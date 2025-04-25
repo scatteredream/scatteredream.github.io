@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.23.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="wxy-rpc这是一个同步调用的 RPC 框架。 服务消费方包装好 RpcRequest，做完服务发现之后发送网络请求，使用 Promise 来进行异步请求的同步等待 await(timeout) 与收到 RpcResponse 之后的 setSuccess(rpcMessage)。 服务提供方收到 RpcRequest，根据服务名称在本地注册中心找到实现类，执行调用，返回结果封装在 RpcRes">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于 Netty 的 RPC 框架">
+<meta property="og:url" content="http://example.com/2025/01/01/rpc-interpretation/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="wxy-rpc这是一个同步调用的 RPC 框架。 服务消费方包装好 RpcRequest，做完服务发现之后发送网络请求，使用 Promise 来进行异步请求的同步等待 await(timeout) 与收到 RpcResponse 之后的 setSuccess(rpcMessage)。 服务提供方收到 RpcRequest，根据服务名称在本地注册中心找到实现类，执行调用，返回结果封装在 RpcRes">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250423123418951.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/Sync同步调用.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/Future异步调用.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/Callback回调调用.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/Onway单向调用.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250426001316156.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250426001516610.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250426001729767.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250423123418951.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250423120651325.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/rpc10000并发测试结果.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/dubbo5000并发测试结果.png">
+<meta property="article:published_time" content="2024-12-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-04-25T17:01:31.893Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="netty">
+<meta property="article:tag" content="spring">
+<meta property="article:tag" content="spring-boot">
+<meta property="article:tag" content="auto-configuration">
+<meta property="article:tag" content="rpc">
+<meta property="article:tag" content="动态代理">
+<meta property="article:tag" content="spi">
+<meta property="article:tag" content="bean-lifecyle">
+<meta property="article:tag" content="bean-registry">
+<meta property="article:tag" content="自定义注解">
+<meta property="article:tag" content="项目源码分析">
+<meta property="article:tag" content="load-balance">
+<meta property="article:tag" content="serialization">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250423123418951.png">
+
+
+<link rel="canonical" href="http://example.com/2025/01/01/rpc-interpretation/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/01/01/rpc-interpretation/","path":"2025/01/01/rpc-interpretation/","title":"基于 Netty 的 RPC 框架"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>基于 Netty 的 RPC 框架 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#wxy-rpc"><span class="nav-number">1.</span> <span class="nav-text">wxy-rpc</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">调用方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#framework-core"><span class="nav-number">1.2.</span> <span class="nav-text">&#x3D;&#x3D;framework-core&#x3D;&#x3D;</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#common%EF%BC%88%E6%B6%88%E6%81%AF%E4%BD%93%E5%AE%9A%E4%B9%89%E3%80%81%E6%B3%A8%E5%86%8C%E4%BF%A1%E6%81%AF%EF%BC%89"><span class="nav-number">1.2.1.</span> <span class="nav-text">common（消息体定义、注册信息）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#utils%EF%BC%88ServiceUtil%EF%BC%89"><span class="nav-number">1.2.2.</span> <span class="nav-text">utils（ServiceUtil）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#enums%EF%BC%88%E6%B6%88%E6%81%AF%E5%A4%B4%E5%8F%82%E6%95%B0%EF%BC%89"><span class="nav-number">1.2.3.</span> <span class="nav-text">enums（消息头参数）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#protocol-constant%EF%BC%88%E5%8D%8F%E8%AE%AE%E5%AE%9A%E4%B9%89%E7%9B%B8%E5%85%B3%EF%BC%89"><span class="nav-number">1.2.4.</span> <span class="nav-text">protocol&#x2F;constant（协议定义相关）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#serialization%EF%BC%88%E5%BA%8F%E5%88%97%E5%8C%96%E7%9B%B8%E5%85%B3%EF%BC%89"><span class="nav-number">1.2.5.</span> <span class="nav-text">&#x3D;&#x3D;serialization（序列化相关）&#x3D;&#x3D;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#exception%EF%BC%88%E5%BC%82%E5%B8%B8%EF%BC%89"><span class="nav-number">1.2.6.</span> <span class="nav-text">exception（异常）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#codec%EF%BC%88%E7%BC%96%E8%A7%A3%E7%A0%81%E3%80%81%E7%B2%98%E5%8C%85%E5%A4%84%E7%90%86%EF%BC%89"><span class="nav-number">1.2.7.</span> <span class="nav-text">&#x3D;&#x3D;codec（编解码、粘包处理）&#x3D;&#x3D;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#loadbalance%EF%BC%88%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%89"><span class="nav-number">1.2.8.</span> <span class="nav-text">&#x3D;&#x3D;loadbalance（负载均衡）&#x3D;&#x3D;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#discovery-registry"><span class="nav-number">1.2.9.</span> <span class="nav-text">&#x3D;&#x3D;discovery&#x2F;registry&#x3D;&#x3D;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Nacos"><span class="nav-number">1.2.9.1.</span> <span class="nav-text">Nacos</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Zookeeper"><span class="nav-number">1.2.9.2.</span> <span class="nav-text">Zookeeper</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0"><span class="nav-number">1.2.9.3.</span> <span class="nav-text">服务发现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C"><span class="nav-number">1.2.9.4.</span> <span class="nav-text">服务注册</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.2.9.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#extension-%EF%BC%88SPI%EF%BC%89"><span class="nav-number">1.2.10.</span> <span class="nav-text">extension （SPI）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ExtensionLoader"><span class="nav-number">1.2.10.1.</span> <span class="nav-text">ExtensionLoader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ExtensionFactory"><span class="nav-number">1.2.10.2.</span> <span class="nav-text">ExtensionFactory</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AutoConfiguration"><span class="nav-number">1.2.10.3.</span> <span class="nav-text">AutoConfiguration</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#server-spring-boot"><span class="nav-number">1.3.</span> <span class="nav-text">server-spring-boot</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#store"><span class="nav-number">1.3.1.</span> <span class="nav-text">&#x3D;&#x3D;store&#x3D;&#x3D;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#handler"><span class="nav-number">1.3.2.</span> <span class="nav-text">&#x3D;&#x3D;handler&#x3D;&#x3D;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#transport"><span class="nav-number">1.3.3.</span> <span class="nav-text">transport</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#http"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">http</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#socket"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">socket</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#netty"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">netty</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#client-spring-boot"><span class="nav-number">1.4.</span> <span class="nav-text">client-spring-boot</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#common"><span class="nav-number">1.4.1.</span> <span class="nav-text">common</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#handler-1"><span class="nav-number">1.4.2.</span> <span class="nav-text">handler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#transport-1"><span class="nav-number">1.4.3.</span> <span class="nav-text">transport</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#http-1"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">http</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#socket-1"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">socket</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#netty-1"><span class="nav-number">1.4.3.3.</span> <span class="nav-text">netty</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#proxy"><span class="nav-number">1.4.4.</span> <span class="nav-text">&#x3D;&#x3D;proxy&#x3D;&#x3D;</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%90%86%E5%AE%9E%E4%BE%8B%E5%B7%A5%E5%8E%82"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">代理实例工厂</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cglib"><span class="nav-number">1.4.4.2.</span> <span class="nav-text">cglib</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#jdk"><span class="nav-number">1.4.4.3.</span> <span class="nav-text">jdk</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RemoteMethodCall-%E5%8F%91%E8%B5%B7-RPC-%E7%9A%84%E5%85%AC%E5%85%B1%E6%96%B9%E6%B3%95"><span class="nav-number">1.4.4.4.</span> <span class="nav-text">RemoteMethodCall 发起 RPC 的公共方法</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring"><span class="nav-number">2.</span> <span class="nav-text">Spring</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Bean-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%B8%80%E8%A7%88"><span class="nav-number">2.1.</span> <span class="nav-text">Spring Bean 生命周期一览</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IoC-%E5%AE%B9%E5%99%A8%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B"><span class="nav-number">2.1.1.</span> <span class="nav-text">&#x3D;&#x3D;IoC 容器启动过程&#x3D;&#x3D;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bean-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">2.1.2.</span> <span class="nav-text">Bean 生命周期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SpringBoot-%E5%90%AF%E5%8A%A8"><span class="nav-number">2.1.3.</span> <span class="nav-text">SpringBoot 启动</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-%E6%89%AB%E6%8F%8F%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3"><span class="nav-number">2.2.</span> <span class="nav-text">Spring 扫描自定义注解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RpcComponentScan-%EF%BC%9A%E6%89%AB%E6%8F%8F%E3%80%81%E6%B3%A8%E5%86%8C-RpcService%E7%9A%84%E7%B1%BB%EF%BC%8C%E5%AE%9E%E4%BE%8B%E5%8C%96%E6%97%B6%E5%B0%86%E5%85%B6%E5%8A%A0%E5%85%A5%E6%9C%AC%E5%9C%B0%E7%BC%93%E5%AD%98"><span class="nav-number">2.2.1.</span> <span class="nav-text">@RpcComponentScan ：扫描、注册@RpcService的类，实例化时将其加入本地缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89-BeanDefinition-%E6%89%AB%E6%8F%8F%E5%99%A8"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">定义 BeanDefinition 扫描器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Import-%E6%B3%A8%E8%A7%A3%E7%BB%93%E5%90%88-Registrar-%E5%8A%A8%E6%80%81%E6%B3%A8%E5%86%8C-BeanDefinition"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">使用 @Import 注解结合 Registrar 动态注册 BeanDefinition</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bean-%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">2.2.1.3.</span> <span class="nav-text">Bean 处理器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RpcReference%EF%BC%9A%E5%88%A9%E7%94%A8%E5%8F%8D%E5%B0%84%E6%8A%8A-Bean-%E7%9A%84%E5%AD%97%E6%AE%B5%E6%9B%BF%E6%8D%A2%E6%88%90%E4%BB%A3%E7%90%86%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.2.2.</span> <span class="nav-text">@RpcReference：利用反射把 Bean 的字段替换成代理对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SpringBoot-%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%EF%BC%9A%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%A1%86%E6%9E%B6%E5%86%85%E9%83%A8%E7%9A%84-Bean"><span class="nav-number">2.3.</span> <span class="nav-text">SpringBoot 自动装配：自动装配框架内部的 Bean</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.3.1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90"><span class="nav-number">2.3.2.</span> <span class="nav-text">原理浅析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-%E5%88%9B%E5%BB%BA-starter"><span class="nav-number">2.3.3.</span> <span class="nav-text">示例 创建 starter</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">项目使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-number">3.1.</span> <span class="nav-text">环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E6%B5%8B%E8%AF%95"><span class="nav-number">3.2.</span> <span class="nav-text">项目测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95"><span class="nav-number">3.3.</span> <span class="nav-text">压力测试</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/01/01/rpc-interpretation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="基于 Netty 的 RPC 框架 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于 Netty 的 RPC 框架
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-01-01 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-01T00:00:00+08:00">2025-01-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-04-26 01:01:31" itemprop="dateModified" datetime="2025-04-26T01:01:31+08:00">2025-04-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E9%A1%B9%E7%9B%AE/" itemprop="url" rel="index"><span itemprop="name">项目</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="wxy-rpc"><a href="#wxy-rpc" class="headerlink" title="wxy-rpc"></a>wxy-rpc</h1><p>这是一个同步调用的 RPC 框架。</p>
+<p>服务消费方包装好 RpcRequest，做完服务发现之后发送网络请求，使用 Promise 来进行异步请求的同步等待 await(timeout) 与收到 RpcResponse 之后的 setSuccess(rpcMessage)。</p>
+<p>服务提供方收到 RpcRequest，根据服务名称在本地注册中心找到实现类，执行调用，返回结果封装在 RpcResponse 内。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250423123418951.png" alt="责任链"></p>
+<h2 id="调用方式"><a href="#调用方式" class="headerlink" title="调用方式"></a>调用方式</h2><p>成熟的 RPC 框架一般会提供四种调用方式，分别为同步 Sync、异步 Future、回调 Callback和单向 Oneway。RPC 框架的性能和吞吐量与合理使用调用方式是息息相关的，下面我们逐一介绍下四种调用方式的实现原理。</p>
+<ul>
+<li>Sync 同步调用。客户端线程发起 RPC 调用后，当前线程会一直阻塞，直至服务端返回结果或者处理超时异常。Sync 同步调用一般是 RPC 框架默认的调用方式，为了保证系统可用性，客户端设置合理的超时时间是非常重要的。虽说 Sync 是同步调用，但是客户端线程和服务端线程并不是同一个线程，实际在 RPC 框架内部还是异步处理的。Sync 同步调用的过程如下图所示。</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/Sync同步调用.png" alt="Sync同步调用" style="zoom:67%;" />
+
+<ul>
+<li>Future 异步调用。客户端发起调用后不会再阻塞等待，而是拿到 RPC 框架返回的 Future 对象，调用结果会被服务端缓存，客户端自行决定后续何时获取返回结果。当客户端主动获取结果时，该过程是阻塞等待的。Future 异步调用过程如下图所示。</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/Future异步调用.png" alt="Future异步调用" style="zoom:67%;" />
+
+<ul>
+<li>Callback 回调调用。如下图所示，客户端发起调用时，将 Callback 对象传递给 RPC 框架，无须同步等待返回结果，直接返回。当获取到服务端响应结果或者超时异常后，再执行用户注册的 Callback 回调。所以 Callback 接口一般包含 onResponse 和 onException 两个方法，分别对应成功返回和异常返回两种情况。</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/Callback回调调用.png" alt="Callback回调调用" style="zoom:67%;" />
+
+<ul>
+<li>Oneway 单向调用。客户端发起请求之后直接返回，忽略返回结果。Oneway 方式是最简单的，具体调用过程如下图所示。</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/Onway单向调用.png" alt="Onway单向调用" style="zoom:67%;" />
+
+<p>四种调用方式都各有优缺点，很难说异步方式一定会比同步方式效果好，在不用的业务场景可以按需选取更合适的调用方式。</p>
+<h2 id="framework-core"><a href="#framework-core" class="headerlink" title="==framework-core=="></a>==framework-core==</h2><p><strong>config</strong> 线程池配置类 <strong>factory</strong> 单例工厂和线程池工厂</p>
+<h3 id="common（消息体定义、注册信息）"><a href="#common（消息体定义、注册信息）" class="headerlink" title="common（消息体定义、注册信息）"></a>common（消息体定义、注册信息）</h3><p>包括消息体的三种类型，以及注册中心提供的服务信息 <code>ServiceInfo</code>。</p>
+<ul>
+<li><code>RpcRequest</code> 包含 服务名称（服务名+版本）、方法名、参数类型、参数</li>
+<li><code>RpcResponse</code> 包含 返回值、发生异常时的异常信息</li>
+<li><code>HeartBeatMessage</code> 包含字符串（PING/PONG）</li>
+<li><code>ServiceInfo</code> 应用名称、服务名称、版本号、服务提供方主机地址、端口号。</li>
+</ul>
+<h3 id="utils（ServiceUtil）"><a href="#utils（ServiceUtil）" class="headerlink" title="utils（ServiceUtil）"></a>utils（ServiceUtil）</h3><p><code>String serviceKey(String serviceName, String version)</code> 根据服务名称和版本号生成注册服务的key</p>
+<p><code>Map toMap(ServiceInfo serviceInfo)</code> 将ServiceInfo转换成Map 用于nacos注册</p>
+<p><code>ServiceInfo toServiceInfo（Map map）</code> 将Map转换成ServiceInfo 用于nacos发现</p>
+<blockquote>
+<p>nacos instance 的metadata是一个map，键和值都是字符串。</p>
+<p>port是 int 类型，Gson 解析出 8080 会变成 Number 类型 8080.0 变成Double，因此要把8080转成字符串。</p>
+<p><code>map.put(&quot;port&quot;, serviceInfo.getPort().toString());</code> </p>
+<p><code>map.put(&quot;port&quot;, Integer.parseInt(map.getOrDefault(&quot;port&quot;, &quot;0&quot;).toString()))</code> </p>
+</blockquote>
+<h3 id="enums（消息头参数）"><a href="#enums（消息头参数）" class="headerlink" title="enums（消息头参数）"></a>enums（消息头参数）</h3><ul>
+<li><code>MessageStatus</code> <code>code</code>=01 代表成功/失败</li>
+<li><code>MessageType</code> <code>type</code>=01表示正常的请求与响应 23表示心跳的ping 与pong</li>
+<li><code>SerializationType</code>  <code>type</code> = 0-4 分别对应5种序列化算法，可以根据输入的序列化算法名称匹配对应的序列化方式，默认为Hessian，也可根据type匹配。</li>
+</ul>
+<h3 id="protocol-constant（协议定义相关）"><a href="#protocol-constant（协议定义相关）" class="headerlink" title="protocol/constant（协议定义相关）"></a>protocol/constant（协议定义相关）</h3><ul>
+<li><code>RpcMessage</code> 封装好的 Rpc 协议信息<ul>
+<li><code>MessageHeader header</code> 消息头</li>
+<li><code>Object body</code> 携带的消息内容（可能是 <code>RpcRequest</code>，<code>RpcResponse</code>，也可能是心跳 <code>HeartBeatMessage</code>）</li>
+</ul>
+</li>
+<li><code>MessageHeader</code>  消息头<ul>
+<li>4B 魔数 1B 版本号  均有<strong>默认填充</strong> </li>
+<li>1B <code>serializerType</code></li>
+<li>1B <code>messageType</code> </li>
+<li>1B <code>messageStatus</code> </li>
+<li>4B <code>serialNumber</code> 有一个原子变量，每get一次就自增</li>
+<li>4B <code>length</code> </li>
+<li><strong>Builder 建造者模式</strong> 链式构造 build</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>设计模式：建造者模式</p>
+<ul>
+<li><strong>解决复杂对象的构造问题</strong>：当一个对象需要多个参数（尤其包含大量可选参数）时，传统构造方法会变得臃肿且难以维护。</li>
+<li><strong>避免“重叠构造器”反模式</strong>：无需编写多个不同参数组合的构造函数。</li>
+<li><strong>防止对象的不一致状态</strong>：确保对象在构造完成后处于完整且一致的状态。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">优势</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>参数灵活</strong></td>
+<td align="left">可选参数可自由组合，避免编写多个重载构造函数。</td>
+</tr>
+<tr>
+<td align="left"><strong>代码可读性高</strong></td>
+<td align="left">链式调用清晰表达参数含义（如 <code>.age(30).email(&quot;...&quot;)</code>）。</td>
+</tr>
+<tr>
+<td align="left"><strong>对象状态一致性</strong></td>
+<td align="left">通过 <code>build()</code> 方法统一校验参数，确保对象构造完成后合法且完整。</td>
+</tr>
+<tr>
+<td align="left"><strong>与不可变对象兼容</strong></td>
+<td align="left">适合构建不可变（<code>final</code>）对象，所有参数在构造时一次性设置。</td>
+</tr>
+</tbody></table>
+</blockquote>
+<h3 id="serialization（序列化相关）"><a href="#serialization（序列化相关）" class="headerlink" title="==serialization（序列化相关）=="></a>==serialization（序列化相关）==</h3><ul>
+<li><code>Serialization</code> 接口，定义了 <code>serialize()</code>和 <code>deserialize()</code> 两个方法 共有5个实现（Gson、Kryo、JDK、Protostuff、Hessian）使用 SPI 标注，表示这个类是可扩展的（可插拔）</li>
+<li><code>SerializationFactory</code> 工厂模式，使用工厂方法创建序列化实例。</li>
+</ul>
+<blockquote>
+<p>设计模式：工厂模式</p>
+<ul>
+<li>提供了一种创建对象的方式，使得创建对象的过程与使用对象的过程分离。</li>
+<li>工厂模式提供了一种创建对象的方式，而无需指定要创建的具体类。</li>
+<li>通过使用工厂模式，可以将对象的创建逻辑封装在一个工厂类中，而不是在客户端代码中直接实例化对象，这样可以提高代码的可维护性和可扩展性。</li>
+</ul>
+</blockquote>
+<p><strong>Gson</strong>：默认不支持class序列化，需要自己实现</p>
+<p><strong>Kryo</strong>：Kryo 线程不安全，所以使用 ThreadLocal 保存 kryo 对象</p>
+<p><strong>Protostuff</strong>：提前分配好 LinkedBuffer，避免每次进行序列化都需要重新分配 buffer 内存空间</p>
+<p>序列化无需双方约定，只需要客户端规定好就可以，写入MessageHeader以后，双方的codec自己会根据对应字段选择相同的序列化/反序列化方式。</p>
+<h3 id="exception（异常）"><a href="#exception（异常）" class="headerlink" title="exception（异常）"></a>exception（异常）</h3><p>定义了RPCException和SerializeException来封装框架的异常</p>
+<h3 id="codec（编解码、粘包处理）"><a href="#codec（编解码、粘包处理）" class="headerlink" title="==codec（编解码、粘包处理）=="></a>==codec（编解码、粘包处理）==</h3><p><code>MessageToByteEncoder&lt;T&gt;</code> 负责编码 <code>ByteToMessageDecoder</code> 负责解码</p>
+<ul>
+<li><p>在 Netty 的 Pipeline 中，通常将两者结合使用：</p>
+<ol>
+<li>**<code>LengthFieldBasedFrameDecoder</code>**：解决粘包/半包， 提取完整帧。</li>
+<li>**<code>MessageToMessageCodec</code>**：拆分后的数据帧（如<code>ByteBuf</code>）与业务对象转换。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ch.pipeline()</span><br><span class="line">  <span class="comment">// 第一步：处理粘包/半包，输出完整ByteBuf帧</span></span><br><span class="line">  .addLast(<span class="keyword">new</span> <span class="title class_">LengthFieldBasedFrameDecoder</span>(<span class="number">1024</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">0</span>, <span class="number">4</span>))</span><br><span class="line">  <span class="comment">// 第二步：将ByteBuf解码为Java对象</span></span><br><span class="line">  .addLast(<span class="keyword">new</span> <span class="title class_">MyMessageCodec</span>())</span><br><span class="line">  <span class="comment">// 第三步：处理业务逻辑</span></span><br><span class="line">  .addLast(<span class="keyword">new</span> <span class="title class_">BusinessHandler</span>());</span><br></pre></td></tr></table></figure></li>
+<li><p><strong><code>SharableRpcMessageCodec</code></strong></p>
+<ul>
+<li>可共享的 Rpc 消息编码解码器，继承自 <code>MessageToMessageCodec&lt;ByteBuf, RpcMessage&gt;</code> 重写其 <code>encode(ctx, msg, out)</code> 与 <code>decode(ctx, msg, out)</code> 方法。使用此编解码器必须配合 <code>RpcFrameDecoder</code> 进行使用， 以保证得到完整的数据包。不同于 <code>io.netty.handler.codec.ByteToMessageCodec</code> 的编解码器，共享编解码器无需 保存 <code>ByteBuf</code> 的状态信息。</li>
+<li>为了支持多线程共享，编解码器 Handler 应该是 <strong>无状态或线程安全</strong> 的。<code>@Sharable</code> 是 <strong>Netty 框架</strong>中一个重要的注解，用于标记 <code>ChannelHandler</code> 是否可以被多个 <code>Channel</code>（连接）<strong>安全共享</strong>。（默认情况下会为每一个Channel创建一个新的Handler实例，不能复用）<ul>
+<li>仅当 <code>Handler</code> <strong>无状态</strong>或<strong>线程安全</strong>时，才应添加 <code>@Sharable</code>：</li>
+<li><strong>统计类 Handler</strong>（如监控请求总数、连接数）。</li>
+<li><strong>无状态 Handler</strong>（不保存任何与特定 <code>Channel</code> 相关的数据）。</li>
+<li><strong>工具类 Handler</strong>（如日志记录、编解码器等）。</li>
+</ul>
+</li>
+<li>入：<code>Bytebuf</code> -&gt; <code>RpcMessage</code> （解码）：先判断魔数，然后是版本号，之后是其余的字段，根据信息构造出消息头，然后根据消息类型反序列化消息体，rpc请求和响应的消息分别对应的是 <code>RpcRequest</code> 和 <code>RpcResponse</code>，心跳对应的是 <code>String</code> ，将这些信息拼成一个 <code>RpcMessage</code>，传递到下一个出站处理器</li>
+<li>出：<code>RpcMessage</code>-&gt; <code>Bytebuf</code> （编码）：消息头发出时根据 <code>RpcMessage</code> 的消息头直接发送协议的对应字段，发到 <code>length</code> 以后暂停，将 <code>body</code> 序列化成为<code>byte</code> 数组，之后设置消息头的长度字段，然后将长度字段也写入，最后将消息体发出，传递到下一个出站处理器</li>
+</ul>
+</li>
+<li><p><code>RpcFrameDecoder</code> </p>
+<ul>
+<li><p>粘包拆包编码器，固定长度的帧解码器，通过约定用定长字节表示接下来数据的长度。非共享，保存 <code>ByteBuf</code> 的状态信息。继承自 <code>LengthFieldBasedFrameDecoder</code> </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">RpcFrameDecoder</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>(<span class="number">1024</span>, <span class="number">12</span>, <span class="number">4</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> maxFrameLength    数据帧的最大长度</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lengthFieldOffset 长度域的偏移字节数</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> lengthFieldLength 长度域所占的字节数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">RpcFrameDecoder</span><span class="params">(<span class="type">int</span> maxFrameLength, <span class="type">int</span> lengthFieldOffset, <span class="type">int</span> lengthFieldLength)</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>(maxFrameLength, lengthFieldOffset, lengthFieldLength);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>TCP 是无边界的字节流，考虑到 RPC 框架特性，排除了固定长度/分隔符/channel短连接，采用消息长度+消息体的模式。不同 <code>Channel</code>之间肯定会互相干扰，因此不能使用 <code>@Sharable</code> 注解</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="loadbalance（负载均衡）"><a href="#loadbalance（负载均衡）" class="headerlink" title="==loadbalance（负载均衡）=="></a>==loadbalance（负载均衡）==</h3><p>本项目实现了 Random、RoundRobin、ConsistentHash 三种负载均衡算法</p>
+<p>在分布式系统中，服务提供者和服务消费者都会有多台节点，如何保证服务提供者所有节点的负载均衡呢？客户端在发起调用之前，需要感知有多少服务端节点可用，然后从中选取一个进行调用。客户端需要拿到服务端节点的状态信息，并根据不同的策略实现负载均衡算法。负载均衡策略是影响 RPC 框架吞吐量很重要的一个因素，下面我们介绍几种最常用的负载均衡策略。</p>
+<ul>
+<li>Round-Robin 轮询。Round-Robin 是最简单有效的负载均衡策略，并没有考虑服务端节点的实际负载水平，而是依次轮询服务端节点。</li>
+<li>Weighted Round-Robin 权重轮询。对不同负载水平的服务端节点增加权重系数，这样可以通过权重系数降低性能较差或者配置较低的节点流量。权重系数可以根据服务端负载水平实时进行调整，使集群达到相对均衡的状态。</li>
+<li>Least Connections 最少连接数。客户端根据服务端节点当前的连接数进行负载均衡，客户端会选择连接数最少的一台服务器进行调用。Least Connections 策略只是服务端其中一种维度，我们可以演化出最少请求数、CPU 利用率最低等其他维度的负载均衡方案。</li>
+<li>Consistent Hash 一致性 Hash。目前主流推荐的负载均衡策略，Consistent Hash 是一种特殊的 Hash 算法，在服务端节点扩容或者下线时，尽可能保证客户端请求还是固定分配到同一台服务器节点。Consistent Hash 算法是采用哈希环来实现的，通过 Hash 函数将对象和服务器节点放置在哈希环上，一般来说服务器可以选择 IP + Port 进行 Hash，然后为对象选择对应的服务器节点，在哈希环中顺时针查找距离对象 Hash 值最近的服务器节点。</li>
+</ul>
+<p>此外，负载均衡算法可以是多种多样的，客户端可以记录例如健康状态、连接数、内存、CPU、Load 等更加丰富的信息，根据综合因素进行更好地决策。</p>
+<ul>
+<li><code>LoadBalance</code> 接口定义了 <code>ServiceInfo select(List&lt;ServiceInfo&gt; invokers, RpcRequest request)</code> ，SPI 注解表示可扩展。</li>
+<li><code>AbstractLoadBalance</code> 实现了 <code>select</code> 考虑到 无invokers、单invokers 的情况，体现了 模版方法 的设计模式，让实现类自己实现 <code>doSelect</code> 方法。</li>
+</ul>
+<blockquote>
+<p>设计模式：模板方法 （示例：HttpServlet 的 service() 方法）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">service</span><span class="params">(HttpServletRequest req, HttpServletResponse resp)</span></span><br><span class="line">        <span class="keyword">throws</span> ServletException, IOException &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">method</span> <span class="operator">=</span> req.getMethod();</span><br><span class="line">    <span class="keyword">if</span> (method.equals(<span class="string">&quot;GET&quot;</span>)) &#123;</span><br><span class="line">        doGet(req, resp);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (method.equals(<span class="string">&quot;POST&quot;</span>)) &#123;</span><br><span class="line">        doPost(req, resp);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 其他如 PUT、DELETE 等也可以类似处理</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>本项目实现了 Random、RoundRobin、ConsistentHash 三种负载均衡算法</p>
+<p>在分布式系统中，服务提供者和服务消费者都会有多台节点，如何保证服务提供者所有节点的负载均衡呢？客户端在发起调用之前，需要感知有多少服务端节点可用，然后从中选取一个进行调用。客户端需要拿到服务端节点的状态信息，并根据不同的策略实现负载均衡算法。负载均衡策略是影响 RPC 框架吞吐量很重要的一个因素，下面我们介绍几种最常用的负载均衡策略。</p>
+<ul>
+<li>Round-Robin 轮询。Round-Robin 是最简单有效的负载均衡策略，并没有考虑服务端节点的实际负载水平，而是依次轮询服务端节点。</li>
+<li>Weighted Round-Robin 权重轮询。对不同负载水平的服务端节点增加权重系数，这样可以通过权重系数降低性能较差或者配置较低的节点流量。权重系数可以根据服务端负载水平实时进行调整，使集群达到相对均衡的状态。</li>
+<li>Least Connections 最少连接数。客户端根据服务端节点当前的连接数进行负载均衡，客户端会选择连接数最少的一台服务器进行调用。Least Connections 策略只是服务端其中一种维度，我们可以演化出最少请求数、CPU 利用率最低等其他维度的负载均衡方案。</li>
+<li>Consistent Hash 一致性 Hash。目前主流推荐的负载均衡策略，Consistent Hash 是一种特殊的 Hash 算法，在服务端节点扩容或者下线时，尽可能保证客户端请求还是固定分配到同一台服务器节点。Consistent Hash 算法是采用哈希环来实现的，通过 Hash 函数将对象和服务器节点放置在哈希环上，一般来说服务器可以选择 IP + Port 进行 Hash，然后为对象选择对应的服务器节点，在哈希环中顺时针查找距离对象 Hash 值最近的服务器节点。</li>
+</ul>
+<p>此外，负载均衡算法可以是多种多样的，客户端可以记录例如健康状态、连接数、内存、CPU、Load 等更加丰富的信息，根据综合因素进行更好地决策。</p>
+</blockquote>
+<h3 id="discovery-registry"><a href="#discovery-registry" class="headerlink" title="==discovery/registry=="></a>==discovery/registry==</h3><p>在分布式系统中，不同服务之间应该如何通信呢？传统的方式可以通过 HTTP 请求调用、保存服务端的服务列表等，这样做需要开发者主动感知到服务端暴露的信息，系统之间耦合严重。为了更好地将客户端和服务端解耦，以及实现服务优雅上线和下线，于是注册中心就出现了。</p>
+<p>在 RPC 框架中，主要是使用注册中心来实现服务注册和发现的功能。服务端节点上线后自行向注册中心注册服务列表，节点下线时需要从注册中心将节点元数据信息移除。客户端向服务端发起调用时，自己负责从注册中心获取服务端的服务列表，然后在通过负载均衡算法选择其中一个服务节点进行调用。以上是最简单直接的服务端和客户端的发布和订阅模式，不需要再借助任何中间服务器，性能损耗也是最小的。</p>
+<p>现在思考一个问题，服务在下线时需要从注册中心移除元数据，那么注册中心怎么才能感知到服务下线呢？我们最先想到的方法就是节点主动通知的实现方式，当节点需要下线时，向注册中心发送下线请求，让注册中心移除自己的元数据信息。但是如果节点异常退出，例如断网、进程崩溃等，那么注册中心将会一直残留异常节点的元数据，从而可能造成服务调用出现问题。</p>
+<p>为了避免上述问题，实现服务优雅下线比较好的方式是采用主动通知 + 心跳检测的方案。除了主动通知注册中心下线外，还需要增加节点与注册中心的心跳检测功能，这个过程也叫作探活。心跳检测可以由节点或者注册中心负责，例如注册中心可以向服务节点每 60s 发送一次心跳包，如果 3 次心跳包都没有收到请求结果，可以任务该服务节点已经下线。</p>
+<p>由此可见，采用注册中心的好处是可以解耦客户端和服务端之间错综复杂的关系，并且能够实现对服务的动态管理。服务配置可以支持动态修改，然后将更新后的配置推送到客户端和服务端，无须重启任何服务。</p>
+<p>心跳检测：</p>
+<p>Nacos: 客户端默认5秒发送一次心跳，服务端15s未收到心跳会将实例标记为不健康，超过30s就会删除实例</p>
+<p>ZK: 临时节点（Ephemeral）本身就具备心跳检测特性，超时后节点自动删除（默认40s）</p>
+<h4 id="Nacos"><a href="#Nacos" class="headerlink" title="Nacos"></a>Nacos</h4><blockquote>
+<p>Nacos 是阿里开源的一站式服务发现、配置管理和服务管理平台。它可以作为注册中心使用，也支持配置中心功能，是服务治理的核心组件之一，类似于 Eureka、Consul、Zookeeper。<em>适合AP，高可用，健康检查机制更加可靠</em></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Nacos</th>
+<th>Eureka</th>
+<th>Consul</th>
+<th>Zookeeper</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CAP 理论倾向</td>
+<td>AP(+CP)</td>
+<td>AP</td>
+<td>CP</td>
+<td>CP</td>
+</tr>
+<tr>
+<td>支持健康检查</td>
+<td>✅</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>支持配置中心</td>
+<td>✅</td>
+<td>❌</td>
+<td>部分</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>UI 管理界面</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>动态感知能力</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌（延迟）</td>
+</tr>
+</tbody></table>
+<p><strong>服务注册</strong>（Service Registration）：一个服务启动后把自己的信息（如 IP、端口等）注册到 Nacos。</p>
+<p><strong>服务发现</strong>（Service Discovery）：别的服务通过服务名从 Nacos 查询到这个服务的实例信息，然后进行调用。</p>
+<p>==Nacos 注册中心的核心功能（命名服务 NamingService）==</p>
+<p>在微服务架构中，服务的实例通常是动态变化的（可能会横向扩展、下线），不能写死 IP 和端口。使用命名服务的好处是：</p>
+<ul>
+<li>动态管理服务实例</li>
+<li>实现服务的自动上下线</li>
+<li>支持客户端负载均衡</li>
+<li>解耦服务之间的调用</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Zookeeper</th>
+<th>Nacos</th>
+<th>Eureka</th>
+<th>Consul</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CAP 理论倾向</td>
+<td><strong>CP</strong></td>
+<td>AP</td>
+<td>AP</td>
+<td>CP</td>
+</tr>
+<tr>
+<td>强一致性</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>服务宕机会下线</td>
+<td>✅（临时节点）</td>
+<td>✅（心跳）</td>
+<td>❌（延迟）</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Watcher 机制</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>配置中心功能</td>
+<td>❌</td>
+<td>✅</td>
+<td>❌</td>
+<td>有限</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>服务（Service）</td>
+<td>一个服务的逻辑名，如 <code>user-service</code></td>
+</tr>
+<tr>
+<td>实例（Instance）</td>
+<td>服务的一个具体实现，如 <code>user-service 192.168.1.10:8080 healthy metadata</code></td>
+</tr>
+<tr>
+<td>命名空间（Namespace）</td>
+<td>用于服务隔离，可以做多环境管理，比如开发、测试、生产环境</td>
+</tr>
+<tr>
+<td>分组（Group）</td>
+<td>用于对服务进行逻辑分组，默认是 <code>DEFAULT_GROUP</code></td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">NamingService</span> <span class="variable">naming</span> <span class="operator">=</span> NacosFactory.createNamingService(<span class="string">&quot;127.0.0.1:8848&quot;</span>);</span><br><span class="line"><span class="comment">// 注册服务</span></span><br><span class="line">naming.registerInstance(<span class="string">&quot;user-service&quot;</span>, <span class="string">&quot;192.168.1.100&quot;</span>, <span class="number">8080</span>);</span><br><span class="line"><span class="comment">// 获取服务实例列表</span></span><br><span class="line">List&lt;Instance&gt; instances = naming.getAllInstances(<span class="string">&quot;user-service&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">user-service</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">nacos:</span></span><br><span class="line">      <span class="attr">discovery:</span></span><br><span class="line">        <span class="attr">server-addr:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span><span class="string">:8848</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Zookeeper"><a href="#Zookeeper" class="headerlink" title="Zookeeper"></a>Zookeeper</h4><blockquote>
+<p>Zookeeper 是一个开源的<strong>分布式协调框架</strong>，用于实现分布式系统中的统一配置管理、命名服务、分布式锁、主从选举等功能。在微服务体系中，它也可以作为注册中心使用，比如 Dubbo 体系就常用 ZK。<em>CP，强一致性，不过临时节点删除可能有一点延迟</em> </p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>功能点</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>服务注册</td>
+<td>服务提供者在 ZooKeeper 的 <code>/services/&#123;serviceName&#125;/providers</code> 路径下创建==临时节点==（Ephemeral Node），节点内容为服务元数据。</td>
+</tr>
+<tr>
+<td>服务发现</td>
+<td>消费者监听 <code>/services/&#123;serviceName&#125;/providers</code> 的子节点变化（==Watcher== 机制），实时获取服务列表。</td>
+</tr>
+<tr>
+<td>健康检查</td>
+<td>依赖==临时节点==的机制，服务宕机/断连节点会自动消失。</td>
+</tr>
+<tr>
+<td>动态感知</td>
+<td>使用 Watcher 机制，监听节点变化自动感知上下线，通过 Watcher 通知消费者刷新本地缓存。</td>
+</tr>
+<tr>
+<td>数据一致性</td>
+<td>强一致性（CP系统），适合对一致性要求高的场景。</td>
+</tr>
+</tbody></table>
+<p>ZooKeeper 的 Watcher 机制保证消费者在节点增删时立即收到通知，触发本地缓存更新。</p>
+<p>若 ZooKeeper 会话超时，消费者需重新注册 Watcher 并全量拉取数据。</p>
+<p>缓存当前服务列表的快照，并在 Watcher 回调中对比差异，实现增量更新。</p>
+<h4 id="服务发现"><a href="#服务发现" class="headerlink" title="服务发现"></a>服务发现</h4><ul>
+<li><p><code>ServiceDiscovery</code> 接口</p>
+<ul>
+<li><code>ServiceInfo discover(RpcRequest request)</code> 服务发现</li>
+<li><code>default List&lt;ServiceInfo&gt; getServices(String serviceName)</code> 返回所有服务提供方</li>
+<li><code>void destroy()</code> 摧毁连接</li>
+</ul>
+</li>
+<li><p><code>NacosServiceDiscovery</code> </p>
+<ul>
+<li><p><code>LoadBalance loadBalance</code> 负载均衡算法</p>
+</li>
+<li><p><code>Map&lt;String, List&lt;ServiceInfo&gt;&gt; serviceMap</code> 本地缓存</p>
+</li>
+<li><p>构造器：提供负载均衡算法，nacos 地址 </p>
+</li>
+<li><p>```java<br>this.loadBalance = loadBalance;<br>this.namingService = NamingFactory.createNamingService(“localhost:8848”);</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">  - `void destroy()` 关闭 命名服务</span><br><span class="line"></span><br><span class="line">  - `ServiceInfo discover(RpcRequest request)` 调用`getServices()`得到服务信息传给负载均衡器返回结果</span><br><span class="line"></span><br><span class="line">  - `List&lt;ServiceInfo&gt; getServices(String serverName)` </span><br><span class="line"></span><br><span class="line">    先看看缓存里有没有，没有就从NamingService里获取`List&lt;Instances&gt;`，通过stream映射到`List&lt;ServiceInfo&gt;`，将list作为服务名对应的值加到本地缓存里面。与此同时，订阅 NamingEvent，`subscribe(String serviceName, EventListener el)` 实现 `EventListener` 的 `onEvent(Event e)`，`Event` 转成 `NamingEvent`，从 NamingEvent 获取服务信息`getInstances`，更新至本地缓存。</span><br><span class="line"></span><br><span class="line">- `ZookeeperServiceDiscovery` </span><br><span class="line"></span><br><span class="line">  - `ServiceDiscovery&lt;ServiceInfo&gt; serviceDiscovery` Curator 提供的服务发现组件</span><br><span class="line"></span><br><span class="line">  - `Map&lt;String, List&lt;ServiceInfo&gt;&gt; serviceMap`</span><br><span class="line"></span><br><span class="line">    将服务列表缓存到本地内存，当服务发生变化时，由 serviceCache 进行服务列表更新操作，当 zk 挂掉时，将保存当前服务列表以便继续提供服务。</span><br><span class="line"></span><br><span class="line">  - `Map&lt;String, ServiceCache&lt;ServiceInfo&gt;&gt; serviceCacheMap`  </span><br><span class="line"></span><br><span class="line">    将在zk中的服务数据缓存至本地，并监听服务变化，实时更新缓存</span><br><span class="line">    服务本地缓存，将服务缓存到本地并增加 watch 事件，当远程服务发生改变时自动更新服务缓存</span><br><span class="line"></span><br><span class="line">  - 构造器：提供负载均衡算法，zk地址</span><br><span class="line"></span><br><span class="line">  - ```java</span><br><span class="line">    this.loadBalance = loadBalance;</span><br><span class="line">    // 创建zk客户端示例 (会话超时，连接超时，指数退避重试)</span><br><span class="line">    client = CuratorFrameworkFactory</span><br><span class="line">            .newClient(registryAddress, SESSION_TIMEOUT, CONNECT_TIMEOUT,</span><br><span class="line">                    new ExponentialBackoffRetry(BASE_SLEEP_TIME, MAX_RETRY));</span><br><span class="line">    // 开启客户端通信</span><br><span class="line">    client.start();</span><br><span class="line">    // 构建 ServiceDiscovery 服务注册中心 建造者模式</span><br><span class="line">    serviceDiscovery = ServiceDiscoveryBuilder.builder(ServiceInfo.class)</span><br><span class="line">            .client(client)</span><br><span class="line">            .serializer(new JsonInstanceSerializer&lt;&gt;(ServiceInfo.class))</span><br><span class="line">            .basePath(BASE_PATH)</span><br><span class="line">            .build();</span><br><span class="line">    // 开启 服务发现</span><br><span class="line">    serviceDiscovery.start();</span><br></pre></td></tr></table></figure></li>
+<li><p><code>void destroy()</code> 关闭缓存，关闭服务发现中心，关闭客户端</p>
+</li>
+<li><p><code>ServiceInfo discover(RpcRequest request)</code> 调用<code>getServices()</code>得到服务信息传给负载均衡器返回结果</p>
+</li>
+<li><p><code>List&lt;ServiceInfo&gt; getServices(String serverName)</code> </p>
+<p>先查本地缓存，没有就构建缓存 <code>ServiceCache&lt;ServiceInfo&gt;</code>（这个是实时更新的缓存），使用建造者模式赋值服务名称。添加缓存事件监听器 <code>ServiceCacheListener</code>：重写 <code>cacheChanged()</code>，一旦缓存发生改变，就<code>getInstances</code> 获取 <code>List&lt;ServiceInstance&lt;ServiceInfo&gt;&gt;</code> 通过 <code>getPayload()</code> 获取<code>ServiceInfo</code>。连接状态改变只打印信息。将&lt;服务名，对应的实时缓存&gt;存到 <code>ServiceCacheMap</code> 里面，也存到本地缓存里面。</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="服务注册"><a href="#服务注册" class="headerlink" title="服务注册"></a>服务注册</h4><ul>
+<li><code>ServiceRegistry</code><ul>
+<li><code>register(ServiceInfo info)</code> 注册</li>
+<li><code>unregister(ServiceInfo info)</code> 注销</li>
+<li><code>destroy()</code> 摧毁连接</li>
+</ul>
+</li>
+<li><code>NacosServiceRegistry</code> <ul>
+<li>注册：构建 <code>Instance</code>，将 <code>ServiceInfo</code> 转为 <code>Map</code> 作为其 metadata 进行注册</li>
+<li>注销：构建 <code>Instance</code>，将 <code>ServiceInfo</code> 转为 <code>Map</code> 作为其 metadata 进行注销</li>
+</ul>
+</li>
+<li><code>ZookeeperServiceRegistry</code><ul>
+<li>注册：将 <code>ServiceInfo</code> 构建为 <code>ServiceInstance&lt;ServiceInfo&gt;</code> ，然后进行注册</li>
+<li>注销：将 <code>ServiceInfo</code> 构建为 <code>ServiceInstance&lt;ServiceInfo&gt;</code> ，然后进行注销</li>
+</ul>
+</li>
+</ul>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>Nacos 直接拿 <code>NamingService</code> 使用就可以，<code>Instance</code> 中的 <strong>metadata</strong> 是 <code>ServiceInfo</code> 转换成的 Map</p>
+<ul>
+<li>服务发现的时候，数据来源就是 <code>NamingService</code> 本身。</li>
+</ul>
+<p>ZK 需要手动用 Curator API 构造注册中心， <code>ServiceInstance&lt;ServiceInfo&gt;</code> 的 <strong>payload</strong> 是 <code>ServiceInfo</code> </p>
+<ul>
+<li>服务发现的时候，数据主要来源是本地的实时缓存 <code>ServiceCache&lt;ServiceInfo&gt;</code>。</li>
+</ul>
+<h3 id="extension-（SPI）"><a href="#extension-（SPI）" class="headerlink" title="extension （SPI）"></a>extension （SPI）</h3><p>已实现，参考Dubbo部分源码，实现了自定义的SPI机制，目前仅支持根据接口类型加载配置文件中的所有具体的扩展实现类，并且可以根据指定的key获取特定的实现类，具体实现类逻辑在 <code>com.wxy.rpc.core.extension.ExtensionLoader</code> 中。</p>
+<p>服务存储目录在 <code>resource/META-INF/extensions</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">protostuff=com.wxy.rpc.core.serialization.protostuff.ProtostuffSerialization</span><br><span class="line">kryo=com.wxy.rpc.core.serialization.kryo.KryoSerialization</span><br><span class="line">json=com.wxy.rpc.core.serialization.json.JsonSerialization</span><br><span class="line">jdk=com.wxy.rpc.core.serialization.jdk.JdkSerialization</span><br><span class="line">hessian=com.wxy.rpc.core.serialization.hessian.HessianSerialization</span><br></pre></td></tr></table></figure>
+
+<p>与类解耦的单例生成器 Holder。</p>
+<h4 id="ExtensionLoader"><a href="#ExtensionLoader" class="headerlink" title="ExtensionLoader"></a>ExtensionLoader</h4><p>ExtensionLoader 通过一系列map缓存减少无用的对象创建：</p>
+<p><code>Map&lt;Class&lt;?&gt;, ExtensionLoader&lt;?&gt;&gt; classToLoaderMap</code>  loader缓存（接口，loader）</p>
+<ul>
+<li>关联方法：<code>ExtensionLoader&lt;T&gt; getExtensionLoader(Class&lt;T&gt; type)</code> type必须有SPI注解才能返回对应的Loader</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250426001316156.png" alt="单例缓存"></p>
+<h4 id="ExtensionFactory"><a href="#ExtensionFactory" class="headerlink" title="ExtensionFactory"></a>ExtensionFactory</h4><p>然后使用工厂类，先根据type获取loader，然后根据name得到对象。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250426001516610.png" alt="Factory" style="zoom:50%;" />
+
+<h4 id="AutoConfiguration"><a href="#AutoConfiguration" class="headerlink" title="AutoConfiguration"></a>AutoConfiguration</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250426001729767.png" alt="自动装配类" style="zoom:50%;" />
+
+<p>如图，单例工厂，从配置读取 key，然后让加载器加载key对应的实现类。</p>
+<h2 id="server-spring-boot"><a href="#server-spring-boot" class="headerlink" title="server-spring-boot"></a>server-spring-boot</h2><h3 id="store"><a href="#store" class="headerlink" title="==store=="></a>==store==</h3><p><code>LocalServiceCache</code> 服务提供者的本地注册中心</p>
+<p>从调用信息 RpcRequest 中解析出的服务名映射到本地实现类.class <code>ConcurrentHashMap</code></p>
+<p><code>static addService(String serviceName, Object obj)</code>  添加服务</p>
+<p><code>static Object getService(String serviceName)</code>  获得服务</p>
+<p><code>static void removeService(Object obj)</code> 移除服务</p>
+<h3 id="handler"><a href="#handler" class="headerlink" title="==handler=="></a>==handler==</h3><p><code>RpcRequestHandler</code> 执行调用的核心</p>
+<p><code>Object handleRpcRequest(RpcRequest request)</code></p>
+<p>从本地注册中心 <code>LocalServiceCache</code> 获取服务，通过反射执行调用，返回结果。</p>
+<h3 id="transport"><a href="#transport" class="headerlink" title="transport"></a>transport</h3><p><code>RpcServer</code> 接口 定义了 <code>start(Integer port)</code> 方法，有三个实现（Http、Netty、Socket）</p>
+<h4 id="http"><a href="#http" class="headerlink" title="http"></a><span id="httpserver">http</span></h4><p><code>HttpRpcRequestHandler</code> 处理器，单例模式，责任链模式，相当于回调函数 核心方法 <code>handler.handle(req, resp)</code> 将 <code>RpcRequestHandler</code> 的结果以及异常封装到 <code>RpcResponse</code> 中，发回到序列化流中。</p>
+<p><code>HttpRpcServer</code> 启动 tomcat ，主要是设置好 Servlet</p>
+<p><code>DispatcherServlet</code> 分发 Servlet，前端控制器模式，使用线程池处理，来一个请求就开一个线程，关于参数：IO密集型 为 cpuNum *2 ，cpu密集型应为 cpuNum + 1 </p>
+<p><a href="#httpclient">http 客户端</a> </p>
+<h4 id="socket"><a href="#socket" class="headerlink" title="socket"></a><span id="socketserver">socket</span></h4><p><code>SocketRpcServer</code> 启动 ServerSocket bind 端口，在死循环中 accept 还被阻塞，只要服务端socket不关闭（抛出 IOException），就会一直在循环里。除非关闭serversocket/网络问题。建立连接就在线程池开一个任务。</p>
+<p><code>SocketRpcRequestHandler</code> 实现了 <code>Runnable</code> 接口，将 <code>RpcRequestHandler</code> 的结果以及异常封装到 <code>RpcResponse</code> 中，发回到序列化流中。</p>
+<p><a href="#socketclient">socket 客户端</a> </p>
+<h4 id="netty"><a href="#netty" class="headerlink" title="netty"></a><span id="nettyserver">netty</span></h4><p><a href="#nettyclient">netty 客户端</a> </p>
+<p><code>NettyRpcRequestHandler</code> </p>
+<blockquote>
+<p>继承自 <code>SimpleChannelInboundHandler&lt;RpcMessage&gt;</code> 表示入站处理器处理RpcMessage。</p>
+<p>只接收你想要的类型（即泛型指定的类型）；</p>
+<p>消息处理完之后，<strong>自动释放 ByteBuf</strong>，避免内存泄漏（比 <code>ChannelInboundHandlerAdapter</code> 更安全）。</p>
+</blockquote>
+<p>重写了 <code>channelRead0</code> 方法。相当于进入一个消息的处理器。<strong>新开一个任务提交到线程池</strong>：先判断消息类型，如果是心跳请求PING，那么就设置回复的RpcMessage为心跳响应，然后设置好头部信息，消息体为 PONG。剩下的就是客户端的Rpc请求了，像其他方法一样将RpcRequest提取出来交给handler处理，设置好type status body 就发到下一个处理器（codec）。</p>
+<p><code>ctx.writeAndFlush(responseRpcMessage).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);</code></p>
+<p><code>finally:  ReferenceCountUtil.release(msg);</code> 防止内存泄露</p>
+<p>==心跳检测==：<code>userEventTriggered</code> 用户自定义事件，当触发读空闲(<code>IdleState.READER_IDLE</code>)时，也就是 30s 没有读的内容，就自动关闭【客户端channel】连接 </p>
+<p><code>NettyRpcServer</code></p>
+<ul>
+<li><p><code>EventLoopGroup</code> 每个 <code>EventLoopGroup</code> 默认使用多个线程（CPU 核数 * 2）</p>
+<blockquote>
+<p>Netty 的线程模型是什么？为什么要用 boss/worker 分离？</p>
+<p>Netty 使用的是 <strong>Reactor 多线程模型</strong>，将连接处理和读写事件分离，避免阻塞。</p>
+<ul>
+<li><code>bossGroup</code> 负责处理 <strong>accept（连接建立）</strong> 事件 将接受的连接注册到 Worker Group 的某个线程上，通常1-2个线程即可</li>
+<li><code>workerGroup</code> 负责处理 <strong>read/write（数据通信）</strong> 事件，执行实际的业务处理，通常 为 cpu core *2 </li>
+</ul>
+<p>这样设计可以保证即使某个连接在业务处理时耗时较长，也不会阻塞新连接的接入，提高并发性能和系统的稳定性。</p>
+</blockquote>
+</li>
+<li><p><code>ServerBootstrap</code> 启动类 配置参数</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ServerBootstrap</span> <span class="variable">serverBootstrap</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServerBootstrap</span>();</span><br><span class="line">serverBootstrap.group(boss, worker) <span class="comment">// 指定线程组 group(parentGroup, childGroup)</span></span><br><span class="line">.channel(NioServerSocketChannel.class) <span class="comment">// 指定服务端 Channel 类型</span></span><br><span class="line">.childOption(ChannelOption.TCP_NODELAY, <span class="literal">true</span>) <span class="comment">// 关闭 Nagle 算法，更及时发送数据</span></span><br><span class="line">.childOption(ChannelOption.SO_KEEPALIVE, <span class="literal">true</span>) <span class="comment">// TCP 底层心跳机制（不是业务层心跳，2小时）</span></span><br><span class="line">.option(ChannelOption.SO_BACKLOG, <span class="number">128</span>)<span class="comment">/* 表示用于临时存放完成三次握手的请求的队列的最大长度,</span></span><br><span class="line"><span class="comment">    								   	若连接建立频繁，服务器处理创建新连接较慢，可适当调大 */</span></span><br><span class="line">    </span><br><span class="line">.handler(<span class="keyword">new</span> <span class="title class_">LoggingHandler</span>(LogLevel.DEBUG)) <span class="comment">// ParentGroup 的处理器，记录日志</span></span><br><span class="line">    </span><br><span class="line">.childHandler(<span class="keyword">new</span> <span class="title class_">ChannelInitializer</span>&lt;SocketChannel&gt;() &#123;<span class="comment">// 客户端首次请求，为此连接分配一个</span></span><br><span class="line">    <span class="meta">@Override</span>                                          <span class="comment">// 新的SocketChannel (lazy init)</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">initChannel</span><span class="params">(SocketChannel ch)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="comment">//  心跳机制，30s内没有收到客户端的请求就关闭连接，会触发一个 IdleState#READER_IDLE 事件</span></span><br><span class="line">        ch.pipeline().addLast(<span class="keyword">new</span> <span class="title class_">IdleStateHandler</span>(<span class="number">30</span>, <span class="number">0</span>, <span class="number">0</span>, TimeUnit.SECONDS));</span><br><span class="line">        ch.pipeline().addLast(<span class="keyword">new</span> <span class="title class_">RpcFrameDecoder</span>());</span><br><span class="line">        ch.pipeline().addLast(<span class="keyword">new</span> <span class="title class_">SharableRpcMessageCodec</span>());</span><br><span class="line">        ch.pipeline().addLast(<span class="keyword">new</span> <span class="title class_">NettyRpcRequestHandler</span>());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 绑定端口，同步等待绑定成功 生命周期 bind </span></span><br><span class="line"><span class="type">ChannelFuture</span> <span class="variable">channelFuture</span> <span class="operator">=</span> serverBootstrap.bind(inetAddress, port).sync();</span><br><span class="line">log.debug(<span class="string">&quot;Rpc server add &#123;&#125; started on the port &#123;&#125;.&quot;</span>, inetAddress, port);</span><br><span class="line"><span class="comment">// 等待服务端监听端口关闭，如果不写这句，主线程会直接退出，Netty 服务就被销毁了。</span></span><br><span class="line">channelFuture.channel().closeFuture().sync();</span><br><span class="line"><span class="comment">// 这里 netty 已经封装好了异步接受逻辑，bind通常用sync等待一次，然后监听channel的关闭即可。</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><code>EventLoop</code> 事件处理单元 <code>ChannelHandler</code>  业务处理逻辑 <code>ChannelPipeline</code>  处理器链</p>
+<p><code>ByteBuf</code>  高效字节容器</p>
+<p><code>Channel</code>  网络连接通道</p>
+<p><code>NioServerSocketChannel</code> 用于 boss 的Channel，<code>SocketChannel</code> 用于 worker </p>
+</blockquote>
+<p>Netty 的 <code>ChannelPipeline</code> 是一个基于责任链模式的事件处理链，每个请求或响应都会从一个 handler 流向下一个 handler，形成链式处理。</p>
+<p><code>[字节流] -&gt; ([心跳检测]) -&gt; [帧解码器] -&gt; [消息解码器] -&gt; [业务处理器]</code> </p>
+<table>
+<thead>
+<tr>
+<th>Handler 名称</th>
+<th>作用说明</th>
+<th>方向</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>IdleStateHandler</code></td>
+<td>空闲连接检测（30 秒无读事件会触发 READER_IDLE）实现应用层心跳机制（比 TCP 更灵活）更适合业务层快速检测连接状态</td>
+<td>入站</td>
+</tr>
+<tr>
+<td><code>RpcFrameDecoder</code></td>
+<td>拆包/粘包处理，按协议规则拆出完整消息帧</td>
+<td>入站</td>
+</tr>
+<tr>
+<td><code>SharableRpcMessageCodec</code></td>
+<td>编解码器，将 ByteBuf ↔ 自定义消息（RpcMessage）相互转换</td>
+<td>双向</td>
+</tr>
+<tr>
+<td><code>NettyRpcRequestHandler</code></td>
+<td>业务逻辑处理器，处理请求、调用本地服务、写回响应</td>
+<td>入站</td>
+</tr>
+</tbody></table>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250423123418951.png" alt="责任链"></p>
+<p><a href="#nettyclient">netty 客户端</a></p>
+<h2 id="client-spring-boot"><a href="#client-spring-boot" class="headerlink" title="client-spring-boot"></a>client-spring-boot</h2><h3 id="common"><a href="#common" class="headerlink" title="common"></a>common</h3><p><code>RequestMetadata</code> 封装请求，有 RpcMessage serverAddr port timeout 字段。</p>
+<h3 id="handler-1"><a href="#handler-1" class="headerlink" title="handler"></a>handler</h3><p><code>RpcResponseHandler</code> 继承自 <code>SimpleChannelInboundHandler&lt;RpcMessage&gt;</code> </p>
+<blockquote>
+<p><strong>Netty 中的 Promise 机制</strong> </p>
+<p>RPC 是远程调用，发送请求和得到响应的过程属于异步操作，Promise 机制用来解决 “客户端怎么知道哪个响应对应哪个请求？怎么挂起等待，又怎么唤醒？”的问题。</p>
+<p>Netty 提供的 <code>DefaultPromise&lt;V&gt;</code> 是一个线程安全的对象，用来异步地接收并处理计算结果。你可以把它理解为一个 <strong>可手动完成的 Future</strong>。它有几个特点：</p>
+<ul>
+<li>在请求发送后立刻返回，不阻塞</li>
+<li>把结果放入 Promise 中，调用方通过 <code>promise.get()</code> 或回调拿到结果</li>
+<li>由响应处理器来手动调用 <code>promise.setSuccess(response)</code> 来填充结果</li>
+</ul>
+<p>实践中通常会用一个 <code>Map&lt;requestId, Promise&lt;RpcResponse&gt;&gt;</code> 保存请求对应的 Promise。具体流程如下：</p>
+<ol>
+<li><strong>发送请求之前：</strong><ul>
+<li>创建一个 <code>DefaultPromise&lt;RpcResponse&gt;</code> 对象</li>
+<li>存入全局请求池（Map）中：<code>promises.put(requestId, promise)</code></li>
+</ul>
+</li>
+<li><strong>接收响应时：</strong><ul>
+<li>从请求池里通过 <code>requestId</code> 找到对应的 <code>Promise</code></li>
+<li>执行 <code>promise.setSuccess(response)</code>，通知结果已经到了</li>
+</ul>
+</li>
+<li><strong>调用方阻塞等待结果（可选）：</strong><ul>
+<li><code>promise.get()</code> 或 <code>promise.await()</code></li>
+</ul>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 发请求之前保存 promise</span></span><br><span class="line">DefaultPromise&lt;RpcResponse&gt; promise = <span class="keyword">new</span> <span class="title class_">DefaultPromise</span>&lt;&gt;(eventExecutor);</span><br><span class="line">RpcResponsePool.put(requestId, promise);</span><br><span class="line">channel.writeAndFlush(rpcMessage);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 接收响应时设置结果</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">channelRead0</span><span class="params">(ChannelHandlerContext ctx, RpcMessage msg)</span> &#123;</span><br><span class="line">    <span class="type">RpcResponse</span> <span class="variable">response</span> <span class="operator">=</span> (RpcResponse) msg.getBody();</span><br><span class="line">    Promise&lt;RpcResponse&gt; promise = RpcResponsePool.remove(response.getRequestId()); <span class="comment">// 防内存泄露</span></span><br><span class="line">    <span class="keyword">if</span> (promise != <span class="literal">null</span>) &#123;</span><br><span class="line">        promise.setSuccess(response);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. 获取结果</span></span><br><span class="line"><span class="type">RpcResponse</span> <span class="variable">result</span> <span class="operator">=</span> promise.get();</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p><code>Map&lt;Integer, Promise&lt;RpcMessage&gt;&gt; UNPROCESSED_RPC_RESPONSES</code> 未处理的响应请求，跟 sequenceId 相对应</p>
+<p><code>channelRead0</code> 如果是 <code>RpcResponse</code>，从map中拿出对应的响应，如果响应中没有异常，代表 <code>Promise</code> 成功。如果是心跳回应，则记录日志。</p>
+<p><code>userEventTriggered(ctx, Object evt)</code> 用户自定义事件处理器，处理写空闲（<code>WRITE_IDLE</code>），当检测到写空闲15s 以后自动发送一个心跳检测数据包。如果 <code>evt</code> 是 <code>IdleStateEvent</code>，那么就构建一个 心跳检查的 RpcMessage，这里使用 Kryo 序列化以达到最好的效果。</p>
+<h3 id="transport-1"><a href="#transport-1" class="headerlink" title="transport"></a>transport</h3><p><code>RpcClient</code> </p>
+<p><code>RpcMessage sendRpcRequest(RequestMetadata requestMetadata)</code>  </p>
+<h4 id="http-1"><a href="#http-1" class="headerlink" title="http"></a><span id="httpclient">http</span></h4><p><code>sendRpcRequest(RequestMetadata requestMetadata)</code> </p>
+<p>根据 RequestMetadata，拿出 RpcMessage，取出 RpcRequest 并通过 Http 连接序列化发送，阻塞等待读取 RpcResponse，读取之后封装为 RpcMessage返回。</p>
+<p><code>HttpRpcClient 发送和接受的数据为：RpcRequest，Response</code> </p>
+<p><a href="#httpserver">http 服务端</a> </p>
+<h4 id="socket-1"><a href="#socket-1" class="headerlink" title="socket"></a><span id="socketclient">socket</span></h4><p><code>sendRpcRequest(RequestMetadata requestMetadata)</code>   socket connect 获取数据</p>
+<p><code>SocketRpcClient 发送和接受的数据为：RpcRequest, RpcResponse</code></p>
+<p><a href="#socketserver">socket 服务端</a> </p>
+<h4 id="netty-1"><a href="#netty-1" class="headerlink" title="netty"></a><span id="nettyclient">netty</span></h4><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>你的职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Channel 断开</td>
+<td>触发 <code>channelInactive()</code> 或 <code>exceptionCaught()</code> 时，尝试<strong>重连</strong></td>
+</tr>
+<tr>
+<td>连接池中拿到无效 Channel</td>
+<td>检查 <code>channel.isActive()</code>，如果无效：<strong>close 并重新连接</strong></td>
+</tr>
+<tr>
+<td>心跳失败或无响应</td>
+<td>在 <code>IdleStateHandler</code> 的事件中<strong>关闭旧连接并重建</strong></td>
+</tr>
+<tr>
+<td>重试次数限制</td>
+<td>设置最大重试次数，避免死循环</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><code>ChannelProvider</code> 获取Channel的工具类</p>
+<ul>
+<li><code>Map&lt;String, Channel&gt; channels</code> 存储 channel 对象，key 为 ip:port</li>
+<li><code>get(host,port)</code> 取出 活跃的 channel，不活跃的/null 从map移除</li>
+<li><code>get(inetSocketAddress)</code> 同上</li>
+<li><code>set(host,port,channel)</code> 将 host:port 与 Channel 映射</li>
+</ul>
+</blockquote>
+<p><code>NettyRpcClient</code> </p>
+<p><code>BootStrap</code> 启动类，注册 NioSocketChannel 超时时间，5s连接超时。handler 设置为 15s写空闲的IdleStateHandler，粘包拆包解码器、codec、ResponseHandler 。提供 ChannelProvider 工具类</p>
+<p><code>EventLoopGroup</code> 每个事件循环对象对应一个线程，维护一个 Selector，用来处理io事件</p>
+<p><code>getChannel(inetSocketAddress)</code>首先从map中获取，获取不到就主动去连接 <code>doConnect</code></p>
+<p><code>doConnect(inetSocketAddress)</code> ：</p>
+<p>方式1：</p>
+<p>随后sync()同步阻塞等待 channel 的 closeFuture()。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// connect 会返回一个 异步的 ChannelFuture</span></span><br><span class="line"><span class="comment">// sync() 同步等待异步connect连接成功 </span></span><br><span class="line"><span class="type">Channel</span> <span class="variable">channel</span> <span class="operator">=</span> bootstrap.connect(inetSocketAddress).sync().channel();</span><br><span class="line"><span class="comment">// 同步阻塞等待异步关闭完成</span></span><br><span class="line">channel.closeFuture().sync();</span><br></pre></td></tr></table></figure>
+
+<p>方式2：</p>
+<p>指数退避重连，使用 CompletetableFuture 阻塞获取 channel，future 成功时返回值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SneakyThrows</span></span><br><span class="line"><span class="keyword">public</span> Channel <span class="title function_">doConnectWithRetry</span><span class="params">(InetSocketAddress inetSocketAddress, <span class="type">int</span> remainingRetries)</span>&#123;</span><br><span class="line">    CompletableFuture&lt;Channel&gt; cf = <span class="keyword">new</span> <span class="title class_">CompletableFuture</span>&lt;&gt;();</span><br><span class="line">    bootstrap.connect(inetSocketAddress).addListener((ChannelFutureListener)future -&gt; &#123;</span><br><span class="line">        <span class="keyword">if</span> (!future.isSuccess()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (remainingRetries &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="type">long</span> <span class="variable">delay</span> <span class="operator">=</span> calculateRetryDelay(remainingRetries);</span><br><span class="line">                log.info(<span class="string">&quot;Retrying connection to &#123;&#125; in &#123;&#125; ms&quot;</span>, inetSocketAddress, delay);</span><br><span class="line">                eventLoopGroup.schedule(() -&gt; doConnectWithRetry(inetSocketAddress, remainingRetries - <span class="number">1</span>), delay, TimeUnit.MILLISECONDS); </span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                log.error(<span class="string">&quot;Failed to connect to &#123;&#125; after &#123;&#125; retries&quot;</span>, inetSocketAddress, MAX_RETRIES);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span>&#123;</span><br><span class="line">            log.info(<span class="string">&quot;Connected to &#123;&#125; successfully&quot;</span>, inetSocketAddress);</span><br><span class="line">            cf.complete(future.channel());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="type">Channel</span> <span class="variable">channel</span> <span class="operator">=</span> cf.get();</span><br><span class="line">    channel.closeFuture().addListener(future -&gt; &#123;</span><br><span class="line">        log.info(<span class="string">&quot;The client has been disconnected from server [&#123;&#125;].&quot;</span>, inetSocketAddress.toString());</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> channel;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">private</span> <span class="type">long</span> <span class="title function_">calculateRetryDelay</span><span class="params">(<span class="type">int</span> remainingRetries)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">attempt</span> <span class="operator">=</span> MAX_RETRIES - remainingRetries + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> (<span class="type">long</span>) (Math.pow(<span class="number">2</span>, attempt) * <span class="number">500</span>); <span class="comment">// 指数退避基础500ms</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>之后是</p>
+<p><code>sendRpcRequest()</code> ：</p>
+<p>根据requestMetadata获取channel对象<code>getChannel()</code>。</p>
+<p><code>promise = DefaultPromise&lt;&gt;(channel.eventLoop());</code></p>
+<p>获取sequenceId，将promise存入map，把rpcMessage写入channel（异步的）addListener。</p>
+<p>对于timeout，使用 promise 的 await 方法。isSuccess 则调用 getNow() 返回响应结果 RpcMessage。</p>
+<p><a href="#nettyserver">netty 服务端</a> </p>
+<h3 id="proxy"><a href="#proxy" class="headerlink" title="==proxy=="></a>==proxy==</h3><p>代理对象生成过程：</p>
+<ol>
+<li><p>首先需要一个得到代理对象的工厂类，里面有一个工厂方法返回的就是代理对象。</p>
+</li>
+<li><p>如何创建代理对象：</p>
+<p>JDK：<code>Proxy.newInstance(目标接口类加载器, 目标接口的数组, 实现InvocationHandler接口的invoke方法)</code></p>
+<p>CGLIB: <code>Enhancer.create(目标类, 实现MethodInterceptor接口的intercept方法)</code></p>
+</li>
+<li><p>记住 <code>invoke</code> 和 <code>intercept</code> 就是拿着 <code>method</code>和 <code>args</code>为所欲为，当然也可以在实现类自己加参数，工厂类自己也要加参数</p>
+</li>
+<li><p>如果你想得到代理对象，那么就调用工厂类的工厂方法。</p>
+</li>
+</ol>
+<p>RPC 框架怎么做到像调用本地接口一样调用远端服务呢？这必须依赖动态代理来实现。需要创建一个代理对象，在代理对象中完成数据报文编码，然后发起调用发送数据给服务提供方，以此屏蔽 RPC 框架的调用细节。因为代理类是在运行时生成的，所以代理类的生成速度、生成的字节码大小都会影响 RPC 框架整体的性能和资源消耗，所以需要慎重选择动态代理的实现方案。动态代理比较主流的实现方案有以下几种：JDK 动态代理、Cglib、Javassist、ASM、Byte Buddy，我们简单做一个对比和介绍。</p>
+<ul>
+<li>JDK 动态代理。在运行时可以动态创建代理类，但是 JDK 动态代理的功能比较局限，代理对象必须实现一个接口，否则抛出异常。因为代理类会继承 Proxy 类，然而 Java 是不支持多重继承的，只能通过接口实现多态。JDK 动态代理所生成的代理类是接口的实现类，不能代理接口中不存在的方法。JDK 动态代理是通过反射调用的形式代理类中的方法，比直接调用肯定是性能要慢的。</li>
+<li>Cglib 动态代理。Cglib 是基于 ASM 字节码生成框架实现的，通过字节码技术生成的代理类，所以代理类的类型是不受限制的。而且 Cglib 生成的代理类是继承于被代理类，所以可以提供更加灵活的功能。在代理方法方面，Cglib 是有优势的，它采用了 FastClass 机制，为代理类和被代理类各自创建一个 Class，这个 Class 会为代理类和被代理类的方法分配 index 索引，FastClass 就可以通过 index 直接定位要调用的方法，并直接调用，这是一种空间换时间的优化思路。</li>
+<li>Javassist 和 ASM。二者都是 Java 字节码操作框架，使用起来难度较大，需要开发者对 Class 文件结构以及 JVM 都有所了解，但是它们都比反射的性能要高。Byte Buddy 也是一个字节码生成和操作的类库，Byte Buddy 功能强大，相比于 Javassist 和 ASM，Byte Buddy 提供了更加便捷的 API，用于创建和修改 Java 类，无须理解字节码的格式，而且 Byte Buddy 更加轻量，性能更好。</li>
+</ul>
+<h4 id="代理实例工厂"><a href="#代理实例工厂" class="headerlink" title="代理实例工厂"></a>代理实例工厂</h4><p>建立一个本地的代理对象缓存，不用每次都重新new代理对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ClientStubProxyFactory</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ServiceDiscovery discovery;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RpcClient rpcClient;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RpcClientProperties properties;</span><br><span class="line">    <span class="comment">// 本地代理对象缓存</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Map&lt;String, Object&gt; proxyMap = <span class="keyword">new</span> <span class="title class_">ConcurrentHashMap</span>&lt;&gt;();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> &lt;T&gt; T <span class="title function_">getProxy</span><span class="params">(Class&lt;T&gt; clazz, String version)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> (T) proxyMap.computeIfAbsent(ServiceUtil.serviceKey(clazz.getName(), version), serviceName -&gt; &#123;</span><br><span class="line">            <span class="comment">// 如果目标类是一个接口或者 是 java.lang.reflect.Proxy 的子类 则默认使用 JDK 动态代理</span></span><br><span class="line">            <span class="keyword">if</span> (clazz.isInterface() || Proxy.isProxyClass(clazz)) &#123;</span><br><span class="line">                <span class="keyword">return</span> Proxy.newProxyInstance(clazz.getClassLoader(),</span><br><span class="line">                        <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;clazz&#125;, <span class="comment">// 注意，这里的接口是 clazz 本身（即，要代理的实现类所实现的接口）</span></span><br><span class="line">                        <span class="keyword">new</span> <span class="title class_">ClientStubInvocationHandler</span>(discovery, rpcClient, properties, serviceName));</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123; <span class="comment">// 使用 CGLIB 动态代理</span></span><br><span class="line">                <span class="keyword">return</span> Enhancer.create(clazz, </span><br><span class="line">                        <span class="keyword">new</span> <span class="title class_">ClientStubMethodInterceptor</span>(discovery, rpcClient, properties, serviceName));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="cglib"><a href="#cglib" class="headerlink" title="cglib"></a>cglib</h4><p>重写 MethodInterceptor 中的 intercept() 方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ClientStubMethodInterceptor</span> <span class="keyword">implements</span> <span class="title class_">MethodInterceptor</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ServiceDiscovery serviceDiscovery;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RpcClient rpcClient;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RpcClientProperties properties;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String serviceName;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">intercept</span><span class="params">(Object o, Method method, Object[] args, MethodProxy methodProxy)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        <span class="keyword">return</span> RemoteMethodCall.remoteCall(serviceDiscovery, rpcClient, serviceName, properties, method, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="jdk"><a href="#jdk" class="headerlink" title="jdk"></a>jdk</h4><p>重写 InvocationHandler 中的 invoke() 方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ClientStubInvocationHandler</span> <span class="keyword">implements</span> <span class="title class_">InvocationHandler</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ServiceDiscovery serviceDiscovery;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RpcClient rpcClient;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> RpcClientProperties properties;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String serviceName;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        <span class="keyword">return</span> RemoteMethodCall.remoteCall(serviceDiscovery, rpcClient, serviceName, properties, method, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="RemoteMethodCall-发起-RPC-的公共方法"><a href="#RemoteMethodCall-发起-RPC-的公共方法" class="headerlink" title="RemoteMethodCall 发起 RPC 的公共方法"></a>RemoteMethodCall 发起 RPC 的公共方法</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">remoteCall</span><span class="params">(ServiceDiscovery serviceDiscovery, RpcClient rpcClient, String serviceName, 	</span></span><br><span class="line"><span class="params">                                RpcClientProperties properties, Method method, Object[] args)</span>&#123;</span><br><span class="line">    <span class="type">MessageHeader</span> <span class="variable">header</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MessageHeader</span>().build(properties.getSerialization());</span><br><span class="line">    <span class="comment">// 构建 RpcRequest: serviceName, methodName, parameterTypes, args</span></span><br><span class="line">    <span class="comment">// 构建 RpcMessage</span></span><br><span class="line">    <span class="comment">// 服务发现：得到负载均衡后返回的服务信息 serviceInfo</span></span><br><span class="line">    <span class="comment">// 根据 serviceInfo, properties, 与 rpcMessage 构建 RequestMetadata</span></span><br><span class="line">    <span class="comment">// client 调用 sendRpcRequest(rpcMetadata) 返回的 rpcMessage</span></span><br><span class="line">    <span class="comment">// rpcMessage 解包出 rpcResponse 提取 value 返回</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h1><p>服务端的Spring：</p>
+<p>==需要按照是否有@RpcService注解进行 Bean 的注册。谁能注册？谁来执行注册？（手动实现Scanner以BeanDefinitionRegistrar），然后把被注解的bean加入本地缓存map，准备执行 RequestHandler== </p>
+<p>客户端的Spring：</p>
+<p>==所有的 bean 都已经注册并导入好了，唯一的问题是 RestController 里面，出现 HelloService 字段，需要将其进行替换为代理对象！== </p>
+<h2 id="Spring-Bean-生命周期一览"><a href="#Spring-Bean-生命周期一览" class="headerlink" title="Spring Bean 生命周期一览"></a>Spring Bean 生命周期一览</h2><h3 id="IoC-容器启动过程"><a href="#IoC-容器启动过程" class="headerlink" title="==IoC 容器启动过程=="></a>==IoC 容器启动过程==</h3><ol>
+<li><p>Spring IoC 启动入口：<code>AnnotationConfigApplicationContext</code> 或 Spring Boot 的 <code>SpringApplication.run(...)</code> </p>
+</li>
+<li><p>加载配置类（带 <code>@Configuration</code>、<code>@ComponentScan</code>、<code>@Import</code> 等注解）</p>
+</li>
+<li><p> <strong>扫描、注册阶段</strong> （由 <code>ClassPathBeanDefinitionScanner</code> 完成）</p>
+</li>
+</ol>
+<ul>
+<li>扫描被 <code>@ComponentScan</code> 指定的包</li>
+<li>找到带注解的类（如 <code>@Component</code>、<code>@Service</code>、<code>@Controller</code>）</li>
+<li>解析为 <code>BeanDefinition</code>，使用 <code>BeanDefinitionRegistry</code> 将其注册进<code>beanDefinitionMap</code>还未创建对象。<ul>
+<li>修改Bean定义：执行所有 <code>BeanFactoryPostProcessor</code> 的实现类（如 <code>PropertySourcesPlaceholderConfigurer</code>），允许对 <code>BeanDefinition</code> 进行修改（例如替换占位符）。</li>
+<li><strong>提前实例化处理器</strong>：注册 <code>BeanPostProcessor</code> 实现类（如 <code>AutowiredAnnotationBeanPostProcessor</code>），这些处理器需在普通Bean之前初始化，以便后续处理其他Bean的创建。</li>
+<li>初始化消息源以及事件广播器</li>
+</ul>
+</li>
+</ul>
+<ol start="4">
+<li><p><strong>实例化阶段</strong>（容器对于单例且非懒加载的 Bean）</p>
+<p>对每个要使用的 Bean：</p>
+<ul>
+<li><p>（主要是针对懒加载或者<code>Scope = prototype</code>）存在性检查：Scope判断（若为单例则检查到单例缓存）以及循环依赖判断（如果当前正在创建就从单例缓存获取原始对象）</p>
+</li>
+<li><p><strong>实例化</strong>：从 <code>BeanDefinitionRegistry</code> 获取<code> BeanDefinition</code>，包含类名、作用域、初始化方法等元数据。检查是否存在未满足的依赖（如通过<code>@DependsOn</code>指定的前置依赖，或者<code>@Order</code>加载顺序）最后<strong>实例化</strong>对象（通过反射或者工厂方法调用<code>Constructor</code>创建原始对象）</p>
+</li>
+<li><p><strong>依赖注入</strong>： <code>@Autowired/@Resource</code> 递归调用<code>getBean()</code>获取依赖bean，通过三级缓存（<code>singletonFactories</code>、<code>earlySingletonObjects</code>、<code>singletonObjects</code>）提前暴露对象引用，解决setter的循环依赖。设置好属性。</p>
+</li>
+<li><p>Aware 接口回调：如果实现了 <code>XXXAware</code> 接口，则通过 <code>setXXX</code> 注入容器底层信息。如名称，类加载器等</p>
+</li>
+<li><p><code>BeanPostProcessor</code>: 每个bean在构建的过程中，Spring都会遍历所有的<code>BeanPostProcessor</code>的实现类，调用实现类中的方法，入参为构建好的bean。要实现无感的对bean的处理必须使用 <code>BeanPostProcessor</code>。</p>
+<table>
+<thead>
+<tr>
+<th>方法（按照先后顺序）</th>
+<th>方法所属</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1. <code>Object postProcessBeforeInitialization()</code></td>
+<td><code>BeanPostProcessor</code></td>
+</tr>
+<tr>
+<td>2. <code>@PostConstruct</code> 标注的方法</td>
+<td>JSR-250 规定</td>
+</tr>
+<tr>
+<td>3. <code>void afterPropertiesSet()</code></td>
+<td><code>InitializingBean</code></td>
+</tr>
+<tr>
+<td>4. <code>init()</code></td>
+<td><code>@Bean (initMethod =  init)</code></td>
+</tr>
+<tr>
+<td>5. <code>Object postProcessAfterInitialization()</code></td>
+<td><code>BeanPostProcessor</code></td>
+</tr>
+</tbody></table>
+<p> <strong>5 是 AOP 动态代理的关键阶段</strong>：Spring 在这里可能会返回代理对象替代原对象</p>
+</li>
+</ul>
+</li>
+<li><p><strong>完成容器启动</strong>：触发 <code>ContextRefreshedEvent</code>，通知监听器容器已就绪。<strong>此时可以通过 <code>getBean()</code> 获取单例 Bean</strong>，如果是懒加载或者<code>Scope = prototype</code>的则会在主动调用 <code>getBean()</code> 的时候才实例化。</p>
+</li>
+</ol>
+<h3 id="Bean-生命周期"><a href="#Bean-生命周期" class="headerlink" title="Bean 生命周期"></a>Bean 生命周期</h3><ol>
+<li><p>Bean 实例化(仅为构造出对象)</p>
+<ul>
+<li><strong>触发条件</strong>：①容器启动 ②首次请求 Bean 时 <code>getBean() 或者依赖注入</code>。</li>
+<li><strong>方式</strong>：通过构造函数或工厂方法创建 Bean 的实例。</li>
+<li><strong>异常</strong>：若依赖无法解析或构造函数抛出异常，Bean 创建失败。</li>
+</ul>
+</li>
+<li><p>属性赋值 Populate Properties</p>
+<ul>
+<li><strong>依赖注入</strong>：通过 <code>@Autowired</code>、<code>@Resource</code>、XML 配置等方式注入属性。</li>
+<li>**处理 <code>@Value</code>**：解析并注入 SpEL 表达式或占位符的值。</li>
+</ul>
+</li>
+<li><p>Aware 接口回调 与 <code>BeanPostProcessor </code>前置处理、初始化、后置处理。</p>
+</li>
+<li><p>就绪状态</p>
+<ul>
+<li>Bean 完全初始化，可被应用程序使用。</li>
+<li><strong>Singleton Bean</strong> 会被缓存，后续请求直接获取。</li>
+<li><strong>Prototype Bean</strong> 每次请求创建新实例（无后续销毁步骤）。</li>
+</ul>
+</li>
+<li><p>Bean 对象销毁回调</p>
+<ul>
+<li><p><code>@PreDestroy</code> JSR-250</p>
+</li>
+<li><p><code>destroy()-&gt;</code>  DisposableBean</p>
+</li>
+<li><p><code>close()</code> @Bean (destroyMethod =  close)</p>
+</li>
+</ul>
+</li>
+<li><p>Bean 对象销毁</p>
+<ul>
+<li><strong>触发条件</strong>：容器关闭时（如 <code>close()</code> 方法调用）。</li>
+<li><strong>作用域影响</strong>：仅 Singleton Bean 会执行销毁回调，Prototype Bean 需手动清理。</li>
+</ul>
+</li>
+</ol>
+<h3 id="SpringBoot-启动"><a href="#SpringBoot-启动" class="headerlink" title="SpringBoot 启动"></a>SpringBoot 启动</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">SpringApplication.run()</span><br><span class="line">    ├── 创建 SpringApplication</span><br><span class="line">    ├── prepareEnvironment</span><br><span class="line">    ├── createApplicationContext <span class="comment">// 创建应用上下文</span></span><br><span class="line">    ├── refresh() <span class="comment">// AbstractApplicationContext#refresh() 方法 启动 IOC 容器</span></span><br><span class="line">        ├── postProcessBeanFactory(beanFactory)</span><br><span class="line">        ├── prepareBeanFactory(beanFactory)</span><br><span class="line">        ├── invokeBeanFactoryPostProcessors(beanFactory)</span><br><span class="line">        ├── registerBeanPostProcessors, initMessageSource/initEventMulticaster </span><br><span class="line">        ├── onRefresh (Web容器启动)</span><br><span class="line">        ├── registerListeners</span><br><span class="line">        ├── finishBeanFactoryInitialization <span class="comment">// 初始化所有非懒加载单例 Bean </span></span><br><span class="line">        └── finishRefresh (发布ContextRefreshedEvent)</span><br><span class="line">    ├── 调用 CommandLineRunner.run(String... args) ApplicationRunner(String... args)</span><br><span class="line">    └── ApplicationReady</span><br></pre></td></tr></table></figure>
+
+<p><a href="#boot">由此可见 CommandLineRunner 是在容器启动完成以后执行的。可以实现这个接口的 run 方法来注入参数。</a></p>
+<h2 id="Spring-扫描自定义注解"><a href="#Spring-扫描自定义注解" class="headerlink" title="Spring 扫描自定义注解"></a>Spring 扫描自定义注解</h2><h3 id="RpcComponentScan-：扫描、注册-RpcService的类，实例化时将其加入本地缓存"><a href="#RpcComponentScan-：扫描、注册-RpcService的类，实例化时将其加入本地缓存" class="headerlink" title="@RpcComponentScan ：扫描、注册@RpcService的类，实例化时将其加入本地缓存"></a><code>@RpcComponentScan</code> ：扫描、注册<code>@RpcService</code>的类，实例化时将其加入本地缓存</h3><p>扫描、注册的具体过程：</p>
+<ol>
+<li>扫描到 <code>@Configuration</code> 配置类，又扫到了 <code>@Import(RpcBeanDefinitionRegistrar.class)</code> </li>
+<li>通过 <code>RpcBeanDefinitionRegistrar</code> 的 <code>registerBeanDefinitions(AnnotationMetadata data, BeanDefinitionRegistry registry)</code> 进行动态注册，其中 <code>data</code> 参数为被@Import注解 的类（这里是注解<code>@RpcComponentScan</code>）解析出要扫描的包路径，<code>registry</code> 为注册bean的核心。在里面 new 一个 <code>RpcClassPathBeanDefinitionScanner(registry, RpcService.class)</code> 在其构造函数里添加针对 RpcService.class 的 TypeFilter。</li>
+<li>设置好 scanner 的 <code>resourceloader</code>，增强代码健壮性。调用 scanner 的 <code>scan(basePackages)</code> 方法，此方法会在内部调用 scanner 的 <code>registry</code> 进行 bean 的注册。</li>
+</ol>
+<h4 id="定义-BeanDefinition-扫描器"><a href="#定义-BeanDefinition-扫描器" class="headerlink" title="定义 BeanDefinition 扫描器"></a>定义 BeanDefinition 扫描器</h4><blockquote>
+<p><code>ClassPathBeanDefinitionScanner</code> 是 Spring 框架中的一个类，用于从指定的类路径中扫描符合条件的类，并将其注册为 Spring 容器中的 Bean 定义。</p>
+<p>主要功能：</p>
+<ul>
+<li>扫描类路径：根据指定的包路径，扫描类路径下的所有类。</li>
+<li>过滤条件：通过过滤器（如注解过滤器、类型过滤器等）筛选出符合条件的类。</li>
+<li>注册 Bean 定义：将符合条件的类的元信息（<code>BeanDefinition</code>）注册到 Spring 容器中。<strong>核心：<code>BeanDefinitionRegistry</code></strong> </li>
+</ul>
+<p>核心用途：</p>
+<ul>
+<li>用于实现自定义注解扫描和动态注册 Bean。</li>
+<li>常见于 Spring 的扩展机制中，例如自定义注解的扫描器。</li>
+</ul>
+<p>工作流程：</p>
+<ol>
+<li><p>指定需要扫描的包路径<code>basePackages</code>。</p>
+</li>
+<li><p>配置过滤器（如只扫描带有特定注解的类）。 <code>addIncludeFilter(TypeFilter tf)</code> </p>
+</li>
+<li><blockquote>
+<p>TypeFilter 接口需要实现<code>boolean match(MetadataReader reader, MetadataReaderFactory factory)</code> </p>
+</blockquote>
+</li>
+<li><p>调用 <code>scan(String... basePackages)</code> 方法，扫描并注册符合条件的类。</p>
+</li>
+</ol>
+</blockquote>
+<p><code>RpcClassPathBeanDefinitionScanner</code> 继承了 <code>ClassPathBeanDefinitionScanner</code> </p>
+<p>构造函数调用 <code>this.addIncludeFilter(new AnnotationTypeFilter(this.annotationType));</code> 注册想要扫描的注解类。通过 父类的 scan 方法扫包</p>
+<hr>
+<h4 id="使用-Import-注解结合-Registrar-动态注册-BeanDefinition"><a href="#使用-Import-注解结合-Registrar-动态注册-BeanDefinition" class="headerlink" title="使用 @Import 注解结合 Registrar 动态注册 BeanDefinition"></a>使用 @Import 注解结合 Registrar 动态注册 BeanDefinition</h4><blockquote>
+<p><code>@Import</code>注解</p>
+<ul>
+<li>Allows for importing <code>@Configuration</code> classes, <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/ImportSelector.html"><code>ImportSelector</code></a> and <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/annotation/ImportBeanDefinitionRegistrar.html"><code>ImportBeanDefinitionRegistrar</code></a> implementations, as well as regular <strong>component</strong> classes</li>
+</ul>
+<p><strong>将一个类或多个类注入到 Spring 的 IOC 容器中</strong>，等价于在配置类中手动用 <code>@Bean</code> 或 <code>@ComponentScan</code> 注册。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250423120651325.png" alt="三种等价的导入方式" style="zoom: 35%;" />
+
+<p><code>ImportBeanDefinitionRegistrar</code>   它通常与 <code>@Import</code> 注解一起使用，允许开发者在 Spring 容器启动时通过编程方式向容器中动态注册 Bean。</p>
+<ul>
+<li>动态注册 Bean：通过实现 <code>ImportBeanDefinitionRegistrar</code>接口，可以在运行时根据需要向 Spring 容器中注册 Bean。</li>
+<li>扩展 Spring 配置：允许开发者在 Spring 的配置阶段插入自定义逻辑，动态调整 Bean 的定义和注册。</li>
+</ul>
+<p><code>ImportSelector</code> 例如 <code>AutoConfigurationImportSelector</code> 实现自动装配的核心</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(ElementType.TYPE)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Import(MyRegistrar.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> EnableMyFeature &#123;&#125;</span><br><span class="line">---------------------------------------------------------</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyRegistrar</span> <span class="keyword">implements</span> <span class="title class_">ImportBeanDefinitionRegistrar</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">registerBeanDefinitions</span><span class="params">(</span></span><br><span class="line"><span class="params">            AnnotationMetadata importingClassMetadata, // 被<span class="meta">@Import</span>注解的类，这里是 EnableMyFeature 接口的信息（关键）</span></span><br><span class="line"><span class="params">            BeanDefinitionRegistry registry  // 用于注册 Bean 定义的注册表，开发者可以通过它向容器中动态添加 Bean</span></span><br><span class="line"><span class="params">    )</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">RootBeanDefinition</span> <span class="variable">beanDefinition</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RootBeanDefinition</span>(MyService.class);</span><br><span class="line">        registry.registerBeanDefinition(<span class="string">&quot;myService&quot;</span>, beanDefinition);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">---------------------------------------------------------</span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableMyFeature</span> </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AppConfig</span>&#123;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如上，相当于在底层手动注册了一个类到IoC容器中。</p>
+<p>Spring 的 <code>ConfigurationClassPostProcessor</code> 在处理 <code>@Import</code> 时，<strong>会检查被导入的类是否实现了 <code>Aware</code> 接口（如 <code>EnvironmentAware</code>、<code>ResourceLoaderAware</code>、<code>BeanFactoryAware</code> 等）</strong>，并会调用对应的方法注入你需要的对象（resourceLoader environment beanFactoryAware）等。为了以防万一，让自定义的Registerar实现ResourceLoaderAware，重写其setLoader，设置好scanner以后再扫描</p>
+</blockquote>
+<p>自定义 Rpc 组件扫描注解<br><code>RpcComponentScan</code> 注解用 <code>@Import</code> 引入了 <code>RpcBeanDefinitionRegistrar</code> 类，而这个类是一个 <code>ImportBeanDefinitionRegistrar</code> 的实现类， Spring 容器在解析该类型的 Bean 时会调用其 <code>importBeanDefRegistrar.registerBeanDefinitions(AnnotationMetadata, BeanDefinitionRegistry)</code> 方法， 将 <code>@RpcComponentScan</code> 注解上的信息提取成 <code>AnnotationMetadata</code> 以及容器注册器对象作为此方法的参数，这个就是自定义注解式组件扫描的关键逻辑。</p>
+<p>metadata.getAnnotationAttributes(RpcComponent.class.getName()) 返回 RpcComponent 注解的属性和值(basePackages)，是一个map。从attributes中提取basePackages的值。未指定则扫描被注解类所在的包。随后构建一个扫描器，添加针对自定义注解的过滤器，开始扫描（注册）</p>
+<hr>
+<h4 id="Bean-处理器"><a href="#Bean-处理器" class="headerlink" title="Bean 处理器"></a>Bean 处理器</h4><p>@RpcService 注解</p>
+<p><code>RpcServerBeanPostProcessor</code> 实现了 BeanPostProcessor</p>
+<p>有服务注册、RpcServer、以及RpcServerProperties 3个字段。</p>
+<p><code>public Object postProcessAfterInitialization(Object bean, String beanName)</code> 重写此方法配置好服务 Bean： 如果当前的bean被RpcService注解标注（也就是服务类的实现类），获取其注解的值，得到其暴露的接口的对象，由此得到接口名字，和版本拼接形成服务名，再根据properties配置构建好 ServiceInfo，<strong>然后进行服务注册，在本地缓存map加入服务bean</strong>.</p>
+<p>还实现了 CommandLineRunner：新开一个线程启动服务器，增加关闭勾子强制清除注册中心的连接。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">(String... args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; rpcServer.start(properties.getPort())).start();</span><br><span class="line">    Runtime.getRuntime().addShutdownHook(<span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 当服务关闭之后，将服务从 注册中心 上清除（关闭连接）</span></span><br><span class="line">            serviceRegistry.destroy();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="RpcReference：利用反射把-Bean-的字段替换成代理对象"><a href="#RpcReference：利用反射把-Bean-的字段替换成代理对象" class="headerlink" title="@RpcReference：利用反射把 Bean 的字段替换成代理对象"></a><code>@RpcReference</code>：利用反射把 Bean 的字段替换成代理对象</h3><p>定义了<strong>接口类型</strong>、版本号、<strong>负载均衡</strong>、<strong>超时时间</strong>、mock，可以在字段、方法、注解上面使用</p>
+<p>自动配置：除去负载均衡、服务发现、客户端类型，还有<strong>代理工厂</strong>、RpcClientBeanPostProcessor、RpcClientExitDisposableBean（这些都是需要注入 bean 的参数的）</p>
+<p>客户端这边唯一的问题是 RestController 里面，出现 HelloService 字段，需要将其进行替换为代理对象。</p>
+<p>如果字段被 @RpcReference 注解，那么就从注解中提取相关信息（接口全限定名+版本号），交给代理工厂生产代理对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">postProcessAfterInitialization</span><span class="params">(Object bean, String beanName)</span> <span class="keyword">throws</span> BeansException &#123;</span><br><span class="line">    Field[] fields = bean.getClass().getDeclaredFields();</span><br><span class="line">    <span class="comment">// 遍历所有属性</span></span><br><span class="line">    <span class="keyword">for</span> (Field field : fields) &#123;</span><br><span class="line">        <span class="comment">// 判断是否被 RpcReference 注解标注</span></span><br><span class="line">        <span class="keyword">if</span> (field.isAnnotationPresent(RpcReference.class)) &#123;</span><br><span class="line">            <span class="comment">//...</span></span><br><span class="line">            field.setAccessible(<span class="literal">true</span>);<span class="comment">// 关闭安全检查 因为是 private</span></span><br><span class="line">            field.set(bean, proxy); <span class="comment">// 设置域的值为代理对象</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> bean;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="SpringBoot-自动装配：自动装配框架内部的-Bean"><a href="#SpringBoot-自动装配：自动装配框架内部的-Bean" class="headerlink" title="SpringBoot 自动装配：自动装配框架内部的 Bean"></a>SpringBoot 自动装配：自动装配框架内部的 Bean</h2><p>自动装配基于自动装配类，所以要把所有的bean都用bean方法的形式注册到容器中。</p>
+<p>包括之前讲的 服务发现、服务注册、代理工厂、BeanPostProcessor、ConfigurationProperties等。</p>
+<p>Bean 方法不需要使用Autowired在参数上注解！！！！</p>
+<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p><a target="_blank" rel="noopener" href="https://javaguide.cn/system-design/framework/spring/spring-boot-auto-assembly-principles.html">SpringBoot 自动装配原理详解</a> </p>
+<p>自动装配可以简单理解为：<strong>通过注解或者一些简单的配置就能在 Spring Boot 的帮助下实现某块功能。</strong></p>
+<ul>
+<li>没有 Spring Boot 的时候，我们写一个 RestFul Web 服务，还首先需要自己写 Configuration 配置类，写 Bean 方法。</li>
+<li>但有了 SpringBoot，只需要引入依赖，启动 SpringBootApplication 即可。</li>
+</ul>
+<blockquote>
+<p>SpringBoot 定义了一套接口规范，这套规范规定：SpringBoot 在启动时会扫描外部引用 jar 包中的<code>META-INF/spring.factories</code>文件，将文件中配置的类型信息加载到 Spring 容器（此处涉及到 JVM 类加载机制与 Spring 的容器知识），并执行类中定义的各种操作。对于外部 jar 来说，只需要按照 SpringBoot 定义的标准，就能将自己的功能装置进 SpringBoot。</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># SpringBoot 2.x  在 META-INF/spring.factories </span></span><br><span class="line"><span class="attr">org.springframework.boot.autoconfigure.EnableAutoConfiguration</span>=<span class="string">\</span></span><br><span class="line"><span class="string">com.example.rpc.RpcServerAutoConfiguration</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># SpringBoot 3 在 META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports</span></span><br><span class="line"><span class="attr">com.example.rpc.RpcServerAutoConfiguration</span></span><br></pre></td></tr></table></figure>
+
+<p>没有 Spring Boot 的情况下，如果我们需要引入第三方依赖，需要手动配置，非常麻烦。但是，Spring Boot 中，我们直接引入一个 starter 即可。比如你想要在项目中使用 redis 的话，直接在项目中引入对应的 starter 即可。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>引入 starter 之后，我们通过少量注解和一些简单的配置就能使用第三方组件提供的功能了。</p>
+</blockquote>
+<h3 id="原理浅析"><a href="#原理浅析" class="headerlink" title="原理浅析"></a>原理浅析</h3><p>机制核心 @EnableAutoConfiguration (@SpringBootApplication 的一部分) </p>
+<p>底层通过 @Import(AutoConfigurationImportSelector.class) 加载所有自动配置类（通过 spring.factories 找到） 这个ImportSelector很重要，通过 selectImport</p>
+<p>方法扫描获取所有符合条件的类的全限定类名，将这些类注册到 IoC 容器。核心调用路径如下：</p>
+<p><code>selectImport-&gt;getAutoConfigurationEntry-&gt;getCandidateConfigurations-&gt;SpringFactoriesLoader.loadFactoryNames-&gt;loadSpringFactories</code> 不光是这个依赖下的<code>META-INF/spring.factories</code>被读取到，所有 Spring Boot Starter 下的<code>META-INF/spring.factories</code>都会被读取到。后边会根据条件进行逐层筛选。</p>
+<h3 id="示例-创建-starter"><a href="#示例-创建-starter" class="headerlink" title="示例 创建 starter"></a>示例 创建 starter</h3><blockquote>
+<p>引入 starter-validation</p>
+<p>@Validated注解加到类上，下面这些注解可以用到 字段、参数</p>
+<p>@NotBlank @Email  @Min(1)  @Max(91)</p>
+<p>@Pattern(regexp = “^[a-zA-Z0-9]{8,16}$”,message = “用户名只能是长度在8至16”      + “之间的包含数字和大小写字母的字符串”)</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Validated</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;rpc.server&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RpcServerProperties</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String address;<span class="keyword">private</span> Integer port;<span class="keyword">private</span> String appName;</span><br><span class="line">    <span class="meta">@Pattern(regexp = &quot;zookeeper|nacos&quot;, message = &quot;必须是 nacos或者zookeeper&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String registry;</span><br><span class="line">    <span class="keyword">private</span> String transport;<span class="keyword">private</span> String registryAddr;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RpcServerProperties</span><span class="params">()</span> <span class="keyword">throws</span> UnknownHostException &#123;</span><br><span class="line">        <span class="built_in">this</span>.address = InetAddress.getLocalHost().getHostAddress();</span><br><span class="line">        <span class="built_in">this</span>.port = <span class="number">8080</span>;</span><br><span class="line">        <span class="built_in">this</span>.appName = <span class="string">&quot;provider-1&quot;</span>;</span><br><span class="line">        <span class="built_in">this</span>.registry = <span class="string">&quot;zookeeper&quot;</span>;</span><br><span class="line">        <span class="built_in">this</span>.transport = <span class="string">&quot;netty&quot;</span>;</span><br><span class="line">        <span class="built_in">this</span>.registryAddr = <span class="string">&quot;127.0.0.1:2181&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>pojo 类 + @ConfigurationProperties注解，可在 application.yml 中按照前缀配置属性。</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">rpc.server.app-name</span>=<span class="string">provider-1</span></span><br><span class="line"><span class="attr">rpc.server.port</span>=<span class="string">9991</span></span><br><span class="line"><span class="attr">rpc.server.registry</span>=<span class="string">zookeeper</span></span><br><span class="line"><span class="attr">rpc.server.registry-addr</span>=<span class="string">39.108.66.202:2181</span></span><br><span class="line"><span class="attr">rpc.server.transport</span>=<span class="string">netty</span></span><br><span class="line"><span class="comment"># 设置指定包下的日志显示级别 INFO/DEBUG/WARNING/OFF</span></span><br><span class="line"><span class="attr">logging.level.com.wxy.rpc</span>=<span class="string">info</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>注解</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>@ConditionalOnProperty</code></td>
+<td>属性Property，满足一定的条件才生效</td>
+</tr>
+<tr>
+<td><code>@ConditionalOnMissingBean</code></td>
+<td>只有没有这个类型的 Bean 时才生效 (用户自定义实现了Bean方法，可以替换这个自动装配的)</td>
+</tr>
+<tr>
+<td><code>@ConditionalOnClass</code></td>
+<td>类路径下有某个类才生效</td>
+</tr>
+<tr>
+<td><code>@ConditionalOnBean</code></td>
+<td>依赖的 Bean 存在才生效</td>
+</tr>
+<tr>
+<td><code>@Primary</code></td>
+<td>多个同类的 Bean 存在时首选注入</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableConfigurationProperties(RpcServerProperties.class)</span> <span class="comment">// 绑定 pojo 作为 properties</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RpcServerAutoConfiguration</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    RpcServerProperties properties;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">    <span class="meta">@ConditionalOnProperty(prefix = &quot;rpc.server&quot;, name = &quot;registry&quot;, havingValue = &quot;zookeeper&quot;, matchIfMissing = true)</span><span class="comment">// property 的 registry 字段的 value = zookeeper 才生效，如果配置项不存在也会生效</span></span><br><span class="line">    <span class="keyword">public</span> ServiceRegistry <span class="title function_">serviceRegistry</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(properties.get)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ZookeeperServiceRegistry</span>(properties.getRegistryAddr());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">    <span class="meta">@ConditionalOnProperty(prefix = &quot;rpc.server&quot;, name = &quot;registry&quot;, havingValue = &quot;nacos&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> ServiceRegistry <span class="title function_">nacosServiceRegistry</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">NacosServiceRegistry</span>(properties.getRegistryAddr());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">    <span class="meta">@ConditionalOnBean(&#123;ServiceRegistry.class, RpcServer.class&#125;)</span></span><br><span class="line">    <span class="keyword">public</span> RpcServerBeanPostProcessor <span class="title function_">rpcServerBeanPostProcessor</span><span class="params">(</span></span><br><span class="line"><span class="params">        <span class="meta">@Autowired</span> ServiceRegistry serviceRegistry,</span></span><br><span class="line"><span class="params">		<span class="meta">@Autowired</span> RpcServer rpcServer,</span></span><br><span class="line"><span class="params">        <span class="meta">@Autowired</span> RpcServerProperties properties)</span> </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">RpcServerBeanPostProcessor</span>(serviceRegistry, rpcServer, properties);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例子：添加 <code>spring-boot-starter-data-redis</code> 后，可直接注入 <code>RedisTemplate</code>。</p>
+<table>
+<thead>
+<tr>
+<th align="left">特征</th>
+<th align="left">Starter 模块</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>命名</strong></td>
+<td align="left">以 <code>-spring-boot-starter</code> 结尾</td>
+</tr>
+<tr>
+<td align="left"><strong>依赖</strong></td>
+<td align="left">包含 <code>spring-boot-autoconfigure</code></td>
+</tr>
+<tr>
+<td align="left"><strong>自动配置</strong></td>
+<td align="left">有 <code>@AutoConfiguration</code> 类，并注册到 <code>spring.factories</code> 或 <code>AutoConfiguration.imports</code></td>
+</tr>
+<tr>
+<td align="left"><strong>配置属性</strong></td>
+<td align="left">包含 <code>@ConfigurationProperties</code> 类</td>
+</tr>
+<tr>
+<td align="left"><strong>功能入口</strong></td>
+<td align="left">提供开箱即用的 Bean，无需用户手动配置。可通过 <code>application.properties</code> 或 <code>@Bean</code> 覆盖 Starter 的默认配置。</td>
+</tr>
+</tbody></table>
+<ol>
+<li><p>实现自动配置类 AutoConfiguration </p>
+</li>
+<li><p>按照 SpringBoot 版本将配置类的全限定名引入指定路径下。</p>
+</li>
+<li><p>新建 starter 模块，添加依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 必须依赖 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-autoconfigure<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring-boot.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 可选：配置注解处理器 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-configuration-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 你的模块核心实现 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>rpc-server-spring-boot<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="项目使用"><a href="#项目使用" class="headerlink" title="项目使用"></a>项目使用</h1><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><ul>
+<li>操作系统：Windows + Linux</li>
+<li>集成开发工具：IntelliJ IDEA</li>
+<li>项目技术栈：SpringBoot 2.5.2 + JDK 1.8 + Netty 4.1.65.Final</li>
+<li>项目依赖管理工具：Maven 4.0.0</li>
+<li>注册中心：Zookeeeper 3.7.1</li>
+</ul>
+<h2 id="项目测试"><a href="#项目测试" class="headerlink" title="项目测试"></a>项目测试</h2><ul>
+<li>启动 Zookeeper 服务器：进入到zk的bin目录，输入命令 <code>./zkServer.sh</code></li>
+<li>启动 provider 模块 ProviderApplication</li>
+<li>启动 consumer 模块 ConsumerApplication</li>
+<li>测试：浏览器输入 <a target="_blank" rel="noopener" href="http://localhost:8080/hello/zhangsan">http://localhost:8080/hello/zhangsan</a> ，成功返回：<code>hello, zhangsan</code>，rpc 调用成功。</li>
+<li>调用接口 100 次耗时 26ms，调用 10_0000 次耗时 25164 ms。</li>
+</ul>
+<h2 id="压力测试"><a href="#压力测试" class="headerlink" title="压力测试"></a>压力测试</h2><p><strong><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/434083702">JMH</a></strong></p>
+<p><code>JMH</code>即<code>Java Microbenchmark Harness</code>，是<code>Java</code>用来做基准测试的一个工具，该工具由<code>OpenJDK</code>提供并维护，测试结果可信度高。</p>
+<p>相对于 Jmeter、ab ，它通过编写代码的方式进行压测，在特定场景下会更能评估某项性能。</p>
+<p>本次通过使用 JMH 来压测 RPC 的性能（官方也是使用JMH压测）</p>
+<p>启动 10000 个线程同时访问 sayHello 接口，总共进行 3 轮测试，测试结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Benchmark                                          Mode     Cnt      Score       Error  Units</span><br><span class="line">BenchmarkTest.testSayHello                        thrpt       3  29288.573 ± 20780.318  ops/s</span><br><span class="line">BenchmarkTest.testSayHello                         avgt       3      0.532 ±     6.159   s/op</span><br><span class="line">BenchmarkTest.testSayHello                       sample  395972      0.382 ±     0.002   s/op</span><br><span class="line">BenchmarkTest.testSayHello:testSayHello·p0.00    sample              0.003               s/op</span><br><span class="line">BenchmarkTest.testSayHello:testSayHello·p0.50    sample              0.318               s/op</span><br><span class="line">BenchmarkTest.testSayHello:testSayHello·p0.90    sample              0.387               s/op</span><br><span class="line">BenchmarkTest.testSayHello:testSayHello·p0.95    sample              0.840               s/op</span><br><span class="line">BenchmarkTest.testSayHello:testSayHello·p0.99    sample              2.282               s/op</span><br><span class="line">BenchmarkTest.testSayHello:testSayHello·p0.999   sample              2.470               s/op</span><br><span class="line">BenchmarkTest.testSayHello:testSayHello·p0.9999  sample              2.496               s/op</span><br><span class="line">BenchmarkTest.testSayHello:testSayHello·p1.00    sample              2.508               s/op</span><br><span class="line">BenchmarkTest.testSayHello                           ss       3      0.118 ±     0.051   s/op</span><br></pre></td></tr></table></figure>
+
+<p>测试曲线图：</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/rpc10000并发测试结果.png">
+
+<p>同时，在同样的条件下，启动 5000（1w个电脑会卡死） 个线程同时对 <strong>Dubbo2.7.14</strong> 发起 RPC 调用，得到的结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Benchmark                                       Mode     Cnt      Score      Error  Units</span><br><span class="line">StressTest.testSayHello                        thrpt       3  41549.866 ± 9703.455  ops/s</span><br><span class="line">StressTest.testSayHello                         avgt       3      0.119 ±    0.034   s/op</span><br><span class="line">StressTest.testSayHello                       sample  611821      0.123 ±    0.001   s/op</span><br><span class="line">StressTest.testSayHello:testSayHello·p0.00    sample              0.042              s/op</span><br><span class="line">StressTest.testSayHello:testSayHello·p0.50    sample              0.119              s/op</span><br><span class="line">StressTest.testSayHello:testSayHello·p0.90    sample              0.129              s/op</span><br><span class="line">StressTest.testSayHello:testSayHello·p0.95    sample              0.139              s/op</span><br><span class="line">StressTest.testSayHello:testSayHello·p0.99    sample              0.195              s/op</span><br><span class="line">StressTest.testSayHello:testSayHello·p0.999   sample              0.446              s/op</span><br><span class="line">StressTest.testSayHello:testSayHello·p0.9999  sample              0.455              s/op</span><br><span class="line">StressTest.testSayHello:testSayHello·p1.00    sample              0.456              s/op</span><br><span class="line">StressTest.testSayHello                           ss       3      0.058 ±    0.135   s/op</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>结果</strong>：<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/dubbo5000并发测试结果.png"></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>RPC</th>
+<th>RPC</th>
+<th>Dubbo2.7.14</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>并发数</td>
+<td>10000</td>
+<td>5000</td>
+<td>5000</td>
+</tr>
+<tr>
+<td>TPS</td>
+<td>29288</td>
+<td>31675</td>
+<td>41549</td>
+</tr>
+<tr>
+<td>RTT</td>
+<td>95% 8ms</td>
+<td>xxx</td>
+<td>95% 50ms</td>
+</tr>
+<tr>
+<td>AVGTime/OP</td>
+<td>0.532</td>
+<td>0.532</td>
+<td>0.119</td>
+</tr>
+<tr>
+<td>OOM</td>
+<td>无</td>
+<td>无</td>
+<td>无</td>
+</tr>
+</tbody></table>
+<p>对比了 jmeter、Apache-Benmark（ab）、jmh 这三个压测工具，个人比较推荐使用jmh，原因有：</p>
+<ul>
+<li>jmh压测简单，只需要引入依赖，声明注解</li>
+<li>准确性高，目前大多数性能压测都是使用jmh</li>
+<li>缺点就是代码入侵</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/netty/" rel="tag"># netty</a>
+              <a href="/tags/spring/" rel="tag"># spring</a>
+              <a href="/tags/spring-boot/" rel="tag"># spring-boot</a>
+              <a href="/tags/auto-configuration/" rel="tag"># auto-configuration</a>
+              <a href="/tags/rpc/" rel="tag"># rpc</a>
+              <a href="/tags/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" rel="tag"># 动态代理</a>
+              <a href="/tags/spi/" rel="tag"># spi</a>
+              <a href="/tags/bean-lifecyle/" rel="tag"># bean-lifecyle</a>
+              <a href="/tags/bean-registry/" rel="tag"># bean-registry</a>
+              <a href="/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3/" rel="tag"># 自定义注解</a>
+              <a href="/tags/%E9%A1%B9%E7%9B%AE%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" rel="tag"># 项目源码分析</a>
+              <a href="/tags/load-balance/" rel="tag"># load-balance</a>
+              <a href="/tags/serialization/" rel="tag"># serialization</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/01/%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/" rel="prev" title="基于 Netty 的 RPC 框架">
+                  <i class="fa fa-angle-left"></i> 基于 Netty 的 RPC 框架
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/01/Starter%E7%9A%84%E5%AE%9E%E7%8E%B0/" rel="next" title="自定义 starter">
+                  自定义 starter <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.23.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="并发容器并发安全 MapConcurrentSkipListMap : 跳表的实现。这是一个 Map，使用跳表的数据结构进行快速查找。 ConcurrentHashMapJDK 1.7: Segment(ReentrantLock) 在 JDK1.7 的时候，ConcurrentHashMap 对整个桶数组进行了分割分段(Segment，分段锁)， JDK 1.7 采用 Segment 分段锁来保">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于 Netty 的 RPC 框架">
+<meta property="og:url" content="http://example.com/2025/01/01/%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="并发容器并发安全 MapConcurrentSkipListMap : 跳表的实现。这是一个 Map，使用跳表的数据结构进行快速查找。 ConcurrentHashMapJDK 1.7: Segment(ReentrantLock) 在 JDK1.7 的时候，ConcurrentHashMap 对整个桶数组进行了分割分段(Segment，分段锁)， JDK 1.7 采用 Segment 分段锁来保">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/java7_concurrenthashmap.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/java8_concurrenthashmap.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/3039212-20221224114551267-580082797.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/3039212-20221223214340940-165732240.png">
+<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6.assets/3039212-20221224125000674-1551081400.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3039212/202212/3039212-20221224125144809-649163275.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/arrayblockingqueue-class-diagram.png">
+<meta property="article:published_time" content="2024-12-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-04-25T16:58:10.838Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="集合">
+<meta property="article:tag" content="JUC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/java7_concurrenthashmap.png">
+
+
+<link rel="canonical" href="http://example.com/2025/01/01/%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://example.com/2025/01/01/%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/","path":"2025/01/01/并发集合框架/","title":"基于 Netty 的 RPC 框架"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>基于 Netty 的 RPC 框架 | Hexo</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Hexo</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%AE%B9%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">并发容器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8-Map"><span class="nav-number">1.1.</span> <span class="nav-text">并发安全 Map</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ConcurrentHashMap"><span class="nav-number">1.1.1.</span> <span class="nav-text">ConcurrentHashMap</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JDK-1-7-Segment-ReentrantLock"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">JDK 1.7: Segment(ReentrantLock)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JDK-1-8-Node-CAS-synchronized"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">JDK 1.8: Node+CAS+synchronized</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8D%E4%BF%9D%E8%AF%81%E5%A4%8D%E5%90%88%E6%93%8D%E4%BD%9C%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">不保证复合操作原子性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HashTable"><span class="nav-number">1.1.2.</span> <span class="nav-text">HashTable</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8-List"><span class="nav-number">1.2.</span> <span class="nav-text">并发安全 List</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E4%B8%8D%E5%AE%89%E5%85%A8-ArrayList"><span class="nav-number">1.2.1.</span> <span class="nav-text">线程不安全 ArrayList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CopyOnWriteArrayList"><span class="nav-number">1.2.2.</span> <span class="nav-text">CopyOnWriteArrayList</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">优缺点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Vector"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">Vector</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8-Set"><span class="nav-number">1.3.</span> <span class="nav-text">并发安全 Set</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E4%B8%8D%E5%AE%89%E5%85%A8-HashSet"><span class="nav-number">1.3.1.</span> <span class="nav-text">线程不安全 HashSet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CopyOnWriteArraySet"><span class="nav-number">1.3.2.</span> <span class="nav-text">CopyOnWriteArraySet</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BlockingQueue"><span class="nav-number">1.4.</span> <span class="nav-text">BlockingQueue</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-number">1.4.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB"><span class="nav-number">1.4.2.</span> <span class="nav-text">分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E6%96%B9%E6%B3%95-put-take-offer-poll"><span class="nav-number">1.4.3.</span> <span class="nav-text">主要方法: put-take offer-poll</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayBlockingQueue"><span class="nav-number">1.4.4.</span> <span class="nav-text">ArrayBlockingQueue</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/01/01/%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="基于 Netty 的 RPC 框架 | Hexo">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于 Netty 的 RPC 框架
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2025-01-01 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-01T00:00:00+08:00">2025-01-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2025-04-26 00:58:10" itemprop="dateModified" datetime="2025-04-26T00:58:10+08:00">2025-04-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/jdk/" itemprop="url" rel="index"><span itemprop="name">jdk</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="并发容器"><a href="#并发容器" class="headerlink" title="并发容器"></a>并发容器</h1><h2 id="并发安全-Map"><a href="#并发安全-Map" class="headerlink" title="并发安全 Map"></a>并发安全 Map</h2><p><strong><code>ConcurrentSkipListMap</code></strong> : 跳表的实现。这是一个 Map，使用跳表的数据结构进行快速查找。</p>
+<h3 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h3><h4 id="JDK-1-7-Segment-ReentrantLock"><a href="#JDK-1-7-Segment-ReentrantLock" class="headerlink" title="JDK 1.7: Segment(ReentrantLock)"></a>JDK 1.7: Segment(ReentrantLock)</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/java7_concurrenthashmap.png" alt="Java7 ConcurrentHashMap 存储结构"></p>
+<p>在 JDK1.7 的时候，<code>ConcurrentHashMap</code> 对整个桶数组进行了分割分段(<code>Segment</code>，分段锁)，</p>
+<p>JDK 1.7 采用 <code>Segment</code> 分段锁来保证安全， <code>Segment</code> 继承自 <code>ReentrantLock</code>。每一把锁只锁容器其中一部分数据，多线程访问容器里不同数据段的数据，就不会存在锁竞争，提高并发访问率。</p>
+<ul>
+<li><code>ConcurrentHashMap</code> 是由 <code>Segment</code> 数组结构和 <code>HashEntry</code> 数组结构组成。</li>
+<li><code>Segment</code> 数组中的每个元素包含一个 <code>HashEntry</code> 数组，每个 <code>HashEntry</code> 数组属于链表结构。</li>
+</ul>
+<p>首先将数据分为一段一段（这个“段”就是 <code>Segment</code>）的存储，然后给每一段数据配一把锁，当一个线程占用锁访问其中一个段数据时，其他段的数据也能被其他线程访问。</p>
+<p><strong><code>ConcurrentHashMap</code> 是由 <code>Segment</code> 数组结构和 <code>HashEntry</code> 数组结构组成</strong>。</p>
+<p><code>Segment</code> 继承了 <code>ReentrantLock</code>,所以 <code>Segment</code> 是一种可重入锁，扮演锁的角色。<code>HashEntry</code> 用于存储键值对数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Segment</span>&lt;K,V&gt; <span class="keyword">extends</span> <span class="title class_">ReentrantLock</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一个 <code>ConcurrentHashMap</code> 里包含一个 <code>Segment</code> 数组，<code>Segment</code> 的个数一旦<strong>初始化就不能改变</strong>。 <code>Segment</code> 数组的大小默认是 16，也就是说默认可以同时支持 16 个线程并发写。</p>
+<p><code>Segment</code> 的结构和 <code>HashMap</code> 类似，是一种数组和链表结构，一个 <code>Segment</code> 包含一个 <code>HashEntry</code> 数组，每个 <code>HashEntry</code> 是一个链表结构的元素，每个 <code>Segment</code> 守护着一个 <code>HashEntry</code> 数组里的元素，当对 <code>HashEntry</code> 数组的数据进行修改时，必须首先获得对应的 <code>Segment</code> 的锁。也就是说，对同一 <code>Segment</code> 的并发写入会被阻塞，不同 <code>Segment</code> 的写入是可以并发执行的。</p>
+<p>JDK 1.7 最大并发度是 Segment 的个数，默认是 16</p>
+<h4 id="JDK-1-8-Node-CAS-synchronized"><a href="#JDK-1-8-Node-CAS-synchronized" class="headerlink" title="JDK 1.8: Node+CAS+synchronized"></a>JDK 1.8: Node+CAS+synchronized</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/java8_concurrenthashmap.png" alt="Java8 ConcurrentHashMap 存储结构"></p>
+<p>到了 JDK1.8 的时候，<code>ConcurrentHashMap</code> 已经摒弃了 <code>Segment</code> 的概念，而是==直接用 <code>Node</code>== 数组+链表+红黑树的数据结构来实现，并发控制使用 ==<code>synchronized</code> 和 CAS== 来操作。（JDK1.6 以后 <code>synchronized</code> 锁做了很多优化） 整个看起来就像是优化过且线程安全的 <code>HashMap</code>，虽然在 JDK1.8 中还能看到 <code>Segment</code> 的数据结构，但是已经简化了属性，只是为了兼容旧版本；</p>
+<p>JDK1.8 放弃了 <code>Segment</code> 分段锁的设计，采用 <code>Node + CAS + synchronized</code> 保证线程安全，锁粒度更细，<code>synchronized</code> 只锁定当前链表或红黑二叉树的首节点。</p>
+<ul>
+<li><p>每个 <strong>桶（bucket）</strong> 对应一个链表或红黑树，用于解决<strong>哈希冲突</strong>。</p>
+</li>
+<li><p>如果链表长度超过一定阈值（默认为 8），链表会自动转换为<strong>红黑树</strong>，提高查询效率。</p>
+</li>
+<li><p>红黑树的情况需要使用 **<code>TreeNode</code>**。当冲突链表达到一定长度时，链表会转换成红黑树。<code>TreeNode</code>是存储红黑树节点，被<code>TreeBin</code>包装。<code>TreeBin</code>通过<code>root</code>属性维护红黑树的根结点，因为红黑树在旋转的时候，根结点可能会被它原来的子节点替换掉，在这个时间点，如果有其他线程要写这棵红黑树就会发生线程不安全问题，所以在 <code>ConcurrentHashMap</code> 中<code>TreeBin</code>通过<code>waiter</code>属性维护当前使用这棵红黑树的线程，来防止其他线程的进入。</p>
+</li>
+</ul>
+<p>JDK 1.8 最大并发度是 Node 数组的大小，并发度更大。</p>
+<p><strong>链表的线程安全性</strong> </p>
+<p>在 <strong>ConcurrentHashMap</strong> 中，链表本身不是直接加锁的，而是通过更细粒度的<strong>CAS（Compare-And-Swap）机制</strong>和<strong>自旋锁</strong>来保证线程安全：</p>
+<ol>
+<li><strong>插入节点</strong>时通过 CAS 更新表头或表尾。</li>
+<li><strong>查询节点</strong>时允许并发读操作，而不会阻塞其他线程。</li>
+<li><strong>扩容操作</strong>采用链表迁移的方式，通过分段迁移减少阻塞时间。</li>
+</ol>
+<h4 id="不保证复合操作原子性"><a href="#不保证复合操作原子性" class="headerlink" title="不保证复合操作原子性"></a>不保证复合操作原子性</h4><p><code>ConcurrentHashMap</code> 是线程安全的，意味着它可以保证多个线程同时对它进行读写操作时，不会出现数据不一致的情况，也不会导致 JDK1.7 及之前版本的 <code>HashMap</code> 多线程操作导致死循环问题。但是，这并不意味着它可以保证所有的复合操作都是原子性的，一定不要搞混了！</p>
+<p>复合操作是指由多个基本操作(如<code>put</code>、<code>get</code>、<code>remove</code>、<code>containsKey</code>等)组成的操作，例如先判断某个键是否存在<code>containsKey(key)</code>，然后根据结果进行插入或更新<code>put(key, value)</code>。这种操作在执行过程中可能会被其他线程打断，导致结果不符合预期。</p>
+<h3 id="HashTable"><a href="#HashTable" class="headerlink" title="HashTable"></a>HashTable</h3><p><strong><code>Hashtable</code>(同一把锁)</strong> :使用 <code>synchronized</code> 来保证线程安全，效率非常低下。当一个线程访问同步方法时，其他线程也访问同步方法，可能会进入阻塞或轮询状态，如使用 put 添加元素，另一个线程不能使用 put 添加元素，也不能使用 get，竞争会越来越激烈效率越低</p>
+<h2 id="并发安全-List"><a href="#并发安全-List" class="headerlink" title="并发安全 List"></a>并发安全 List</h2><h3 id="线程不安全-ArrayList"><a href="#线程不安全-ArrayList" class="headerlink" title="线程不安全 ArrayList"></a>线程不安全 ArrayList</h3><p>我们通常使用的ArrayList就是线程不安全的，举个简单的例子</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * List集合</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestList</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] <span class="keyword">args</span></span>)</span> &#123;</span><br><span class="line">        List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">10</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">                list.<span class="keyword">add</span>(UUID.randomUUID().toString().substring(<span class="number">0</span>, <span class="number">5</span>));</span><br><span class="line">                System.<span class="keyword">out</span>.println(list);</span><br><span class="line">            &#125;, String.valueOf(i)).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//并发修改异常</span></span><br><span class="line">Exception <span class="keyword">in</span> thread <span class="string">&quot;4&quot;</span> java.util.ConcurrentModificationException</span><br><span class="line">   at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:<span class="number">909</span>)</span><br><span class="line">   at java.util.ArrayList$Itr.next(ArrayList.java:<span class="number">859</span>)</span><br><span class="line">   at java.util.AbstractCollection.toString(AbstractCollection.java:<span class="number">461</span>)</span><br><span class="line">   at java.lang.String.valueOf(String.java:<span class="number">2994</span>)</span><br><span class="line">   at java.io.PrintStream.println(PrintStream.java:<span class="number">821</span>)</span><br><span class="line">   at com.hnguigu.<span class="keyword">unsafe</span>.TestList.lambda$main$<span class="number">0</span>(TestList.java:<span class="number">20</span>)</span><br><span class="line">   at java.lang.Thread.run(Thread.java:<span class="number">748</span>)</span><br><span class="line"></span><br><span class="line">Process finished <span class="keyword">with</span> exit code <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>解决方案，有以下几种！</strong></p>
+<h3 id="CopyOnWriteArrayList"><a href="#CopyOnWriteArrayList" class="headerlink" title="CopyOnWriteArrayList"></a>CopyOnWriteArrayList</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.<span class="property">util</span>.<span class="property">concurrent</span>.<span class="property">CopyOnWriteArrayList</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestList</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">void</span> <span class="title function_">main</span>(<span class="params"><span class="title class_">String</span>[] args</span>) &#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 解决方案</span></span><br><span class="line"><span class="comment">         * 1. List&lt;String&gt; list = new Vector&lt;&gt;();</span></span><br><span class="line"><span class="comment">         * 2. List&lt;String&gt; list = Collections.synchronizedList(new ArrayList&lt;&gt;());</span></span><br><span class="line"><span class="comment">         * 3. List&lt;String&gt; list = new CopyOnWriteArrayList&lt;&gt;();</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="title class_">List</span>&lt;<span class="title class_">String</span>&gt; list = <span class="keyword">new</span> <span class="title class_">CopyOnWriteArrayList</span>&lt;&gt;();</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (int i = <span class="number">1</span>; i &lt;=<span class="number">10</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">                list.<span class="title function_">add</span>(<span class="variable constant_">UUID</span>.<span class="title function_">randomUUID</span>().<span class="title function_">toString</span>().<span class="title function_">substring</span>(<span class="number">0</span>,<span class="number">5</span>));</span><br><span class="line">                <span class="title class_">System</span>.<span class="property">out</span>.<span class="title function_">println</span>(list);</span><br><span class="line">            &#125;,<span class="title class_">String</span>.<span class="title function_">valueOf</span>(i)).<span class="title function_">start</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>写入时复制（CopyOnWrite，简称COW）思想是计算机程序设计领域中的一种通用优化策略。</p>
+<p>CopyOnWrite容器即写入时复制的容器。<strong>通俗的理解是当我们往一个容器添加元素的时候，不直接往当前容器添加，而是先将当前容器进行Copy，复制出一个新的容器，然后新的容器里添加元素，添加完元素之后，再将原容器的引用指向新的容器。</strong>这样做的好处是我们可以对CopyOnWrite容器进行并发的读，而不需要加锁，因为当前容器不会添加任何元素。所以CopyOnWrite容器也是一种读写分离的思想，读和写不同的容器。</p>
+<p>读的时候不需要加锁，如果读的时候有多个线程正在向CopyOnWriteArrayList添加数据，读还是会读到旧的数据。CopyOnWrite并发容器用于读多写少的并发场景。</p>
+<blockquote>
+<p>CopyOnWriteArrayList 比 Vector 厉害在哪里？</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/3039212-20221224114551267-580082797.png" alt="CopyOnWrite"></p>
+<p>CopyOnWriteArrayList底层采用了Lock锁，是JDK层面的，效率高！</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/3039212-20221223214340940-165732240.png" alt="VectorSource"></p>
+<h4 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h4><p>优点：</p>
+<ul>
+<li>CopyOnWriteArrayList 并发安全且性能比 Vector 好。Vector 是增删改查方法都加了synchronized 来保证同步，但是每个方法执行的时候都要去获得锁，性能就会大大下降，而 CopyOnWriteArrayList 只是在增删改上加锁，但是读不加锁，在读方面的性能就好于 Vector。</li>
+<li>线程安全的 <code>List</code>，在读多写少的场合性能非常好，远远好于 <code>Vector</code>。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>数据一致性问题。这种实现只是保证数据的<strong>最终一致性</strong>，不能保证数据的<strong>实时一致性</strong>。在添加到拷贝数据而还没进行替换的时候，读到的仍然是旧数据。</li>
+<li>内存占用问题。如果对象比较大，内存写操作的时候，需要拷贝数组，会消耗内存，如果原数组的内容比较多的情况下，可能导致 young gc 或者 full gc。 这个时候，我们应该考虑其他的容器，例如 ConcurrentHashMap。</li>
+<li>由于实际使用中可能没法保证 CopyOnWriteArrayList 到底要放置多少数据，万一数据稍微有点 多，每次 add/set 都要重新复制数组，这个代价实在太高昂了。在高性能的互联网应用中，这种 操作分分钟引起故障。</li>
+</ul>
+<h4 id="Vector"><a href="#Vector" class="headerlink" title="Vector"></a>Vector</h4><p>Vector底层采用了Synchronized加锁的方式，保证了数据的安全性，但是效率低下！</p>
+<p>解释一下：Synchronized是Java内置的机制，是JVM层面的，效率低是因为底层操作依赖于操作系统，操作系统切换线程要从用户态切换到内核态，花费很多时间。</p>
+<h2 id="并发安全-Set"><a href="#并发安全-Set" class="headerlink" title="并发安全 Set"></a>并发安全 Set</h2><h3 id="线程不安全-HashSet"><a href="#线程不安全-HashSet" class="headerlink" title="线程不安全 HashSet"></a>线程不安全 HashSet</h3><p>Set和List同样是多线程下不安全的集合类，同样会报并发修改异常！</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Set集合</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestSet</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] <span class="keyword">args</span></span>)</span> &#123;</span><br><span class="line">        Set&lt;String&gt; <span class="keyword">set</span> = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">20</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">                <span class="keyword">set</span>.<span class="keyword">add</span>(UUID.randomUUID().toString().substring(<span class="number">0</span>, <span class="number">5</span>));</span><br><span class="line">                System.<span class="keyword">out</span>.println(<span class="keyword">set</span>);</span><br><span class="line">            &#125;, String.valueOf(i)).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解决方案：</p>
+<h3 id="CopyOnWriteArraySet"><a href="#CopyOnWriteArraySet" class="headerlink" title="CopyOnWriteArraySet"></a>CopyOnWriteArraySet</h3><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">import java.util.concurrent.CopyOnWriteArraySet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestSet</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] <span class="keyword">args</span></span>)</span> &#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 解决方案</span></span><br><span class="line"><span class="comment">         * set集合没有可替换的集合</span></span><br><span class="line"><span class="comment">         * 1. Set&lt;String&gt; set = Collections.synchronizedSet(new HashSet&lt;&gt;());</span></span><br><span class="line"><span class="comment">         * 2. Set&lt;String&gt; set = new CopyOnWriteArraySet&lt;&gt;();</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        Set&lt;String&gt; <span class="keyword">set</span> = <span class="keyword">new</span> CopyOnWriteArraySet&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">20</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">                <span class="keyword">set</span>.<span class="keyword">add</span>(UUID.randomUUID().toString().substring(<span class="number">0</span>, <span class="number">5</span>));</span><br><span class="line">                System.<span class="keyword">out</span>.println(<span class="keyword">set</span>);</span><br><span class="line">            &#125;, String.valueOf(i)).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>和面试官谈到这里，一般都会问hashSet的底层实现原理。<br><img src="C:/Users/Lenovo/Pictures/markdownfile/%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6.assets/3039212-20221224125000674-1551081400.png" alt="hashSetSource"></p>
+<p>底层其实就是用hashMap实现的</p>
+<p><img src="https://img2023.cnblogs.com/blog/3039212/202212/3039212-20221224125144809-649163275.png" alt="hashSetAdd"></p>
+<p>HashSet底层使用了哈希表来支持的，特点：存储快 往HashSet添加元素的时候，HashSet会先调用元素的HashCode方法得到元素的哈希值，然后通过元素的哈希值经过异或移位等运算，就可以算出该元素在哈希表中的存储位置。如果算出的元素存储的位置目前没有任何元素存储，那么该元素可以直接存储在该位置上；如果算出的元素的存储位置上目前已经有了其他的元素，那么还会调用该元素的equals方法 ，与该位置的元素进行比较一次，如果过equals方法返回的是true，那么该位置上的元素就会被视为重复元素，不允许被添加，如果false，则允许添加。</p>
+<h2 id="BlockingQueue"><a href="#BlockingQueue" class="headerlink" title="BlockingQueue"></a>BlockingQueue</h2><p><strong><code>BlockingQueue</code></strong> 是 Java 并发包（<code>java.util.concurrent</code>）中的一个接口，专门用于<strong>线程安全的生产者-消费者模型</strong>。它支持线程在队列为空或已满时自动阻塞，从而简化了多线程编程中的同步问题。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/arrayblockingqueue-class-diagram.png" alt="ArrayBlockingQueue 类图"></p>
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ol>
+<li>线程安全：<ul>
+<li>内部使用锁和条件变量（Condition）实现线程安全操作。</li>
+</ul>
+</li>
+<li>阻塞机制：<ul>
+<li>当队列为空时，获取元素的线程会被阻塞，直到队列中有可用元素。</li>
+<li>当队列已满时，添加元素的线程会被阻塞，直到队列有空间。</li>
+</ul>
+</li>
+<li>常用场景：<ul>
+<li><strong>生产者-消费者模型</strong>，生产者向队列中添加数据，消费者从队列中取数据。</li>
+<li>控制线程执行顺序或流量，避免资源争抢。</li>
+</ul>
+</li>
+</ol>
+<p><strong><code>BlockingQueue</code></strong> : 这是一个接口，JDK 内部通过链表、数组等方式实现了这个接口。表示阻塞队列，非常适合用于作为数据共享的通道。</p>
+<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p><code>ArrayBlockingQueue</code> </p>
+<ul>
+<li><strong>best performance</strong> </li>
+<li>单lock 双condition 算法，必须显式设置容量</li>
+<li>底层是数组，有界队列，如果我们要使用生产者-消费者模式，这是非常好的选择。</li>
+</ul>
+<p><code>LinkedBlockingQueue</code> / <code>LinkedBlockingDeque</code></p>
+<ul>
+<li>2 locks 2 conditions，默认Integer.MAX_VALUE</li>
+<li>底层是链表，可以当做无界和有界队列来使用，所以大家不要以为它就是无界队列。</li>
+</ul>
+<p><code>SynchronousQueue</code></p>
+<ul>
+<li>每次插入操作必须等待一个取出操作，否则就会阻塞，适合高并发传递数据。</li>
+<li>不允许null</li>
+<li>本身不带有空间来存储任何元素，使用上可以选择公平模式和非公平模式。</li>
+</ul>
+<p><code>DelayQueue</code></p>
+<ul>
+<li>延时队列，只有到期的元素才能被取出，适合定时任务或延迟执行场景。</li>
+<li>elements must implement <code>java.util.concurrent.Delayed</code> </li>
+</ul>
+<p><code>LinkedTransferQueue</code></p>
+<ul>
+<li>waits for consumer to consume the element (message passing need to be guaranteed)</li>
+</ul>
+<p><strong><code>ConcurrentLinkedQueue</code></strong> :</p>
+<ul>
+<li>高效的并发队列，使用链表实现。一个线程安全的 <code>LinkedList</code>，这是一个非阻塞队列。</li>
+</ul>
+<p><code>PriorityBlockingQueue</code></p>
+<ul>
+<li>concurrent version of <code>PriorityQueue</code></li>
+<li>无界队列，基于数组，数据结构为二叉堆，数组第一个也是树的根节点总是最小值。</li>
+<li>基于优先级堆实现的无界阻塞队列，元素按优先级排序，不保证 FIFO。</li>
+</ul>
+<h3 id="主要方法-put-take-offer-poll"><a href="#主要方法-put-take-offer-poll" class="headerlink" title="主要方法: put-take offer-poll"></a>主要方法: put-take offer-poll</h3><p>add、remove实际上是对offer的封装</p>
+<ul>
+<li><strong>插入元素：</strong><ul>
+<li><code>put(E e)</code>：如果队列已满，阻塞等待空间。</li>
+<li><code>offer(E e)</code>: 非阻塞插入<ul>
+<li><code>offer(E e, long timeout, TimeUnit unit)</code>：带自旋的非阻塞插入</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>取出元素：</strong> <ul>
+<li><code>take()</code>：如果队列为空，阻塞等待数据。</li>
+<li><code>poll()</code>: 非阻塞获取<ul>
+<li><code>poll(long timeout, TimeUnit unit)</code>：带自旋的非阻塞获取</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>检查队列状态：</strong><ul>
+<li><code>size()</code>：返回当前元素数量。</li>
+<li><code>remainingCapacity()</code>：返回剩余可用空间。</li>
+</ul>
+</li>
+<li>队列数据迁移<ul>
+<li><code>int elemCount = queue.drainTo(list);</code></li>
+<li> <code>drainTo</code> 会一次性将队列中所有元素存放到列表，如果队列中有元素，且成功存到 list 中则 <code>drainTo</code> 会返回本次转移到 list 中的元素数，若队列为空，<code>drainTo</code> 则直接返回 0</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BlockingQueueExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        </span><br><span class="line">        BlockingQueue&lt;Integer&gt; queue = <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 生产者线程</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">10</span>; i++) &#123;</span><br><span class="line">                    queue.put(i); <span class="comment">// 阻塞插入</span></span><br><span class="line">                    System.out.println(<span class="string">&quot;Produced: &quot;</span> + i);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 消费者线程</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                    <span class="type">Integer</span> <span class="variable">value</span> <span class="operator">=</span> queue.take(); <span class="comment">// 阻塞获取</span></span><br><span class="line">                    System.out.println(<span class="string">&quot;Consumed: &quot;</span> + value);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="ArrayBlockingQueue"><a href="#ArrayBlockingQueue" class="headerlink" title="ArrayBlockingQueue"></a>ArrayBlockingQueue</h3><p>实际上就是生产者——消费者模式的具体实现</p>
+<p>加锁访问共享区域，阻塞使用的是和锁相关的condition条件变量，细化了等待条件</p>
+<p>condition.await    condition.signal/signalAll   就是使用了这个细节</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">#define MAXSIZE <span class="number">8</span></span><br><span class="line"><span class="type">int</span> buffer[MAXSIZE];</span><br><span class="line"><span class="type">int</span> <span class="variable">fill_ptr</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">use_ptr</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"><span class="keyword">void</span> <span class="title function_">put</span><span class="params">(<span class="type">int</span> value)</span>&#123;</span><br><span class="line">    buffer[fill_ptr] = value;</span><br><span class="line">	fill_ptr = (fill_ptr + <span class="number">1</span>) % MAXSIZE;</span><br><span class="line">    count++;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">get</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">tmp</span> <span class="operator">=</span> buffer[use_ptr];</span><br><span class="line">    fill_ptr = (fill_ptr + <span class="number">1</span>) % MAXSIZE;</span><br><span class="line">    count--;</span><br><span class="line">    <span class="keyword">return</span> tmp;</span><br><span class="line">&#125;</span><br><span class="line">cond_t notEmpty,notFull;</span><br><span class="line">mutex_t mutex;</span><br><span class="line"><span class="keyword">void</span> <span class="title function_">producer</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;i &lt; loops;i++)&#123;</span><br><span class="line">        mutex_lock(&amp;mutex);</span><br><span class="line">        <span class="keyword">while</span>(count == MAXSIZE)</span><br><span class="line">            cond_wait(&amp;notEmpty, &amp;mutex);</span><br><span class="line">    	put(i);</span><br><span class="line">        printf(<span class="string">&quot;producer:%d puts value:%d&quot;</span>, gettid(), i);</span><br><span class="line">        cond_signal((&amp;notFull);</span><br><span class="line">    	mutex_unlock(&amp;mutex);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">void</span> <span class="title function_">consumer</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;i &lt; loops;i++)&#123;</span><br><span class="line">        mutex_lock(&amp;mutex);</span><br><span class="line">        <span class="keyword">while</span>(count == <span class="number">0</span>)</span><br><span class="line">            cond_wait(&amp;isEmpty, &amp;mutex);</span><br><span class="line">        <span class="type">int</span> <span class="variable">value</span> <span class="operator">=</span> get();</span><br><span class="line">        printf(<span class="string">&quot;pid:%d gets value:%d&quot;</span>, gettid(), value);</span><br><span class="line">        cond_signal(&amp;isFull);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">                    </span><br></pre></td></tr></table></figure>
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%9B%86%E5%90%88/" rel="tag"># 集合</a>
+              <a href="/tags/JUC/" rel="tag"># JUC</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/12/26/Netty%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" rel="prev" title="Netty 最佳实践">
+                  <i class="fa fa-angle-left"></i> Netty 最佳实践
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/01/rpc-interpretation/" rel="next" title="基于 Netty 的 RPC 框架">
+                  基于 Netty 的 RPC 框架 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">John Doe</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
