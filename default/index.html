@@ -292,7 +292,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-26 14:03:01" itemprop="dateModified" datetime="2025-04-26T14:03:01+08:00">2025-04-26</time>
+      <time title="修改时间：2025-04-26 23:37:13" itemprop="dateModified" datetime="2025-04-26T23:37:13+08:00">2025-04-26</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -314,9 +314,9 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="wxy-rpc"><a href="#wxy-rpc" class="headerlink" title="wxy-rpc"></a>wxy-rpc</h1><p>这是一个同步调用的 RPC 框架。</p>
-<p>服务消费方包装好 RpcRequest，做完服务发现之后发送网络请求，使用 Promise 来进行异步请求的同步等待 await(timeout) 与收到 RpcResponse 之后的 setSuccess(rpcMessage)。</p>
-<p>服务提供方收到 RpcRequest，根据服务名称在本地注册中心找到实现类，执行调用，返回结果封装在 RpcResponse 内。</p>
+          <h1 id="基于-Netty-的-RPC-框架"><a href="#基于-Netty-的-RPC-框架" class="headerlink" title="基于 Netty 的 RPC 框架"></a>基于 Netty 的 RPC 框架</h1><p>这是一个同步调用的 RPC 框架。</p>
+<p>服务消费方包装好 <code>RpcRequest</code>，做完服务发现之后发送网络请求，使用 <code>Promise</code>来进行异步请求的同步等待 <code>await(timeout)</code>与收到 <code>RpcResponse</code>之后的 <code>setSuccess(rpcMessage)</code>。</p>
+<p>服务提供方收到 <code>RpcRequest</code>，根据服务名称在本地注册中心找到实现类，执行调用，返回结果封装在 <code>RpcResponse</code>内。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250423123418951.png" alt="责任链"></p>
           <!--noindex-->
             <div class="post-button">
