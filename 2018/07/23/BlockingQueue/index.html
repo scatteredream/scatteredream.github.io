@@ -23,7 +23,7 @@
     <meta name="description" content="最近得空，想写篇文章好好说说 java 线程池问题，我相信很多人都一知半解的，包括我自己在仔仔细细看源码之前，也有许多的不解，甚至有些地方我一直都没有理解到位。 说到线程池实现，那么就不得不涉及到各种 BlockingQueue 的实现，那么我想就 BlockingQueue 的问题和大家分享分享我了解的一些知识。 本文没有像之前分析 AQS 那样一行一行源码分析了，不过还是把其中最重要和最难理解">
 <meta property="og:type" content="article">
 <meta property="og:title" content="解读 java 并发队列 BlockingQueue(转自Javadoop)">
-<meta property="og:url" content="http://scatteredream.github.io/2025/04/27/BlockingQueue/index.html">
+<meta property="og:url" content="http://scatteredream.github.io/2018/07/23/BlockingQueue/index.html">
 <meta property="og:site_name" content="scatteredream&#39;s blog">
 <meta property="og:description" content="最近得空，想写篇文章好好说说 java 线程池问题，我相信很多人都一知半解的，包括我自己在仔仔细细看源码之前，也有许多的不解，甚至有些地方我一直都没有理解到位。 说到线程池实现，那么就不得不涉及到各种 BlockingQueue 的实现，那么我想就 BlockingQueue 的问题和大家分享分享我了解的一些知识。 本文没有像之前分析 AQS 那样一行一行源码分析了，不过还是把其中最重要和最难理解">
 <meta property="og:locale" content="zh_CN">
@@ -34,8 +34,8 @@
 <meta property="og:image" content="https://assets.javadoop.com/blogimages/java-concurrent-queue/priority-blocking-queue-2.png">
 <meta property="og:image" content="https://assets.javadoop.com/blogimages/java-concurrent-queue/priority-blocking-queue-3.png">
 <meta property="og:image" content="https://assets.javadoop.com/blogimages/java-concurrent-queue/priority-blocking-queue-4.png">
-<meta property="article:published_time" content="2025-04-27T06:39:10.013Z">
-<meta property="article:modified_time" content="2025-04-27T06:38:52.165Z">
+<meta property="article:published_time" content="2018-07-22T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-04-27T15:20:47.685Z">
 <meta property="article:author" content="碎梦">
 <meta property="article:tag" content="集合">
 <meta property="article:tag" content="并发">
@@ -43,10 +43,10 @@
 <meta name="twitter:image" content="https://assets.javadoop.com/blogimages/java-concurrent-queue/array-blocking-queue.png">
 
 
-<link rel="canonical" href="http://scatteredream.github.io/2025/04/27/BlockingQueue/">
+<link rel="canonical" href="http://scatteredream.github.io/2018/07/23/BlockingQueue/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2025/04/27/BlockingQueue/","path":"2025/04/27/BlockingQueue/","title":"解读 java 并发队列 BlockingQueue(转自Javadoop)"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2018/07/23/BlockingQueue/","path":"2018/07/23/BlockingQueue/","title":"解读 java 并发队列 BlockingQueue(转自Javadoop)"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>解读 java 并发队列 BlockingQueue(转自Javadoop) | scatteredream's blog</title>
@@ -189,7 +189,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/04/27/BlockingQueue/">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2018/07/23/BlockingQueue/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -217,9 +217,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2025-04-27 14:39:10 / 修改时间：14:38:52" itemprop="dateCreated datePublished" datetime="2025-04-27T14:39:10+08:00">2025-04-27</time>
+      <time title="创建时间：2018-07-23 00:00:00" itemprop="dateCreated datePublished" datetime="2018-07-23T00:00:00+08:00">2018-07-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-27 23:20:47" itemprop="dateModified" datetime="2025-04-27T23:20:47+08:00">2025-04-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -440,11 +446,14 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2025/04/27/AQS-Tools/" rel="prev" title="一行一行源码分析清楚 AbstractQueuedSynchronizer (三)(转自Javadoop)">
-                  <i class="fa fa-angle-left"></i> 一行一行源码分析清楚 AbstractQueuedSynchronizer (三)(转自Javadoop)
+                <a href="/2018/02/27/NIO%20AIO/" rel="prev" title="Java 非阻塞 IO 和异步 IO(转自Javadoop)">
+                  <i class="fa fa-angle-left"></i> Java 非阻塞 IO 和异步 IO(转自Javadoop)
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2018/09/07/spring-ioc/" rel="next" title="Spring IOC 容器源码分析(转自JavaDoop)">
+                  Spring IOC 容器源码分析(转自JavaDoop) <i class="fa fa-angle-right"></i>
+                </a>
             </div>
           </div>
     </footer>
