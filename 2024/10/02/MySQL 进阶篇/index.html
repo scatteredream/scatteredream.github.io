@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Arvo:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="进阶篇索引数据结构B-Tree度数：一个节点上面最大的指针数 度数为5，最多5个指针，4个key 当一个节点上面key数超过4，中间节点向上分裂，其余两段分成两个节点，连到上面    B+Tree只有叶子节点存储数据。非叶子节点只有索引的作用 中间节点向上分裂，并且中间节点保留在叶子节点，其余两段分成两个节点连到上面，节点与节点之间通过链表进行连接     两个索引中间的指针指向的节点位于这两个索">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL 进阶篇">
+<meta property="og:url" content="http://scatteredream.github.io/2024/10/02/MySQL%20%E8%BF%9B%E9%98%B6%E7%AF%87/index.html">
+<meta property="og:site_name" content="scatteredream&#39;s blog">
+<meta property="og:description" content="进阶篇索引数据结构B-Tree度数：一个节点上面最大的指针数 度数为5，最多5个指针，4个key 当一个节点上面key数超过4，中间节点向上分裂，其余两段分成两个节点，连到上面    B+Tree只有叶子节点存储数据。非叶子节点只有索引的作用 中间节点向上分裂，并且中间节点保留在叶子节点，其余两段分成两个节点连到上面，节点与节点之间通过链表进行连接     两个索引中间的指针指向的节点位于这两个索">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185901845-1728392950452-1.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185828031-1728392950452-2.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185947095-1728392950452-4.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191613613-1728392950452-3.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191730054-1728392950453-5.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191755751-1728392950453-7.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191802276-1728392950454-9.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008192952009-1728392950453-6.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008193116742-1728392950453-8.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241011162420695.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241011162503825.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241015190857506.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017194645333.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017194802298.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017215201503.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017223439818.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017223354241.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017224916640.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017230538715.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017222539070.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017235509444.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018000157308.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/Mindmap.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029174344508-1730195209915-1.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018150130329.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018151050435.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018151107149.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018151128340.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018161558601.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/trans_visible-ekj9bMvL.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018205730125.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018161738996.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018155530221.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018155805136.png">
+<meta property="article:published_time" content="2024-10-01T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-04-27T07:14:39.829Z">
+<meta property="article:author" content="碎梦">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="事务">
+<meta property="article:tag" content="b+ tree">
+<meta property="article:tag" content="索引">
+<meta property="article:tag" content="sql优化">
+<meta property="article:tag" content="锁">
+<meta property="article:tag" content="inoodb">
+<meta property="article:tag" content="mvcc">
+<meta property="article:tag" content="日志">
+<meta property="article:tag" content="redolog">
+<meta property="article:tag" content="undolog">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185901845-1728392950452-1.png">
+
+
+<link rel="canonical" href="http://scatteredream.github.io/2024/10/02/MySQL%20%E8%BF%9B%E9%98%B6%E7%AF%87/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2024/10/02/MySQL%20%E8%BF%9B%E9%98%B6%E7%AF%87/","path":"2024/10/02/MySQL 进阶篇/","title":"MySQL 进阶篇"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MySQL 进阶篇 | scatteredream's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">scatteredream's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E9%98%B6%E7%AF%87"><span class="nav-number">1.</span> <span class="nav-text">进阶篇</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">1.1.</span> <span class="nav-text">索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#B-Tree"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">B-Tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-Tree-1"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">B+Tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-Tree-vs-B-Tree"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">B+Tree vs. B-Tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E7%B1%BB"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">分类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E4%BC%98%E5%8C%96-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-number">1.1.2.</span> <span class="nav-text">SQL优化 性能指标</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">慢查询日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#profiles"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">profiles</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#explain-%E8%AF%AD%E5%8F%A5-%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">explain +语句 执行计划</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E4%BD%BF%E7%94%A8%E8%A7%84%E5%88%99"><span class="nav-number">1.1.3.</span> <span class="nav-text">索引使用规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88%E6%83%85%E5%86%B5"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">索引失效情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A6%86%E7%9B%96%E6%9F%A5%E8%AF%A2%EF%BC%88%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%EF%BC%89"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">覆盖查询（联合索引）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">前缀索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E5%88%97or%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95"><span class="nav-number">1.1.3.4.</span> <span class="nav-text">单列or联合索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E5%88%99"><span class="nav-number">1.1.3.5.</span> <span class="nav-text">原则</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96"><span class="nav-number">1.2.</span> <span class="nav-text">SQL 优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-%E6%8F%92%E5%85%A5"><span class="nav-number">1.2.1.</span> <span class="nav-text">SQL 优化 - 插入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-%E4%B8%BB%E9%94%AE"><span class="nav-number">1.2.2.</span> <span class="nav-text">SQL 优化 - 主键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-order-by"><span class="nav-number">1.2.3.</span> <span class="nav-text">SQL 优化 - order by</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-group-by"><span class="nav-number">1.2.4.</span> <span class="nav-text">SQL 优化 - group by</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-limit"><span class="nav-number">1.2.5.</span> <span class="nav-text">SQL 优化 - limit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-count-%E4%BC%98%E5%8C%96"><span class="nav-number">1.2.6.</span> <span class="nav-text">SQL 优化 - count 优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-update-%E4%BC%98%E5%8C%96"><span class="nav-number">1.2.7.</span> <span class="nav-text">SQL 优化 - update 优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%86%E5%9B%BE%E3%80%81%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E3%80%81%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-number">1.3.</span> <span class="nav-text">视图、存储过程、触发器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">1.4.</span> <span class="nav-text">锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E9%94%81"><span class="nav-number">1.4.1.</span> <span class="nav-text">全局锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8%E7%BA%A7%E9%94%81"><span class="nav-number">1.4.2.</span> <span class="nav-text">表级锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A8%E9%94%81"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">表锁</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#S-%E5%85%B1%E4%BA%AB%E8%AF%BB%E9%94%81"><span class="nav-number">1.4.2.1.1.</span> <span class="nav-text">S 共享读锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#X-%E7%8B%AC%E5%8D%A0%E5%86%99%E9%94%81"><span class="nav-number">1.4.2.1.2.</span> <span class="nav-text">X 独占写锁</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E9%94%81"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">元数据锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%84%8F%E5%90%91%E9%94%81-%E8%A7%A3%E5%86%B3%E8%A1%8C%E9%94%81%E8%A1%A8%E9%94%81%E5%86%B2%E7%AA%81"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">意向锁 解决行锁表锁冲突</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#IX"><span class="nav-number">1.4.2.3.1.</span> <span class="nav-text">IX</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#IS"><span class="nav-number">1.4.2.3.2.</span> <span class="nav-text">IS</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.4.2.3.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A8%E9%94%81%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9F%A9%E9%98%B5"><span class="nav-number">1.4.2.4.</span> <span class="nav-text">表锁兼容性矩阵</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E7%BA%A7%E9%94%81"><span class="nav-number">1.4.3.</span> <span class="nav-text">行级锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%8C%E9%94%81"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">行锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%B4%E9%9A%99%E3%80%81%E4%B8%B4%E9%94%AE%E9%94%81"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">间隙、临键锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E7%BA%A7%E9%94%81-%E5%8A%A0%E9%94%81%E8%8C%83%E5%9B%B4%E9%AA%8C%E8%AF%81"><span class="nav-number">1.4.4.</span> <span class="nav-text">行级锁 加锁范围验证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%E7%AD%89%E5%80%BC%E6%9F%A5%E8%AF%A2-%E2%80%94%E2%80%94-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%9C%A8"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">主键等值查询 —— 数据存在</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%E7%AD%89%E5%80%BC%E6%9F%A5%E8%AF%A2-%E2%80%94%E2%80%94-%E6%95%B0%E6%8D%AE%E4%B8%8D%E5%AD%98%E5%9C%A8"><span class="nav-number">1.4.4.2.</span> <span class="nav-text">主键等值查询 —— 数据不存在</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.4.4.3.</span> <span class="nav-text">主键范围查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E7%B4%A2%E5%BC%95%E7%AD%89%E5%80%BC%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.4.4.4.</span> <span class="nav-text">普通索引等值查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E7%B4%A2%E5%BC%95%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.4.4.5.</span> <span class="nav-text">普通索引范围查询</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB"><span class="nav-number">1.5.</span> <span class="nav-text">InnoDB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84"><span class="nav-number">1.5.1.</span> <span class="nav-text">架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="nav-number">1.5.2.</span> <span class="nav-text">事务管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RedoLog-%E6%8C%81%E4%B9%85%E6%80%A7"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">RedoLog - 持久性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UndoLog-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">UndoLog - 原子性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVCC-%E9%9A%94%E7%A6%BB%E6%80%A7"><span class="nav-number">1.5.3.</span> <span class="nav-text">MVCC - 隔离性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BD%93%E5%89%8D%E8%AF%BB"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">当前读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BF%AB%E7%85%A7%E8%AF%BB"><span class="nav-number">1.5.3.2.</span> <span class="nav-text">快照读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%90%E8%97%8F%E5%AD%97%E6%AE%B5"><span class="nav-number">1.5.3.3.</span> <span class="nav-text">隐藏字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A9%E7%94%A8-UndoLog"><span class="nav-number">1.5.3.4.</span> <span class="nav-text">利用 UndoLog</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%9F%E6%88%90UndoLog"><span class="nav-number">1.5.3.4.1.</span> <span class="nav-text">生成UndoLog</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E9%93%BE"><span class="nav-number">1.5.3.4.2.</span> <span class="nav-text">版本链</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ReadView-amp-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%81%E6%80%A7%E7%AE%97%E6%B3%95"><span class="nav-number">1.5.3.5.</span> <span class="nav-text">ReadView &amp; 数据可见性算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RC-amp-RR-%E8%A7%A3%E5%86%B3%E5%B9%B6%E5%8F%91%E4%BA%8B%E5%8A%A1%E5%BC%95%E5%8F%91%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.5.3.6.</span> <span class="nav-text">RC &amp; RR 解决并发事务引发的问题</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">碎梦</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/02/MySQL%20%E8%BF%9B%E9%98%B6%E7%AF%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MySQL 进阶篇 | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL 进阶篇
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-10-02 00:00:00" itemprop="dateCreated datePublished" datetime="2024-10-02T00:00:00+08:00">2024-10-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-27 15:14:39" itemprop="dateModified" datetime="2025-04-27T15:14:39+08:00">2025-04-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="进阶篇"><a href="#进阶篇" class="headerlink" title="进阶篇"></a>进阶篇</h1><h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><h4 id="B-Tree"><a href="#B-Tree" class="headerlink" title="B-Tree"></a>B-Tree</h4><p>度数：一个节点上面最大的指针数</p>
+<p>度数为5，最多5个指针，4个key</p>
+<p>当一个节点上面key数超过4，中间节点向上分裂，其余两段分成两个节点，连到上面</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185901845-1728392950452-1.png" alt="image-20241008185901845"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185828031-1728392950452-2.png" alt="image-20241008185828031"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185947095-1728392950452-4.png" alt="image-20241008185947095"></p>
+<h4 id="B-Tree-1"><a href="#B-Tree-1" class="headerlink" title="B+Tree"></a>B+Tree</h4><p>只有叶子节点存储数据。非叶子节点只有索引的作用</p>
+<p>中间节点向上分裂，并且中间节点保留在叶子节点，其余两段分成两个节点连到上面，节点与节点之间通过链表进行连接</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191613613-1728392950452-3.png" alt="image-20241008191613613"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191730054-1728392950453-5.png" alt="image-20241008191730054"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191755751-1728392950453-7.png" alt="image-20241008191755751"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191802276-1728392950454-9.png" alt="image-20241008191802276"></p>
+<p>两个索引中间的指针指向的节点位于这两个索引之间</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008192952009-1728392950453-6.png" alt="image-20241008192952009"></p>
+<p>MySQL优化B+Tree<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008193116742-1728392950453-8.png" alt="image-20241008193116742"></p>
+<p>段-区-页-行</p>
+<h4 id="B-Tree-vs-B-Tree"><a href="#B-Tree-vs-B-Tree" class="headerlink" title="B+Tree vs. B-Tree"></a>B+Tree vs. B-Tree</h4><ul>
+<li>都比二叉树层级更少，搜索效率高</li>
+<li>B+树因为只有叶子节点能够存储数据，所以非叶子节点能够储存的key和指针数量更多，key和指针数量增多，指向的节点数目也会更多，相同数据量的情况下，需要的层数就比较少，节点数目少了，磁盘IO减少</li>
+<li>B树 因为一个节点中存储的指针数目少，所以一个节点只能指向很少的一个节点，相同数据量下需要更多的节点储存指针，层级较深</li>
+<li>B+树搜索效率很稳定（数据全在叶子节点上）相比Hash索引，支持了范围匹配和排序操作</li>
+</ul>
+<h4 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h4><p><strong>聚集索引</strong>（key是主键or唯一键or自动隐式生成的rowid）通常键的值以升序排列 底部存储一整行的数据（对应的键值）</p>
+<p><strong>二级索引</strong> 通常键的值以字典序排列 底部存储行号（聚集索引的键值 也就是主键值）</p>
+<p>select * from tb_user where name = ‘Arm’;</p>
+<p>查询时先根据<strong>二级索引</strong>找到对应的行的索引key（主键/唯一键/rowid），然后再根据聚集索引拿到行数据（回<strong>表查询</strong>）</p>
+<p>主键查询不需要回表.</p>
+<p>InnoDB主键索引的B+树高度：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241011162420695.png" alt="image-20241011162420695"></p>
+<p>根据一页数据的大小能够得出一页中能储存几个指针，树高度为2，指向1171个节点，1171个节点一共有1171*16行数据</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241011162503825.png" alt="image-20241011162503825"></p>
+<p>create index on</p>
+<p>show index from</p>
+<p>drop index on</p>
+<h3 id="SQL优化-性能指标"><a href="#SQL优化-性能指标" class="headerlink" title="SQL优化 性能指标"></a>SQL优化 性能指标</h3><h4 id="慢查询日志"><a href="#慢查询日志" class="headerlink" title="慢查询日志"></a>慢查询日志</h4><p>可以设置 <code>long_query_time</code> 参数，定义什么算作“慢查询”。</p>
+<p>输出到文件或者表中</p>
+<h4 id="profiles"><a href="#profiles" class="headerlink" title="profiles"></a>profiles</h4><p>通过启用 <code>PROFILE</code>，可以获取查询的执行时间和资源消耗，包括 CPU 使用、锁等待、IO 等信息。</p>
+<h4 id="explain-语句-执行计划"><a href="#explain-语句-执行计划" class="headerlink" title="explain +语句 执行计划"></a>explain +语句 执行计划</h4><ul>
+<li>const：主键或者唯一索引查询</li>
+<li>ref：非唯一索引查询</li>
+<li>index，all 性能差</li>
+</ul>
+<h3 id="索引使用规则"><a href="#索引使用规则" class="headerlink" title="索引使用规则"></a>索引使用规则</h3><h4 id="索引失效情况"><a href="#索引失效情况" class="headerlink" title="索引失效情况"></a>索引失效情况</h4><ol>
+<li><strong>联合索引</strong>：跳过某个，后边的全部失效，使用&gt;=否则后边的失效</li>
+<li><strong>函数</strong>：不要对索引的字段用字符串，否则失效</li>
+<li><strong>字符串要括起来</strong>：否则失效</li>
+<li><strong>模糊</strong>：前面不能模糊，否则失效</li>
+<li><strong>OR</strong>：其中一个没索引，剩下的都失效</li>
+<li><strong>数据库自行判断：</strong>如果走全表查询比走索引还快，优化器会直接走全表索引</li>
+</ol>
+<h4 id="覆盖查询（联合索引）"><a href="#覆盖查询（联合索引）" class="headerlink" title="覆盖查询（联合索引）"></a>覆盖查询（联合索引）</h4><p>覆盖查询，联合索引查到了对应的键，也能查到对应的主键值，只查这几列不需要回表，如果多查其他的列就需要到聚集索引处回表查询，性能较慢</p>
+<h4 id="前缀索引"><a href="#前缀索引" class="headerlink" title="前缀索引"></a>前缀索引</h4><p>搜索文本时对一些长字符数据没有必要把他们全部都创建索引，而只是截取一部分</p>
+<p>算出他们的选择性数据，方法：对email截取不同的长度，去重count再除以总数count</p>
+<p>前缀索引，查询字符串先截取前缀，根据前缀进行辅助查询，查到主键id就回表查询拿到整行数据，拿到整行数据以后再进行核实，看字段后半部分是否匹配。一定需要回表查询</p>
+<h4 id="单列or联合索引"><a href="#单列or联合索引" class="headerlink" title="单列or联合索引"></a>单列or联合索引</h4><p>or 其中一个没有索引，肯定全都不走索引</p>
+<p>都有索引，但是全是单列查询，则只会选择其中一个效率最高进行查询</p>
+<p>所以多条件的查询用联合索引，减少回表</p>
+<h4 id="原则"><a href="#原则" class="headerlink" title="原则"></a>原则</h4><ul>
+<li>什么样的表要建立索引：数据量超过百万，且查询很频繁</li>
+<li>哪些字段建立索引：where group by order by  并且尽量是唯一的，区分度要高</li>
+<li>尽量使用联合索引，联合索引很多时候能够覆盖索引，避免回表查询</li>
+<li>控制索引数量</li>
+<li>如果索引列不能存null，要用非空约束字段</li>
+</ul>
+<h2 id="SQL-优化"><a href="#SQL-优化" class="headerlink" title="SQL 优化"></a>SQL 优化</h2><h3 id="SQL-优化-插入"><a href="#SQL-优化-插入" class="headerlink" title="SQL 优化 - 插入"></a>SQL 优化 - 插入</h3><ol>
+<li>一条insert插入多条（insert）<ol>
+<li>手动控制事务（事务较为耗费资源）</li>
+<li>主键顺序插入</li>
+</ol>
+</li>
+<li>load</li>
+</ol>
+<h3 id="SQL-优化-主键"><a href="#SQL-优化-主键" class="headerlink" title="SQL 优化 - 主键"></a>SQL 优化 - 主键</h3><ol>
+<li>主键顺序插入</li>
+<li>主键自增</li>
+<li>主键长度尽量小一些，不要用uuid或者身份证号</li>
+<li>避免在业务操作时修改主键</li>
+</ol>
+<h3 id="SQL-优化-order-by"><a href="#SQL-优化-order-by" class="headerlink" title="SQL 优化 - order by"></a>SQL 优化 - order by</h3><ol>
+<li>多个条件，使用联合索引，最左前缀</li>
+<li>一升一降，需要额外创建独立的索引</li>
+<li>覆盖查询，不然仍回表</li>
+<li>增大sort_buffer_size(256k default)（不可避免使用filesort时，大数据量）</li>
+</ol>
+<h3 id="SQL-优化-group-by"><a href="#SQL-优化-group-by" class="headerlink" title="SQL 优化 - group by"></a>SQL 优化 - group by</h3><ol>
+<li>多个条件，使用联合索引，最左前缀，需要都出现</li>
+<li>肯定是覆盖查询，不然报错</li>
+</ol>
+<h3 id="SQL-优化-limit"><a href="#SQL-优化-limit" class="headerlink" title="SQL 优化 - limit"></a>SQL 优化 - limit</h3><ol>
+<li>覆盖索引加子查询，先覆盖查询主键，根据返回的数据进行select *  </li>
+</ol>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241015190857506.png" alt="image-20241015190857506"></p>
+<p>不支持in后加limit，就可以联合两张表查询，只返回满足id相同条件的数据</p>
+<ol>
+<li><strong>延迟关联 (INNER JOIN)</strong>: 使用 <code>INNER JOIN</code> 将分页操作转移到主键索引上，减少回表次数。相比子查询，延迟关联的性能更优，适合大数据量的分页查询。</li>
+<li><strong>覆盖索引</strong>: 通过索引直接获取所需字段，避免回表操作，减少 IO 开销，适合查询特定字段的场景。但当结果集较大时，MySQL 可能会选择全表扫描。</li>
+</ol>
+<h3 id="SQL-优化-count-优化"><a href="#SQL-优化-count-优化" class="headerlink" title="SQL 优化 - count 优化"></a>SQL 优化 - count 优化</h3><ul>
+<li><p>MyISAM：可以直接读取</p>
+</li>
+<li><p>InnoDB：只能逐行读取，只能借助Redis等</p>
+</li>
+</ul>
+<ul>
+<li><p>count(字段)会判断是否为非空，如果没有非空约束，会把每一行的字段值都取出来，服务器判断是否为null，不为null计数累加。如果有非空约束，不用判断null直接累加。如果是主键，直接累加</p>
+</li>
+<li><p>count(1) count(*) 都是遍历整张表但是不取值，按照行进行累加</p>
+</li>
+</ul>
+<h3 id="SQL-优化-update-优化"><a href="#SQL-优化-update-优化" class="headerlink" title="SQL 优化 - update 优化"></a>SQL 优化 - update 优化</h3><p>update利用了索引，行锁</p>
+<p>如果没有利用索引，就要加表锁，因为行锁是根据索引加的，而且索引不能失效</p>
+<h2 id="视图、存储过程、触发器"><a href="#视图、存储过程、触发器" class="headerlink" title="视图、存储过程、触发器"></a>视图、存储过程、触发器</h2><p>视图就是给子查询起了个名字，然后作为对象存储到数据库中</p>
+<h2 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h2><h3 id="全局锁"><a href="#全局锁" class="headerlink" title="全局锁"></a>全局锁</h3><p>整个数据库的锁，用于全库备份</p>
+<h3 id="表级锁"><a href="#表级锁" class="headerlink" title="表级锁"></a>表级锁</h3><p>释放：事务提交</p>
+<h4 id="表锁"><a href="#表锁" class="headerlink" title="表锁"></a>表锁</h4><p>特点：手动开关</p>
+<h5 id="S-共享读锁"><a href="#S-共享读锁" class="headerlink" title="S 共享读锁"></a>S 共享读锁</h5><p>​    所有事务都能读，但都不能写</p>
+<h5 id="X-独占写锁"><a href="#X-独占写锁" class="headerlink" title="X 独占写锁"></a>X 独占写锁</h5><p>​    只有当前事务能读写，其他事务都不能读写 </p>
+<h4 id="元数据锁"><a href="#元数据锁" class="headerlink" title="元数据锁"></a>元数据锁</h4><p>特点：自动</p>
+<p>执行DML, DQL语句会自动加共享SHARED READ/WRITE锁，</p>
+<p>执行DDL语句会自动加EXCLUSIVE锁，与上述的锁不兼容。</p>
+<p><strong>锁的兼容性</strong>指的是不同类型的锁在同一数据对象（如表或行）上是否可以同时存在的特性，即两个或多个事务能否同时持有某种锁类型，而不会发生冲突或阻塞。</p>
+<p>一个事务进行读操作，自动给表加上了共享读锁，另一个事务要改变表结构，此时这个事务想加上独占写的元数据锁，但是因为互相不兼容，所以只能阻塞等待直到另一个事务提交</p>
+<h4 id="意向锁-解决行锁表锁冲突"><a href="#意向锁-解决行锁表锁冲突" class="headerlink" title="意向锁 解决行锁表锁冲突"></a>意向锁 解决行锁表锁冲突</h4><p>某个事务DML加行锁，另一个事务来加表锁的时候，要逐行扫描是否有行锁才能加上，性能较低。</p>
+<p>因此引入了意向锁，DML加行锁同时对表加了意向写锁(IX)，另一个事务想加表锁，但是IX和常规的表锁不兼容，所以会阻塞等待。</p>
+<p><strong>Intention Lock</strong></p>
+<h5 id="IX"><a href="#IX" class="headerlink" title="IX"></a><u>IX</u></h5><ul>
+<li><code>insert</code>、<code>update</code>、<code>delete </code>(DML自动添加)</li>
+<li><code>select...for update</code> (表示查询加行级排他锁)</li>
+</ul>
+<h5 id="IS"><a href="#IS" class="headerlink" title="IS"></a><u>IS</u></h5><ul>
+<li><code>select ... lock in share mode</code>(表示查询加行级共享锁)</li>
+</ul>
+<p>一旦事务提交了，意向共享锁、意向排他锁，都会自动释放。</p>
+<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><p>IX：加行锁的同时会自动加IX</p>
+<p>IS：DQL后边加<code>Lock in share mode</code>表示手动加了IS</p>
+<h4 id="表锁兼容性矩阵"><a href="#表锁兼容性矩阵" class="headerlink" title="表锁兼容性矩阵"></a>表锁兼容性矩阵</h4><table>
+<thead>
+<tr>
+<th></th>
+<th>共享锁 (S)</th>
+<th>独占锁 (X)</th>
+<th>意向共享锁 (IS)</th>
+<th>意向独占锁 (IX)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>S</td>
+<td>O</td>
+<td>X</td>
+<td>O</td>
+<td>X</td>
+</tr>
+<tr>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+</tr>
+<tr>
+<td>IS</td>
+<td>O</td>
+<td>X</td>
+<td>O</td>
+<td>O</td>
+</tr>
+<tr>
+<td>IX</td>
+<td>X</td>
+<td>X</td>
+<td>O</td>
+<td>O</td>
+</tr>
+</tbody></table>
+<h3 id="行级锁"><a href="#行级锁" class="headerlink" title="行级锁"></a>行级锁</h3><p>InnoDB存储引擎，并发度高</p>
+<p>行级锁是针对索引对行加的锁，事务提交后会释放</p>
+<h4 id="行锁"><a href="#行锁" class="headerlink" title="行锁"></a>行锁</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017194645333.png" alt="image-20241017194645333"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017194802298.png" alt="image-20241017194802298"></p>
+<p>DML自动加行级排他锁，自动加表级意向排他锁(IX)</p>
+<p>DQL+<code>for update</code> 加行级排他锁，自动加IX</p>
+<p>DQL+<code>lock in share mode</code> 加共享锁，自动加IS</p>
+<p>IX 和 IS 就是行锁在表级锁中的一种呈现形式</p>
+<ul>
+<li><p>默认可重复读(RR)，使用 Next-Key 锁 进行搜索和索引扫描，防止幻读。</p>
+</li>
+<li><p>针对唯一索引进行检索，对已存在的记录等值匹配，自动优化为行锁（详见下文）</p>
+<ul>
+<li><p>当你执行以下查询时：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> email <span class="operator">=</span> <span class="string">&#x27;example@example.com&#x27;</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>数据库会使用唯一索引快速找到这条记录。</li>
+<li>然后，它会在找到的记录上加上行锁，确保其他事务无法修改或删除该行，直到当前事务提交。</li>
+<li>由于只锁定了这一行，而不是整个表，其他事务仍然可以并发读取或修改表中的其他记录。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><u>行锁是针对索引</u>加的，<strong>如果定位数据时不使用索引，</strong>如果此时加锁(除了普通的select查询都会加)那么会对表中所有记录都加上锁，此时<strong>升级为表锁</strong> </p>
+</li>
+</ul>
+<p>由于锁的兼容性，行锁会影响另一个事务的DML以及加后缀的DQL。同时也会影响普通的DQL，除非使用RU隔离级别，否则另一个事务的普通DQL也会阻塞</p>
+<h4 id="间隙、临键锁"><a href="#间隙、临键锁" class="headerlink" title="间隙、临键锁"></a>间隙、临键锁</h4><p>InnoDB 行锁是通过对索引数据页上的记录加锁实现的，MySQL InnoDB 支持三种行锁定方式：</p>
+<ul>
+<li><strong>记录锁（Record Lock）</strong>：也被称为记录锁，属于单个行记录上的锁。</li>
+<li><strong>间隙锁（Gap Lock）</strong>：锁定一个记录之前的范围，不包括记录本身。防止其他事务<strong>插入</strong>间隙，间隙锁之间可以共存</li>
+<li><strong>临键锁（Next-Key Lock）</strong>：Record Lock + Gap Lock，锁定一个范围，包含记录本身，主要目的是为了解决幻读问题（MySQL 事务部分提到过）。记录锁只能锁住已经存在的记录，为了避免插入新记录，需要依赖间隙锁。</li>
+</ul>
+<p>在 InnoDB 默认的隔离级别 <strong>REPEATABLE-READ</strong> 下，行锁默认使用的是 <strong>Next-Key Lock</strong>。但是，如果操作的索引是唯一索引或主键的等值查询，InnoDB 会对 Next-Key Lock 进行优化，将其降级为 Record Lock 或 Gap Lock。</p>
+<p><strong>省流</strong>：</p>
+<ul>
+<li><p>查找过程中访问到的才会被加锁，遍历停止时访问的那个不符合条件的行也要加锁，默认加NextKeyLock。</p>
+</li>
+<li><p><strong>唯一索引的等值查询</strong>，存在加RecordLock，不存在加右边界的GapLock</p>
+</li>
+<li><p><strong>唯一索引的范围查询</strong> 或者 <strong>普通索引的查询</strong> 这些查询包含向右遍历，如果出现<strong>唯一索引的等值查询</strong>，加对应的RecordLock，其他被遍历到的都是Next-keyLock，出现正无穷加正无穷的Next-KeyLock</p>
+</li>
+<li><p>特别地，对于 <strong>唯一索引的范围查询</strong> 或者 <strong>普通索引等值查询</strong> ，遍历停止时访问的那个不符合条件的行，这一行的NextKeyLock会退化为GapLock</p>
+</li>
+</ul>
+<h3 id="行级锁-加锁范围验证"><a href="#行级锁-加锁范围验证" class="headerlink" title="行级锁 加锁范围验证"></a>行级锁 加锁范围验证</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017215201503.png" alt="image-20241017215201503"></p>
+<p>X 对应 默认的 Next-key Lock</p>
+<p>X, REC_NOT_GAP 对应 Record Lock</p>
+<p>X, GAP 对应 Gap Lock </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> index idx_t_a <span class="keyword">on</span> t(a);</span><br><span class="line"><span class="keyword">show</span> index <span class="keyword">from</span> t;</span><br><span class="line"></span><br><span class="line"><span class="keyword">begin</span>;</span><br><span class="line"><span class="keyword">select</span> INDEX_NAME, LOCK_MODE,LOCK_STATUS,LOCK_DATA <span class="keyword">from</span> performance_schema.data_locks;</span><br><span class="line"><span class="keyword">commit</span>;</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">10</span> <span class="keyword">for</span> <span class="keyword">update</span>;  <span class="comment">-- 主键等值查询 存在</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t <span class="keyword">where</span> id <span class="operator">=</span> <span class="number">9</span> <span class="keyword">for</span> <span class="keyword">update</span>;   <span class="comment">-- 主键等值查询 不存在</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t <span class="keyword">where</span> id <span class="operator">&gt;=</span> <span class="number">15</span> <span class="keyword">for</span> <span class="keyword">update</span>; <span class="comment">-- 主键范围查询</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> t <span class="keyword">where</span> a <span class="operator">=</span> <span class="number">10</span> <span class="keyword">for</span> <span class="keyword">update</span>;   <span class="comment">-- 普通索引等值查询</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="主键等值查询-——-数据存在"><a href="#主键等值查询-——-数据存在" class="headerlink" title="主键等值查询 —— 数据存在"></a>主键等值查询 —— 数据存在</h4><p>查询 id = 10 REC_NOT_GAP</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017223439818.png" alt="image-20241017223439818"></p>
+<p>对主键等值加锁，且值存在，临键锁退化为Record，锁住10这条记录</p>
+<h4 id="主键等值查询-——-数据不存在"><a href="#主键等值查询-——-数据不存在" class="headerlink" title="主键等值查询 —— 数据不存在"></a>主键等值查询 —— 数据不存在</h4><p>查询 id = 9 GAP</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017223354241.png" alt="image-20241017223354241"></p>
+<p>对主键等值加锁，值不存在，临键锁退化为Gap，锁住了10之前的间隙</p>
+<h4 id="主键范围查询"><a href="#主键范围查询" class="headerlink" title="主键范围查询"></a>主键范围查询</h4><ol>
+<li>查找id&gt;=10 有10,11,12,15,20满足条件</li>
+</ol>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017224916640.png" alt="image-20241017224916640"></p>
+<p>10是等值查询，会退化成Record，其他都是NextKey，还有一个正无穷的NextKey</p>
+<ol start="2">
+<li>查找id在[10,15) 之间 </li>
+</ol>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017230538715.png" alt="image-20241017230538715"></p>
+<p>10是等值查询，退化Record，其他都是临键，查到15的时候不符合, 15退化为Gap</p>
+<h4 id="普通索引等值查询"><a href="#普通索引等值查询" class="headerlink" title="普通索引等值查询"></a>普通索引等值查询</h4><p>查询 a = 10 一共三条符合的记录 id = 10,11,12 </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017222539070.png" alt="image-20241017222539070"></p>
+<ul>
+<li>对于idx_t_a这个索引，加了四把锁，其中符合条件的3行都是nextKey(也就是默认的行锁)，检索到第一个不符合条件的行 （15,15）nextKey退化成GAP间隙</li>
+<li>对于主键，所有的nextKey都退化成Record Lock</li>
+</ul>
+<p>不存在：查询 a = 9 只有Gap</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017235509444.png" alt="image-20241017235509444"></p>
+<h4 id="普通索引范围查询"><a href="#普通索引范围查询" class="headerlink" title="普通索引范围查询"></a>普通索引范围查询</h4><p>查询 a &gt;= 10</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018000157308.png" alt="image-20241018000157308"></p>
+<h2 id="InnoDB"><a href="#InnoDB" class="headerlink" title="InnoDB"></a>InnoDB</h2><h3 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/Mindmap.png" alt="MindMap"></p>
+<h3 id="事务管理"><a href="#事务管理" class="headerlink" title="事务管理"></a>事务管理</h3><p>在事务开始前和结束后，数据库的状态必须一致。InnoDB 在事务提交时会检查所有约束（如外键、唯一性约束），确保数据的完整性和<strong>一致性</strong>。</p>
+<h4 id="RedoLog-持久性"><a href="#RedoLog-持久性" class="headerlink" title="RedoLog - 持久性"></a>RedoLog - 持久性</h4><ul>
+<li>产生：更新数据之后，事务提交之时</li>
+<li>销毁：数据成功刷新到磁盘之时</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029174344508-1730195209915-1.png" alt="image-20241029174344508"></p>
+<ul>
+<li><p>BufferPool中的脏页会定期刷新到磁盘中，如果写入磁盘失败，则会导致事务提交了，磁盘中的数据却没改变。</p>
+</li>
+<li><p>BufferPool首先把当次事务的<u>修改存入</u>RedoLogBuffer，RedoLogBuffer会刷新到磁盘中的RedoLogFile，然后过一段时间会将BP中的脏页刷新到磁盘中，如果写入失败，可以通过磁盘中的RedoLogFile恢复数据。</p>
+</li>
+</ul>
+<p><strong>为什么不直接刷新到磁盘中</strong>？因为磁盘随机IO太慢，而日志文件是顺序IO，快得多（Write-Ahead Logging）先写日志，再刷新，并且WAL能够防止还没有刷盘就崩溃的情况。</p>
+<p>重做日志记录的是数据页的具体变化<u>（物理修改）</u>，而不是 SQL 语句或逻辑操作，例如页的写入、删除或更新。这种方式确保了在崩溃恢复时，能够准确地重放这些操作，从而恢复数据到一致的状态。物理修改在执行时通常更高效。</p>
+<p><mark>物理日志<mark></p>
+<h4 id="UndoLog-原子性"><a href="#UndoLog-原子性" class="headerlink" title="UndoLog - 原子性"></a>UndoLog - 原子性</h4><ul>
+<li>产生：事务执行具体SQL语句时</li>
+<li>销毁：事务未提交时可以用于回滚，事务提交以后也不会立即删除，<strong>用于MVCC</strong> </li>
+</ul>
+<ul>
+<li><mark>逻辑日志<mark>，是具体的SQL语句（反向）</li>
+<li>事务Rollback时会从UndoLog读取逻辑语句并执行</li>
+</ul>
+<ul>
+<li>存储在 表空间的 rollback segment 段中</li>
+</ul>
+<p>表空间TableSpaces-&gt;段Segment-&gt;区Extent-&gt;页Page-&gt;行Row</p>
+<h3 id="MVCC-隔离性"><a href="#MVCC-隔离性" class="headerlink" title="MVCC - 隔离性"></a>MVCC - 隔离性</h3><p><strong>M</strong>ulti<strong>V</strong>ersion <strong>C</strong>oncurrency <strong>C</strong>ontrol</p>
+<h4 id="当前读"><a href="#当前读" class="headerlink" title="当前读"></a>当前读</h4><p>读取数据的当前版本（最新版本），读取时要加锁</p>
+<h4 id="快照读"><a href="#快照读" class="headerlink" title="快照读"></a>快照读</h4><p>读取的是记录数据的可见版本，不加锁</p>
+<ul>
+<li>Read Committed：每次select都生成一个快照读</li>
+<li>Repeatable Read：开启事务以后的首个select才是快照读</li>
+<li>Serializable：快照读退化为当前读</li>
+</ul>
+<p>MySQL用MVCC实现了一致性非锁定读，读操作只读该事务开始前的数据库的快照，也就是快照读（与当前读相对）</p>
+<p>事务隔离级别越低，对应的锁就越少，MySQL用MVCC减少了高并发情况下锁的数量，也就是说默认的RR对性能没有影响</p>
+<h4 id="隐藏字段"><a href="#隐藏字段" class="headerlink" title="隐藏字段"></a>隐藏字段</h4><p>TRX_ID 最后一次事务ID</p>
+<p>ROLL_PTR 指向undolog</p>
+<p>ROW_ID 如果没有主键会对每一行生成rowID</p>
+<h4 id="利用-UndoLog"><a href="#利用-UndoLog" class="headerlink" title="利用 UndoLog"></a>利用 UndoLog</h4><h5 id="生成UndoLog"><a href="#生成UndoLog" class="headerlink" title="生成UndoLog"></a>生成UndoLog</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018150130329.png" alt="image-20241018150130329"></p>
+<h5 id="版本链"><a href="#版本链" class="headerlink" title="版本链"></a>版本链</h5><p>事务对记录进行修改，会在Undolog生成对应的undo备份，事务对同一条记录进行修改，会在Undolog中生成一条版本链，链表尾部是最早的旧版本，链表头部是最新的旧版本，</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018151050435.png" alt="image-20241018151050435"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018151107149.png" alt="image-20241018151107149"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018151128340.png" alt="image-20241018151128340"></p>
+<h4 id="ReadView-amp-数据可见性算法"><a href="#ReadView-amp-数据可见性算法" class="headerlink" title="ReadView &amp; 数据可见性算法"></a>ReadView &amp; 数据可见性算法</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018161558601.png" alt="image-20241018161558601"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/trans_visible-ekj9bMvL.png" alt="trans_visible"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018205730125.png" alt="image-20241018205730125"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018161738996.png" alt="image-20241018161738996"></p>
+<h4 id="RC-amp-RR-解决并发事务引发的问题"><a href="#RC-amp-RR-解决并发事务引发的问题" class="headerlink" title="RC &amp; RR 解决并发事务引发的问题"></a>RC &amp; RR 解决并发事务引发的问题</h4><p><mark><u>1. MVCC 通过 ReadView 的数据可见性算法 只会读取其他事务已提交的信息，完全避免了脏读</u><mark> </p>
+<p><strong>RC</strong>：避免脏读（读已提交）</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018155530221.png" alt="image-20241018155530221"></p>
+<p><code>mIDs</code>包含活跃事务，<code>maxID</code>当前最大事务ID+1，<code>minID</code>最小活跃事务ID，<code>trxID</code>当前所浏览版本所属的事务ID</p>
+<ol>
+<li><code>trxID</code> =<code> create_trxID</code>  自己改的的肯定能读</li>
+<li><code>trxID </code>&gt;= <code>maxID</code> 说明事务在快照创建之后才修改的，数据没有参考价值，不能读。</li>
+<li><code>trxID </code>&lt;<code>maxID</code>说明事务在快照创建之前修改的，有参考价值，不在活跃列表中的就是已提交了</li>
+<li><code>trxID</code> &lt; <code>minID</code>  肯定不在活跃列表，读<strong>已提交</strong>。</li>
+<li><code>trxID</code>∈[<code>minID</code>,<code>maxID</code>) 说明事务在快照创建之前修改的，但不知道提交了没有。<ul>
+<li>在<code>mIDs</code>中，说明还活跃着没有提交，不能读    </li>
+<li>不在<code>mIDs</code>中，说明<strong>已提交</strong></li>
+</ul>
+</li>
+<li><code>mIDs</code>为空，可读</li>
+</ol>
+<p><code>Read View</code>在SQL执行结束后自动销毁，下次生成新的</p>
+<p><mark><a target="_blank" rel="noopener" href="https://javaguide.cn/database/mysql/innodb-implementation-of-mvcc.html#mvcc-%E8%A7%A3%E5%86%B3%E4%B8%8D%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E9%97%AE%E9%A2%98">2. MVCC 通过设置同一事务复用 ReadView 完全避免了不可重复读问题 </a><mark> </p>
+<p><strong>RR</strong>：注意——RR是可以读已提交的，RR是用来解决不可重复读的</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018155805136.png" alt="image-20241018155805136"></p>
+<p>同一个事务的<code>Read View</code>相同，后开启的事务修改肯定不会去读，只会按照同一个<code>Read View</code>读版本链</p>
+<ul>
+<li>事务5第一次读，事务3修改了但还没提交，最后选择事务2的版本，生成的<code>Read View</code>不会马上销毁</li>
+<li>事务5第二次读，复用之前的<code>Read View</code>，最重要的是记录了<strong>活跃事务列表</strong> <code>mIds</code>，即使事务3提交了，</li>
+</ul>
+<p><u><mark>3. MVCC 如何解决幻读问题？<mark></u> </p>
+<ol>
+<li>执行普通select语句，MVCC会使用快照读。RR 隔离级别只会在事务开启后的第一次查询生成 <code>Read View</code> ，并使用至事务提交。所以在生成 <code>Read View</code> 之后其它事务所做的更新、插入记录版本对当前事务并不可见，实现了可重复读和防止快照读下的 “幻读”。</li>
+<li>对于当前读，通过设置Next-Key Lock，将间隙也锁住，阻塞其他事务插入数据，防止插入，幻读也就不会出现。</li>
+</ol>
+<p>没法防止的幻读：</p>
+<p>事务A第一次查询id=5没查到，事务B此时插入了id=5并提交了，事务A为了维持可重复读第二次依然查不到5，但是此时事务A插入5会失败，update id = 5会成功，试图select for update也会成功，好像出现了幻觉，只能改变隔离模式为 Serializable </p>
+<p>MySQL 可重复读隔离级别并没有彻底解决幻读，只是很大程度上避免了幻读现象的发生，</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+              <a href="/tags/%E4%BA%8B%E5%8A%A1/" rel="tag"># 事务</a>
+              <a href="/tags/b-tree/" rel="tag"># b+ tree</a>
+              <a href="/tags/%E7%B4%A2%E5%BC%95/" rel="tag"># 索引</a>
+              <a href="/tags/sql%E4%BC%98%E5%8C%96/" rel="tag"># sql优化</a>
+              <a href="/tags/%E9%94%81/" rel="tag"># 锁</a>
+              <a href="/tags/inoodb/" rel="tag"># inoodb</a>
+              <a href="/tags/mvcc/" rel="tag"># mvcc</a>
+              <a href="/tags/%E6%97%A5%E5%BF%97/" rel="tag"># 日志</a>
+              <a href="/tags/redolog/" rel="tag"># redolog</a>
+              <a href="/tags/undolog/" rel="tag"># undolog</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/10/01/Starter%E7%9A%84%E5%AE%9E%E7%8E%B0/" rel="prev" title="自定义 starter">
+                  <i class="fa fa-angle-left"></i> 自定义 starter
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/10/03/%E5%BA%8F%E5%88%97%E5%8C%96/" rel="next" title="序列化">
+                  序列化 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">碎梦</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/scatteredream" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

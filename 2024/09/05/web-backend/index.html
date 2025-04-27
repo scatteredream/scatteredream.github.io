@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Arvo:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="HTTPHyperText Transfer Protocol  TCPIP协议四层架构的最上层 规定了服务器和浏览器之间传输数据的规则 HTTP | MDN (mozilla.org) 超文本传输协议 - 维基百科，自由的百科全书 (wikipedia.org)  特点 基于TCP，面向连接，安全 基于请求-响应模型：1Request 1Response HTTP是无状态协议，对事务处理没有记忆">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Web 后端 Java">
+<meta property="og:url" content="http://scatteredream.github.io/2024/09/05/web-backend/index.html">
+<meta property="og:site_name" content="scatteredream&#39;s blog">
+<meta property="og:description" content="HTTPHyperText Transfer Protocol  TCPIP协议四层架构的最上层 规定了服务器和浏览器之间传输数据的规则 HTTP | MDN (mozilla.org) 超文本传输协议 - 维基百科，自由的百科全书 (wikipedia.org)  特点 基于TCP，面向连接，安全 基于请求-响应模型：1Request 1Response HTTP是无状态协议，对事务处理没有记忆">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926220614547.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926221417729.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926221630980.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926222005460.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926222320894.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927151450747.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927151529348.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927162801770.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927163054997.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927174147654.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927180225035.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927181319844.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927181753064.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927181825881.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927183113407.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927183710215.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927183912074.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927184223066.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927184637027.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927192106826.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927192310996.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927192340229.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927192426370.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927195026912.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927214608765.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928140710653.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928140736371.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928142749615.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928142944677.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928143039892.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928145151848.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928175143005.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928175642020.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928180319108.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928180738621.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928180843640.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928181558853.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928182101658.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928182210315.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928182800258.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928183033816.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240919202449018-1727923726251-1.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928183538077-1727923726251-2.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928183903472-1727923726251-3.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928183924963-1727923726251-4.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928201532521.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928202227465.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928204006874.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928204020606.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928205018701.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928210309806.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928210431476.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928210448553.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928220229036.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928225946421.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928223745507.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928223916558.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928231442349.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928231455396.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241030152447734.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928234937677.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928235049041.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929000311150.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929000603427.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929000822547.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929011626311.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929121700747.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929161209624.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929161455819.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929161832460.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929192249373.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929192732304.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929210844535.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929194822398.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929200621197.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929203719660.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929204058611.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929204235548.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002150928236.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002164617150.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002164523529.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002135939524.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002164451103.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002164355800.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002164240142.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002225509824.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002230031380.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002231938685.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002234502508.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241003001119464.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241003003901994.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241003004044018.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241003005454880.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241003005659475.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241003004606856.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241003004711700.png">
+<meta property="article:published_time" content="2024-09-04T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-04-27T06:13:09.576Z">
+<meta property="article:author" content="碎梦">
+<meta property="article:tag" content="http">
+<meta property="article:tag" content="servlet">
+<meta property="article:tag" content="tomcat">
+<meta property="article:tag" content="jsp">
+<meta property="article:tag" content="mvc">
+<meta property="article:tag" content="设计模式">
+<meta property="article:tag" content="json">
+<meta property="article:tag" content="authentication">
+<meta property="article:tag" content="jwt">
+<meta property="article:tag" content="session&amp;cookie">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926220614547.png">
+
+
+<link rel="canonical" href="http://scatteredream.github.io/2024/09/05/web-backend/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2024/09/05/web-backend/","path":"2024/09/05/web-backend/","title":"Web 后端 Java"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Web 后端 Java | scatteredream's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">scatteredream's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP"><span class="nav-number">1.</span> <span class="nav-text">HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-number">1.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.2.</span> <span class="nav-text">请求数据格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%8D%E5%BA%94%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">响应数据格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E7%A0%81"><span class="nav-number">1.4.</span> <span class="nav-text">状态码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Tomcat"><span class="nav-number">2.</span> <span class="nav-text">Tomcat</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAWeb%E9%A1%B9%E7%9B%AE"><span class="nav-number">2.1.</span> <span class="nav-text">创建Web项目</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Servlet"><span class="nav-number">3.</span> <span class="nav-text">Servlet</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A5%E9%97%A8"><span class="nav-number">3.1.</span> <span class="nav-text">入门</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">3.2.</span> <span class="nav-text">生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Servlet-%E6%8E%A5%E5%8F%A3"><span class="nav-number">3.3.</span> <span class="nav-text">Servlet 接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Servlet-%E4%BD%93%E7%B3%BB"><span class="nav-number">3.4.</span> <span class="nav-text">Servlet 体系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#urlPattern"><span class="nav-number">3.5.</span> <span class="nav-text">urlPattern</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AAservlet%E5%8F%AF%E4%BB%A5%E9%85%8D%E7%BD%AE%E5%A4%9A%E4%B8%AA%E8%AE%BF%E9%97%AE%E8%B7%AF%E5%BE%84"><span class="nav-number">3.5.1.</span> <span class="nav-text">一个servlet可以配置多个访问路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%A7%84%E5%88%99"><span class="nav-number">3.5.2.</span> <span class="nav-text">配置规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#web-xml%E9%85%8D%E7%BD%AE"><span class="nav-number">3.5.3.</span> <span class="nav-text">web.xml配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Request-amp-Response"><span class="nav-number">4.</span> <span class="nav-text">Request&amp;Response</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Request"><span class="nav-number">4.1.</span> <span class="nav-text">Request</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%A7%E6%89%BF%E4%BD%93%E7%B3%BB"><span class="nav-number">4.1.1.</span> <span class="nav-text">继承体系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E8%AF%B7%E6%B1%82%E6%95%B0%E6%8D%AE"><span class="nav-number">4.1.2.</span> <span class="nav-text">获取请求数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E8%A1%8C"><span class="nav-number">4.1.2.1.</span> <span class="nav-text">请求行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E5%A4%B4"><span class="nav-number">4.1.2.2.</span> <span class="nav-text">请求头</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E4%BD%93"><span class="nav-number">4.1.2.3.</span> <span class="nav-text">请求体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%8F%82%E6%95%B0%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81"><span class="nav-number">4.1.2.4.</span> <span class="nav-text">获取参数中文乱码</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#POST"><span class="nav-number">4.1.2.4.1.</span> <span class="nav-text">POST</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#GET"><span class="nav-number">4.1.2.4.2.</span> <span class="nav-text">GET</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#URL%E7%BC%96%E7%A0%81"><span class="nav-number">4.1.2.4.3.</span> <span class="nav-text">URL编码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Forward-%E8%AF%B7%E6%B1%82%E8%BD%AC%E5%8F%91"><span class="nav-number">4.1.3.</span> <span class="nav-text">Forward 请求转发</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Response"><span class="nav-number">4.2.</span> <span class="nav-text">Response</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%93%8D%E5%BA%94%E6%95%B0%E6%8D%AE"><span class="nav-number">4.2.1.</span> <span class="nav-text">设置响应数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redirect-%E9%87%8D%E5%AE%9A%E5%90%91"><span class="nav-number">4.2.2.</span> <span class="nav-text">Redirect 重定向</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%B9%E7%82%B9%EF%BC%9A"><span class="nav-number">4.2.2.1.</span> <span class="nav-text">特点：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%AF%E5%BE%84%E9%97%AE%E9%A2%98-%E5%8A%A8%E6%80%81%E8%8E%B7%E5%8F%96%E8%99%9A%E6%8B%9F%E7%9B%AE%E5%BD%95"><span class="nav-number">4.2.2.2.</span> <span class="nav-text">路径问题 动态获取虚拟目录</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%93%8D%E5%BA%94%E6%95%B0%E6%8D%AE-1"><span class="nav-number">4.2.3.</span> <span class="nav-text">设置响应数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E6%95%B0%E6%8D%AE"><span class="nav-number">4.2.3.1.</span> <span class="nav-text">字符数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E8%8A%82%E6%95%B0%E6%8D%AE"><span class="nav-number">4.2.3.2.</span> <span class="nav-text">字节数据</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SqlSessionFactory"><span class="nav-number">4.3.</span> <span class="nav-text">SqlSessionFactory</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JSP"><span class="nav-number">5.</span> <span class="nav-text">JSP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A5%E9%97%A8-1"><span class="nav-number">5.1.</span> <span class="nav-text">入门</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JSP%E8%84%9A%E6%9C%AC"><span class="nav-number">5.1.1.</span> <span class="nav-text">JSP脚本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">5.2.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EL%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">5.3.</span> <span class="nav-text">EL表达式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSTL-%E6%A0%87%E7%AD%BE%E5%BA%93"><span class="nav-number">5.4.</span> <span class="nav-text">JSTL 标签库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#if"><span class="nav-number">5.4.1.</span> <span class="nav-text">if</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#forEach"><span class="nav-number">5.4.2.</span> <span class="nav-text">forEach</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%99%AE%E9%80%9Afor%E5%BE%AA%E7%8E%AF"><span class="nav-number">5.4.2.1.</span> <span class="nav-text">普通for循环</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Servlet-JSP%E5%BC%80%E5%8F%91"><span class="nav-number">5.5.</span> <span class="nav-text">Servlet+JSP开发</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#MVC-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">6.</span> <span class="nav-text">MVC 设计模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Cookie-amp-Session-amp-JWT"><span class="nav-number">7.</span> <span class="nav-text">Cookie&amp;Session&amp;JWT</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%9A%E8%AF%9D%E8%B7%9F%E8%B8%AA%E6%8A%80%E6%9C%AF"><span class="nav-number">7.1.</span> <span class="nav-text">会话跟踪技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cookie"><span class="nav-number">7.2.</span> <span class="nav-text">Cookie</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E9%80%81cookie"><span class="nav-number">7.2.1.</span> <span class="nav-text">发送cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96cookie"><span class="nav-number">7.2.2.</span> <span class="nav-text">获取cookie</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cookie%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-number">7.3.</span> <span class="nav-text">cookie的原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#cookie%E4%BD%BF%E7%94%A8%E7%BB%86%E8%8A%82"><span class="nav-number">7.3.1.</span> <span class="nav-text">cookie使用细节</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E6%B4%BB%E6%97%B6%E9%97%B4"><span class="nav-number">7.3.1.1.</span> <span class="nav-text">存活时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cookie%E5%AD%98%E5%82%A8%E4%B8%AD%E6%96%87"><span class="nav-number">7.3.1.2.</span> <span class="nav-text">cookie存储中文</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Session"><span class="nav-number">7.4.</span> <span class="nav-text">Session</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%BB%86%E8%8A%82"><span class="nav-number">7.4.1.</span> <span class="nav-text">使用细节</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#session-%E9%92%9D%E5%8C%96%E3%80%81%E6%B4%BB%E5%8C%96"><span class="nav-number">7.4.1.1.</span> <span class="nav-text">session 钝化、活化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#session-%E9%94%80%E6%AF%81"><span class="nav-number">7.4.1.2.</span> <span class="nav-text">session 销毁</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cookie-vs-Session"><span class="nav-number">7.5.</span> <span class="nav-text">Cookie vs. Session</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%99%BB%E5%BD%95%E7%B3%BB%E7%BB%9FDEMO"><span class="nav-number">7.5.1.</span> <span class="nav-text">登录系统DEMO:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E6%B3%A8%E5%86%8CDEMO"><span class="nav-number">7.5.2.</span> <span class="nav-text">用户注册DEMO:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Token-Json-Web-Token"><span class="nav-number">7.6.</span> <span class="nav-text">Token(Json Web Token)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#token-cookie-session"><span class="nav-number">7.6.1.</span> <span class="nav-text">token cookie session</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Cookie-1"><span class="nav-number">7.6.1.1.</span> <span class="nav-text">Cookie</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Session-1"><span class="nav-number">7.6.1.2.</span> <span class="nav-text">Session</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JsonWebToken"><span class="nav-number">7.6.1.3.</span> <span class="nav-text">JsonWebToken</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-number">7.6.1.3.1.</span> <span class="nav-text">非对称加密算法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9E%84%E6%88%90"><span class="nav-number">7.6.1.3.2.</span> <span class="nav-text">构成</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Filter-amp-Listener"><span class="nav-number">8.</span> <span class="nav-text">Filter&amp;Listener</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Filter"><span class="nav-number">8.1.</span> <span class="nav-text">Filter</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A5%E9%97%A8-2"><span class="nav-number">8.1.1.</span> <span class="nav-text">入门</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="nav-number">8.1.2.</span> <span class="nav-text">执行流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%BB%86%E8%8A%82-1"><span class="nav-number">8.1.3.</span> <span class="nav-text">使用细节</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%A6%E6%88%AA%E8%B7%AF%E5%BE%84"><span class="nav-number">8.1.3.1.</span> <span class="nav-text">拦截路径</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Filter%E9%93%BE"><span class="nav-number">8.1.3.2.</span> <span class="nav-text">Filter链</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%EF%BC%9A%E7%99%BB%E5%BD%95%E9%AA%8C%E8%AF%81%E6%89%8D%E5%8F%AF%E4%BB%A5%E8%AE%BF%E9%97%AE"><span class="nav-number">8.1.3.3.</span> <span class="nav-text">案例：登录验证才可以访问</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Listener"><span class="nav-number">8.2.</span> <span class="nav-text">Listener</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTML-CSS-JavaScript-Java-Web-%E5%89%8D%E7%AB%AF-md"><span class="nav-number">9.</span> <span class="nav-text">[HTML+CSS+JavaScript](.\Java Web 前端.md)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AJAX"><span class="nav-number">10.</span> <span class="nav-text">AJAX</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E3%80%81%E5%BC%82%E6%AD%A5"><span class="nav-number">10.1.</span> <span class="nav-text">同步、异步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">10.2.</span> <span class="nav-text">使用方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E8%AF%B7%E6%B1%82%E6%A1%88%E4%BE%8B"><span class="nav-number">10.3.</span> <span class="nav-text">异步请求案例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%AB%AF%E5%8F%91%E9%80%81%E8%AF%B7%E6%B1%82"><span class="nav-number">10.4.</span> <span class="nav-text">前端发送请求</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E5%A4%84%E7%90%86"><span class="nav-number">10.4.1.</span> <span class="nav-text">服务器端处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GET-%E5%92%8C-POST-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">10.4.2.</span> <span class="nav-text">GET 和 POST 的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87URL%E7%9A%84%E5%A1%AB%E5%86%99"><span class="nav-number">10.4.3.</span> <span class="nav-text">目标URL的填写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E6%9E%90-URL"><span class="nav-number">10.4.4.</span> <span class="nav-text">解析 URL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS-%E8%A7%A3%E6%9E%90"><span class="nav-number">10.4.5.</span> <span class="nav-text">DNS 解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B-TCP-%E8%BF%9E%E6%8E%A5"><span class="nav-number">10.4.6.</span> <span class="nav-text">建立 TCP 连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E8%AF%B7%E6%B1%82%E6%8A%A5%E6%96%87"><span class="nav-number">10.4.7.</span> <span class="nav-text">构造请求报文</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E8%AF%B7%E6%B1%82"><span class="nav-number">10.4.8.</span> <span class="nav-text">发送请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%A4%84%E7%90%86%E8%AF%B7%E6%B1%82"><span class="nav-number">10.4.9.</span> <span class="nav-text">服务器处理请求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Axios"><span class="nav-number">10.5.</span> <span class="nav-text">Axios</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JSON"><span class="nav-number">11.</span> <span class="nav-text">JSON</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JSON%E6%95%B0%E6%8D%AE%E5%92%8CJava%E5%AF%B9%E8%B1%A1%E8%BD%AC%E6%8D%A2"><span class="nav-number">11.1.</span> <span class="nav-text">JSON数据和Java对象转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%EF%BC%9A%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5"><span class="nav-number">11.2.</span> <span class="nav-text">案例：增删改查</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Vue-Servlet-%E5%BC%80%E5%8F%91"><span class="nav-number">12.</span> <span class="nav-text">Vue+Servlet 开发</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="nav-number">12.1.</span> <span class="nav-text">整体架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">12.1.1.</span> <span class="nav-text">客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">12.1.2.</span> <span class="nav-text">服务端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E4%BC%98%E5%8C%96"><span class="nav-number">12.2.</span> <span class="nav-text">服务端优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-%E4%BC%98%E5%8C%96"><span class="nav-number">12.2.1.</span> <span class="nav-text">Service 优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Service-%E6%8E%A5%E5%8F%A3%E5%AE%9A%E4%B9%89"><span class="nav-number">12.2.1.1.</span> <span class="nav-text">Service 接口定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ServiceImpl-%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0"><span class="nav-number">12.2.1.2.</span> <span class="nav-text">ServiceImpl 接口实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E7%BB%93%E6%9E%9C"><span class="nav-number">12.2.1.3.</span> <span class="nav-text">优化结果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet-%E4%BC%98%E5%8C%96"><span class="nav-number">12.2.2.</span> <span class="nav-text">Servlet 优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E5%AE%9E%E7%8E%B0%E7%B1%BB%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="nav-number">12.2.2.1.</span> <span class="nav-text">业务实现类的创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E5%8A%9F%E8%83%BD%E6%95%B4%E5%90%88"><span class="nav-number">12.2.2.2.</span> <span class="nav-text">业务功能整合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E7%BB%93%E6%9E%9C-1"><span class="nav-number">12.2.2.3.</span> <span class="nav-text">优化结果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%90%8E%E7%9A%84%E5%90%8E%E7%AB%AF%E7%BB%93%E6%9E%84"><span class="nav-number">12.2.3.</span> <span class="nav-text">优化后的后端结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%BB%86%E8%8A%82"><span class="nav-number">12.3.</span> <span class="nav-text"> 其他细节 </span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MyBatis-%E6%A8%A1%E7%B3%8A%E6%9F%A5%E8%AF%A2"><span class="nav-number">12.3.1.</span> <span class="nav-text">MyBatis 模糊查询</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#39-password-39-%E4%B8%8D%E8%A1%8C%EF%BC%9F-39-password-39-%E8%A1%8C%EF%BC%9F"><span class="nav-number">12.3.1.1.</span> <span class="nav-text">&#39;%#{password}%&#39;不行？&#39;%${password}%&#39;行？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E8%AF%A5%E6%80%8E%E4%B9%88%E7%94%A8"><span class="nav-number">12.3.1.2.</span> <span class="nav-text">应该怎么用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MyBatis-%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2"><span class="nav-number">12.3.2.</span> <span class="nav-text">MyBatis 分页查询</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8E%E7%AB%AF"><span class="nav-number">12.3.2.1.</span> <span class="nav-text">后端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%8D%E7%AB%AF%E4%BC%98%E5%8C%96"><span class="nav-number">12.3.2.2.</span> <span class="nav-text">前端优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E9%87%8D%E5%A4%8D%E7%9A%84%E9%94%AE%E2%80%94%E2%80%94%E4%BA%8B%E5%8A%A1%E5%9B%9E%E6%BB%9A"><span class="nav-number">12.3.3.</span> <span class="nav-text">插入重复的键——事务回滚</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%90%8E%E7%9A%84%E5%89%8D%E7%AB%AF%E7%BB%93%E6%9E%84"><span class="nav-number">12.3.4.</span> <span class="nav-text">优化后的前端结构</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">碎梦</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">97</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/09/05/web-backend/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Web 后端 Java | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Web 后端 Java
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-09-05 00:00:00" itemprop="dateCreated datePublished" datetime="2024-09-05T00:00:00+08:00">2024-09-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-27 14:13:09" itemprop="dateModified" datetime="2025-04-27T14:13:09+08:00">2025-04-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/web-development/" itemprop="url" rel="index"><span itemprop="name">web development</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h1><p><strong>H</strong>yper<strong>T</strong>ext <strong>T</strong>ransfer <strong>P</strong>rotocol </p>
+<p>TCPIP协议四层架构的最上层 规定了服务器和浏览器之间传输数据的规则</p>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP">HTTP | MDN (mozilla.org)</a></p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE">超文本传输协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> </p>
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li>基于TCP，面向连接，安全</li>
+<li>基于请求-响应模型：1Request 1Response</li>
+<li>HTTP是无状态协议，对事务处理没有记忆能力，每次RR都是独立的<ul>
+<li>多次请求之间不能共享数据，java用会话技术（cookie session）解决这个问题</li>
+<li>优点：速度快</li>
+</ul>
+</li>
+</ul>
+<h2 id="请求数据格式"><a href="#请求数据格式" class="headerlink" title="请求数据格式"></a><a href="#request">请求数据格式</a></h2><p><strong>请求行</strong>：第一行，<code>GET</code>(请求方式) 后面的<code>/</code>表示请求资源的路径，HTTP/1.1表示协议版本</p>
+<p><strong>请求头</strong>：第二行开始 key: value形式</p>
+<p><strong>请求体</strong>：POST请求的最后一部分，存放请求参数</p>
+<p>GET请求参数在请求行中，没有请求体，参数大小有限制(URL长度限制) POST请求的参数在请求体中，参数大小无限制</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926220614547.png" alt="image-20240926220614547"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926221417729.png" alt="image-20240926221417729"></p>
+<p><strong>Host</strong>: 请求的主机名</p>
+<p><strong>User-Agent</strong>: 浏览器版本</p>
+<p><strong>Accept</strong>: 浏览器能接受的资源类型，如text/* image/* */* </p>
+<p><strong>Accept-Language</strong>: 浏览器的偏好语言</p>
+<p><strong>Accept-Encoding</strong>: 浏览器支持的压缩类型</p>
+<h2 id="响应数据格式"><a href="#响应数据格式" class="headerlink" title="响应数据格式"></a>响应数据格式</h2><p><strong>响应行</strong>：响应数据的第一行，HTTP/1.1表示协议版本，下一个是响应状态码，OK表示状态码描述</p>
+<p><strong>响应头</strong>：keyvalue</p>
+<p><strong>响应体</strong>：最后一部分，存放响应数据</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926221630980.png" alt="image-20240926221630980"></p>
+<p><strong>Content-Type</strong>：响应内容类型，比如text/html image/jpeg</p>
+<p><strong>Content-Length</strong>：响应内容长度（bytes）</p>
+<p><strong>Content-Encoding</strong>：响应压缩算法 gzip等</p>
+<p><strong>Cache-Control</strong>: 指示客户端如何缓存，例如max-age=300 表示最多缓存300s</p>
+<h2 id="状态码"><a href="#状态码" class="headerlink" title="状态码"></a>状态码</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926222005460.png" alt="image-20240926222005460"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926222320894.png" alt="image-20240926222320894"></p>
+<p>200 OK 404资源不存在 500 服务器异常</p>
+<p>Java程序中，如果直接用自带的javawebsocketAPI 代码会变得异常繁琐，要注意请求和响应的格式要求，因此要用web服务器软件进行开发—-Tomcat</p>
+<h1 id="Tomcat"><a href="#Tomcat" class="headerlink" title="Tomcat"></a>Tomcat</h1><p>Apache Tomcat web服务器是一个应用程序，封装http协议，不用对协议进行直接操作。类似的还有jetty，weblogic，ibm webSphere，部署web项目到服务器中</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/61596145">JavaEE的13种核心技术规范： - 知乎 (zhihu.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://tomcat.apache.org/">Apache Tomcat® - Welcome!</a> </p>
+<h2 id="创建Web项目"><a href="#创建Web项目" class="headerlink" title="创建Web项目"></a>创建Web项目</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927151450747.png" alt="image-20240927151450747"></p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Web-&gt;META-INF()</span><br><span class="line">     WEB-INF -&gt;classes(java文件夹和resources文件夹合并)</span><br><span class="line">     	     -&gt;lib(依赖jar包)</span><br><span class="line">             -&gt;web.xml(web项目的配置文件)</span><br><span class="line">     webapp中除了WEB-INF的其他文件</span><br></pre></td></tr></table></figure>
+
+
+
+<p>using 骨架</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927151529348.png" alt="image-20240927151529348"></p>
+<p>packaging 默认jar 改成web项目用的war </p>
+<h1 id="Servlet"><a href="#Servlet" class="headerlink" title="Servlet"></a>Servlet</h1><p>动态资源web开发技术</p>
+<p> <img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927162801770.png" alt="image-20240927162801770"></p>
+<h2 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927163054997.png" alt="image-20240927163054997"></p>
+<p>servlet对象，service方法由web服务器tomcat创建</p>
+<p>WebServlet继承了Servlet接口</p>
+<h2 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927174147654.png" alt="image-20240927174147654"></p>
+<ol>
+<li>默认情况 servlet对象第一次被访问就被创建，通过改变loadOnStartup参数可以改变优先级</li>
+<li>容器（tomcat）通过init方法初始化对象，只需要调用一次</li>
+<li>每次请求servlet 容器都会调用servlet的service方法</li>
+</ol>
+<h2 id="Servlet-接口"><a href="#Servlet-接口" class="headerlink" title="Servlet 接口"></a>Servlet 接口</h2><p>定义了五个抽象方法：</p>
+<ol>
+<li><p><code>init(ServletConfig conf)</code>：默认情况下，servlet第一次被访问，容器创建servlet对象时，会调用init，只调用一次。改变WebServlet注解的参数loadOnStartup，可以控制在创建服务器的时候就创建servlet对象。</p>
+</li>
+<li><p><code>service(ServletRequest req,ServletResponse res)</code>: 每一次访问servlet就调用一次</p>
+</li>
+<li><p><code>destroy()</code>: 内存释放、服务器关闭时调用，只有一次</p>
+</li>
+<li><p><code>ServletConfig getServletConfig()</code>: servletconfig是容器调用init方法传进来的参数,可以在demo类中声明一个config成员变量，在init中赋值，然后在getConfig方法中返回</p>
+</li>
+<li><p><code>String getServletInfo() </code>: copyright information</p>
+</li>
+</ol>
+<h2 id="Servlet-体系"><a href="#Servlet-体系" class="headerlink" title="Servlet 体系"></a>Servlet 体系</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927180225035.png" alt="image-20240927180225035"></p>
+<p>Http doGet doPost</p>
+<p>根据请求方式的不同分别处理，因为get的参数在请求行中，post的参数在请求体中。</p>
+<p>httpservlet是servlet的实现类，实际上把service方法重写，接收请求参数req，如果req中是get方式，就执行doGet，如果是post就执行doPost  子类只需要重写doGetdoPost方法即可</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927181319844.png" alt="image-20240927181319844"></p>
+<p>源码分析：原来的service方法重载，参数变成httpservletrequest和httpservletresponse ，原版的请求参数传进来，强制转换成httpservletrequest，然后吊用自己写好的重载service方法</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927181753064.png" alt="image-20240927181753064"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927181825881.png" alt="image-20240927181825881"></p>
+<h2 id="urlPattern"><a href="#urlPattern" class="headerlink" title="urlPattern"></a>urlPattern</h2><h3 id="一个servlet可以配置多个访问路径"><a href="#一个servlet可以配置多个访问路径" class="headerlink" title="一个servlet可以配置多个访问路径"></a>一个servlet可以配置多个访问路径</h3><p>urlPatterns = {“”,””}</p>
+<h3 id="配置规则"><a href="#配置规则" class="headerlink" title="配置规则"></a>配置规则</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927183113407.png" alt="image-20240927183113407"></p>
+<ol>
+<li>精确匹配 （优先级比目录匹配高）</li>
+<li>目录匹配，通配符</li>
+<li>扩展名匹配，<code>*.do</code> <code>aaa.do bbb.do</code>都可以访问，注意不能有斜杠</li>
+<li>任意匹配，<code>/</code>优先级低于<code>/*</code><ul>
+<li>/是tomcat默认生成的一个servlet，启动以后自动创建，是用来访问静态资源的</li>
+<li>很危险，不要用</li>
+</ul>
+</li>
+</ol>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927183710215.png" alt="image-20240927183710215"></p>
+<h3 id="web-xml配置"><a href="#web-xml配置" class="headerlink" title="web.xml配置"></a>web.xml配置</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927183912074.png" alt="image-20240927183912074"></p>
+<h1 id="Request-amp-Response"><a href="#Request-amp-Response" class="headerlink" title="Request&amp;Response"></a>Request&amp;Response</h1><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927184223066.png" alt="image-20240927184223066"></p>
+<p>request 获取请求数据</p>
+<p>response 设置响应时的数据</p>
+<p>request中含有用户输入的参数，response可以根据这个参数设置响应的数据，这样就完成了和用户交互的基本过程</p>
+<h2 id="Request"><a href="#Request" class="headerlink" title="Request"></a>Request</h2><h3 id="继承体系"><a href="#继承体系" class="headerlink" title="继承体系"></a>继承体系</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927184637027.png" alt="image-20240927184637027"></p>
+<p>ServletRequest和HttpServletRequest都是接口，不能实例化，定义了一些抽象方法作为规范。</p>
+<p>我们的 servlet 重写了 service()方法的方法体，浏览器访问时，tomcat就要调用servlet的service方法。tomcat作为servlet容器，<strong>要解析请求报文，将其封装成req对象</strong>，送到servlet的service方法处作为参数。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//这是tomcat的程序</span></span><br><span class="line"><span class="comment">//tomcat做的是解析报文封装请求的操作，具体如何利用请求做出什么样的响应，则是开发者的工作</span></span><br><span class="line"><span class="type">MyServlet</span> <span class="variable">myServlet</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyServlet</span>();</span><br><span class="line">myServlet.init()<span class="comment">//开发者重写</span></span><br><span class="line">myServlet.service(req,res)<span class="comment">//开发者重写</span></span><br></pre></td></tr></table></figure>
+
+<p>所以Tomcat对接口进行了实现，查J2EE API</p>
+<h3 id="获取请求数据"><a href="#获取请求数据" class="headerlink" title="获取请求数据"></a>获取请求数据</h3><h4 id="请求行"><a href="#请求行" class="headerlink" title="请求行"></a>请求行</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927192106826.png" alt="image-20240927192106826"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927192310996.png" alt="image-20240927192310996"></p>
+<h4 id="请求头"><a href="#请求头" class="headerlink" title="请求头"></a>请求头</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927192340229.png" alt="image-20240927192340229"></p>
+<p>getHeader根据name来获取对应的信息</p>
+<p>getHeader(“User-Agent”) 输出Mozilla/5.0 Chrome/91.0.4472.106</p>
+<h4 id="请求体"><a href="#请求体" class="headerlink" title="请求体"></a>请求体</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927192426370.png" alt="image-20240927192426370"></p>
+<p>统一获取请求参数的方式？从而统一doGet和doPost方法内的代码</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927195026912.png" alt="image-20240927195026912"></p>
+<p>getParameterMap 获取参数map 结构如上</p>
+<p>getParameter 根据名称获取参数值</p>
+<p>getParameterValues 根据名称获取参数值</p>
+<h4 id="获取参数中文乱码"><a href="#获取参数中文乱码" class="headerlink" title="获取参数中文乱码"></a>获取参数中文乱码</h4><h5 id="POST"><a href="#POST" class="headerlink" title="POST"></a>POST</h5><p>设置输入流的字符集</p>
+<p>底层是获取字符输入流BufferReader，所以<code>setCharacterEncoding(&quot;UTF-8&quot;)</code></p>
+<h5 id="GET"><a href="#GET" class="headerlink" title="GET"></a>GET</h5><p>底层是字符串形式</p>
+<p>浏览器发出请求的时候，会把中文字符转成URL编码，tomcat需要进行URL解码</p>
+<h5 id="URL编码"><a href="#URL编码" class="headerlink" title="URL编码"></a>URL编码</h5><p>字符串按照编码方式转为二进制，每个字节转换为两个十六进制数，在前面加上%                                            </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240927214608765.png" alt="image-20240927214608765"></p>
+<p>Tomcat底层将URL编码 解码为ISO-8859-1</p>
+<h3 id="Forward-请求转发"><a href="#Forward-请求转发" class="headerlink" title="Forward 请求转发"></a>Forward 请求转发</h3><p>服务器内部资源跳转方式，转发的资源之间共享数据</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928140710653.png" alt="image-20240928140710653"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928140736371.png" alt="image-20240928140736371"></p>
+<p>请求内部有参数（map形式），来源URL等信息</p>
+<ul>
+<li><code>setAttribute(String name, Object o)</code>把数据o 存到request域中，以key为键    </li>
+<li><code>removeAttribute(String name)</code> 根据key删除键值对</li>
+<li><code>Object getAttribute(String name)</code>根据key获取数据</li>
+</ul>
+<ul>
+<li>地址栏路径不发生变化；</li>
+<li>只能转发到服务器内部的资源；</li>
+<li>浏览器发送一次请求，多个资源共享request数据</li>
+<li>高效率</li>
+</ul>
+<h2 id="Response"><a href="#Response" class="headerlink" title="Response"></a>Response</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928142749615.png" alt="image-20240928142749615"></p>
+<h3 id="设置响应数据"><a href="#设置响应数据" class="headerlink" title="设置响应数据"></a>设置响应数据</h3><ol>
+<li>响应行：设置状态码</li>
+<li>响应头：设置键值对</li>
+<li>响应体：通过输出流输出数据</li>
+</ol>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928142944677.png" alt="image-20240928142944677"></p>
+<h3 id="Redirect-重定向"><a href="#Redirect-重定向" class="headerlink" title="Redirect 重定向"></a>Redirect 重定向</h3><p>资源跳转方式</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928143039892.png" alt="image-20240928143039892"></p>
+<p>状态码 <strong>302</strong> 响应头：location: 虚拟目录/demo6</p>
+<p><code>sendRedirect(String url)</code>发送重定向响应</p>
+<p><code>setStatus(302)</code> </p>
+<p><code>setHeader(&quot;location&quot;,&quot;https://www.google.com&quot;)</code> </p>
+<p><code>setHeader(&quot;Content-type&quot;,&quot;text/html&quot;)</code> </p>
+<h4 id="特点："><a href="#特点：" class="headerlink" title="特点："></a>特点：</h4><ul>
+<li>地址栏路径发生变化；</li>
+<li>转发任意资源；</li>
+<li>浏览器发送两次请求，不能在多个资源用request共享数据</li>
+<li>效率低</li>
+</ul>
+<h4 id="路径问题-动态获取虚拟目录"><a href="#路径问题-动态获取虚拟目录" class="headerlink" title="路径问题 动态获取虚拟目录"></a>路径问题 动态获取虚拟目录</h4><p>如果浏览器使用，需要加虚拟目录</p>
+<p>服务端使用就不需要加了</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928145151848.png" alt="image-20240928145151848"></p>
+<p>虚拟目录可以动态变化，所以尽量减少硬编码，减少耦合性</p>
+<p>可以用<code>request</code>的<code>getContextPath()</code> 获取虚拟目录</p>
+<h3 id="设置响应数据-1"><a href="#设置响应数据-1" class="headerlink" title="设置响应数据"></a>设置响应数据</h3><h4 id="字符数据"><a href="#字符数据" class="headerlink" title="字符数据"></a>字符数据</h4><p><code>getWriter().write(String s) </code>写入数据到资源中</p>
+<p><code>setContentType(&quot;text/html;charset=utf-8&quot;)</code>   </p>
+<p>细节：不用关闭流</p>
+<p>乱码可以用响应头设置编码，tomcat8不乱码</p>
+<h4 id="字节数据"><a href="#字节数据" class="headerlink" title="字节数据"></a>字节数据</h4><p>ServletOutputStream = request.getOutputStream()</p>
+<h2 id="SqlSessionFactory"><a href="#SqlSessionFactory" class="headerlink" title="SqlSessionFactory"></a>SqlSessionFactory</h2><p>用来创建与数据库的连接会话,只需要一个即可，所以运用单例的设计模式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SqlSessionFactoryUtils</span>&#123;</span><br><span class="line">    SqlSessionFactory factory;</span><br><span class="line">    <span class="keyword">static</span>&#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">resource</span> <span class="operator">=</span> <span class="string">&quot;mybatis-config.xml&quot;</span>;</span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> Resources.getResourceAsStream(resource);</span><br><span class="line">        <span class="type">SqlSessionFactory</span> <span class="variable">sqlSessionFactory</span> <span class="operator">=</span></span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">SqlSessionFactoryBuilder</span>().build(inputStream);</span><br><span class="line">    &#125;</span><br><span class="line">    SqlSessionFactory <span class="title function_">getSqlSessionFactory</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> factory;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="JSP"><a href="#JSP" class="headerlink" title="JSP"></a>JSP</h1><h2 id="入门-1"><a href="#入门-1" class="headerlink" title="入门"></a>入门</h2><p>Java Server Pages 静态的页面嵌入动态的代码 简化开发</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928175143005.png" alt="image-20240928175143005"></p>
+<p>JSP本质是servlet，把写标签等繁琐的工作交给jsp技术</p>
+<h3 id="JSP脚本"><a href="#JSP脚本" class="headerlink" title="JSP脚本"></a>JSP脚本</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928175642020.png" alt="image-20240928175642020"></p>
+<ol>
+<li><p>service方法是访问到这个资源的时候调用</p>
+</li>
+<li><p>out.print() 是printWriter 调用的</p>
+</li>
+<li><p>被生成的jsp类直接包含</p>
+</li>
+</ol>
+<p>截断java代码，中间插入html标签是可以的</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928180319108.png" alt="image-20240928180319108"></p>
+<p>出现HTML标签的地方可以理解为java程序代替你输入这些标签，最简单的字面意义上的代替功能，因此截断也没什么关系</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928180738621.png" alt="image-20240928180738621"></p>
+<h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928180843640.png" alt="image-20240928180843640"></p>
+<h2 id="EL表达式"><a href="#EL表达式" class="headerlink" title="EL表达式"></a>EL表达式</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928181558853.png" alt="image-20240928181558853"></p>
+<h2 id="JSTL-标签库"><a href="#JSTL-标签库" class="headerlink" title="JSTL 标签库"></a>JSTL 标签库</h2><p><mark><strong>#{}</strong><mark></p>
+<h3 id="if"><a href="#if" class="headerlink" title="if"></a>if</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928182101658.png" alt="image-20240928182101658"></p>
+<h3 id="forEach"><a href="#forEach" class="headerlink" title="forEach"></a>forEach</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928182210315.png" alt="image-20240928182210315"></p>
+<p>brand.id 不是访问成员变量，是要调用get方法</p>
+<p>自动调用getId()</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928182800258.png" alt="image-20240928182800258"></p>
+<p>varStatus 计数器</p>
+<p>status.count是计数从1开始，status.index是从1开始</p>
+<h4 id="普通for循环"><a href="#普通for循环" class="headerlink" title="普通for循环"></a>普通for循环</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928183033816.png" alt="image-20240928183033816"></p>
+<p>Java虚拟机负责存储变量信息，jsp只负责展示与变量相关的信息，因此不用重启服务器，</p>
+<h2 id="Servlet-JSP开发"><a href="#Servlet-JSP开发" class="headerlink" title="Servlet+JSP开发"></a>Servlet+JSP开发</h2><p><strong>业务逻辑层</strong>本质上是对dao层的封装，包括创建session，创建mapper，mapper调用dao方法，事务等。</p>
+<p>每个servlet都是资源，浏览器能够通过网址或者表单的形式发出请求，servlet根据request的参数进行一系列业务逻辑操作，将返回的结果转发给jsp页面。</p>
+<p>jsp本质也是一个servlet，将请求中的参数打印出来的同时还能生成html标签，浏览器就能通过html标签解析出网页。</p>
+<p>在修改页面改了一个数据，提交表单到updateServlet，updateServlet进行业务操作，完成后，把包含参数的请求转发到 浏览所有数据 的showAll.jsp页面，jsp本质是servlet，负责打印标签和数据。</p>
+<h1 id="MVC-设计模式"><a href="#MVC-设计模式" class="headerlink" title="MVC 设计模式"></a>MVC 设计模式</h1><p><strong>Model</strong>：接受Controller发出的指令，与数据库交互，增删改查，返回数据给Controller</p>
+<p><strong>View</strong>：接受Controller发出的数据（Model给的）渲染页面，返回HTML页面给Controller</p>
+<p><strong>Controller</strong>：接受客户端的数据请求，返回给客户端HTML页面，同时与model和view交流，充当Model和View之间的桥梁。</p>
+<p>Model和View之间一个是处理数据，一个是呈现数据，二者可以专注于各自的事情</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240919202449018-1727923726251-1.png" alt="image-20240919202449018"></p>
+<p>Servlet controller </p>
+<p>JSP View </p>
+<p>JavaBean Model </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928183538077-1727923726251-2.png" alt="image-20240928183538077"></p>
+<p>三层架构</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928183903472-1727923726251-3.png" alt="image-20240928183903472"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928183924963-1727923726251-4.png" alt="image-20240928183924963"></p>
+<h1 id="Cookie-amp-Session-amp-JWT"><a href="#Cookie-amp-Session-amp-JWT" class="headerlink" title="Cookie&amp;Session&amp;JWT"></a>Cookie&amp;Session&amp;JWT</h1><h2 id="会话跟踪技术"><a href="#会话跟踪技术" class="headerlink" title="会话跟踪技术"></a>会话跟踪技术</h2><p>浏览器打开一个网站就是会话建立的过程，其中可以<strong>包含多次请求和响应</strong>，服务段需要区分不同的会话，判断多次请求是否来自统一浏览器，以便在同一次会话的<strong>多次请求之间，共享数据。</strong></p>
+<p><strong>HTTP协议是无状态</strong>的，为了最佳的请求响应效率，牺牲了存储记忆数据的功能，每次请求都被视作新的请求，因此要跟踪回话实现会话内数据共享。</p>
+<p>本质是将数据存储在一端</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928201532521.png" alt="image-20240928201532521"></p>
+<p>客户端：<strong>Cookie</strong> </p>
+<p>服务端：<strong>Session</strong> </p>
+<h2 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h2><p>客户端的会话技术，保存数据到客户端，每次请求都携带cookie数据进行访问。客户端的记忆</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928202227465.png" alt="image-20240928202227465"></p>
+<p>响应的时候setcookie，请求的时候带着cookie</p>
+<h3 id="发送cookie"><a href="#发送cookie" class="headerlink" title="发送cookie"></a>发送cookie</h3><p>创建Cookie，设置键值对</p>
+<p>response调用addCookie方法发送cookie</p>
+<h3 id="获取cookie"><a href="#获取cookie" class="headerlink" title="获取cookie"></a>获取cookie</h3><p>request对象调用getCookies 接收cookies</p>
+<p>for循环遍历，getName和getValue</p>
+<h2 id="cookie的原理"><a href="#cookie的原理" class="headerlink" title="cookie的原理"></a>cookie的原理</h2><p><strong>基于HTTP协议</strong></p>
+<p>响应的时候，做好cookie传回去，<strong>响应头</strong>setCookie:username=zs</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928204006874.png" alt="image-20240928204006874"></p>
+<p>浏览器再次请求的时候，<strong>请求头</strong>中cookie:username=zs</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928204020606.png" alt="image-20240928204020606"></p>
+<h3 id="cookie使用细节"><a href="#cookie使用细节" class="headerlink" title="cookie使用细节"></a>cookie使用细节</h3><h4 id="存活时间"><a href="#存活时间" class="headerlink" title="存活时间"></a>存活时间</h4><p><strong>默认</strong>存储在浏览器内存中，关闭浏览器会释放内存，销毁cookie</p>
+<p>setMaxAge(int seconds) 正数：写入浏览器硬盘，到时间自动删除；负数：写入内存，自动销毁；零：删除对应cookie</p>
+<p>30天内免登录</p>
+<p>cookie是键值对 </p>
+<h4 id="cookie存储中文"><a href="#cookie存储中文" class="headerlink" title="cookie存储中文"></a>cookie存储中文</h4><p>可以把字符串用URL编码</p>
+<h2 id="Session"><a href="#Session" class="headerlink" title="Session"></a>Session</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928205018701.png" alt="image-20240928205018701"></p>
+<p>服务端的记忆功能</p>
+<p>request.getSession();</p>
+<p>set Attribute 存到session域中</p>
+<p>get Attribute</p>
+<p>session是键值对集合，存储在服务器</p>
+<p><strong>Session基于Cookie实现</strong> </p>
+<p>如何保证多个浏览器不是同一个session？发送一个sessionID的cookie，作为唯一标识，浏览器请求的时候会带着cookie。响应的时候创建一个session，把浏览器唯一对应的session对象id作为cookie发过去，再次请求的时候带着sessionid作为cookie就能找到对应的session对象去存储</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928210309806.png" alt="image-20240928210309806"></p>
+<p>识别sessionid如果已经创建过了就不再创建</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928210431476.png" alt="image-20240928210431476"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928210448553.png" alt="image-20240928210448553"></p>
+<h3 id="使用细节"><a href="#使用细节" class="headerlink" title="使用细节"></a>使用细节</h3><h4 id="session-钝化、活化"><a href="#session-钝化、活化" class="headerlink" title="session 钝化、活化"></a>session 钝化、活化</h4><p>钝化：服务器正常关闭，tomcat自动把session存到硬盘</p>
+<p>活化：服务器开启，从session文件读取</p>
+<p>浏览器关闭后中断会话，session不是同一个</p>
+<h4 id="session-销毁"><a href="#session-销毁" class="headerlink" title="session 销毁"></a>session 销毁</h4><ul>
+<li>自动销毁web.xml sessionconfig 时间默认为30分钟</li>
+<li>手动销毁：登出</li>
+</ul>
+<h2 id="Cookie-vs-Session"><a href="#Cookie-vs-Session" class="headerlink" title="Cookie vs. Session"></a>Cookie vs. Session</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928220229036.png" alt="image-20240928220229036"></p>
+<p>安全性，长期存储</p>
+<p>cookie保证用户在未登录情况下的身份识别</p>
+<p>session存储用户登录以后的</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928225946421.png" alt="image-20240928225946421"></p>
+<h3 id="登录系统DEMO"><a href="#登录系统DEMO" class="headerlink" title="登录系统DEMO:"></a>登录系统DEMO:</h3><p>login.jsp页面</p>
+<p>登录成功存储用户信息，并且要重定向到另一个brand.jsp页面，两次会话共享信息，考虑安全性，session</p>
+<p>登录失败，转发回登录页面，把错误 信息加进request域中，jsp登录页面显示的是错误信息</p>
+<p>记住用户登录信息：登录成功并且勾选了复选框（发送复选框的value参数，Object.equals或是”1”.equals（remember））创建username和password的cookie并发送到浏览器。修改login.jsp：拿到请求中的cookies，分别把响应的数据填到页面的username和password中。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928223745507.png" alt="image-20240928223745507"></p>
+<h3 id="用户注册DEMO"><a href="#用户注册DEMO" class="headerlink" title="用户注册DEMO:"></a>用户注册DEMO:</h3><p>reg.jsp </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928223916558.png" alt="image-20240928223916558"></p>
+<p>if(布尔表达式){</p>
+<p>}</p>
+<p>return 布尔表达式</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928231442349.png" alt="image-20240928231442349"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928231455396.png" alt="image-20240928231455396"></p>
+<p>展示验证码：servlet输出的验证码作为img src显示在HTML静态页面上，写js脚本把点击事件设置成重新请求一次，每次请求的路径不同 (?号后面加时间)，防止浏览器缓存</p>
+<p>生成验证码和提交注册表单一共需要两次请求，是不同的servlet在处理，所以服务器要在生成的时候将验证码存到session中，提交注册表单的时候再次从session中访问数据看是否一致。存到cookie中会直接被抓取然后攻击，失去了验证码的功能</p>
+<p>if else if直接return就不用else了</p>
+<p>checkcodeServlet 生成code，输出到自己的输出流中  </p>
+<h2 id="Token-Json-Web-Token"><a href="#Token-Json-Web-Token" class="headerlink" title="Token(Json Web Token)"></a>Token(<u>J</u>son <u>W</u>eb <u>T</u>oken)</h2><p><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/995894#comment">JWT详细讲解(保姆级教程)-阿里云开发者社区 (aliyun.com)</a></p>
+<h3 id="token-cookie-session"><a href="#token-cookie-session" class="headerlink" title="token cookie session"></a>token cookie session</h3><h4 id="Cookie-1"><a href="#Cookie-1" class="headerlink" title="Cookie"></a>Cookie</h4><p>本质是键值对，客户端发起请求，服务端响应会把包含着用户信息的set-cookie 加入响应头，客户端收到set-cookie，下次发送请求，请求头中会带着包含相同内容的cookie，服务端只需要根据cookie响应对应用户的资源。</p>
+<p>局限：数据直接存放在浏览器端内存，安全性差，</p>
+<p>优化：把set-cookie内容除了正常的cookie内容再加一段报文鉴别码，使用服务器自己的私钥进行签名，</p>
+<p>优点：存储期限长</p>
+<h4 id="Session-1"><a href="#Session-1" class="headerlink" title="Session"></a>Session</h4><p>以cookie为基础，本质是一个对象，每个session可以通过唯一的sessionID进行访问，客户端发起请求，服务端会把包含着sessionID信息的set-cookie响应给客户端，客户端下次发送请求，请求头中会带着包含着sessionID信息的cookie，服务端根据sessionID找到对应的session，响应对应用户的资源</p>
+<p>优点：数据完全存储在服务端内存，安全性很高，</p>
+<p>缺点：</p>
+<p>最重要的是，session只支持单体服务器，session拷贝效率低，</p>
+<p>默认不支持跨域名，但是不同域名可能是会共享用户信息的，</p>
+<p>因此在集群部署，分布式应用，前后端分离的背景下，session已经不再适用</p>
+<h4 id="JsonWebToken"><a href="#JsonWebToken" class="headerlink" title="JsonWebToken"></a>JsonWebToken</h4><p>base64: 将原来的字符串二进制化，然后重新分成每6位一组，6位对应有64个索引，分别对应0-9和所有大小写英文字母</p>
+<p>用户信息保存在浏览器端内存，本质就是一条加密字符串。</p>
+<h5 id="非对称加密算法"><a href="#非对称加密算法" class="headerlink" title="非对称加密算法"></a>非对称加密算法</h5><p>RSA—单向陷门函数：加密数字5，公钥是7,33 ，<strong>5</strong>^7^ mod 33 = <mark>14<mark>，解密使用公钥，x^7^ mod 33 = <mark>14<mark> 的数字有无数个，也就无法推算出具体的x，只能穷举。如果有了私钥3,33，<mark>14<mark>^3^ mod 33 = <strong>5</strong> 很容易就能算出原数字5</p>
+<p>加密和解密都用同一种算法，但不是逆向。</p>
+<p><strong>签名算法：</strong> </p>
+<p>HS256：$A+H(A,K)$ 签发和验证都使用同一个密钥，只适用于单体应用。H表示密钥拼接在报文后进行哈希。S表示SHA256</p>
+<p>RS256, ES256：$A+D(H(A))$ 签发用私钥，验证用公钥，适合分布式架构，安全性更高。R,E分别表示RSA与ECDSA，S表示SHA256。</p>
+<h5 id="构成"><a href="#构成" class="headerlink" title="构成"></a>构成</h5><p>header(base64-encoded).payload(base64-encoded).signature(HMACSHA256-encoded)</p>
+<ul>
+<li>header 用于定义token类型以及加密算法（非对称），用base64编码，相当于明文</li>
+<li>payload 用于装载要传输的用户数据，用base64编码，相当于明文<ul>
+<li>附加一些预定义声明</li>
+<li>iss: 签发者issuer</li>
+<li>sub: jwt所面向的用户subject</li>
+<li>aud: 接收jwt的一方audience</li>
+<li>iat: jwt的签发时间 issued at</li>
+<li>exp: jwt的过期时间，必须大于签发时间  expire</li>
+<li>nbf: 定义在什么时间之前，该jwt都是不可用的. not valid before</li>
+<li>jti: jwt的唯一身份标识，主要用来作为一次性token,从而回避重放攻击 jwtid</li>
+</ul>
+</li>
+</ul>
+<p><code>注意:对于已签名的Token，这些信息虽然受到保护，不会被篡改，但任何人都可以阅读。除非加密，否则不要将机密信息放在 JWT 的有效负载或头元素中。</code> </p>
+<ul>
+<li>signature = HS256…(header(base64)+payload(base64)+secret)私钥 ，用header指定的算法进行加密，鉴权核心</li>
+</ul>
+<p>用户请求通过鉴权成功，<strong>服务端通过私钥签发JWT字符串</strong>，通过响应返回给用户，用户后续请求会在请求头中添加一个authorization:token的键值对。</p>
+<p>再次请求，鉴权成功，然后将JWT根据secret进行解密，验证此JWT是否有效。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241030152447734.png" alt="image-20241030152447734"></p>
+<p>假如其他人偶然间拿到了JWT，然后篡改JWT，服务器拿私钥解密JWT，会发现信息被篡改。</p>
+<h1 id="Filter-amp-Listener"><a href="#Filter-amp-Listener" class="headerlink" title="Filter&amp;Listener"></a>Filter&amp;Listener</h1><h2 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h2><p>拦截资源请求</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928234937677.png" alt="image-20240928234937677"></p>
+<h3 id="入门-2"><a href="#入门-2" class="headerlink" title="入门"></a>入门</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240928235049041.png" alt="image-20240928235049041"></p>
+<h3 id="执行流程"><a href="#执行流程" class="headerlink" title="执行流程"></a>执行流程</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929000311150.png" alt="image-20240929000311150"></p>
+<p>先访问完资源，然后执行放行后的逻辑</p>
+<p>放行前对request进行处理，放行后对response进行处理</p>
+<h3 id="使用细节-1"><a href="#使用细节-1" class="headerlink" title="使用细节"></a>使用细节</h3><h4 id="拦截路径"><a href="#拦截路径" class="headerlink" title="拦截路径"></a>拦截路径</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929000603427.png" alt="image-20240929000603427"></p>
+<p>拦截的是具体的资源，不是说filter访问哪个路径</p>
+<h4 id="Filter链"><a href="#Filter链" class="headerlink" title="Filter链"></a>Filter链</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929000822547.png" alt="image-20240929000822547"></p>
+<p>执行顺序：类名字符串自然排序</p>
+<h4 id="案例：登录验证才可以访问"><a href="#案例：登录验证才可以访问" class="headerlink" title="案例：登录验证才可以访问"></a>案例：登录验证才可以访问</h4><p>第一次请求，没有登录，跳转到登录页面</p>
+<p>filter要看是否登录，登录成功就把username pswd存到客户端session中，下一次请求的时候就验证session是否有值，没有值就继续</p>
+<p>从服务端获取用户的session，session存储登录密码，如果session</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929011626311.png" alt="image-20240929011626311"></p>
+<p>针对某个资源设置filter，第一次访问被拒绝，<strong>转发</strong>到login页面，此时网址不会变化，就会把这个资源的网址缓存成login页面的样式，login成功以后如果再次访问这个资源，会展示login页面，只有刷新一下才能解决这个问题</p>
+<h2 id="Listener"><a href="#Listener" class="headerlink" title="Listener"></a>Listener</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929121700747.png" alt="image-20240929121700747"></p>
+<h1 id="HTML-CSS-JavaScript-Java-Web-前端-md"><a href="#HTML-CSS-JavaScript-Java-Web-前端-md" class="headerlink" title="[HTML+CSS+JavaScript](.\Java Web 前端.md)"></a>[HTML+CSS+JavaScript](.\Java Web 前端.md)</h1><h1 id="AJAX"><a href="#AJAX" class="headerlink" title="AJAX"></a><span id=ajax>AJAX</span></h1><p>异步JS和XML <strong>A</strong>synchronous <strong>J</strong>avaScript <strong>A</strong>nd <strong>X</strong>ML </p>
+<p><strong>AJAX作用1：与服务器交换数据，前后端分离</strong></p>
+<ul>
+<li>Servlet+JSP开发：HTML是静态的，要想展示动态的数据必须要让servlet根据请求中的参数来手动打印页面（JSP），服务端负担较重</li>
+<li>AJAX+HTML: 替换JSP页面 ，AJAX给服务器<strong>发送请求</strong>，<strong>获取服务器响应</strong>的数据，展示给浏览器</li>
+</ul>
+<p><strong>AJAX作用2：异步交互</strong></p>
+<p>不刷新<strong>整个页</strong>面也能与服务器交换数据，更新部分网页，如搜索联想，用户名是否可用校验</p>
+<p>用户名按照一定的规则：直接本地编写js脚本即可，如果用户名不能和已有的重复，还应该发送请求，接收服务器响应回来的结果（数据库中是否重名）</p>
+<h2 id="同步、异步"><a href="#同步、异步" class="headerlink" title="同步、异步"></a>同步、异步</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929161209624.png" alt="image-20240929161209624"></p>
+<p>异步操作使 用户可以在等待响应的同时继续与页面互动，这使得应用程序更具响应性</p>
+<p>不用刷新整个页面，只跟服务器请求需要的数据，而不是整个页面，AJAX可以减少服务器的负担和网络流量，提高响应速度。</p>
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929161455819.png" alt="image-20240929161455819"></p>
+<p>URL 全路径，前后端完全分离</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929161832460.png" alt="image-20240929161832460"></p>
+<h2 id="异步请求案例"><a href="#异步请求案例" class="headerlink" title="异步请求案例"></a><span id="request">异步请求案例</span></h2><p>现在有这样一个需求，在浏览器填完了一个用户名，要把用户名发送到服务器的某个servlet，servlet根据用户名查询是否重复，并把数据传回到浏览器。</p>
+<p>首先应该让失焦事件绑定函数，函数中要查询用户名。</p>
+<p>设置 提示重复字句的style属性为不可见（正常情况下不可见）ajax根据传回的数据为true or false，改变 提示重复字句的style属性，如果是，则设置可见，如果否，则设置不可见。</p>
+<p>具体流程？可以通过以下步骤：</p>
+<h2 id="前端发送请求"><a href="#前端发送请求" class="headerlink" title="前端发送请求"></a>前端发送请求</h2><p>使用 JavaScript（比如 <code>XMLHttpRequest</code> 或 Fetch API）发送请求：</p>
+<ul>
+<li><strong>GET 方法</strong>（URL 参数字符串）：</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> username = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;username&quot;</span>).<span class="property">value</span>;</span><br><span class="line">xhttp.<span class="title function_">open</span>(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;http://example.com/checkUsername?username=&quot;</span> + <span class="built_in">encodeURIComponent</span>(username));</span><br><span class="line">xhttp.<span class="title function_">send</span>();</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>POST 方法</strong>（请求体）：</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> username = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&quot;username&quot;</span>).<span class="property">value</span>;</span><br><span class="line">xhttp.<span class="title function_">open</span>(<span class="string">&quot;POST&quot;</span>, <span class="string">&quot;http://example.com/checkUsername&quot;</span>);</span><br><span class="line">xhttp.<span class="title function_">setRequestHeader</span>(<span class="string">&quot;Content-Type&quot;</span>, <span class="string">&quot;application/x-www-form-urlencoded&quot;</span>);</span><br><span class="line">xhttp.<span class="title function_">send</span>(<span class="string">&quot;username=&quot;</span> + <span class="built_in">encodeURIComponent</span>(username));</span><br></pre></td></tr></table></figure>
+
+<h3 id="服务器端处理"><a href="#服务器端处理" class="headerlink" title="服务器端处理"></a>服务器端处理</h3><p>在 Servlet 中处理请求：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> <span class="keyword">throws</span> ServletException, IOException &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">username</span> <span class="operator">=</span> request.getParameter(<span class="string">&quot;username&quot;</span>);</span><br><span class="line">    <span class="comment">// 查询数据库检查用户名是否重复</span></span><br><span class="line">    <span class="comment">// 返回结果到浏览器</span></span><br><span class="line">    response.setPatameter...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">doPost</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> <span class="keyword">throws</span> ServletException, IOException &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">username</span> <span class="operator">=</span> request.getParameter(<span class="string">&quot;username&quot;</span>);</span><br><span class="line">    doGet(request,response);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="GET-和-POST-的区别"><a href="#GET-和-POST-的区别" class="headerlink" title="GET 和 POST 的区别"></a>GET 和 POST 的区别</h3><ul>
+<li><strong>GET</strong>：参数通过 URL 传递，适合获取数据，但不适合传递敏感信息，因为 URL 可见，且请求长度有限。</li>
+<li><strong>POST</strong>：参数通过请求体传递，适合发送大量数据或敏感信息。</li>
+</ul>
+<p>要探究本质，就要解析他们的**<mark>报文<mark>**  </p>
+<p>GET：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET /search?query=java&amp;page=2 HTTP/1.1</span><br><span class="line">Host: www.example.com</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</span><br><span class="line">Accept-Language: en-US,en;q=0.5</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>POST：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">POST /search HTTP/1.1</span><br><span class="line">Host: www.example.com</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</span><br><span class="line">Accept-Language: en-US,en;q=0.5</span><br><span class="line">Connection: keep-alive</span><br><span class="line"></span><br><span class="line">?query=java&amp;page=2 </span><br></pre></td></tr></table></figure>
+
+<p>这些都是一个个字符串而已，发送的时候设置URL和参数本质上都是拼字符串，然后把整段报文发给服务。Servlet 接收请求，解析报文，拿到参数，仅此而已。填写表单的时候也一样，form标签的action属性就是要发送请求的目标，输入参数，提交的时候，就相当于填写好了目标URL，既然目标确定了。浏览器会解析内容，写好报文，发送给目标，那么浏览器是如何确定要发送给谁呢？浏览器确定请求的目标地址（即请求的 URL）是通过 URL 来实现的。以下是这一过程的基本步骤：以GET请求为例：</p>
+<h3 id="目标URL的填写"><a href="#目标URL的填写" class="headerlink" title="目标URL的填写"></a>目标URL的填写</h3><p>用户在浏览器中提交表单（例如，点击“提交”按钮），这会触发一个请求。表单的 <code>action</code> 属性指定了要发送请求的 URL。浏览器会将表单数据编码为查询字符串，并附加到 <code>action</code> URL 后面作为要访问的目标。</p>
+<h3 id="解析-URL"><a href="#解析-URL" class="headerlink" title="解析 URL"></a>解析 URL</h3><p>浏览器解析这个 URL，分解成几个部分：</p>
+<ul>
+<li><strong>协议</strong>：<code>http</code></li>
+<li><strong>主机名</strong>：<code>www.example.com</code></li>
+<li><strong>路径</strong>：<code>/search</code></li>
+<li><strong>查询字符串</strong>：<code>?query=java</code></li>
+</ul>
+<h3 id="DNS-解析"><a href="#DNS-解析" class="headerlink" title="DNS 解析"></a>DNS 解析</h3><p>浏览器会通过 DNS（域名系统）将主机名转换为相应的 IP 地址，以便找到目标服务器。例如，<code>www.example.com</code> 可能会被解析为 <code>192.0.2.1</code>。</p>
+<h3 id="建立-TCP-连接"><a href="#建立-TCP-连接" class="headerlink" title="建立 TCP 连接"></a>建立 TCP 连接</h3><p>浏览器与目标服务器建立 TCP 连接，通常使用 HTTP 端口（默认为 80，HTTPS 为 443）。</p>
+<h3 id="构造请求报文"><a href="#构造请求报文" class="headerlink" title="构造请求报文"></a>构造请求报文</h3><p>一旦连接建立，浏览器会根据表单数据构造 HTTP 请求报文，包括请求行、请求头和请求体。</p>
+<h3 id="发送请求"><a href="#发送请求" class="headerlink" title="发送请求"></a>发送请求</h3><p>浏览器通过已建立的 TCP 连接，将构造好的请求报文发送到服务器的指定 IP 地址。</p>
+<h3 id="服务器处理请求"><a href="#服务器处理请求" class="headerlink" title="服务器处理请求"></a>服务器处理请求</h3><p>服务器接收到请求后，会根据请求的路径和参数来处理请求，最终返回相应的响应数据。</p>
+<p>发出请求实际上就是浏览器访问目标URL</p>
+<p>表单：action就是目标URL，如果是get请求，浏览器会将目标url加上参数。随后解析url，得出目标IP，根据这些参数生成请求报文发送到目标IP。</p>
+<h2 id="Axios"><a href="#Axios" class="headerlink" title="Axios"></a>Axios</h2><p>axios是对js 的封装</p>
+<p><a target="_blank" rel="noopener" href="https://www.axios-http.cn/">Axios中文文档 | Axios中文网 (axios-http.cn)</a></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929192249373.png" alt="image-20240929192249373"></p>
+<p>method url data</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929192732304.png" alt="image-20240929192732304"></p>
+<p>链式编程</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">axios.<span class="title function_">get</span>(url).<span class="title function_">then</span>(<span class="keyword">function</span>(<span class="params">resp</span>)&#123;</span><br><span class="line">    <span class="comment">//具体用响应干什么？</span></span><br><span class="line">&#125;)</span><br><span class="line">axios.<span class="title function_">post</span>(url,data).<span class="title function_">then</span>(<span class="keyword">function</span>(<span class="params">resp</span>)&#123;</span><br><span class="line">    <span class="comment">//具体用响应干什么？</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>resp：</p>
+<p>①data :实际响应回来的数据</p>
+<p>②headers :响应头信息</p>
+<p>③status :响应状态码</p>
+<p>④statusText:响应状态信息</p>
+<p>特色：自动将data对象序列化为json字符串，再自动将响应数据中的json转回js自定义对象</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929210844535.png" alt="image-20240929210844535"></p>
+<p>解构赋值：then({data}) 只取resp的data字段</p>
+<h1 id="JSON"><a href="#JSON" class="headerlink" title="JSON"></a>JSON</h1><p><strong>J</strong>ava<strong>S</strong>cript <strong>O</strong>bject <strong>N</strong>otation js对象表示法</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929194822398.png" alt="image-20240929194822398"></p>
+<p>字段名要用双引号括起来，</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> json = &#123;</span><br><span class="line">    <span class="string">&quot;key1&quot;</span>:value1,</span><br><span class="line">    <span class="string">&quot;key2&quot;</span>:value2</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">//json.key1 访问value1</span></span><br><span class="line"><span class="keyword">var</span> json = &#123;</span><br><span class="line">    <span class="attr">key1</span>:value1,</span><br><span class="line">    <span class="attr">key2</span>:value2</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这两个对象的主要区别在于属性名的引号使用。在第一个对象中，所有属性名都用双引号包围，而在第二个对象中，属性名没有引号。根据 JavaScript 的语法，属性名可以不加引号（如果是有效的标识符），但如果包含特殊字符或空格，就需要加引号。功能上，它们是等价的。</p>
+<p>axios发送自定义对象会自动转成json的形式</p>
+<h2 id="JSON数据和Java对象转换"><a href="#JSON数据和Java对象转换" class="headerlink" title="JSON数据和Java对象转换"></a>JSON数据和Java对象转换</h2><p>Fastjson 高性能JSON库。</p>
+<p>导入fastjson坐标</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">jsonStr</span> <span class="operator">=</span> JSON.toJSONString(user);</span><br><span class="line"><span class="comment">//对象tostring</span></span><br><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> JSON.parseObject(user, User.class);</span><br><span class="line"><span class="comment">//解析出对象</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">response.setContentType(<span class="string">&quot;text/json;charset=utf-8&quot;</span>);</span><br><span class="line">response.getWriter().write(jsonString)</span><br></pre></td></tr></table></figure>
+
+<h2 id="案例：增删改查"><a href="#案例：增删改查" class="headerlink" title="案例：增删改查"></a>案例：增删改查</h2><p><strong>查询</strong>：把axios发送请求接收响应数据并打印数据的过程 封装成一个函数，跟onload（brandSelect页面加载完成）绑定。</p>
+<p>axios+html 接收servlet响应，打印表格</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929200621197.png" alt="image-20240929200621197"></p>
+<p>axios这边接收到json，也就是resp.data 是对象的集合，所以用for循环遍历，由于是打印，所以可以用id锚定表格的标签，每遍历一次就累加字符串一次，最后一起写入表格标签的innerHTML中。</p>
+<p><strong>新增品牌</strong>：</p>
+<p>表单提交的操作是一个同步请求，同步请求是直接发送参数字段，而且需要重新加载页面才能生效，利用不上js的异步高效性，所以提交按钮应该设置成普通button，进行异步操作</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929203719660.png" alt="image-20240929203719660"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929204058611.png" alt="image-20240929204058611"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240929204235548.png" alt="image-20240929204235548"></p>
+<p>获取表单数据，字符串直接赋值，复选框的结果用checked表示，因为这是两个复选框，名字都叫status，所以返回的是一个元素数组，对这个数组进行便利，被选中的就把自己的value赋给对象。</p>
+<p>axios发送自定义对象会自动转成json的形式，直接把封装好的自定义对象添加到axios的data参数中即可</p>
+<p>函数绑定提交按钮的onclick事件，设定js函数把表单填入的内容封装成json对象（即为前面的操作），发送ajax请求给addServlet。</p>
+<p><strong>addServlet</strong>处，<u>getParameter不能接收json数据</u>，所以应该用<u>getReader.readLine读取字符串</u>，然后把json字符串转成pojo对象，执行添加操作，返回操作成功与否，作为响应数据发出。</p>
+<p>axios接收响应数据，如果操作成功，就跳转到第一步做出来的加载html页面中</p>
+<p>增删改用post 查用get </p>
+<h1 id="Vue-Servlet-开发"><a href="#Vue-Servlet-开发" class="headerlink" title="Vue+Servlet 开发"></a>Vue+Servlet 开发</h1><h2 id="整体架构"><a href="#整体架构" class="headerlink" title="整体架构"></a>整体架构</h2><h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><ul>
+<li><strong>Vue</strong>：前端的JS骨架，model view双向绑定，渲染网页</li>
+<li><strong>axios</strong>：AJAX请求发送</li>
+<li><strong>Element</strong> <strong>UI</strong>：CSS组件库，基于Vue</li>
+</ul>
+<h3 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h3><ul>
+<li><strong>Web层</strong>：Servlet调用Service层的方法查询，结果转为JSON，响应JSON数据发给客户端</li>
+<li><strong>Service层</strong>：BrandService定义selectAll方法，获取sqlSession对象，调用BrandMapper执行SQL语句</li>
+<li><strong>DAO层</strong>：BrandMapper定义selectAll方法，方法体为MyBatis执行某条具体的SQL语句</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002150928236.png" alt="image-20241002150928236"></p>
+<h2 id="服务端优化"><a href="#服务端优化" class="headerlink" title="服务端优化"></a>服务端优化</h2><h3 id="Service-优化"><a href="#Service-优化" class="headerlink" title="Service 优化"></a>Service 优化</h3><h4 id="Service-接口定义"><a href="#Service-接口定义" class="headerlink" title="Service 接口定义"></a>Service 接口定义</h4><ul>
+<li>定义 <strong>BrandService</strong> 接口：定义一些业务的抽象方法，实现类中实现业务方法，在servlet中创建好业务实现对象，这样就解除了service层和servlet层的耦合性</li>
+</ul>
+<h4 id="ServiceImpl-接口实现"><a href="#ServiceImpl-接口实现" class="headerlink" title="ServiceImpl 接口实现"></a>ServiceImpl 接口实现</h4><ul>
+<li>在实现类中，先创建好唯一的的factory工厂，然后在方法中开启sqlSession，执行SQL语句</li>
+</ul>
+<h4 id="优化结果"><a href="#优化结果" class="headerlink" title="优化结果"></a>优化结果</h4><ul>
+<li><strong>UserService:</strong></li>
+<li><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002164617150.png" alt="image-20241002164617150"></li>
+<li><strong>UserServiceImpl:</strong></li>
+<li><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002164523529.png" alt="image-20241002164523529"></li>
+</ul>
+<h3 id="Servlet-优化"><a href="#Servlet-优化" class="headerlink" title="Servlet 优化"></a>Servlet 优化</h3><h4 id="业务实现类的创建"><a href="#业务实现类的创建" class="headerlink" title="业务实现类的创建"></a>业务实现类的创建</h4><p>为了增强项目的组织度，会进行业务整合，在BrandServlet中，创建一个BrandService的对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">BrandServlet</span>&#123;</span><br><span class="line">	<span class="type">BrandService</span> <span class="variable">brandService</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BrandServiceImpl1</span>();</span><br><span class="line">    <span class="comment">//调用service的方法</span></span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="业务功能整合"><a href="#业务功能整合" class="headerlink" title="业务功能整合"></a>业务功能整合</h4><p>一个实体类的一个功能就要新创建一个Servlet，不易管理，要把一个实体类的所有功能都放在一个servlet中。（BrandServlet，UserServlet）通过/brand/*   /user/*来访问上述两个servlet。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002135939524.png" alt="image-20241002135939524"></p>
+<ul>
+<li>如图，原先<code>HttpServlet</code>的<code>service</code>方法根据请求的方式（<code>getMethod</code>）进行方法的分发（<code>doGe</code>t或<code>doPost</code>）</li>
+<li>现在要根据请求的路径来进行方法的分发，因此<code>BrandServlet</code>不能直接继承<code>HttpServlet</code>，要创建一个<code>BaseServlet</code>继承<code>HttpServlet</code>，重写其<code>service</code>方法，根据路径分发方法。同理<code>UserServlet</code>也直接继承<code>Base</code></li>
+<li>获取到请求路径的最后一部分（最后一个<code>/</code>之后的内容）就是请求的方法名</li>
+<li>方法名称有了还要找<code>对应servlet</code>的字节码文件，<code>baseServlet</code>没有<code>@WebServlet</code>注解，也就不会直接访问了，到时候被访问的应该是<code>BrandServlet</code>和<code>UserServlet</code>这两个子类，子类继承父类的<code>service</code>方法，所以<code>service</code>方法中的<code>this.getClass</code>就能理所应当地拿到子类的字节码文件。</li>
+<li>因为<code>BrandServlet</code>和<code>UserServlet </code>都是要先执行<code>service(req,resp)</code>方法，接收<code>request</code>参数和<code>response</code>参数，如果要执行具体的<code>selectAll</code>业务方法，就要在反射调用方法的时候把参数加上，同时在<code>子类servlet</code>中，业务方法接受的参数全部统一成<code>req</code>和<code>resp</code>。</li>
+</ul>
+<p>如此一来，就能实现：</p>
+<ol>
+<li>访问<code>/brand/selectAll</code>路径，</li>
+<li>调用重写过后的<code>service(HttpServletRequest req,HttpServletResponse resp)</code> 能获取方法名和字节码文件</li>
+<li>根据方法名和参数类型（<code>methodName, HttpServletRequest req.class, HttpServletResponse.class</code>）获取Method对象，</li>
+<li><code>method.invoke(this, req, resp)</code>，实现业务整合</li>
+</ol>
+<h4 id="优化结果-1"><a href="#优化结果-1" class="headerlink" title="优化结果"></a>优化结果</h4><ul>
+<li><strong>BaseServlet:</strong></li>
+<li><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002164451103.png" alt="image-20241002164451103"></li>
+<li><strong>UserServlet:</strong> </li>
+<li><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002164355800.png" alt="image-20241002164355800"></li>
+</ul>
+<h3 id="优化后的后端结构"><a href="#优化后的后端结构" class="headerlink" title="优化后的后端结构"></a>优化后的后端结构</h3><p>后端的DAO, Service, Web层分开 各司其职，减少了耦合度</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002164240142.png" alt="image-20241002164240142" style="zoom: 50%;" />
+
+
+
+<h2 id="其他细节"><a href="#其他细节" class="headerlink" title=" 其他细节 "></a><span id="mybatis"> 其他细节 </span></h2><h3 id="MyBatis-模糊查询"><a href="#MyBatis-模糊查询" class="headerlink" title="MyBatis 模糊查询"></a>MyBatis 模糊查询</h3><h4 id="39-password-39-不行？-39-password-39-行？"><a href="#39-password-39-不行？-39-password-39-行？" class="headerlink" title="&#39;%#{password}%&#39;不行？&#39;%${password}%&#39;行？"></a><code>&#39;%#&#123;password&#125;%&#39;</code>不行？<code>&#39;%$&#123;password&#125;%&#39;</code>行？</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002225509824.png" alt="image-20241002225509824"></p>
+<p>${password}就是最简单的文本替换，直接拼接字符串，也不会类型转换（输入参数<code>that</code>会直接拼接成<code>and password like that</code> 很显然少了引号）连SQL都无法注入<code>&#39; OR &#39;1&#39; = &#39;1</code> <code>and password like &#39; OR &#39;1&#39; = &#39;1</code> （语法错误）自然，模糊匹配就变成<code>&#39;%that%&#39;</code>了</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002230031380.png" alt="image-20241002230031380"></p>
+<p>预编译占位符#{password}会把整个password转换成字符串，输入参数<code>&#39; OR &#39;1&#39; = &#39;1</code>会帮你转义成<code>\&#39; OR \&#39;1\&#39; = \&#39;1</code> 还会贴心地给两边加上引号<code>and password like &#39;\&#39; OR \&#39;1\&#39; = \&#39;1&#39;</code></p>
+<p>因此，#{password}本身就自带引号，模糊匹配会解析成<code>&#39;%&#39;that&#39;%&#39;</code> 完全的语法错误。</p>
+<h4 id="应该怎么用"><a href="#应该怎么用" class="headerlink" title="应该怎么用"></a>应该怎么用</h4><p>既然返回的是带引号的字符串，可以用拼接字符串函数，也可以用空格把这三个字符串分开</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002231938685.png" alt="image-20241002231938685"></p>
+<h3 id="MyBatis-分页查询"><a href="#MyBatis-分页查询" class="headerlink" title="MyBatis 分页查询"></a>MyBatis 分页查询</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241002234502508.png" alt="image-20241002234502508"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241003001119464.png" alt="image-20241003001119464"></p>
+<h4 id="后端"><a href="#后端" class="headerlink" title="后端"></a>后端</h4><p>分页查询要两个参数，这一页从哪一行开始和每页显示的条数</p>
+<p>前端传递给后台 当前页码和每页显示条数，(当前页码-1)*每行显示条数就是这一页开始的一行</p>
+<p>PageBean封装 总条数 和 这一页的查询结果List&lt;User&gt; </p>
+<p>list用于显示，总条数返回给前端</p>
+<h4 id="前端优化"><a href="#前端优化" class="headerlink" title="前端优化"></a>前端优化</h4><p>前端刷新表格的操作：发出自己的两个属性，收到PageBean中的rows和totalCount</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241003003901994.png" alt="image-20241003003901994"></p>
+<p>前端点击页码的操作，设置自身的两个属性，同时刷新表格</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241003004044018.png" alt="image-20241003004044018"></p>
+<h3 id="插入重复的键——事务回滚"><a href="#插入重复的键——事务回滚" class="headerlink" title="插入重复的键——事务回滚"></a>插入重复的键——事务回滚</h3><p>username是unique 且 not null 的，所以不能重复，在提交表单的时候，如果输入重复数据，就会导致事务提交失败，这是就会出现异常，<strong>如果出现异常不处理</strong>，会一直导致故障。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241003005454880.png" alt="image-20241003005454880"></p>
+<p>使用try catch 如果出现异常，就调用rollback，同时return false，响应</p>
+<p>前端收到响应，会根据结果弹出提示，成功或者失败</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241003005659475.png" alt="image-20241003005659475"></p>
+<h3 id="优化后的前端结构"><a href="#优化后的前端结构" class="headerlink" title="优化后的前端结构"></a>优化后的前端结构</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241003004606856.png" alt="image-20241003004606856"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241003004711700.png" alt="image-20241003004711700"></p>
+<p>加入了表格loading动画，刷新按钮，以及删除和插入的结果提示</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/http/" rel="tag"># http</a>
+              <a href="/tags/servlet/" rel="tag"># servlet</a>
+              <a href="/tags/tomcat/" rel="tag"># tomcat</a>
+              <a href="/tags/jsp/" rel="tag"># jsp</a>
+              <a href="/tags/mvc/" rel="tag"># mvc</a>
+              <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag"># 设计模式</a>
+              <a href="/tags/json/" rel="tag"># json</a>
+              <a href="/tags/authentication/" rel="tag"># authentication</a>
+              <a href="/tags/jwt/" rel="tag"># jwt</a>
+              <a href="/tags/session-cookie/" rel="tag"># session&cookie</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/08/31/mp+lombok/" rel="prev" title="MyBatis-Plus">
+                  <i class="fa fa-angle-left"></i> MyBatis-Plus
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/09/09/web-frontend/" rel="next" title="Web 前端">
+                  Web 前端 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">碎梦</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/scatteredream" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
