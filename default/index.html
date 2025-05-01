@@ -238,7 +238,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-27 16:12:46" itemprop="dateModified" datetime="2025-04-27T16:12:46+08:00">2025-04-27</time>
+      <time title="修改时间：2025-05-02 00:57:46" itemprop="dateModified" datetime="2025-05-02T00:57:46+08:00">2025-05-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -260,10 +260,24 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="基于-Netty-的-RPC-框架"><a href="#基于-Netty-的-RPC-框架" class="headerlink" title="基于 Netty 的 RPC 框架"></a>基于 Netty 的 RPC 框架</h1><p>这是一个同步调用的 RPC 框架。</p>
-<p>服务消费方包装好 <code>RpcRequest</code>，做完服务发现之后发送网络请求，使用 <code>Promise</code>来进行异步请求的同步等待 <code>await(timeout)</code>与收到 <code>RpcResponse</code>之后的 <code>setSuccess(rpcMessage)</code>。</p>
-<p>服务提供方收到 <code>RpcRequest</code>，根据服务名称在本地注册中心找到实现类，执行调用，返回结果封装在 <code>RpcResponse</code>内。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250423123418951.png" alt="责任链"></p>
+          <h1 id="基于-Netty-的-RPC-框架"><a href="#基于-Netty-的-RPC-框架" class="headerlink" title="基于 Netty 的 RPC 框架"></a>基于 Netty 的 RPC 框架</h1><p>实现要点： </p>
+<ul>
+<li>实现了 Netty <a href="#%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6">心跳机制</a>，保持连接。客户端<a href="#%E6%8C%87%E6%95%B0%E9%80%80%E9%81%BF">指数退避</a>重试连接，服务端用线程池处理请求。可选 HTTP 和 Socket。</li>
+<li>实现了自定义 RPC <a href="#protocol">通信协议</a>，<a href="#codec">自定义编解码器和拆包解码器</a>解决粘包和半包，实现了 Kryo 等5种<a href="#serialization">序列化方式</a>。</li>
+<li><a href="#center">注册中心</a>支持 Nacos 与 Zookeeper，服务发现支持本地缓存、实时监听。除利用健康检查机制外，下线服务还会主动通知注册中心注销，实现优雅下线。支持一致性哈希等3种<a href="#loadbalance">负载均衡</a>算法。</li>
+<li>集成 SpringBoot。通过<a href="#annotation">自定义注解</a>，提供者自动扫描并注册服务 Bean，消费者自动注入<a href="#proxy">代理对象</a>。自定义 starter 实现<a href="#autoconfig">自动装配</a>。</li>
+<li>参考 Dubbo 实现 <a href="#spi">SPI</a>，支持<a href="#spi1">序列化</a>、<a href="#spi2">服务发现</a>等的动态扩展，实现与类型解耦的<a href="#cache">单例缓存</a>，减少大量冗余的对象创建。</li>
+</ul>
+<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/项目架构图.png" alt="项目架构图" style="zoom:67%;" />
+
+<p><code>consumer</code>模块：服务的消费者，依赖于 <code>rpc-client-spring-boot-starter</code> 模块；</p>
+<p><code>provider-api</code>模块：服务提供者暴露的API；</p>
+<p><code>provider</code>模块：服务的提供者，依赖于 <code>rpc-server-spring-boot-starter</code> 模块：</p>
+<p><code>rpc-client-spring-boot</code>模块：rpc 客户端模块，封装客户端发起的请求过程，提供服务发现、动态代理，网络通信等功能；</p>
+<p><code>rpc-client-spring-boot-stater</code>模块：是<code>rpc-client-spring-boot</code>的stater模块，负责引入相应依赖进行自动配置；</p>
+<p><code>rpc-framework-core</code>模块：是rpc核心依赖，提供负载均衡、服务注册发现、消息协议、消息编码解码、序列化算法；</p>
+<p><code>rpc-server-spring-boot</code>模块：rpc 服务端模块，负责启动服务，接受和处理RPC请求，提供服务发布、反射调用等功能；</p>
+<p><code>rpc-server-spring-boot-stater</code>模块：是<code>rpc-server-spring-boot</code>的stater模块，负责引入相应依赖进行自动配置；</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2025/02/03/rpc-interpretation/#more" rel="contents">
