@@ -17788,7 +17788,8 @@ gender varchar(1) comment &#39;性别&#39;
   <entry>
     <title>点评项目优化</title>
     <url>/2024/10/20/%E9%BB%91%E9%A9%AC%E7%82%B9%E8%AF%84%E4%BC%98%E5%8C%96/</url>
-    <content><![CDATA[<h1 id="hmdp-optimization"><a href="#hmdp-optimization" class="headerlink" title="hmdp-optimization"></a>hmdp-optimization</h1><h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p><mark>STRING<mark> </p>
+    <content><![CDATA[<h1 id="redis-review"><a href="#redis-review" class="headerlink" title="redis-review"></a>redis-review</h1><p>配置环境： Nginx + SpringBoot + RabbitMQ + Redis</p>
+<h2 id="redis-key-设计"><a href="#redis-key-设计" class="headerlink" title="redis key 设计"></a>redis key 设计</h2><p>==STRING== </p>
 <ul>
 <li><code>sign:&#123;userId&#125;:202411</code> 2024年11月的userId的签到信息 （bitmap）</li>
 <li><code>incr:order:2024:11:10</code> 2024年11月10号的订单序列号serialNumber，唯一id（timestamp&lt;&lt;32 | serialNumber）</li>
@@ -17796,11 +17797,11 @@ gender varchar(1) comment &#39;性别&#39;
 <li><code>cache:shop:&#123;shopId&#125;</code> shopId的商铺信息</li>
 <li><code>login:code:&#123;phoneNumber&#125;</code> 验证码信息</li>
 </ul>
-<p><mark>LIST<mark> </p>
+<p>==LIST== </p>
 <ul>
 <li><code>cache:shoptype</code>（商铺类型信息JSON数组）</li>
 </ul>
-<p><mark>ZSET<mark> </p>
+<p>==ZSET== </p>
 <ul>
 <li><p><code>shop:geo:&#123;shopId&#125;</code> 商铺地理位置信息</p>
 </li>
@@ -17809,23 +17810,21 @@ gender varchar(1) comment &#39;性别&#39;
 <li><p><code>feed:&#123;userId&#125;</code> userId 的收件箱，保存笔记时推送到所有粉丝（看看谁follow了我）包括了 blogId 以及对应的score </p>
 </li>
 </ul>
-<p><mark>SET<mark> </p>
+<p>==SET== </p>
 <ul>
 <li><code>follows:&#123;userId&#125;</code> userId 关注的人</li>
 <li><code>seckill:order:&#123;voucherId&#125;</code> 抢过voucherId的优惠券的人的集合</li>
 </ul>
-<p><mark>HASH<mark> </p>
+<p>==HASH== </p>
 <ul>
 <li><code>login:token:&#123;token&#125;</code> 存储token对应的userDTO </li>
 </ul>
-<h2 id="feed-滚动"><a href="#feed-滚动" class="headerlink" title="feed 滚动"></a>feed 滚动</h2><p>10-6 5-1 一共是两页，传统分页在feed流是不适用的，因为我们的数据会随时发生变化，</p>
-<p>我们需要记录每次操作的最后一条，然后从这个位置开始去读取数据</p>
-<h2 id="表结构"><a href="#表结构" class="headerlink" title="表结构"></a>表结构</h2><p>blog blog评论 关注的人(x在t时间关注了y) 用户表 </p>
+<h2 id="数据库表设计"><a href="#数据库表设计" class="headerlink" title="数据库表设计"></a>数据库表设计</h2><p>blog blog评论 关注的人(x在t时间关注了y) 用户表 </p>
 <p>商铺 商铺类别</p>
 <p>券 秒杀券 秒杀券订单</p>
 <h2 id="热key-大key"><a href="#热key-大key" class="headerlink" title="热key 大key"></a>热key 大key</h2><p>在处理热key、大key以及分表问题时，可以采用以下策略进行优化：</p>
-<hr>
-<h3 id="一、热Key处理方案"><a href="#一、热Key处理方案" class="headerlink" title="一、热Key处理方案"></a><strong>一、热Key处理方案</strong></h3><ol>
+<p>• <strong>热Key</strong>：多级缓存 + 分片 + 异步更新。<br>• <strong>大Key</strong>：拆分 + 异步删除 + 设计规避。<br>• <strong>分表</strong>：合理分片规则 + 中间件 + 缓存加速。<br>• <strong>监控</strong>：实时监控Key大小和QPS，提前预防问题。</p>
+<h3 id="热Key处理方案"><a href="#热Key处理方案" class="headerlink" title="热Key处理方案"></a>热Key处理方案</h3><ol>
 <li><p><strong>监控与识别</strong><br>• 使用Redis监控工具（如<code>redis-cli --hotkeys</code>、<code>MONITOR</code>命令）或APM系统（如Prometheus）识别高频访问的key。<br>• 业务侧预判热点（如秒杀商品ID、热门话题），提前介入优化。</p>
 </li>
 <li><p><strong>多级缓存</strong><br>• <strong>本地缓存</strong>：结合Guava Cache或Caffeine，将热key缓存在应用服务器本地，减少Redis压力。<br>• <strong>分布式缓存冗余</strong>：复制热key到多个Redis实例（如<code>key:1</code>, <code>key:2</code>），通过随机访问分散压力。</p>
@@ -17835,8 +17834,7 @@ gender varchar(1) comment &#39;性别&#39;
 <li><p><strong>读写分离与分片</strong><br>• 使用Redis Cluster或Codis分片，分散热key压力。<br>• 读写分离：通过从节点处理读请求，主节点处理写请求。</p>
 </li>
 </ol>
-<hr>
-<h3 id="二、大Key处理方案"><a href="#二、大Key处理方案" class="headerlink" title="二、大Key处理方案"></a><strong>二、大Key处理方案</strong></h3><ol>
+<h3 id="大Key处理方案"><a href="#大Key处理方案" class="headerlink" title="大Key处理方案"></a>大Key处理方案</h3><ol>
 <li><p><strong>拆分与分片</strong><br>• <strong>横向拆分</strong>：将大Hash/List按字段或元素拆分（如<code>user:1000:info</code>拆为<code>user:1000:base</code>、<code>user:1000:contact</code>）。<br>• <strong>分片存储</strong>：对Key添加分片后缀（如<code>user:&#123;id%10&#125;:profile</code>），分散存储。</p>
 </li>
 <li><p><strong>异步删除</strong><br>• 使用<code>UNLINK</code>替代<code>DEL</code>，非阻塞删除大Key。<br>• 渐进式删除：通过脚本分批删除Hash/Set元素（如<code>HSCAN</code>遍历删除）。</p>
@@ -17846,8 +17844,7 @@ gender varchar(1) comment &#39;性别&#39;
 <li><p><strong>设计规避</strong><br>• 避免单个Key存储超过1MB的数据。<br>• 使用HyperLogLog替代大Set统计UV，或使用TimeSeries存储时序数据。</p>
 </li>
 </ol>
-<hr>
-<h3 id="三、分表方案（以MySQL为例）"><a href="#三、分表方案（以MySQL为例）" class="headerlink" title="三、分表方案（以MySQL为例）"></a><strong>三、分表方案（以MySQL为例）</strong></h3><ol>
+<h3 id="分表方案（以MySQL为例）"><a href="#分表方案（以MySQL为例）" class="headerlink" title="分表方案（以MySQL为例）"></a>分表方案（以MySQL为例）</h3><ol>
 <li><p><strong>水平分表</strong><br>• <strong>规则分片</strong>：按哈希（如<code>user_id % 100</code>）、范围（如时间戳）或一致性哈希拆分数据。<br>• <strong>中间件</strong>：使用ShardingSphere、Vitess等工具自动路由查询。</p>
 </li>
 <li><p><strong>垂直分表</strong><br>• 将大表按列拆分（如用户基础信息表<code>user_base</code>与扩展信息表<code>user_extend</code>），减少单行数据量。</p>
@@ -17857,8 +17854,7 @@ gender varchar(1) comment &#39;性别&#39;
 <li><p><strong>结合Redis</strong><br>• 缓存分表路由信息（如<code>user_shard:1000 -&gt; shard_2</code>），加速查询。<br>• 热数据缓存：将分表后的热数据单独缓存，降低DB压力。</p>
 </li>
 </ol>
-<hr>
-<h3 id="四、Redis分片与集群"><a href="#四、Redis分片与集群" class="headerlink" title="四、Redis分片与集群"></a><strong>四、Redis分片与集群</strong></h3><ol>
+<h3 id="Redis分片与集群"><a href="#Redis分片与集群" class="headerlink" title="Redis分片与集群"></a>Redis分片与集群</h3><ol>
 <li><p><strong>Redis Cluster</strong><br>• 自动分片（16384 slots），支持水平扩展和高可用。<br>• 通过<code>CRC16(key) % 16384</code>计算slot，分散数据。</p>
 </li>
 <li><p><strong>客户端分片</strong><br>• 使用一致性哈希算法（如Jedis的<code>ShardedJedis</code>）在客户端路由请求。</p>
@@ -17866,136 +17862,60 @@ gender varchar(1) comment &#39;性别&#39;
 <li><p><strong>Proxy方案</strong><br>• 通过Twemproxy或Codis代理层管理分片，对业务透明。</p>
 </li>
 </ol>
-<hr>
-<h3 id="五、总结"><a href="#五、总结" class="headerlink" title="五、总结"></a><strong>五、总结</strong></h3><p>• <strong>热Key</strong>：多级缓存 + 分片 + 异步更新。<br>• <strong>大Key</strong>：拆分 + 异步删除 + 设计规避。<br>• <strong>分表</strong>：合理分片规则 + 中间件 + 缓存加速。<br>• <strong>监控</strong>：实时监控Key大小和QPS，提前预防问题。</p>
-<p>通过组合以上策略，可显著提升系统性能和稳定性，应对高并发与大数据的挑战。</p>
-<h2 id="延迟双删"><a href="#延迟双删" class="headerlink" title="延迟双删"></a>延迟双删</h2><p>通过重试、过期时间、补偿机制保证最终一致性，避免因删除失败导致脏数据长期存在。</p>
-<p>延迟双删是解决缓存与数据库一致性的策略，步骤如下：</p>
-<ol>
-<li>删除缓存。</li>
-<li>更新数据库。</li>
-<li>延迟一段时间（如等主从同步完成）。</li>
-<li>再次删除缓存。</li>
+<h1 id="项目剖析"><a href="#项目剖析" class="headerlink" title="项目剖析"></a>项目剖析</h1><h2 id="Login-Redis-Token"><a href="#Login-Redis-Token" class="headerlink" title="Login (Redis Token)"></a>Login (Redis Token)</h2><ol>
+<li><p>短信登录的短信怎么发送的?</p>
+<p>（使用hutool生成的随机六位数验证码）</p>
+</li>
+<li><p>如何标识用户</p>
+<p>（主要是唯一的id主键，而登录靠的是也是唯一的手机号）</p>
+</li>
+<li><p>项目的权限刷新什么意思</p>
+<p>（token具有ttl期，用户如果浏览网页就会刷新其ttl）</p>
+</li>
 </ol>
-<p><strong>若第二次删除失败</strong>：</p>
+<p><strong>原来</strong>：tomcat 的 HttpSession 是集中的，如果要扩展的话同步是一个大问题，并且可能过多占用服务器的内存。</p>
+<p><strong>改进</strong>：<mark>Redis Token</mark>是分布式的，天生不存在同步问题。</p>
 <ul>
-<li><strong>重试机制</strong>：将删除操作加入重试队列（如消息队列），确保最终成功。</li>
-<li><strong>设置缓存过期时间</strong>：即使删除失败，缓存也会自动失效，减少不一致的时间窗口。</li>
-<li><strong>异步补偿</strong>：通过定时任务检查并清理残留脏数据。</li>
+<li><strong>Redis</strong>：使用 Hash 数据结构—— KEY: token:xxxxxxxx, VALUE: UserDTO的字段信息</li>
+<li><strong>拦截器</strong>：配置到需要拦截器的地方（个人中心等位置）根据请求头里的 token 查到对应的UserDTO，将其放入<mark>ThreadLocal</mark>，放行，同时也会刷新 token 有效期。<mark>核心方法：preHandle + afterCompletion</mark><ul>
+<li>ThreadLocal 使用：<code>get()</code>,<code>set()</code> 在finally块调用<code>remove()</code> 用途 Spring 数据库连接、事务管理</li>
+<li>内存泄露：每个线程有个 Map，键是 tl（弱引用），值是对应的值（强引用），如果线程没有销毁，但是 tl 销毁了，就容易泄露内存。</li>
 </ul>
-<h2 id="缓存：旁路缓存"><a href="#缓存：旁路缓存" class="headerlink" title="缓存：旁路缓存"></a>缓存：旁路缓存</h2><p>Cache Aside Pattern（旁路缓存机制）是一种广泛应用于高并发系统的缓存设计模式，其核心目标是<strong>解决缓存与数据库之间的数据一致性问题</strong>，同时提升系统的读取性能。以下是该模式的具体解决场景、实现原理及实际应用分析：</p>
-<hr>
-<h3 id="解决的问题场景"><a href="#解决的问题场景" class="headerlink" title="解决的问题场景"></a><strong>解决的问题场景</strong></h3><h4 id="读多写少的高并发场景"><a href="#读多写少的高并发场景" class="headerlink" title="读多写少的高并发场景"></a><strong>读多写少的高并发场景</strong></h4><p>• <strong>典型场景</strong>：用户信息查询、商品详情页、新闻内容页等。<br>• <strong>痛点</strong>：直接读取数据库会导致性能瓶颈，缓存能显著降低数据库压力，但需保证缓存与数据库的一致性。</p>
-<h4 id="数据更新后的缓存一致性"><a href="#数据更新后的缓存一致性" class="headerlink" title="数据更新后的缓存一致性"></a><strong>数据更新后的缓存一致性</strong></h4><p>• <strong>痛点</strong>：数据更新时，若缓存与数据库的更新顺序或策略不当，可能引发脏读、旧数据残留等问题。</p>
-<h4 id="缓存穿透与雪崩的规避"><a href="#缓存穿透与雪崩的规避" class="headerlink" title="缓存穿透与雪崩的规避"></a><strong>缓存穿透与雪崩的规避</strong></h4><p>• <strong>痛点</strong>：恶意请求或缓存失效时，大量请求穿透到数据库，导致数据库过载甚至宕机。</p>
-<hr>
-<h3 id="Cache-Aside-Pattern-的实现原理"><a href="#Cache-Aside-Pattern-的实现原理" class="headerlink" title="Cache Aside Pattern 的实现原理"></a><strong>Cache Aside Pattern 的实现原理</strong></h3><h4 id="读流程（优先读缓存）"><a href="#读流程（优先读缓存）" class="headerlink" title="读流程（优先读缓存）"></a><strong>读流程（优先读缓存）</strong></h4><p>• <strong>步骤</strong>：  </p>
-<pre><code>1. 客户端读取数据时，先查询缓存。  
-2. 若缓存命中（Cache Hit），直接返回结果。  
-3. 若缓存未命中（Cache Miss），查询数据库，将结果写入缓存后返回。  
-   • **代码示例**：  
-</code></pre>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Data <span class="title function_">getData</span><span class="params">(String key)</span> &#123;</span><br><span class="line">    <span class="comment">// 1. 先查缓存</span></span><br><span class="line">    <span class="type">Data</span> <span class="variable">data</span> <span class="operator">=</span> cache.get(key);</span><br><span class="line">    <span class="keyword">if</span> (data != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> data;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 2. 缓存未命中，查数据库</span></span><br><span class="line">    data = database.read(key);</span><br><span class="line">    <span class="comment">// 3. 回填缓存</span></span><br><span class="line">    cache.set(key, data, TTL);</span><br><span class="line">    <span class="keyword">return</span> data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="写流程（更新数据库后失效缓存）"><a href="#写流程（更新数据库后失效缓存）" class="headerlink" title="写流程（更新数据库后失效缓存）"></a><strong>写流程（更新数据库后失效缓存）</strong></h4><p>• <strong>步骤</strong>：  </p>
-<pre><code>1. 客户端更新数据时，先更新数据库。  
-2. 删除缓存（而非更新缓存），确保下次读取时触发缓存回填。  
-   • **代码示例**：  
-</code></pre>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateData</span><span class="params">(String key, Data newData)</span> &#123;</span><br><span class="line">    <span class="comment">// 1. 更新数据库</span></span><br><span class="line">    database.update(key, newData);</span><br><span class="line">    <span class="comment">// 2. 删除缓存</span></span><br><span class="line">    cache.delete(key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="核心解决的问题"><a href="#核心解决的问题" class="headerlink" title="核心解决的问题"></a><strong>核心解决的问题</strong></h3><h4 id="缓存与数据库的一致性"><a href="#缓存与数据库的一致性" class="headerlink" title="缓存与数据库的一致性"></a><strong>缓存与数据库的一致性</strong></h4><p>• <strong>旧数据问题</strong>：直接更新缓存可能导致并发场景下出现脏数据（如两个并发写操作顺序错乱）。<br>• <strong>解决方案</strong>：通过“更新数据库 + 删除缓存”的组合，确保下一次读请求回填最新数据。</p>
-<h4 id="降低并发写冲突"><a href="#降低并发写冲突" class="headerlink" title="降低并发写冲突"></a><strong>降低并发写冲突</strong></h4><p>• <strong>场景示例</strong>：若先删除缓存再更新数据库，可能因网络延迟导致其他线程读到旧数据并回填缓存。<br>• <strong>优化策略</strong>：采用 <strong>延迟双删</strong>（先删缓存→更新数据库→再删缓存），但需权衡复杂度。</p>
-<h4 id="规避缓存穿透与雪崩"><a href="#规避缓存穿透与雪崩" class="headerlink" title="规避缓存穿透与雪崩"></a><strong>规避缓存穿透与雪崩</strong></h4><p>• <strong>缓存穿透</strong>：恶意查询不存在的数据（如不存在的用户ID）。<br>  • <strong>解决方案</strong>：缓存空值（Null Object）并设置较短TTL。<br>• <strong>缓存雪崩</strong>：大量缓存同时失效导致数据库被击穿。<br>  • <strong>解决方案</strong>：设置随机化过期时间（如基础TTL + 随机偏移量）。</p>
-<hr>
-<h3 id="实际应用案例"><a href="#实际应用案例" class="headerlink" title="实际应用案例"></a><strong>实际应用案例</strong></h3><h4 id="案例1：电商商品库存更新"><a href="#案例1：电商商品库存更新" class="headerlink" title="案例1：电商商品库存更新"></a><strong>案例1：电商商品库存更新</strong></h4><p>• <strong>场景</strong>：用户下单后扣减库存。<br>• <strong>流程</strong>：  </p>
-<pre><code>1. 更新数据库库存（原子操作：`UPDATE stock SET count=count-1 WHERE product_id=xxx AND count&gt;0`）。  
-2. 删除商品库存缓存（`cache.delete(&quot;product_stock_xxx&quot;)`）。  
-3. 后续查询库存时触发缓存回填，读取最新值。
-</code></pre>
-<h4 id="案例2：用户信息更新"><a href="#案例2：用户信息更新" class="headerlink" title="案例2：用户信息更新"></a><strong>案例2：用户信息更新</strong></h4><p>• <strong>场景</strong>：用户修改昵称后，前端需要展示最新数据。<br>• <strong>流程</strong>：  </p>
-<pre><code>1. 更新数据库用户表。  
-2. 删除用户信息缓存（如 `cache.delete(&quot;user_info_123&quot;)`）。  
-3. 下次读取时从数据库加载新数据并回填缓存。
-</code></pre>
-<hr>
-<h3 id="与其他缓存模式的对比"><a href="#与其他缓存模式的对比" class="headerlink" title="与其他缓存模式的对比"></a><strong>与其他缓存模式的对比</strong></h3><table>
-<thead>
-<tr>
-<th><strong>模式</strong></th>
-<th><strong>特点</strong></th>
-<th><strong>适用场景</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>Cache Aside</strong></td>
-<td>应用层控制缓存逻辑，更新数据库后删除缓存，简单但需处理并发问题。</td>
-<td>读多写少，一致性要求较高</td>
-</tr>
-<tr>
-<td><strong>Read/Write Through</strong></td>
-<td>缓存层代理数据库操作，应用无需感知缓存逻辑（如Redis Module）。</td>
-<td>缓存与数据库强绑定，逻辑简单化</td>
-</tr>
-<tr>
-<td><strong>Write Behind</strong></td>
-<td>异步批量更新数据库，缓存作为写入缓冲区，吞吐量高但存在数据丢失风险。</td>
-<td>写密集且允许短暂数据不一致（如日志）</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a><strong>注意事项</strong></h3><ol>
-<li><p><strong>并发场景下的极端问题</strong>：<br>• <strong>问题</strong>：A线程读缓存未命中→查询旧数据库数据→B线程更新数据库并删缓存→A线程回填旧数据到缓存。<br>• <strong>解决方案</strong>：加分布式锁（如Redisson）或设置缓存更新版本号。  </p>
 </li>
-<li><p><strong>缓存删除失败的重试机制</strong>：<br>• <strong>方案</strong>：引入消息队列（如Kafka）异步重试删除缓存。  </p>
+<li><strong>问题</strong>：访问别的页面也需要刷新，不然不浏览那些需要拦截器的页面就不会刷新token，莫名其妙就会过期</li>
+<li><strong>解决</strong>：新加一个拦截器，负责查token、保存到tl、刷新，放行所有。原先的拦截器只负责从tl查询用户，tl 里没有就拒绝</li>
+<li><strong>其他缺点</strong>：仍然依赖内存（redis是内存数据库） + redis接口调用会增加复杂性。需要注意的是，虽然这种方式支持分布式系统，但是根本上还是和 HttpSession 一样的<strong>中心化</strong>。</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653320764547.png" alt="优化拦截器" style="zoom:33%;" />
+
+<p>JWT：去中心化，服务端压力减小，便于分布式系统使用。基本信息可直接放在token中。功能权限较少可以直接放在token中，用bit位表示用户所具有的功能权限。但是缺点也很明显，签发以后就不能主动让其失效，拿到了就可以进行重放攻击。</p>
+<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>使用 Redis 作为商户信息缓存，避免大量请求直接打到数据库引发宕机，采取<mark>主动更新、旁路缓存</mark>的方法保证数<br>据库与 Redis 之间的缓存一致性问题。使用<mark>布隆过滤器</mark>解决商户信息的缓存穿透问题，使用 <strong>Redis 集群</strong>等方式减<br>小缓存雪崩的概率，使用<mark>逻辑过期</mark>解决缓存击穿。</p>
+<p><strong>内存更新</strong>：</p>
+<ul>
+<li>内存淘汰机制和TTL（对于低一致性场景）</li>
+<li><mark>主动更新</mark>：编写业务逻辑，修改数据库的同时操作缓存，解决一致性问题。（对于高一致性场景）✅</li>
+</ul>
+<p><strong>一致性解决方案</strong>：</p>
+<ul>
+<li><strong>cache aside 旁路缓存</strong> 编码使用客户端自行将数据写入cache ✅ 适合读多写少</li>
+<li>读写穿透：封装了旁路缓存功能，其工作由cache层的服务自动完成，但是redis并不支持写入db</li>
+<li>异步缓存写入：只操作cache，其他线程异步写到db。一般是写密集允许短暂的数据不一致</li>
+</ul>
+<p><strong>Cache Aside</strong>：</p>
+<ul>
+<li>选择删除cache，<em>更新导致的无效写比较多（更新多次但只有最后一次被查询），并且线程安全问题难以解决：<strong>要求数据库和缓存写入都要成功</strong>，此时有可能A更新到v1，线程B突然插进来把缓存更新到v2，最后A把脏数据v1更新到缓存，如果缓存更新涉及多表的查询就更加难以维护。</em> <strong>cache删除和db更新放入一个事务</strong></li>
+<li><strong>删缓存、更新db的先后顺序</strong>：读未命中、更新操作的互相穿插<ul>
+<li>选择先更新db后删除cache。导致不一致的情况：读未命中的过程中插进来一个更新操作，最后缓存里是旧数据</li>
+<li><em>如果反过来，先删cache，更新db过程中进来一个查询的又把旧数据填充到缓存里，最后导致db和cache不一致。</em></li>
+</ul>
 </li>
-<li><p><strong>冷启动预热</strong>：<br>• <strong>方案</strong>：系统启动时加载热点数据到缓存（如Top 100商品）。</p>
+<li><strong>如果缓存删除失败怎么办</strong>？（异步重试）<ul>
+<li>单机可用线程池重试，分布式用MQ</li>
+<li>延迟双删：删完之后，隔段时间再尝试删一次。</li>
+</ul>
 </li>
-</ol>
-<hr>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><p>Cache Aside Pattern 通过<strong>优先读缓存、更新数据库后失效缓存</strong>的策略，解决了高并发下缓存与数据库的一致性问题，适用于读多写少且对一致性要求较高的场景。实际应用中需结合业务特点，处理并发冲突、缓存穿透/雪崩等问题，必要时引入异步重试、分布式锁等机制。</p>
-<h2 id="缓存更新失败怎么办？重试机制"><a href="#缓存更新失败怎么办？重试机制" class="headerlink" title="缓存更新失败怎么办？重试机制"></a>缓存更新失败怎么办？重试机制</h2><p>在 Cache Aside Pattern 中，若 <strong>更新数据库后删除缓存的操作失败</strong>，会导致缓存中残留旧数据，后续读请求可能返回不一致的结果。以下是分层解决方案，涵盖 <strong>容错设计、补偿机制和业务兜底策略</strong>：</p>
-<hr>
-<h3 id="容错设计：同步重试"><a href="#容错设计：同步重试" class="headerlink" title="容错设计：同步重试"></a><strong>容错设计：同步重试</strong></h3><h4 id="本地重试（立即重试）"><a href="#本地重试（立即重试）" class="headerlink" title="本地重试（立即重试）"></a><strong>本地重试（立即重试）</strong></h4><p>• <strong>场景</strong>：因网络抖动或瞬时故障导致删除缓存失败。<br>• <strong>实现</strong>：在业务代码中增加同步重试逻辑（如最多 3 次）。</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateData</span><span class="params">(String key, Data newData)</span> &#123;</span><br><span class="line">    <span class="comment">// 1. 更新数据库</span></span><br><span class="line">    database.update(key, newData);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 2. 删除缓存，最多重试3次</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">retryCount</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (retryCount &lt; <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            cache.delete(key);</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            retryCount++;</span><br><span class="line">            <span class="keyword">if</span> (retryCount &gt;= <span class="number">3</span>) &#123;</span><br><span class="line">                log.error(<span class="string">&quot;删除缓存失败，key=&#123;&#125;&quot;</span>, key);</span><br><span class="line">                <span class="keyword">throw</span> e;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>• <strong>缺点</strong>：同步重试可能阻塞业务线程，影响吞吐量。</p>
-<h4 id="异步重试（解耦处理）"><a href="#异步重试（解耦处理）" class="headerlink" title="异步重试（解耦处理）"></a><strong>异步重试（解耦处理）</strong></h4><p>• <strong>场景</strong>：重试操作无需阻塞主流程。<br>• <strong>实现</strong>：将失败操作提交到线程池或消息队列异步处理。</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateData</span><span class="params">(String key, Data newData)</span> &#123;</span><br><span class="line">    <span class="comment">// 1. 更新数据库</span></span><br><span class="line">    database.update(key, newData);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 2. 异步删除缓存</span></span><br><span class="line">    executor.submit(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            cache.delete(key);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            log.error(<span class="string">&quot;删除缓存失败，key=&#123;&#125;&quot;</span>, key);</span><br><span class="line">            <span class="comment">// 可进一步提交到死信队列</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>• <strong>优点</strong>：不阻塞主线程，适用于高并发场景。</p>
-<hr>
-<h3 id="补偿机制：异步队列-定时任务"><a href="#补偿机制：异步队列-定时任务" class="headerlink" title="补偿机制：异步队列 + 定时任务"></a><strong>补偿机制：异步队列 + 定时任务</strong></h3><h4 id="消息队列（最终一致性）"><a href="#消息队列（最终一致性）" class="headerlink" title="消息队列（最终一致性）"></a><strong>消息队列（最终一致性）</strong></h4><p>• <strong>场景</strong>：缓存服务不可用，需保证最终一致性。<br>• <strong>实现</strong>：</p>
-<pre><code>1. 删除缓存失败时，将 `key` 写入消息队列（如 Kafka、RocketMQ）。
-2. 消费者监听队列，持续重试删除操作。
-3. 设置最大重试次数，超过后触发告警。
-</code></pre>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 删除缓存失败后提交到MQ</span></span><br><span class="line">mqProducer.send(<span class="string">&quot;cache-retry-topic&quot;</span>, key);</span><br><span class="line"></span><br><span class="line"><span class="comment">// MQ消费者逻辑</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">consumeCacheRetry</span><span class="params">(String key)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">maxRetry</span> <span class="operator">=</span> <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; maxRetry; i++) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            cache.delete(key);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            sleep(<span class="number">1000</span> * i); <span class="comment">// 指数退避</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    alert(<span class="string">&quot;缓存删除失败，需人工处理 key=&quot;</span> + key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>• <strong>优点</strong>：解耦业务逻辑，确保最终成功。</p>
-<h4 id="定时补偿任务"><a href="#定时补偿任务" class="headerlink" title="定时补偿任务"></a><strong>定时补偿任务</strong></h4><p>• <strong>场景</strong>：消息队列不可用或需兜底。<br>• <strong>实现</strong>：</p>
-<pre><code>1. 记录删除失败的 `key` 到数据库或本地文件。
-2. 定时任务扫描失败记录，重新发起删除。
-</code></pre>
-  <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 记录失败操作</span></span><br><span class="line"><span class="keyword">INSERT INTO</span> cache_failures (key, retry_count) <span class="keyword">VALUES</span> (<span class="string">&#x27;key1&#x27;</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">-- 定时任务伪代码</span></span><br><span class="line">List<span class="operator">&lt;</span>CacheFailure<span class="operator">&gt;</span> failures <span class="operator">=</span> queryFailures();</span><br><span class="line"><span class="keyword">for</span> (CacheFailure failure : failures) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        cache.delete(failure.getKey());</span><br><span class="line">        deleteFailureRecord(failure);</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        incrementRetryCount(failure);</span><br><span class="line">        if (failure.getRetryCount() <span class="operator">&gt;</span> <span class="number">5</span>) &#123;</span><br><span class="line">            alert(&quot;缓存删除失败，key=&quot; <span class="operator">+</span> failure.getKey());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="业务兜底策略"><a href="#业务兜底策略" class="headerlink" title="业务兜底策略"></a><strong>业务兜底策略</strong></h3><h4 id="设置较短缓存过期时间（TTL）"><a href="#设置较短缓存过期时间（TTL）" class="headerlink" title="设置较短缓存过期时间（TTL）"></a><strong>设置较短缓存过期时间（TTL）</strong></h4><p>• <strong>实现</strong>：即使删除失败，旧数据也会在 TTL 后自动失效。</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 写入缓存时设置较短TTL（如30秒）</span></span><br><span class="line">cache.set(key, data, <span class="number">30</span>);</span><br></pre></td></tr></table></figure>
-
-<p>• <strong>优点</strong>：简单有效，避免长期不一致。<br>• <strong>缺点</strong>：短期不一致窗口仍存在。</p>
-<h4 id="强制读数据库（降级开关）"><a href="#强制读数据库（降级开关）" class="headerlink" title="强制读数据库（降级开关）"></a><strong>强制读数据库（降级开关）</strong></h4><p>• <strong>场景</strong>：缓存删除持续失败，且业务无法容忍不一致。<br>• <strong>实现</strong>：通过配置中心动态开关，绕过缓存直接读数据库。</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Data <span class="title function_">getData</span><span class="params">(String key)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (config.isCacheDegraded()) &#123;</span><br><span class="line">        <span class="keyword">return</span> database.read(key); <span class="comment">// 降级读数据库</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 正常逻辑...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="版本号或时间戳校验"><a href="#版本号或时间戳校验" class="headerlink" title="版本号或时间戳校验"></a><strong>版本号或时间戳校验</strong></h4><p>• <strong>实现</strong>：在缓存值和数据库记录中存储版本号，读取时校验。</p>
-<pre><code>1. 写数据库时更新版本号。
-2. 读缓存时若版本号低于数据库，则忽略缓存。
-</code></pre>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Data <span class="title function_">getData</span><span class="params">(String key)</span> &#123;</span><br><span class="line">    <span class="type">CachedData</span> <span class="variable">cached</span> <span class="operator">=</span> cache.get(key);</span><br><span class="line">    <span class="type">Data</span> <span class="variable">dbData</span> <span class="operator">=</span> database.read(key);</span><br><span class="line">    <span class="keyword">if</span> (cached != <span class="literal">null</span> &amp;&amp; cached.version == dbData.version) &#123;</span><br><span class="line">        <span class="keyword">return</span> cached.data;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> dbData;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="总结方案"><a href="#总结方案" class="headerlink" title="总结方案"></a><strong>总结方案</strong></h3><table>
+</ul>
+<table>
 <thead>
 <tr>
 <th><strong>场景</strong></th>
@@ -18024,39 +17944,13 @@ gender varchar(1) comment &#39;性别&#39;
 <td>金融、交易等强一致性场景</td>
 </tr>
 </tbody></table>
-<hr>
-<h3 id="生产建议"><a href="#生产建议" class="headerlink" title="生产建议"></a><strong>生产建议</strong></h3><ol>
-<li><strong>监控与告警</strong>：<br>• 监控缓存删除失败率、MQ堆积量、降级开关状态。<br>• 设置阈值告警（如每分钟失败次数 &gt; 100）。  </li>
-<li><strong>自动化处理</strong>：<br>• 结合运维工具自动重启缓存节点或切换集群。  </li>
-<li><strong>压测与演练</strong>：<br>• 模拟缓存删除失败场景，验证重试和降级逻辑的有效性。</li>
-</ol>
-<h2 id="缓存更新失败后错数据被访问多次"><a href="#缓存更新失败后错数据被访问多次" class="headerlink" title="缓存更新失败后错数据被访问多次"></a>缓存更新失败后错数据被访问多次</h2><p>在重试过程中，若缓存中的错误数据被多次访问，会导致业务逻辑错误或用户体验受损。以下是分层解决方案，结合 <strong>快速失效、降级兜底、数据校验</strong> 等多种手段，最大限度减少错误数据的影响：</p>
-<hr>
-<h3 id="快速失效：标记缓存为“待修复”状态"><a href="#快速失效：标记缓存为“待修复”状态" class="headerlink" title="快速失效：标记缓存为“待修复”状态"></a><strong>快速失效：标记缓存为“待修复”状态</strong></h3><h4 id="写入标记-短-TTL"><a href="#写入标记-短-TTL" class="headerlink" title="写入标记 + 短 TTL"></a><strong>写入标记 + 短 TTL</strong></h4><p>• <strong>实现</strong>：在删除缓存失败时，写入一个特殊标记（如 <code>key_pending</code>）并设置短 TTL（如 5 秒），提示后续请求该数据可能不准确。</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateData</span><span class="params">(String key, Data newData)</span> &#123;</span><br><span class="line">    <span class="comment">// 1. 更新数据库</span></span><br><span class="line">    database.update(key, newData);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 2. 尝试删除缓存</span></span><br><span class="line">        cache.delete(key);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        <span class="comment">// 3. 删除失败时，写入待修复标记</span></span><br><span class="line">        cache.set(key + <span class="string">&quot;_pending&quot;</span>, <span class="string">&quot;1&quot;</span>, <span class="number">5</span>); <span class="comment">// 标记存在 5 秒</span></span><br><span class="line">        <span class="comment">// 提交异步重试任务</span></span><br><span class="line">        retryQueue.add(key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>• <strong>读取逻辑</strong>：若发现 <code>key_pending</code> 存在，直接读数据库并更新缓存。</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Data <span class="title function_">getData</span><span class="params">(String key)</span> &#123;</span><br><span class="line">    <span class="comment">// 检查是否存在待修复标记</span></span><br><span class="line">    <span class="keyword">if</span> (cache.exists(key + <span class="string">&quot;_pending&quot;</span>)) &#123;</span><br><span class="line">        <span class="type">Data</span> <span class="variable">dbData</span> <span class="operator">=</span> database.read(key);</span><br><span class="line">        cache.set(key, dbData, TTL); <span class="comment">// 主动修复缓存</span></span><br><span class="line">        cache.delete(key + <span class="string">&quot;_pending&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> dbData;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 正常缓存逻辑...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="熔断降级"><a href="#熔断降级" class="headerlink" title="熔断降级"></a><strong>熔断降级</strong></h4><p>• <strong>实现</strong>：监控缓存删除失败率，超过阈值时触发熔断，后续请求直接读数据库。</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (failureRate &gt; <span class="number">0.1</span>) &#123; <span class="comment">// 10%失败率触发熔断</span></span><br><span class="line">    degradeCacheRead(); <span class="comment">// 降级为直读数据库</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="主动修复：异步补偿-版本控制"><a href="#主动修复：异步补偿-版本控制" class="headerlink" title="主动修复：异步补偿 + 版本控制"></a><strong>主动修复：异步补偿 + 版本控制</strong></h3><h4 id="版本号校验"><a href="#版本号校验" class="headerlink" title="版本号校验"></a><strong>版本号校验</strong></h4><p>• <strong>实现</strong>：在数据库和缓存中存储数据版本号（如时间戳或递增序号）。</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateData</span><span class="params">(String key, Data newData)</span> &#123;</span><br><span class="line">    <span class="comment">// 1. 更新数据库并递增版本</span></span><br><span class="line">    <span class="type">long</span> <span class="variable">newVersion</span> <span class="operator">=</span> database.updateWithVersion(key, newData);</span><br><span class="line">    <span class="comment">// 2. 删除缓存时携带版本号</span></span><br><span class="line">    cache.delete(key + <span class="string">&quot;:&quot;</span> + newVersion); </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Data <span class="title function_">getData</span><span class="params">(String key)</span> &#123;</span><br><span class="line">    <span class="type">long</span> <span class="variable">latestVersion</span> <span class="operator">=</span> database.getVersion(key);</span><br><span class="line">    <span class="type">CachedData</span> <span class="variable">cached</span> <span class="operator">=</span> cache.get(key);</span><br><span class="line">    <span class="keyword">if</span> (cached != <span class="literal">null</span> &amp;&amp; cached.version == latestVersion) &#123;</span><br><span class="line">        <span class="keyword">return</span> cached.data;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 版本不一致，触发修复</span></span><br><span class="line">    <span class="type">Data</span> <span class="variable">dbData</span> <span class="operator">=</span> database.read(key);</span><br><span class="line">    cache.set(key, dbData, latestVersion, TTL);</span><br><span class="line">    <span class="keyword">return</span> dbData;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="异步补偿任务"><a href="#异步补偿任务" class="headerlink" title="异步补偿任务"></a><strong>异步补偿任务</strong></h4><p>• <strong>实现</strong>：后台任务定期扫描数据库与缓存的一致性。</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">checkConsistency</span><span class="params">()</span> &#123;</span><br><span class="line">    List&lt;String&gt; keys = database.getAllKeys();</span><br><span class="line">    <span class="keyword">for</span> (String key : keys) &#123;</span><br><span class="line">        <span class="type">long</span> <span class="variable">dbVersion</span> <span class="operator">=</span> database.getVersion(key);</span><br><span class="line">        <span class="type">CachedData</span> <span class="variable">cached</span> <span class="operator">=</span> cache.get(key);</span><br><span class="line">        <span class="keyword">if</span> (cached == <span class="literal">null</span> || cached.version &lt; dbVersion) &#123;</span><br><span class="line">            <span class="comment">// 触发缓存修复</span></span><br><span class="line">            <span class="type">Data</span> <span class="variable">dbData</span> <span class="operator">=</span> database.read(key);</span><br><span class="line">            cache.set(key, dbData, dbVersion, TTL);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="业务层兜底：读写分离-流量染色"><a href="#业务层兜底：读写分离-流量染色" class="headerlink" title="业务层兜底：读写分离 + 流量染色"></a><strong>业务层兜底：读写分离 + 流量染色</strong></h3><h4 id="读写分离"><a href="#读写分离" class="headerlink" title="读写分离"></a><strong>读写分离</strong></h4><p>• <strong>实现</strong>：将修复期间的读请求路由到数据库主库（避免从库延迟）。</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Data <span class="title function_">getData</span><span class="params">(String key)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (isCacheDegraded()) &#123;</span><br><span class="line">        <span class="comment">// 读主库</span></span><br><span class="line">        <span class="keyword">return</span> masterDatabase.read(key);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 正常逻辑...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="流量染色"><a href="#流量染色" class="headerlink" title="流量染色"></a><strong>流量染色</strong></h4><p>• <strong>实现</strong>：对部分用户请求添加标记，强制读数据库并对比缓存数据。</p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Data <span class="title function_">getData</span><span class="params">(String key, <span class="type">boolean</span> forceCheck)</span> &#123;</span><br><span class="line">    <span class="type">Data</span> <span class="variable">cachedData</span> <span class="operator">=</span> cache.get(key);</span><br><span class="line">    <span class="keyword">if</span> (forceCheck) &#123;</span><br><span class="line">        <span class="type">Data</span> <span class="variable">dbData</span> <span class="operator">=</span> database.read(key);</span><br><span class="line">        <span class="keyword">if</span> (!dbData.equals(cachedData)) &#123;</span><br><span class="line">            <span class="comment">// 记录不一致日志并修复</span></span><br><span class="line">            cache.set(key, dbData, TTL);</span><br><span class="line">            <span class="keyword">return</span> dbData;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cachedData;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h3 id="总结方案-1"><a href="#总结方案-1" class="headerlink" title="总结方案"></a><strong>总结方案</strong></h3><table>
+<ul>
+<li><strong>如果删除失败以后读脏数据怎么办</strong>？<ul>
+<li>写入标记+短ttl：删除失败之后写入一个特殊的key，短ttl，标记这个缓存可能不准确，然后在正常读缓存逻辑之前加上if判断即可，遇到特殊key就直读数据库，统计缓存失败率，可以据此熔断。</li>
+</ul>
+</li>
+</ul>
+<table>
 <thead>
 <tr>
 <th><strong>场景</strong></th>
@@ -18066,7 +17960,7 @@ gender varchar(1) comment &#39;性别&#39;
 </thead>
 <tbody><tr>
 <td>短暂删除失败（网络抖动）</td>
-<td>标记待修复 + 读取时主动修复</td>
+<td><strong>标记待修复</strong> + 读取时主动修复</td>
 <td>高并发，允许短暂不一致</td>
 </tr>
 <tr>
@@ -18076,7 +17970,7 @@ gender varchar(1) comment &#39;性别&#39;
 </tr>
 <tr>
 <td>数据版本频繁变更</td>
-<td>版本号校验 + 异步补偿任务</td>
+<td><strong>版本号校验</strong> + 异步补偿任务</td>
 <td>金融、订单等关键业务</td>
 </tr>
 <tr>
@@ -18085,302 +17979,154 @@ gender varchar(1) comment &#39;性别&#39;
 <td>需要验证缓存一致性的场景</td>
 </tr>
 </tbody></table>
-<hr>
-<h3 id="生产级最佳实践"><a href="#生产级最佳实践" class="headerlink" title="生产级最佳实践"></a><strong>生产级最佳实践</strong></h3><ol>
-<li><strong>监控埋点</strong>：<br>• 监控缓存删除失败率、版本不一致比例、修复任务耗时。<br>• 配置告警（如版本不一致率 &gt; 1% 时触发）。  </li>
-<li><strong>自动化修复</strong>：<br>• 结合运维工具自动触发补偿任务，避免人工干预。  </li>
-<li><strong>压力测试</strong>：<br>• 模拟缓存删除失败场景，验证修复逻辑的吞吐量和延迟。  </li>
-<li><strong>动态配置</strong>：<br>• 通过配置中心动态调整 TTL、重试次数、熔断阈值。  </li>
-</ol>
-<p>通过以上方案，即使在重试过程中缓存数据暂时错误，也能通过快速失效、主动修复和业务降级，将影响范围控制在最小，最终保障数据一致性。</p>
-<h2 id="缓存穿透：布隆过滤器"><a href="#缓存穿透：布隆过滤器" class="headerlink" title="缓存穿透：布隆过滤器"></a>缓存穿透：布隆过滤器</h2><ol>
-<li>在ShopService中加入布隆过滤器。<ul>
-<li>Service Bean 初始化之后（PostConstruct）进行一次查询，将商铺id放入布隆过滤器</li>
-<li>本来商铺的数据是经过预热的，秒杀时商铺可以看做不会增加数据</li>
-<li><code>getAvoidPenetrationUsingBloom()</code> 能够先将id加入布隆过滤器中，如果不存在直接返回null。缓存命中真实数据, 直接返回数据</li>
-</ul>
-</li>
-</ol>
-<p>作为面试官，针对项目中布隆过滤器（Bloom Filter）防止缓存穿透的实现，我会从以下角度层层递进提问，考察候选人对技术细节、设计权衡和实际问题的理解：</p>
-<hr>
-<h3 id="基础原理与场景理解"><a href="#基础原理与场景理解" class="headerlink" title="基础原理与场景理解"></a><strong>基础原理与场景理解</strong></h3><ol>
-<li><p><strong>缓存穿透是什么？</strong><br>• 预期回答：频繁查询数据库中不存在的数据，绕过缓存直接冲击数据库，导致性能风险。<br>• 延伸问题：如何区分缓存穿透、缓存击穿、缓存雪崩？能否举例说明？</p>
-</li>
-<li><p><strong>为什么选择布隆过滤器？</strong><br>• 预期回答：空间效率高，可快速判断“数据一定不存在”的场景，避免无效查询。<br>• 延伸问题：布隆过滤器的误判率对业务有何影响？如何量化这种影响？</p>
-</li>
-</ol>
-<hr>
-<h3 id="技术实现细节"><a href="#技术实现细节" class="headerlink" title="技术实现细节"></a><strong>技术实现细节</strong></h3><ol start="3">
-<li><p><strong>布隆过滤器如何与缓存结合？</strong><br>• 预期回答：查询前先经过布隆过滤器，若返回“不存在”则直接拦截请求；若返回“可能存在”，则查询缓存或数据库。<br>• 延伸问题：如何初始化布隆过滤器？是否需要在系统启动时预热数据？</p>
-</li>
-<li><p><strong>如何设计布隆过滤器的参数？</strong><br>• 预期回答：根据预期数据量（n）、可接受的误判率（p），计算所需位数组大小（m）和哈希函数数量（k），公式为：<br>  ( $m = -\frac{n \ln p}{(\ln 2)^2}$ ), ( $k = \frac{m}{n} \ln 2$ )。<br>• 延伸问题：如果数据量持续增长，如何动态扩容布隆过滤器？</p>
-</li>
-</ol>
-<hr>
-<h3 id="设计权衡与优化"><a href="#设计权衡与优化" class="headerlink" title="设计权衡与优化"></a><strong>设计权衡与优化</strong></h3><ol start="5">
-<li><p><strong>布隆过滤器的误判率如何处理？</strong><br>• 预期回答：通过调整参数降低误判率，或在业务层添加兜底机制（如白名单）。<br>• 延伸问题：误判导致合法请求被拦截时，如何监控和修复？是否引入二级缓存？</p>
-</li>
-<li><p><strong>布隆过滤器不支持删除，如何应对数据删除场景？</strong><br>• 预期回答：使用变种结构如 Counting Bloom Filter 计数，或标记删除延迟更新。<br>• 延伸问题：如果是高频率更新的数据（如电商库存），如何避免频繁重建布隆过滤器？</p>
-</li>
-</ol>
-<hr>
-<p><strong>替代方案与对比</strong></p>
-<ol start="7">
-<li><p><strong>除了布隆过滤器，还有哪些方案可以防止缓存穿透？</strong><br>• 预期回答：缓存空值（Null Object）、互斥锁（Mutex Lock）、异步预热等。<br>• 延伸问题：什么场景下更适合缓存空值而非布隆过滤器？两者的性能差异如何？</p>
-</li>
-<li><p><strong>布隆过滤器与布谷鸟过滤器（Cuckoo Filter）的优劣对比？</strong><br>• 预期回答：布谷鸟过滤器支持删除、空间效率更高，但实现复杂度更高。<br>• 延伸问题：在内存敏感的场景下，如何选择数据结构？</p>
-</li>
-</ol>
-<hr>
-<p><strong>实际应用与故障排查</strong></p>
-<ol start="9">
-<li><p><strong>项目中布隆过滤器的误判率监控指标是什么？</strong><br>• 预期回答：通过日志或监控系统追踪误判次数与总请求数的比例，调整参数或重建过滤器。<br>• 延伸问题：如何测试布隆过滤器的实际误判率是否符合预期？</p>
-</li>
-<li><p><strong>是否遇到过布隆过滤器未能解决的极端情况？如何应对？</strong><br>◦ 预期回答：例如恶意攻击构造大量哈希碰撞，需结合限流（Rate Limiting）或IP黑名单。<br>◦ 延伸问题：如果数据库新增了一条本应被布隆过滤器拦截的数据，如何保证一致性？</p>
-</li>
-</ol>
-<hr>
-<p><strong>分布式环境挑战</strong></p>
-<ol start="11">
-<li><p><strong>在分布式系统中，如何维护布隆过滤器的数据一致性？</strong><br>◦ 预期回答：中心化存储（如Redis）或分片同步（需权衡网络开销）。<br>◦ 延伸问题：Redis的布隆过滤器模块（如RedisBloom）是否支持动态扩容？</p>
-</li>
-<li><p><strong>如何避免布隆过滤器成为单点瓶颈？</strong><br>◦ 预期回答：本地缓存+定期同步，或采用分层过滤（如本地布隆过滤器+全局布隆过滤器）。  </p>
-</li>
-</ol>
-<h3 id="布隆过滤器满了"><a href="#布隆过滤器满了" class="headerlink" title="布隆过滤器满了"></a>布隆过滤器满了</h3><p>布隆过滤器的容量由其位数组大小和哈希函数数量决定。当布隆过滤器“满”（即误判率显著上升）时，可以通过以下方式处理：</p>
+<p><mark>缓存穿透和缓存击穿都实现在 <strong>CacheClient</strong> 中</mark></p>
+<p><strong>缓存穿透</strong>：恶意查询db里不存在的数据，导致db崩溃</p>
 <ul>
-<li><strong>扩容</strong>：创建一个更大的布隆过滤器，并重新插入所有原始数据（前提是原始数据可访问）。</li>
-<li><strong>重建</strong>：若无法扩容且原始数据不可用，只能清空并重新初始化，但会导致历史数据丢失。</li>
-<li><strong>分层过滤</strong>：结合多个布隆过滤器（如分片或层级结构），将不同范围的数据分散到不同过滤器中。</li>
+<li>缓存空对象设置ttl：实现简单，维护方便。<em>造成短期的不一致，额外内存消耗。</em> <ul>
+<li>适合空key数目可控的场景，支持动态更新</li>
 </ul>
-<h3 id="如何迁移布隆过滤器的数据？"><a href="#如何迁移布隆过滤器的数据？" class="headerlink" title="如何迁移布隆过滤器的数据？"></a><strong>如何迁移布隆过滤器的数据？</strong></h3><p>迁移需要依赖原始数据，步骤如下：</p>
-<ol>
-<li><strong>创建新过滤器</strong>：构建一个更大的布隆过滤器（更大的位数组和相同/优化的哈希函数）。</li>
-<li><strong>重新插入数据</strong>：遍历原始数据集，将每个元素重新哈希并插入新过滤器。</li>
-<li><strong>替换旧过滤器</strong>：完成迁移后，用新过滤器替换旧过滤器。</li>
-</ol>
-<p><strong>注意</strong>：若原始数据不可用，迁移无法完成，需清空或接受更高的误判率。</p>
-<h3 id="能否从小布隆过滤器升级到更大的？"><a href="#能否从小布隆过滤器升级到更大的？" class="headerlink" title="能否从小布隆过滤器升级到更大的？"></a><strong>能否从小布隆过滤器升级到更大的？</strong></h3><p><strong>可以</strong>，但必须满足以下条件：</p>
+</li>
+<li><strong>布隆过滤器</strong>：内存占用较少，没有多余key。<em>实现复杂，可能误判。</em>   本项目使用 Guava 实现。<ul>
+<li>适合海量数据，且需要高效拦截绝对不存在的请求时（如用户注册校验）需要预先初始化 @PostConstruct </li>
+<li>容量由bitmap大小与哈希函数数量决定，可能会满，满了以后可以扩容，可以业务层兜底（比如缓存空对象）。</li>
+<li>删除、扩容：不支持。</li>
+<li><strong>计数布隆过滤器</strong>(Counting Bloom Filter): 用空间复杂度换来删除功能，bit改为计数器，查询时所有位置的计数器都大于0才算存在。插入时在所有位置加1，删除时在所有位置减1，只要有一个归0就认定其不存在。</li>
+<li><strong>布谷鸟过滤器</strong>(Cuckoo Filter): <strong>指纹</strong>使用抗碰撞性强的哈希函数计算哈希值后截取低位获得。使用<strong>桶数组</strong>存储指纹，一个桶存四个指纹(连续,cpucache)。使用与当前指纹的哈希值异或的方式计算出另一个指纹副本的桶索引。<ul>
+<li>插入时，第一个桶索引 i1= hash(x) 计算，第二个桶索引 i2 = i1 ⊕ hash(fingerprint(x))。桶只要有一个空位就可以插入，如果直接和指纹本身异或，在指纹跟桶数组大小差距悬殊时两个桶离得较近不利于均匀分布。如果没有空位就从其中挑一个指纹 f’ 迁出然后迁入，对于f’我们直接使用当前的桶索引和 f’ 进行异或就能计算出就能 f’ 备用桶的位置。</li>
+<li>查询时，看两个桶里面是否存在 x 的指纹，有指纹就算存在。删除时，从两个桶里删除匹配的指纹。</li>
+<li>降低误判率：增大指纹长度，减小桶的尺寸</li>
+<li>大多数情况下，选择2个哈希函数，桶的尺寸选择4，能够达到最佳或接近最佳的空间效率的假阳性率。</li>
+</ul>
+</li>
+<li>动态数据集应该预防写满，或者使用多级过滤，例如使用 HashSet 过滤高频数据，然后用BF处理长尾数据</li>
+<li>可以使用功能更加强大的 RedisBloom</li>
+</ul>
+</li>
+</ul>
+<p><strong>缓存击穿</strong>：一个被高并发访问并且缓存重建业务较复杂的key突然失效了，无数的请求访问会在瞬间给数据库带来巨大的冲击。常见的解决方案有两种：</p>
 <ul>
-<li><strong>哈希函数兼容</strong>：新过滤器的哈希函数需要与旧过滤器兼容（例如，位数组扩容后，哈希值需映射到新数组范围）。</li>
-<li><strong>依赖原始数据</strong>：需遍历原始数据重新插入到新过滤器中，否则直接合并位数组可能导致误判率不可控。</li>
+<li>互斥锁 MUTEX。线程 1 未命中，拿到锁去<strong>同步地重建缓存</strong>，线程 2 此时也紧随其后，拿不到锁就重复查询缓存。直到重建完成，线程 2 就能拿到重建的缓存值。优点是<strong>一致性可以确保</strong>，缺点是重建期间其他的线程会一直<strong>同步递归调用</strong>。</li>
+<li>逻辑过期 LOGICAL EXPIRE。不存在未命中情况，发现过期就拿到锁然后提交一个重建缓存的任务（异步重建完之后finally释放锁），然后直接返回旧值。优点是<strong>响应比较快</strong>，是非阻塞的，缺点是一致性受影响。</li>
 </ul>
-<h3 id="单体应用中的-BloomFilter-选择建议"><a href="#单体应用中的-BloomFilter-选择建议" class="headerlink" title="单体应用中的 BloomFilter 选择建议"></a><strong>单体应用中的 BloomFilter 选择建议</strong></h3><p>在单体应用中，若需使用布隆过滤器，<strong>Guava BloomFilter 是推荐选择</strong>，原因如下：</p>
+<p><strong>缓存雪崩</strong>：同一时段大量的缓存key同时失效或redis宕机</p>
 <ul>
-<li><strong>轻量易用</strong>：无需依赖外部服务（如 Redis），适合单体架构。</li>
-<li><strong>高性能</strong>：基于内存的位操作，判断时间复杂度为 O(k)（k 为哈希函数数量）。</li>
-<li><strong>灵活配置</strong>：通过 <code>expectedInsertions</code> 和 <code>fpp</code> 平衡内存与误判率。</li>
+<li>给不同的Key的TTL添加随机值</li>
+<li>利用Redis集群提高服务的可用性</li>
+<li>给缓存业务添加降级限流策略</li>
+<li>给业务添加多级缓存</li>
 </ul>
-<p>**<mark>静态数据集<mark>**（如预加载的ID列表）：</p>
-<ul>
-<li>初始化时指定 <code>expectedInsertions</code> 为数据集大小，<code>fpp</code> 根据业务容忍度设置（如 1%）。</li>
-</ul>
-<p>**<mark>动态数据集<mark>**（如实时去重）：</p>
-<ul>
-<li>监控填充率：通过 <code>expectedInsertions</code> 和 <code>actualInsertions</code> 估算填充率（例如 <code>filter.approximateElementCount()</code>）。</li>
-<li><strong>提前预防写满</strong>：当实际插入量接近 <code>expectedInsertions</code> 时，创建更大的新过滤器并迁移数据。</li>
-<li><strong>兜底方案</strong>：若数据不可回溯，可接受更高的误判率，或周期性重置过滤器（牺牲部分业务逻辑准确性）。</li>
-</ul>
-<p>**<mark>资源受限环境<mark>**：</p>
-<ul>
-<li>降低 <code>fpp</code> 要求：适当提高误判率以减少内存占用。</li>
-<li>使用 <code>策略模式</code> 结合多级过滤：例如先用 <code>HashSet</code> 过滤高频元素，再用 <code>BloomFilter</code> 处理长尾数据。</li>
-</ul>
-<h2 id="RedisBloom"><a href="#RedisBloom" class="headerlink" title="RedisBloom"></a>RedisBloom</h2><h3 id="RedisBloom-的特色功能详解"><a href="#RedisBloom-的特色功能详解" class="headerlink" title="RedisBloom 的特色功能详解"></a>RedisBloom 的特色功能详解</h3><p>RedisBloom 是 Redis 的一个扩展模块，提供了一系列概率数据结构（Probabilistic Data Structures），在分布式场景下表现出色。以下是其核心特色功能及优势：</p>
-<hr>
-<h4 id="支持多种概率数据结构"><a href="#支持多种概率数据结构" class="headerlink" title="支持多种概率数据结构"></a><strong>支持多种概率数据结构</strong></h4><p>RedisBloom 不仅包含标准布隆过滤器，还提供以下高级数据结构：<br>• <strong>布隆过滤器（Bloom Filter, BF）</strong>：<br>  支持快速判断元素是否存在，适用于去重、缓存穿透防护等场景。<br>• <strong>计数布隆过滤器（Counting Bloom Filter, CBF）</strong>：<br>  允许删除元素（通过计数器增减），解决了传统布隆过滤器无法删除的问题。<br>• <strong>Cuckoo 过滤器（Cuckoo Filter, CF）</strong>：<br>  相比布隆过滤器，支持删除操作且空间效率更高，误判率更低。<br>• <strong>Top-K 计数器（Top-K）</strong>：<br>  统计高频元素（如热点关键词），支持动态更新和查询 Top N 结果。<br>• <strong>Count-Min Sketch（CMS）</strong>：<br>  估算数据流的频率分布（如统计用户行为次数），适用于大数据量下的近似统计。</p>
-<p><strong>示例命令</strong>：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 布隆过滤器：添加元素并检查存在性</span></span><br><span class="line">BF.ADD myfilter <span class="string">&quot;item1&quot;</span></span><br><span class="line">BF.EXISTS myfilter <span class="string">&quot;item1&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Cuckoo 过滤器：添加并删除元素</span></span><br><span class="line">CF.ADDNX mycuckoo <span class="string">&quot;item2&quot;</span></span><br><span class="line">CF.DEL mycuckoo <span class="string">&quot;item2&quot;</span></span><br></pre></td></tr></table></figure>
+<h2 id="全局异常处理"><a href="#全局异常处理" class="headerlink" title="全局异常处理"></a>全局异常处理</h2><h3 id="RestControllerAdvice-和-ExceptionHandler"><a href="#RestControllerAdvice-和-ExceptionHandler" class="headerlink" title="@RestControllerAdvice 和 @ExceptionHandler"></a>@RestControllerAdvice 和 @ExceptionHandler</h3><p>对于更简单的异常处理，推荐使用 <code>@RestControllerAdvice</code>：所有方法默认返回 JSON，等价于自动添加 <code>@ResponseBody</code>。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@RestControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GlobalApiExceptionHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 自动返回 JSON，无需 @ResponseBody</span></span><br><span class="line">    <span class="meta">@ExceptionHandler(UserNotFoundException.class)</span></span><br><span class="line">    <span class="meta">@ResponseStatus(HttpStatus.NOT_FOUND)</span></span><br><span class="line">    <span class="keyword">public</span> ErrorResponse <span class="title function_">handleUserNotFound</span><span class="params">(UserNotFoundException ex)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ErrorResponse</span>(ex.getMessage(), <span class="number">404</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 更灵活的控制：自定义状态码和响应体</span></span><br><span class="line">    <span class="meta">@ExceptionHandler(ValidationException.class)</span></span><br><span class="line">    <span class="keyword">public</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title function_">handleValidationError</span><span class="params">(ValidationException ex)</span> &#123;</span><br><span class="line">        <span class="type">ErrorResponse</span> <span class="variable">error</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ErrorResponse</span>(ex.getMessage(), <span class="number">400</span>);</span><br><span class="line">        <span class="keyword">return</span> ResponseEntity.badRequest().body(error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<hr>
-<h4 id="动态扩容与自动缩放"><a href="#动态扩容与自动缩放" class="headerlink" title="动态扩容与自动缩放"></a><strong>动态扩容与自动缩放</strong></h4><p>• <strong>自动扩容能力</strong>：<br>  RedisBloom 的布隆过滤器在初始化时可设置 <code>CAPACITY</code> 和 <code>ERROR RATE</code>，当插入元素数量接近容量上限时，<strong>自动创建子过滤器并分摊哈希计算</strong>，无需手动重建。<br>• <strong>弹性扩展</strong>：<br>  通过 <code>BF.RESERVE</code> 命令可动态调整容量和误判率，适应数据量增长。</p>
-<p><strong>示例</strong>：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 初始化一个支持自动扩容的布隆过滤器</span></span><br><span class="line">BF.RESERVE myautofilter 0.01 1000 AUTOEXPAND 1</span><br></pre></td></tr></table></figure>
+<p>注意事项</p>
+<ul>
+<li><strong>执行顺序</strong>：解析器按注册顺序执行。返回非空 <code>ModelAndView</code> 时终止处理。</li>
+<li><strong>默认解析器</strong>：使用 <code>extendHandlerExceptionResolvers</code> 避免覆盖Spring默认解析器（如处理<code>@ExceptionHandler</code>的解析器）。</li>
+<li><strong>与Spring Boot整合</strong>：在Spring Boot中，可结合 <code>@ControllerAdvice</code> 和 <code>ErrorController</code> 进行全局处理。</li>
+</ul>
+<h3 id="Result-封装"><a href="#Result-封装" class="headerlink" title="Result 封装"></a>Result 封装</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Result</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Boolean success;</span><br><span class="line">    <span class="keyword">private</span> String errorMsg;</span><br><span class="line">    <span class="keyword">private</span> Object data;</span><br><span class="line">    <span class="keyword">private</span> Long total;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">ok</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="literal">true</span>, <span class="literal">null</span>, <span class="literal">null</span>, <span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">ok</span><span class="params">(Object data)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="literal">true</span>, <span class="literal">null</span>, data, <span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">ok</span><span class="params">(List&lt;?&gt; data, Long total)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="literal">true</span>, <span class="literal">null</span>, data, total);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">fail</span><span class="params">(String errorMsg)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="literal">false</span>, errorMsg, <span class="literal">null</span>, <span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<hr>
-<h4 id="分布式与高可用支持"><a href="#分布式与高可用支持" class="headerlink" title="分布式与高可用支持"></a><strong>分布式与高可用支持</strong></h4><p>• <strong>天然分布式</strong>：<br>  作为 Redis 模块，支持 Redis 集群模式，数据分片存储在多个节点，适合大规模分布式系统。<br>• <strong>持久化与灾备</strong>：<br>  利用 Redis 的 RDB/AOF 持久化机制，数据可持久保存；通过主从复制、哨兵模式或 Redis Cluster 实现高可用。</p>
-<hr>
-<h4 id="高性能与低延迟"><a href="#高性能与低延迟" class="headerlink" title="高性能与低延迟"></a><strong>高性能与低延迟</strong></h4><p>• <strong>内存优化</strong>：<br>  位数组和哈希算法针对内存效率优化，例如 Cuckoo 过滤器比传统布隆过滤器节省 20%~30% 空间。<br>• <strong>批量操作</strong>：<br>  支持批量添加（<code>BF.MADD</code>）和批量检查（<code>BF.MEXISTS</code>），减少网络开销。</p>
-<p><strong>性能对比</strong>：</p>
-<table>
-<thead>
-<tr>
-<th>操作</th>
-<th>单次请求耗时</th>
-<th>批量（1000元素）耗时</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>BF.ADD</code></td>
-<td>0.1ms</td>
-<td>10ms</td>
-</tr>
-<tr>
-<td><code>BF.MADD</code></td>
-<td>-</td>
-<td>2ms</td>
-</tr>
-</tbody></table>
-<hr>
-<h4 id="灵活的配置与管理"><a href="#灵活的配置与管理" class="headerlink" title="灵活的配置与管理"></a><strong>灵活的配置与管理</strong></h4><p>• <strong>自定义参数</strong>：<br>  初始化时可指定容量（<code>CAPACITY</code>）、误判率（<code>ERROR RATE</code>）、扩容策略（<code>AUTOEXPAND</code>）等。<br>• <strong>过期时间（TTL）</strong>：<br>  结合 Redis 的 <code>EXPIRE</code> 命令，可为过滤器设置自动过期清理。<br>• <strong>信息监控</strong>：<br>  通过 <code>BF.INFO</code> 命令查看过滤器状态（如元素数量、内存占用）。</p>
-<p><strong>示例</strong>：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建过滤器并设置过期时间</span></span><br><span class="line">BF.RESERVE myfilter 0.01 10000</span><br><span class="line">EXPIRE myfilter 3600  <span class="comment"># 1小时后自动删除</span></span><br></pre></td></tr></table></figure>
-
-<hr>
-<h4 id="与-Redis-生态无缝集成"><a href="#与-Redis-生态无缝集成" class="headerlink" title="与 Redis 生态无缝集成"></a><strong>与 Redis 生态无缝集成</strong></h4><p>• <strong>Lua 脚本支持</strong>：<br>  可在脚本中直接调用 RedisBloom 命令，实现复杂逻辑（如原子性操作）。<br>• <strong>事务与管道</strong>：<br>  结合 Redis 事务（<code>MULTI/EXEC</code>）和管道（Pipeline），提升批量操作效率。<br>• <strong>发布订阅（Pub/Sub）</strong>：<br>  监听过滤器状态变化（如容量告警），触发业务逻辑。</p>
-<hr>
-<h3 id="适用场景对比"><a href="#适用场景对比" class="headerlink" title="适用场景对比"></a><strong>适用场景对比</strong></h3><table>
-<thead>
-<tr>
-<th>场景</th>
-<th>Guava BloomFilter</th>
-<th>RedisBloom</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>单机应用</strong></td>
-<td>✅ 轻量、高性能</td>
-<td>❌ 需 Redis 依赖</td>
-</tr>
-<tr>
-<td><strong>分布式系统</strong></td>
-<td>❌ 无法跨节点共享</td>
-<td>✅ 天然支持</td>
-</tr>
-<tr>
-<td><strong>动态扩容需求</strong></td>
-<td>❌ 需手动重建</td>
-<td>✅ 自动扩展</td>
-</tr>
-<tr>
-<td><strong>数据持久化</strong></td>
-<td>❌ 内存数据易丢失</td>
-<td>✅ RDB/AOF 持久化</td>
-</tr>
-<tr>
-<td><strong>高频删除操作</strong></td>
-<td>❌ 不支持</td>
-<td>✅ Cuckoo/Counting BF</td>
-</tr>
-</tbody></table>
-<hr>
-<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a><strong>总结</strong></h3><p>RedisBloom 的核心优势在于：</p>
+<h2 id="秒杀抢购"><a href="#秒杀抢购" class="headerlink" title="秒杀抢购"></a>秒杀抢购</h2><p>• 使用乐观锁避免秒杀券超卖，同时提高并发。通过控制事务的粒度以及动态代理保证事务的有效性。使用 Lua 脚本解决秒杀券更新的原子性问题。 Redisson 分布式 锁解决集群环境下一人一单可能导致的并发安全问题。在 3000 并发测试中成功拦截 100%的重复请求</p>
+<h3 id="乐观锁-防止超卖"><a href="#乐观锁-防止超卖" class="headerlink" title="乐观锁 防止超卖"></a>乐观锁 防止超卖</h3><p><strong>做完&gt;0库存判断之后：</strong></p>
+<ul>
+<li>原来：不检查直接扣【超卖】</li>
+<li>改进1：扣减时的库存必须跟原来一样才成功。【成功率太低】</li>
+<li>改进2：只要大于0就可以进行扣减。</li>
+</ul>
+<h3 id="一人一单（订单接口的幂等性）"><a href="#一人一单（订单接口的幂等性）" class="headerlink" title="一人一单（订单接口的幂等性）"></a>一人一单（订单接口的幂等性）</h3><ol>
+<li><p>订单接口的幂等性是怎么做的？</p>
+<p>（意思就是post请求带着：一个用户id，一个优惠卷id。发送多次请求，如何保证只有一个成功，也就是一人一单）</p>
+</li>
+<li><p>库存扣减之后，还要去insert一个新的订单，你是如何保存这个的一致性的？<code>createVoucherOrderAsync(order)</code></p>
+<p>（使用spring自带的事务，将其放到一个事务里 @Transactional，注意事务有效性）</p>
+</li>
+<li><p>抢优惠券没有及时处理怎么办?</p>
+<p>（通知用户已经抢了，延迟推送结果）</p>
+</li>
+<li><p>抢优惠券处理完了如何通知用户？</p>
+<p>（没有通知，实际的业务还是基于DB的，使用券的时候db里没有就是没有，db处理完了自然就能用了）</p>
+</li>
+<li><p>秒杀场景下扣减库存太慢了怎么办？</p>
+<p>（数据库集群，分库分表，索引优化，Redis热key，大key，Redis缓存过小）</p>
+</li>
+</ol>
+<h4 id="单机解决方案"><a href="#单机解决方案" class="headerlink" title="单机解决方案"></a>单机解决方案</h4><ul>
+<li>原来：一人n单过来之后，一开始都还没有订单，问题还是一样。</li>
+<li>改进1：变成同步方法以后锁太大 createVoucherOrder()</li>
+<li>改进2：使用this作为锁缩小范围，this获取的是服务对象，只要获得了服务对象就要参与竞争，导致所有人都参与竞争</li>
+<li>改进3：使用userId.toString().intern()作为锁对象锁住一人一单的判断逻辑，但是锁在事务内部会导致事务尚未提交锁就已经释放，所以应该在 createVoucherOrder() 外部进行加锁。</li>
+<li>改进4：上方依然有问题，因为直接调用实例方法默认是使用this.createVoucherOrder的，而Spring的事务基于aop动态代理，因此需要显式获取代理对象。</li>
+<li>改进5：外部的方法不要加事务，因为事务传播机制默认是加入已经存在的事务。这边锁释放了大事务还没提交所以没用</li>
+</ul>
+<h4 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h4><p>集群环境下同步代码块会失效，因此需要使用redis作为公共的分布式锁进行改进</p>
+<p><strong>原来</strong>：setnx 到期删除锁</p>
+<ul>
+<li>问题是如果在锁内部阻塞导致过期删除，别人抢来了锁开始执行，自己出来以后就会把别人的锁删掉。</li>
+</ul>
+<p><strong>改进</strong>：分布式锁的value为自己的线程id，释放逻辑里判断id是否和自己相同。</p>
+<ul>
+<li>问题是如果发生比较极端的情况，判断逻辑里id相同，准备delete时可能发生fullgc导致超时释放，仍然会误删别人的锁，拿锁、比锁、删锁不是原子性的。因此引入LUA脚本。</li>
+<li>自定义锁的局限性：实现比较简单，没有高级功能。</li>
+</ul>
+<p><strong>REDISSON</strong> 解决了setnx的以下痛点：</p>
 <ol>
-<li><strong>多数据结构支持</strong>：覆盖从存在性判断（布隆/Cuckoo 过滤器）到频率统计（Top-K/CMS）的多样化场景。</li>
-<li><strong>分布式能力</strong>：无缝集成 Redis 集群和高可用架构，适合微服务和大规模系统。</li>
-<li><strong>自动化运维</strong>：动态扩容、持久化、监控告警等特性降低运维成本。</li>
-<li><strong>高性能与弹性</strong>：内存优化和批量操作保障低延迟，适应高并发需求。</li>
+<li>不可重入，死锁，获取锁的线程不能进入相同的所的代码块。<ul>
+<li><strong>重入机制</strong>：重入次数从0开始增加，使用hash结构存储线程id以及其重入次数。</li>
+</ul>
+</li>
+<li>不可重试，尝试获取一次就返回没有重试机制。要么就是无效自旋耗费资源<ul>
+<li>获取失败会订阅（pub/sub）释放消息，再等一段时间，收到释放信号就重试，如果一直没获取到，超出最大等待时间之后返回false。</li>
+</ul>
+</li>
+<li>超时释放：业务执行时间长导致锁过期，虽然不会误删，但是有隐患。<ul>
+<li><strong>续约</strong>：<strong>watchdog</strong> 线程，只要持有锁就会有定时更新ttl的任务，业务完成释放锁也会将定时任务取消。</li>
+</ul>
+</li>
+<li>主从一致：主从同步出现问题可能出现死锁<ul>
+<li><strong>multilock</strong>：解决主从一致问题。必须所有的redis全获取成功才算获取到。</li>
+</ul>
+</li>
 </ol>
-<p>对于需要扩展性、持久化或分布式协作的场景，RedisBloom 是比 Guava BloomFilter 更强大的选择。</p>
-<h2 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h2><h3 id="简述你的登录逻辑（token-双拦截器）"><a href="#简述你的登录逻辑（token-双拦截器）" class="headerlink" title="简述你的登录逻辑（token 双拦截器）"></a>简述你的登录逻辑（token 双拦截器）</h3><p>短信登录的短信怎么发送的?</p>
+<h3 id="RabbitMQ-异步秒杀"><a href="#RabbitMQ-异步秒杀" class="headerlink" title="RabbitMQ 异步秒杀"></a>RabbitMQ 异步秒杀</h3><p>项目为什么要加个消息队列?</p>
 <ul>
-<li>使用hutool生成的随机六位数验证码</li>
-</ul>
-<p>如何标识用户</p>
-<ul>
-<li>（手机号）</li>
-</ul>
-<p>项目的权限刷新什么意思</p>
-<ul>
-<li>（登录时判断是否注册）</li>
-</ul>
-<p>在这个方案中，他确实可以使用对应路径的拦截，同时刷新登录token令牌的存活时间，但是现在这个拦截器他只是拦截需要被拦截的路径，假设当前用户访问了一些不需要拦截的路径，比如主页之类的那么这个拦截器就不会生效，所以此时令牌刷新的动作实际上就不会执行，所以这个方案他是存在问题的。</p>
-<p>只有访问拦截的网页才会刷redis，这样就导致如果用户访问的是其他网页，不会出发拦截器，过期token就会失效</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653320822964.png" alt="初始方案思路总结"></p>
-<p>既然之前的拦截器无法对不需要拦截的路径生效，那么我们可以添加一个拦截器，在第一个拦截器中拦截所有的路径，把第二个拦截器做的事情放入到第一个拦截器中，同时刷新令牌，因为第一个拦截器有了threadLocal的数据，所以此时第二个拦截器只需要判断拦截器中的user对象是否存在即可，完成整体刷新功能。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653320764547.png" alt="优化拦截器"></p>
-<h3 id="为什么要用thread-local"><a href="#为什么要用thread-local" class="headerlink" title="为什么要用thread local"></a>为什么要用thread local</h3><p>thread local底层你懂吗？会出现什么问题？内存泄漏知道吗？怎么解决的</p>
-<p>内存泄露</p>
-<p><code>ThreadLocal&lt;T&gt;</code> 主要用于以下场景：</p>
-<ol>
-<li><strong>线程安全的变量管理：</strong> 比如事务管理、用户会话等。</li>
-<li><strong>避免同步锁：</strong> 替代传统的锁机制，提高并发性能。</li>
-<li><strong>数据库连接或会话缓存：</strong> 每个线程维护自己的数据库连接实例。避免显式传递参数。</li>
-</ol>
-<p>T 用于表示 ThreadLocal 存的值类型 线程对象的ThreadLocalMap </p>
-<h4 id="ThreadLocal-的核心用法"><a href="#ThreadLocal-的核心用法" class="headerlink" title="ThreadLocal 的核心用法"></a><strong>ThreadLocal 的核心用法</strong></h4><ol>
-<li><p><strong>创建 ThreadLocal 实例</strong><br>通常声明为 <code>static final</code>，避免重复创建。可以通过 <code>withInitial</code> 或重写 <code>initialValue</code> 设置默认值：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Java 8+ 推荐方式</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;String&gt; threadLocal = ThreadLocal.withInitial(() -&gt; <span class="string">&quot;default&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 传统方式（重写 initialValue）</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;String&gt; threadLocal = <span class="keyword">new</span> <span class="title class_">ThreadLocal</span>&lt;String&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> String <span class="title function_">initialValue</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;default&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
-<li><p><strong>设置和获取值</strong><br>使用 <code>set()</code> 和 <code>get()</code> 方法操作当前线程的副本：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">threadLocal.set(<span class="string">&quot;value&quot;</span>); <span class="comment">// 设置当前线程的值</span></span><br><span class="line"><span class="type">String</span> <span class="variable">value</span> <span class="operator">=</span> threadLocal.get(); <span class="comment">// 获取当前线程的值</span></span><br></pre></td></tr></table></figure></li>
-<li><p><strong>清理资源</strong><br>务必在 <code>finally</code> 块中调用 <code>remove()</code>，防止内存泄漏：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    threadLocal.set(<span class="string">&quot;value&quot;</span>);</span><br><span class="line">    <span class="comment">// ... 业务逻辑 ...</span></span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    threadLocal.remove(); <span class="comment">// 清理当前线程的值</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h4 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a>内存泄漏</h4><ul>
-<li>ThreadLocalMap 的键是弱引用（ThreadLocal 实例），但值是强引用。若 ThreadLocal 被回收，但线程未销毁（如线程池复用），值对象可能无法回收。</li>
-<li>线程复用可能导致残留旧值，需确保每次任务结束后清理 ThreadLocal。</li>
-<li><strong>解决</strong>：始终在 <code>finally</code> 块中调用 <code>remove()</code>。</li>
-</ul>
-<h4 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h4><ul>
-<li>默认情况下，子线程无法继承父线程的 ThreadLocal 值。若需要继承，使用 <code>InheritableThreadLocal</code>。</li>
-<li><strong>局限性</strong>：线程池场景中，子线程可能复用旧线程，导致继承的值并非最新。</li>
-</ul>
-<h2 id="异步秒杀"><a href="#异步秒杀" class="headerlink" title="异步秒杀"></a>异步秒杀</h2><p>项目为什么要加个消息队列?</p>
-<ul>
-<li>redis效率比较高，而数据库效率不如redis快，tomcat中的程序，会进行串行操作，分成如下几步：查询优惠卷、<mark>判断秒杀库存是否足够<mark>、查询订单、<mark>校验是否是一人一单<mark>、扣减库存、创建订单。在这六步操作中，又有很多操作是要去操作数据库的，而且还是一个线程串行执行， 这样就会导致我们的程序执行的很慢，所以我们需要异步程序执行。</li>
-<li>将耗时比较短的逻辑判断放入到redis中，比如是否库存足够，比如是否一人一单，这样的操作，只要这种逻辑可以完成，就意味着我们是一定可以下单完成的，我们只需要进行快速的逻辑判断，根本就不用等下单逻辑走完，我们直接给用户返回成功， 再在后台开一个线程，后台线程慢慢的去执行queue里边的消息</li>
+<li>Redis 效率比较高，而数据库效率不如redis快，tomcat中的程序，会进行串行操作，分成如下几步：查询优惠卷、<strong>判断秒杀库存是否足够</strong>、查询订单、<strong>校验是否是一人一单</strong>、扣减库存、创建订单。在这六步操作中，又有很多操作是要去操作数据库的，而且还是一个线程串行执行， 这样就会导致我们的程序执行的很慢，所以我们需要异步程序执行。</li>
+<li>将耗时比较短的逻辑判断放入到redis中，比如是否库存足够，比如是否一人一单，这样的操作，只要这种逻辑可以完成，就意味着我们是一定可以下单完成的，我们只需要进行快速的逻辑判断，根本就不用等下单逻辑走完，我们直接给用户返回成功， 再在后台开一个线程，后台线程慢慢的去执行queue里边的消息。</li>
 <li>为什么不使用线程池或者异步编排。如果访问的人很多，那么线程池中的线程可能一下子就被消耗完了，而且你使用上述方案，最大的特点在于，你觉得时效性会非常重要，但是你想想是吗？并不是，比如我只要确定他能做这件事，然后我后边慢慢做就可以了，我并不需要他一口气做完这件事，所以我们应当采用的是课程中，类似消息队列的方式来完成我们的需求，而不是使用线程池或者是异步编排的方式来完成这个需求。</li>
 </ul>
-<p>在用户异步下单时，后端会接收到/voucher-order/seckill/{} 的请求，此时VoucherOrderController会调用<code>seckillVoucher</code>方法。执行lua脚本，判断用户的购买资格，有购买资格的话，生成orderId，并将用户id和优惠券id一起存入订单消息中，然后将订单消息存入RabbitMQ消息队列，等待<strong>消费者异步消费</strong>。</p>
-<p>订单接口的幂等性是怎么做的？</p>
+<p><strong>Lua 脚本</strong>：把库存和一人一单做好判断，符合就直接返回成功。构建好订单发给rabbitMQ。</p>
+<p>MQ 这边本身支持 concurrency，不过用默认的 1 就好，我们手动配置好线程池的参数，然后提交给线程池。</p>
+<p>异步：时效性不是那么重要，因此使用 MQ 慢慢消化即可。</p>
+<p>单机——轻量级异步任务编排：如并行调用多个本地接口、合并结果、链式处理。</p>
 <ul>
-<li>（意思就是post请求带着：一个用户id，一个优惠卷id。发送多次请求，如何保证只有一个成功，也就是一人一单）</li>
+<li>高并发请求处理：通过线程池快速响应，避免阻塞主线程。</li>
+<li>无需跨进程通信：所有操作在同一个 JVM 内完成。</li>
 </ul>
-<p>库存扣减之后，还要去insert一个新的订单，你是如何保存这个的一致性的？</p>
+<p><strong>分布式——RabbitMQ</strong>：</p>
 <ul>
-<li>使用spring自带的事务，将其放到一个事务里</li>
-</ul>
-<p>抢优惠券没有及时处理怎么办?</p>
+<li><p>直连交换机 <code>hmdianping.direct</code> 负责接收和分发消息</p>
+</li>
+<li><p>队列 <code>direct.seckill.queue</code>  存储消息，是消息的“最终目的地”。</p>
+</li>
+<li><p>绑定关系：队列通过路由键 <code>direct.seckill</code> 绑定到交换机。分发消息的依据（地址）</p>
+</li>
+<li><p><strong>参数注入</strong>：</p>
 <ul>
-<li>（通知用户已经抢了，延迟推送结果）</li>
+<li><code>Message</code>：原始消息对象（含元数据）。</li>
+<li><code>Channel</code>：RabbitMQ 通道，用于手动确认消息（ACK/NACK）。</li>
+<li><code>VoucherOrder</code>：消息体自动反序列化后的业务对象（需配置消息转换器，如 <code>Jackson2JsonMessageConverter</code>）。</li>
 </ul>
-<p>抢优惠券处理完了如何通知用户？</p>
-<ul>
-<li>（没有通知）</li>
+</li>
+<li><p><strong>手动ACK</strong>：manual。业务处理成功调用 <code>basicAck</code>，告知 RabbitMQ 消息已被消费。</p>
+</li>
+<li><p><strong>消息持久化</strong>：发送者发消息时设置DeliveryMode为Persistent，同时队列创建时也要指定durable = true</p>
+</li>
+<li><p><strong>生产者 confirm</strong>：correlated。需要@PostConstruct配置回调函数，到达交换机和路由成功之后会触发回调。</p>
+</li>
+<li><p>重试机制：生产者发送消息的时候设置好消息头的 <code>retryCount = 0</code>，消费者检测 <code>retryCount &lt;= 3</code>才消费。如果订单保存失败则抛异常，此时拒绝消息并重新入队，达到三次重试就将这条消息转发到延时队列中去。这样，配置延时队列的死信队列为我们的正常队列，等到消息的 ttl 到了就 Reject消息，消息就重新回到了“死信队列”，也就是消费者对应的对列中，确保了消息不丢失。</p>
+</li>
 </ul>
-<p>秒杀场景下扣减库存太慢了怎么办？</p>
-<ul>
-<li>（数据库集群，分库分表，索引优化，Redis热key，大key，Redis缓存过小）</li>
-</ul>
-<h2 id="消息堆积"><a href="#消息堆积" class="headerlink" title="消息堆积"></a>消息堆积</h2><hr>
-<h3 id="针对单体架构高并发下请求堆积问题的分层解决方案"><a href="#针对单体架构高并发下请求堆积问题的分层解决方案" class="headerlink" title="针对单体架构高并发下请求堆积问题的分层解决方案"></a>针对单体架构高并发下请求堆积问题的分层解决方案</h3><hr>
-<h4 id="紧急止血：快速缓解当前压力"><a href="#紧急止血：快速缓解当前压力" class="headerlink" title="紧急止血：快速缓解当前压力"></a><strong>紧急止血：快速缓解当前压力</strong></h4><ol>
-<li><p><strong>限流降级</strong><br>• <strong>限流策略</strong>：<br>  ◦ 使用令牌桶或漏桶算法限制接口请求速率（如 Guava RateLimiter 或 Sentinel）。<br>  ◦ 针对非核心功能直接降级（返回静态页或简化逻辑）。<br>• <strong>代码示例</strong>：  </p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 使用 Sentinel 限流</span></span><br><span class="line"><span class="meta">@SentinelResource(value = &quot;coreApi&quot;, blockHandler = &quot;handleBlock&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">coreApi</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 业务逻辑</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">handleBlock</span><span class="params">(BlockException ex)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;系统繁忙，请稍后重试！&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p><strong>异步化处理</strong><br>• <strong>消息队列缓冲</strong>：<br>  ◦ 将非实时请求写入消息队列（如 RabbitMQ/Kafka），异步消费。<br>  ◦ 示例：订单支付后的通知、日志记录等操作异步化。<br>• <strong>代码示例</strong>：  </p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 订单支付主逻辑同步处理</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">payOrder</span><span class="params">(Order order)</span> &#123;</span><br><span class="line">    <span class="comment">// 1. 核心支付逻辑</span></span><br><span class="line">    processPayment(order);</span><br><span class="line">    <span class="comment">// 2. 通知类操作异步化</span></span><br><span class="line">    mq.send(<span class="string">&quot;payment_success_queue&quot;</span>, order.getId());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p><strong>扩容与负载均衡</strong><br>• <strong>垂直扩容</strong>：临时升级服务器配置（CPU、内存）。<br>• <strong>水平扩容</strong>：<br>  ◦ 通过 Nginx 负载均衡部署多个单体实例。<br>  ◦ 使用云服务自动扩展组（如 AWS Auto Scaling）。  </p>
-</li>
-</ol>
-<hr>
-<h4 id="性能优化：提升单机处理能力"><a href="#性能优化：提升单机处理能力" class="headerlink" title="性能优化：提升单机处理能力"></a><strong>性能优化：提升单机处理能力</strong></h4><ol>
-<li><p><strong>代码层优化</strong><br>• <strong>减少锁竞争</strong>：<br>  ◦ 使用无锁数据结构（如 ConcurrentHashMap）。<br>  ◦ 缩小同步代码块范围，避免全局锁。<br>• <strong>优化算法复杂度</strong>：<br>  ◦ 将 O(n²) 逻辑优化为 O(n) 或 O(log n)。<br>• <strong>示例</strong>：  </p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 优化前：双重循环匹配</span></span><br><span class="line"><span class="keyword">for</span> (User user : users) &#123;</span><br><span class="line">    <span class="keyword">for</span> (Order order : orders) &#123;</span><br><span class="line">        <span class="keyword">if</span> (user.getId().equals(order.getUserId())) &#123; ... &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 优化后：使用 Map 降低复杂度</span></span><br><span class="line">Map&lt;Long, User&gt; userMap = users.stream().collect(Collectors.toMap(User::getId, u -&gt; u));</span><br><span class="line"><span class="keyword">for</span> (Order order : orders) &#123;</span><br><span class="line">    <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> userMap.get(order.getUserId());</span><br><span class="line">    <span class="keyword">if</span> (user != <span class="literal">null</span>) &#123; ... &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li><p><strong>数据库优化</strong><br>• <strong>索引优化</strong>：<br>  ◦ 通过 EXPLAIN 分析慢查询，添加缺失索引。<br>  ◦ 避免全表扫描，限制查询范围（如时间区间分页）。<br>• <strong>批量操作</strong>：<br>  ◦ 合并多次 INSERT/UPDATE 为批量操作。  </p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 批量插入优化</span></span><br><span class="line">jdbcTemplate.batchUpdate(<span class="string">&quot;INSERT INTO log (content) VALUES (?)&quot;</span>, logs, <span class="number">100</span>, (ps, log) -&gt; &#123;</span><br><span class="line">    ps.setString(<span class="number">1</span>, log.getContent());</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></li>
-<li><p><strong>缓存加速</strong><br>• <strong>本地缓存</strong>：<br>  ◦ 使用 Caffeine 缓存热点数据（如配置表、频繁查询的用户信息）。<br>  ◦ 示例：缓存用户基本信息，TTL 设置为 5 分钟。<br>• <strong>分布式缓存</strong>：<br>  ◦ Redis 缓存复杂查询结果（如商品详情页）。  </p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Product <span class="title function_">getProduct</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> <span class="string">&quot;product:&quot;</span> + id;</span><br><span class="line">    <span class="type">Product</span> <span class="variable">product</span> <span class="operator">=</span> redis.get(key);</span><br><span class="line">    <span class="keyword">if</span> (product == <span class="literal">null</span>) &#123;</span><br><span class="line">        product = database.queryProduct(id);</span><br><span class="line">        redis.setex(key, <span class="number">3600</span>, product); <span class="comment">// 缓存1小时</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> product;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<hr>
-<h4 id="架构改造：逐步拆分与异步解耦"><a href="#架构改造：逐步拆分与异步解耦" class="headerlink" title="架构改造：逐步拆分与异步解耦"></a><strong>架构改造：逐步拆分与异步解耦</strong></h4><ol>
-<li><p><strong>关键模块拆分</strong><br>• <strong>第一步：拆分高负载模块</strong><br>  ◦ 将消息处理、文件上传等资源密集型模块独立为微服务。<br>  ◦ 示例：将消息消费者拆分为独立服务，单独扩展。<br>• <strong>技术栈</strong>：<br>  ◦ 使用 Spring Cloud 或 Dubbo 实现服务化。  </p>
-</li>
-<li><p><strong>数据库拆分</strong><br>• <strong>读写分离</strong>：<br>  ◦ 主库处理写操作，从库处理读操作（通过 ShardingSphere 或 MyCAT）。<br>• <strong>分库分表</strong>：<br>  ◦ 按用户ID哈希分表，分散单表压力。  </p>
-  <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 按 user_id 分表（user_table_0, user_table_1）</span></span><br><span class="line"><span class="keyword">CREATE TABLE</span> user_table_0 (id <span class="type">BIGINT</span>, user_id <span class="type">BIGINT</span>, ...) <span class="keyword">PARTITION</span> <span class="keyword">BY</span> HASH(user_id <span class="operator">%</span> <span class="number">2</span>);</span><br></pre></td></tr></table></figure></li>
-<li><p><strong>消息队列解耦</strong><br>• <strong>削峰填谷</strong>：<br>  ◦ 使用 Kafka 承接突发流量，消费者按能力处理。<br>  ◦ 示例：秒杀请求先写入 Kafka，异步处理订单。<br>• <strong>代码示例</strong>：  </p>
-  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 生产者快速响应</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleSeckillRequest</span><span class="params">(Request request)</span> &#123;</span><br><span class="line">    kafka.send(<span class="string">&quot;seckill_requests&quot;</span>, request);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;请求已受理，请等待结果！&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 消费者批量处理</span></span><br><span class="line"><span class="meta">@KafkaListener(topics = &quot;seckill_requests&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">processSeckill</span><span class="params">(List&lt;Request&gt; requests)</span> &#123;</span><br><span class="line">    batchProcessOrders(requests);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<hr>
-<h4 id="长期运维：监控与自动化"><a href="#长期运维：监控与自动化" class="headerlink" title="长期运维：监控与自动化"></a><strong>长期运维：监控与自动化</strong></h4><ol>
-<li><p><strong>全链路监控</strong><br>• <strong>指标采集</strong>：<br>  ◦ 使用 Prometheus + Grafana 监控 CPU、内存、线程池、数据库连接池。<br>• <strong>日志追踪</strong>：<br>  ◦ 通过 ELK（Elasticsearch + Logstash + Kibana）定位慢请求。  </p>
-</li>
-<li><p><strong>自动化弹性伸缩</strong><br>• <strong>Kubernetes 部署</strong>：<br>  ◦ 根据 CPU 使用率自动扩展 Pod 实例。<br>• <strong>云服务集成</strong>：<br>  ◦ AWS Lambda 处理突发流量（Serverless 无服务器架构）。  </p>
-</li>
-<li><p><strong>容灾与备份</strong><br>• <strong>多可用区部署</strong>：<br>  ◦ 在云环境中跨可用区（AZ）部署实例，避免单点故障。<br>• <strong>定期备份</strong>：<br>  ◦ 使用 XtraBackup 或 AWS RDS 快照备份数据库。  </p>
-</li>
-</ol>
-<hr>
-<h3 id="方案对比与选型建议"><a href="#方案对比与选型建议" class="headerlink" title="方案对比与选型建议"></a><strong>方案对比与选型建议</strong></h3><table>
+<h4 id="请求堆积"><a href="#请求堆积" class="headerlink" title="请求堆积"></a>请求堆积</h4><p>MQ消息堆积：使用 CallerRunsPolicy()</p>
+<table>
 <thead>
 <tr>
 <th><strong>方案</strong></th>
@@ -18426,70 +18172,25 @@ gender varchar(1) comment &#39;性别&#39;
 <td>中</td>
 </tr>
 </tbody></table>
-<hr>
-<h3 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a><strong>总结</strong></h3><ol>
-<li><strong>短期优先</strong>：限流 + 异步化 + 扩容，快速释放系统压力。  </li>
-<li><strong>中期优化</strong>：代码性能优化 + 数据库调优 + 缓存加速。  </li>
-<li><strong>长期重构</strong>：分步骤拆解单体为微服务，引入弹性伸缩与自动化运维。  </li>
-</ol>
-<p>通过分层策略逐步推进，在保障系统稳定的前提下，最终实现高并发场景下的可持续扩展能力。</p>
-<h2 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h2><p>乐观锁在数据库层面的实现确实存在并发冲突的问题，但通过合理的设计和优化策略，可以在高并发场景下保持较好的性能。以下从技术实现、优化策略和场景适配三个维度详细说明：</p>
-<hr>
-<h3 id="乐观锁的核心原理"><a href="#乐观锁的核心原理" class="headerlink" title="乐观锁的核心原理"></a>乐观锁的核心原理</h3><p><strong>实现方式</strong>：通过版本号（Version）或时间戳（Timestamp）机制实现。更新时检查当前版本是否匹配，若匹配则更新成功并递增版本号，否则拒绝操作。</p>
-<p><strong>SQL示例</strong>：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> <span class="keyword">table</span> </span><br><span class="line"><span class="keyword">SET</span> column1 <span class="operator">=</span> new_value, version <span class="operator">=</span> version <span class="operator">+</span> <span class="number">1</span> </span><br><span class="line"><span class="keyword">WHERE</span> id <span class="operator">=</span> #&#123;id&#125; <span class="keyword">AND</span> version <span class="operator">=</span> #&#123;old_version&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="点赞、排行榜"><a href="#点赞、排行榜" class="headerlink" title="点赞、排行榜"></a>点赞、排行榜</h2><p><strong>使用 ZSet 与 MySQL 的自定义排序实现点赞及排行榜，使用 Set 作为共同关注的解决方案。</strong> </p>
+<p>使用Zset存储每个blog的点赞者。 保证按照点赞时间排序，并且点赞人不会重复。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//  idStr 是前5个点赞的用户的 id，由于MySQL查询的结果顺序不定，因此需要 手动使用 ORDER BY FIELD 指定 ID 字段 按照 idStr 的顺序</span></span><br><span class="line">List&lt;UserDTO&gt; userDTOS = userService.query()</span><br><span class="line">        .in(<span class="string">&quot;id&quot;</span>, ids).last(<span class="string">&quot;ORDER BY FIELD(id,&quot;</span> + idStr + <span class="string">&quot;)&quot;</span>).list()</span><br><span class="line">        .stream()</span><br><span class="line">        .map(user -&gt; BeanUtil.copyProperties(user, UserDTO.class))</span><br><span class="line">        .collect(Collectors.toList());</span><br></pre></td></tr></table></figure>
 
-<p><strong>关键特点</strong>：无锁检测，仅在提交时判断版本，适合读多写少场景。</p>
-<hr>
-<h3 id="高并发下的冲突瓶颈"><a href="#高并发下的冲突瓶颈" class="headerlink" title="高并发下的冲突瓶颈"></a>高并发下的冲突瓶颈</h3><ol>
-<li><p><strong>冲突率高时的表现</strong>：<br>• 大量事务因版本不匹配而失败，需重试或回滚。<br>• 频繁的磁盘I/O和锁竞争导致吞吐量下降。</p>
-</li>
-<li><p><strong>数据库行锁的影响</strong>：<br>• 即使使用乐观锁，MySQL等数据库在执行UPDATE时仍会对行加排他锁，直到事务提交。<br>• 长事务会加剧锁竞争，需缩短事务时间。</p>
-</li>
-</ol>
-<hr>
-<h3 id="优化策略与实践方案"><a href="#优化策略与实践方案" class="headerlink" title="优化策略与实践方案"></a>优化策略与实践方案</h3><h4 id="精细化锁粒度"><a href="#精细化锁粒度" class="headerlink" title="精细化锁粒度"></a><strong>精细化锁粒度</strong></h4><p>   • <strong>字段拆分</strong>：对高频更新字段独立维护版本号，减少无关字段的冲突。<br>     <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> user_points </span><br><span class="line"><span class="keyword">SET</span> points <span class="operator">=</span> points <span class="operator">+</span> <span class="number">100</span>, point_version <span class="operator">=</span> point_version <span class="operator">+</span> <span class="number">1</span> </span><br><span class="line"><span class="keyword">WHERE</span> user_id <span class="operator">=</span> <span class="number">123</span> <span class="keyword">AND</span> point_version <span class="operator">=</span> <span class="number">5</span>;</span><br></pre></td></tr></table></figure><br>   • <strong>分桶计数</strong>：将计数器拆分为多个桶（如100个），随机选择桶更新，查询时求和。<br>     <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> counters </span><br><span class="line"><span class="keyword">SET</span> <span class="keyword">value</span> <span class="operator">=</span> <span class="keyword">value</span> <span class="operator">+</span> <span class="number">1</span> </span><br><span class="line"><span class="keyword">WHERE</span> bucket_id <span class="operator">=</span> <span class="built_in">FLOOR</span>(RAND() <span class="operator">*</span> <span class="number">100</span>);</span><br></pre></td></tr></table></figure></p>
-<h4 id="无锁化设计"><a href="#无锁化设计" class="headerlink" title="无锁化设计"></a><strong>无锁化设计</strong></h4><p>   • <strong>原子操作</strong>：利用数据库内置原子能力，避免CAS检查。<br>     <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 直接增减，无需版本号</span></span><br><span class="line"><span class="keyword">UPDATE</span> products <span class="keyword">SET</span> stock <span class="operator">=</span> stock <span class="operator">-</span> <span class="number">1</span> <span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">100</span>;</span><br></pre></td></tr></table></figure><br>   • <strong>状态机约束</strong>：通过WHERE子句添加业务条件，确保状态合法。<br>     <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> orders </span><br><span class="line"><span class="keyword">SET</span> status <span class="operator">=</span> <span class="string">&#x27;paid&#x27;</span> </span><br><span class="line"><span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">456</span> <span class="keyword">AND</span> status <span class="operator">=</span> <span class="string">&#x27;unpaid&#x27;</span>;</span><br></pre></td></tr></table></figure></p>
-<h4 id="异步合并与缓冲"><a href="#异步合并与缓冲" class="headerlink" title="异步合并与缓冲"></a><strong>异步合并与缓冲</strong></h4><p>   • <strong>本地队列</strong>：在应用层合并短时间内相同资源的写操作，批量提交。<br>   • <strong>Redis中间层</strong>：在缓存层预扣库存，通过定时任务同步至数据库。<br>     <figure class="highlight lua"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- Redis Lua脚本实现原子扣减</span></span><br><span class="line"><span class="keyword">local</span> stock = redis.call(<span class="string">&#x27;GET&#x27;</span>, <span class="string">&#x27;product:100:stock&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> stock &gt; <span class="number">0</span> <span class="keyword">then</span></span><br><span class="line">    redis.call(<span class="string">&#x27;DECR&#x27;</span>, <span class="string">&#x27;product:100:stock&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure></p>
-<h4 id="冲突处理与重试"><a href="#冲突处理与重试" class="headerlink" title="冲突处理与重试"></a><strong>冲突处理与重试</strong></h4><p>   • <strong>指数退避重试</strong>：在应用层实现自动重试逻辑，避免无限循环。<br>     <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">update_with_retry</span>(<span class="params">max_retries=<span class="number">3</span></span>):</span><br><span class="line">    retries = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> retries &lt; max_retries:</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="comment"># 执行乐观锁更新</span></span><br><span class="line">            <span class="keyword">return</span> success</span><br><span class="line">        <span class="keyword">except</span> VersionConflict:</span><br><span class="line">            sleep(<span class="number">2</span> ** retries)</span><br><span class="line">            retries += <span class="number">1</span></span><br><span class="line">    <span class="keyword">raise</span> Exception(<span class="string">&quot;Max retries exceeded&quot;</span>)</span><br></pre></td></tr></table></figure><br>   • <strong>熔断降级</strong>：当冲突超过阈值时，暂时禁用写操作，返回兜底结果。</p>
-<h4 id="数据库调优"><a href="#数据库调优" class="headerlink" title="数据库调优"></a><strong>数据库调优</strong></h4><p>   • <strong>短事务原则</strong>：确保事务尽量简短，及时提交释放行锁。<br>   • <strong>读写分离</strong>：将读请求分流到只读副本，减轻主库压力。<br>   • <strong>索引优化</strong>：避免全表扫描导致锁升级为表锁（如MySQL的InnoDB行锁特性）。</p>
-<hr>
-<h3 id="场景适配与方案选型"><a href="#场景适配与方案选型" class="headerlink" title="场景适配与方案选型"></a>场景适配与方案选型</h3><ol>
-<li><p><strong>秒杀场景</strong>：<br>• <strong>预扣库存</strong>：Redis集群+异步落库。<br>• <strong>限流削峰</strong>：令牌桶算法控制请求速率。</p>
-</li>
-<li><p><strong>账户余额更新</strong>：<br>• <strong>事务拆分</strong>：余额变更与流水记录分离，流水表使用异步插入。</p>
-</li>
-<li><p><strong>评论点赞计数</strong>：<br>• <strong>内存累加</strong>：应用层缓存计数，定时批量写入。</p>
-</li>
-</ol>
-<hr>
-<h3 id="总结-3"><a href="#总结-3" class="headerlink" title="总结"></a>总结</h3><p>乐观锁的并发瓶颈并非无解，关键在于结合业务特点选择优化方向：<br>• <strong>减少冲突</strong>：通过拆分资源、无锁化操作降低竞争。<br>• <strong>提升吞吐</strong>：利用异步化、批量处理减少I/O开销。<br>• <strong>柔性设计</strong>：在强一致性和最终一致性之间寻找平衡点。</p>
-<p>最终方案需权衡开发成本、数据一致性和性能要求，例如金融交易需强一致，而社交 feed 可接受短暂延迟。</p>
-<h2 id=""><a href="#" class="headerlink" title=""></a></h2><p>使用 唯一标识 + 分布式锁 + 数据库唯一约束 保证订单提交的幂等性，做到一人一单、防止超卖，</p>
-<p>是的，**<code>@RabbitListener</code> 监听消息的同步处理逻辑可以结合 <code>CompletableFuture</code> 实现异步操作**，尤其适用于需要异步执行耗时任务（如数据库操作、外部接口调用等）的场景。以下是具体实现方案及注意事项：</p>
-<h3 id="基础实现思路"><a href="#基础实现思路" class="headerlink" title="基础实现思路"></a><strong>基础实现思路</strong></h3><p>• <strong>核心目标</strong>：在 <code>@RabbitListener</code> 方法内启动异步任务，避免阻塞 RabbitMQ 的监听线程。<br>• <strong>消息确认策略</strong>：需结合手动 ACK 模式，确保异步任务完成后才确认消息，避免消息丢失。</p>
-<hr>
-<h3 id="实现代码示例"><a href="#实现代码示例" class="headerlink" title="实现代码示例"></a><strong>实现代码示例</strong></h3><h4 id="配置手动-ACK-模式"><a href="#配置手动-ACK-模式" class="headerlink" title="配置手动 ACK 模式"></a><strong>配置手动 ACK 模式</strong></h4><p>在 <code>application.yml</code> 中启用手动确认：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">rabbitmq:</span></span><br><span class="line">    <span class="attr">listener:</span></span><br><span class="line">      <span class="attr">simple:</span></span><br><span class="line">        <span class="attr">acknowledge-mode:</span> <span class="string">manual</span> <span class="comment"># 手动ACK</span></span><br></pre></td></tr></table></figure>
+<h2 id="分页查询-时间线"><a href="#分页查询-时间线" class="headerlink" title="分页查询 时间线"></a>分页查询 时间线</h2><p><strong>实现了基于推模式的关注内容推送，用基于时间戳的分页查询实现时间线功能。</strong>  </p>
+<p>优点：时效快，不用临时拉取</p>
+<p>缺点：内存压力大，假设一个大V写信息，很多人关注他， 就会写很多分数据到粉丝那边去</p>
+<p>我们需要记录每次操作的最后一条，然后从这个位置开始去读取数据</p>
+<p>举个例子：我们从t1时刻开始，拿第一页数据，拿到了10~6，然后记录下当前最后一次拿取的记录，就是6，t2时刻发布了新的记录，此时这个11放到最顶上，但是不会影响我们之前记录的6，此时t3时刻来拿第二页，第二页这个时候拿数据，还是从6后一点的5去拿，就拿到了5-1的记录。我们这个地方可以采用sortedSet来做，可以进行范围查询，并且还可以记录当前获取数据时间戳最小值，就可以实现滚动分页了。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Result <span class="title function_">queryBlogOfFollow</span><span class="params">(Long max, Integer offset)</span> &#123;</span><br><span class="line">    <span class="comment">// 1.获取当前用户</span></span><br><span class="line">    <span class="type">Long</span> <span class="variable">userId</span> <span class="operator">=</span> UserHolder.getUser().getId();</span><br><span class="line">    <span class="comment">// 2.查询收件箱 ZREVRANGEBYSCORE key Max Min LIMIT offset count</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> FEED_KEY + userId;</span><br><span class="line">    Set&lt;ZSetOperations.TypedTuple&lt;String&gt;&gt; typedTuples = stringRedisTemplate.opsForZSet()</span><br><span class="line">            .reverseRangeByScoreWithScores(key, <span class="number">0</span>, max, offset, <span class="number">2</span>);</span><br><span class="line">    <span class="comment">// 3.非空判断</span></span><br><span class="line">    <span class="keyword">if</span> (typedTuples == <span class="literal">null</span> || typedTuples.isEmpty()) &#123;</span><br><span class="line">        <span class="keyword">return</span> Result.ok();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 4.解析数据：blogId、minTime（时间戳）、offset</span></span><br><span class="line">    List&lt;Long&gt; ids = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(typedTuples.size());</span><br><span class="line">    <span class="type">long</span> <span class="variable">minTime</span> <span class="operator">=</span> <span class="number">0</span>; <span class="comment">// 2</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">os</span> <span class="operator">=</span> <span class="number">1</span>; <span class="comment">// 2</span></span><br><span class="line">    <span class="keyword">for</span> (ZSetOperations.TypedTuple&lt;String&gt; tuple : typedTuples) &#123; <span class="comment">// 5 4 4 2 2</span></span><br><span class="line">        <span class="comment">// 4.1.获取id</span></span><br><span class="line">        ids.add(Long.valueOf(tuple.getValue()));</span><br><span class="line">        <span class="comment">// 4.2.获取分数(时间戳）</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">time</span> <span class="operator">=</span> tuple.getScore().longValue();</span><br><span class="line">        <span class="keyword">if</span>(time == minTime)&#123;</span><br><span class="line">            os++;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            minTime = time;</span><br><span class="line">            os = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    os = minTime == max ? os : os + offset;</span><br><span class="line">    <span class="comment">// 5.根据id查询blog</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">idStr</span> <span class="operator">=</span> StrUtil.join(<span class="string">&quot;,&quot;</span>, ids);</span><br><span class="line">    List&lt;Blog&gt; blogs = query().in(<span class="string">&quot;id&quot;</span>, ids).last(<span class="string">&quot;ORDER BY FIELD(id,&quot;</span> + idStr + <span class="string">&quot;)&quot;</span>).list();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (Blog blog : blogs) &#123;</span><br><span class="line">        setBlogUserInfo(blog);</span><br><span class="line">        setBlogIsLike(blog);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 6.封装并返回</span></span><br><span class="line">    <span class="type">ScrollResult</span> <span class="variable">r</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ScrollResult</span>();</span><br><span class="line">    r.setList(blogs);</span><br><span class="line">    r.setOffset(os);</span><br><span class="line">    r.setMinTime(minTime);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Result.ok(r);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ScrollResult</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> List&lt;?&gt; list;</span><br><span class="line">    <span class="keyword">private</span> Long minTime;</span><br><span class="line">    <span class="keyword">private</span> Integer offset;</span><br><span class="line">    <span class="comment">//minTime 上次查询的最小值 offset从上次查询最小值偏移的个数(上次最小值有多少个)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h4 id="异步处理消息"><a href="#异步处理消息" class="headerlink" title="异步处理消息"></a><strong>异步处理消息</strong></h4><p>在 <code>@RabbitListener</code> 方法中使用 <code>CompletableFuture</code>：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@RabbitListener(queues = &quot;order.queue&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleMessage</span><span class="params">(Message message, Channel channel, <span class="meta">@Header(AmqpHeaders.DELIVERY_TAG)</span> <span class="type">long</span> tag)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">msgBody</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(message.getBody(), StandardCharsets.UTF_8);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 启动异步任务</span></span><br><span class="line">    CompletableFuture.runAsync(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 异步扣减逻辑（如库存、积分）</span></span><br><span class="line">            deductService.asyncDeduct(msgBody);</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 任务成功：手动ACK</span></span><br><span class="line">            channel.basicAck(tag, <span class="literal">false</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// 任务失败：NACK并重新入队（根据业务决定是否重试）</span></span><br><span class="line">            channel.basicNack(tag, <span class="literal">false</span>, <span class="literal">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, asyncExecutor); <span class="comment">// 指定自定义线程池</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="使用-Bitmap-签到"><a href="#使用-Bitmap-签到" class="headerlink" title="使用 Bitmap 签到"></a>使用 Bitmap 签到</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 签到实际上就是将天数所在的位置 SETBIT，重点是记录连续签到天数</span></span><br><span class="line"><span class="keyword">public</span> Result <span class="title function_">signCount</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> USER_SIGN_KEY + userId + keySuffix;</span><br><span class="line">    <span class="comment">// 4.获取今天是本月的第几天</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">dayOfMonth</span> <span class="operator">=</span> now.getDayOfMonth();</span><br><span class="line">    List&lt;Long&gt; result = stringRedisTemplate.opsForValue().bitField(key,</span><br><span class="line">            BitFieldSubCommands.create()</span><br><span class="line">            .get(BitFieldSubCommands.BitFieldType.unsigned(dayOfMonth)).valueAt(<span class="number">0</span>));</span><br><span class="line">    <span class="keyword">if</span> (result == <span class="literal">null</span> || result.isEmpty()) &#123;<span class="keyword">return</span> Result.ok(<span class="number">0</span>);&#125;</span><br><span class="line">    <span class="type">Long</span> <span class="variable">num</span> <span class="operator">=</span> result.getFirst();</span><br><span class="line">    <span class="keyword">if</span> (num == <span class="literal">null</span> || num == <span class="number">0</span>) &#123;<span class="keyword">return</span> Result.ok(<span class="number">0</span>);&#125;</span><br><span class="line">    <span class="comment">// 6.循环遍历</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="comment">// 6.1.让这个数字与1做与运算，得到数字的最后一个bit位  // 判断这个bit位是否为0</span></span><br><span class="line">        <span class="keyword">if</span> ((num &amp; <span class="number">1</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span>; <span class="comment">// 如果为0，说明未签到，结束</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 如果不为0，说明已签到，计数器+1</span></span><br><span class="line">            count++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 把数字右移一位，抛弃最后一个bit位，继续下一个bit位</span></span><br><span class="line">        num &gt;&gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Result.ok(count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h4 id="配置异步线程池"><a href="#配置异步线程池" class="headerlink" title="配置异步线程池"></a><strong>配置异步线程池</strong></h4><p>避免占用默认线程池资源：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Bean(&quot;asyncExecutor&quot;)</span></span><br><span class="line"><span class="keyword">public</span> Executor <span class="title function_">asyncExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">        <span class="number">5</span>, <span class="number">10</span>, <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">LinkedBlockingQueue</span>&lt;&gt;(<span class="number">100</span>),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.CallerRunsPolicy()</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<hr>
-<h3 id="关键注意事项"><a href="#关键注意事项" class="headerlink" title="关键注意事项"></a><strong>关键注意事项</strong></h3><h4 id="消息确认与可靠性"><a href="#消息确认与可靠性" class="headerlink" title="消息确认与可靠性"></a><strong>消息确认与可靠性</strong></h4><p>• <strong>ACK/NACK 必须在异步线程中执行</strong>：RabbitMQ 的 <code>Channel</code> 对象非线程安全，需确保在异步任务内调用 <code>basicAck</code>/<code>basicNack</code>。<br>• <strong>防止消息丢失</strong>：异步任务异常时，通过 <code>basicNack</code> 的 <code>requeue</code> 参数控制消息重试（需业务逻辑幂等）。</p>
-<h4 id="线程池管理"><a href="#线程池管理" class="headerlink" title="线程池管理"></a><strong>线程池管理</strong></h4><p>• <strong>拒绝策略</strong>：当线程池满载时，使用 <code>CallerRunsPolicy</code> 让主线程执行任务，避免消息堆积。<br>• <strong>资源隔离</strong>：为不同业务分配独立线程池，避免互相影响。</p>
-<h4 id="业务幂等性"><a href="#业务幂等性" class="headerlink" title="业务幂等性"></a><strong>业务幂等性</strong></h4><p>• <strong>防重复处理</strong>：消息可能因重试被多次消费，需通过唯一ID+状态机/数据库锁保证扣减操作幂等。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 示例：通过唯一ID保证幂等</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">asyncDeduct</span><span class="params">(String orderId)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (deductLock.tryLock(orderId)) &#123; <span class="comment">// 自定义分布式锁</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 执行扣减</span></span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            deductLock.unlock(orderId);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<hr>
-<h3 id="性能优化建议"><a href="#性能优化建议" class="headerlink" title="性能优化建议"></a><strong>性能优化建议</strong></h3><p>• <strong>批量消费</strong>：结合 <code>@RabbitListener</code> 的 <code>containerFactory</code> 配置批量消费，提升吞吐量。<br>• <strong>异步任务拆分</strong>：若扣减逻辑涉及多个步骤，可进一步用 <code>CompletableFuture</code> 编排子任务：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">CompletableFuture.runAsync(() -&gt; deductStep1(), asyncExecutor)</span><br><span class="line">    .thenRunAsync(() -&gt; deductStep2(), asyncExecutor)</span><br><span class="line">    .exceptionally(ex -&gt; &#123;</span><br><span class="line">        channel.basicNack(tag, <span class="literal">false</span>, <span class="literal">true</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure>
 
-<hr>
-<h3 id="总结-4"><a href="#总结-4" class="headerlink" title="总结"></a><strong>总结</strong></h3><p>• <strong>可行性</strong>：<code>@RabbitListener</code> + <code>CompletableFuture</code> 能有效实现异步处理，提升消息消费速度。<br>• <strong>核心要点</strong>：<br>  • 手动 ACK/NACK 需在异步任务内完成。<br>  • 异步线程池需合理配置，避免资源耗尽。<br>  • 业务逻辑必须幂等，防止消息重试导致数据不一致。<br>• <strong>适用场景</strong>：适用于需要异步化、耗时较长的消息处理逻辑（如IO密集型操作）。</p>
+
+
+
 ]]></content>
       <categories>
         <category>项目</category>
