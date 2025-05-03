@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Arvo:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="计算机面临的安全威胁攻击类型网络攻击常见手段总结 | JavaGuide  被动攻击：也叫截获，流量分析。 主动攻击：  篡改报文。  恶意程序（病毒、蠕虫、木马、流氓软件、漏洞入侵、逻辑炸弹）  拒绝服务（DoS, Denial of Service）：从互联网的一个服务器A发送大量信息到另一个服务器B，使得服务器B崩溃，拒绝服务。从多个服务器发分组又叫做分布式拒绝服务（DDoS, Distri">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机网络安全">
+<meta property="og:url" content="http://scatteredream.github.io/2025/01/12/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/index.html">
+<meta property="og:site_name" content="scatteredream&#39;s blog">
+<meta property="og:description" content="计算机面临的安全威胁攻击类型网络攻击常见手段总结 | JavaGuide  被动攻击：也叫截获，流量分析。 主动攻击：  篡改报文。  恶意程序（病毒、蠕虫、木马、流氓软件、漏洞入侵、逻辑炸弹）  拒绝服务（DoS, Denial of Service）：从互联网的一个服务器A发送大量信息到另一个服务器B，使得服务器B崩溃，拒绝服务。从多个服务器发分组又叫做分布式拒绝服务（DDoS, Distri">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241129155621051.png">
+<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241129230424076-1732894652386-1.png">
+<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241129230521315-1732944264022-8.png">
+<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241129230002490.png">
+<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241129222025691.png">
+<meta property="og:image" content="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/%E7%BD%91%E7%BB%9C/https%E4%BC%98%E5%8C%96/crl.png">
+<meta property="og:image" content="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/%E7%BD%91%E7%BB%9C/https%E4%BC%98%E5%8C%96/ocsp.png">
+<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241130161720294.png">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/4069756/e6zkf4qwi7.jpeg">
+<meta property="og:image" content="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/%E7%BD%91%E7%BB%9C/https/https_rsa.png">
+<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241130165130228.png">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/4069756/0mhr8kq63w.jpeg">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/4069756/0mhr8kq63w.jpeg">
+<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241130224715135.png">
+<meta property="og:image" content="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/HTTP/%E8%AE%B0%E5%BD%95%E5%8D%8F%E8%AE%AE.png">
+<meta property="og:image" content="https://cdn.xiaolincoding.com//mysql/other/0877fe78380bf34ad3b28768e59fb53a.png">
+<meta property="og:image" content="https://pic2.zhimg.com/v2-485b564d2209a3108575a1b13a52d715_1440w.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/v2-91669b8728eb5b0fa2d88730425f9391_1440w.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/v2-083c00146d71e75adbcab401e57c90e1_1440w.jpg">
+<meta property="og:image" content="https://cdn.xiaolincoding.com//mysql/other/59539201f006d7dc0a06333617e5ea85.png">
+<meta property="og:image" content="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/%E7%BD%91%E7%BB%9C/https%E4%BC%98%E5%8C%96/sessionid.png">
+<meta property="og:image" content="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/%E7%BD%91%E7%BB%9C/https%E4%BC%98%E5%8C%96/ticket.png">
+<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241130172210036.png">
+<meta property="og:image" content="https://oss.javaguide.cn/github/javaguide/cs-basics/network/ssh-client-server.png">
+<meta property="og:image" content="https://download.huawei.com/mdl/image/download?uuid=17c579f40e0b440e98a35544fcbbd3dc">
+<meta property="article:published_time" content="2025-01-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-03T13:01:27.245Z">
+<meta property="article:author" content="碎梦">
+<meta property="article:tag" content="tls">
+<meta property="article:tag" content="https">
+<meta property="article:tag" content="密钥">
+<meta property="article:tag" content="RSA">
+<meta property="article:tag" content="ECDHE">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241129155621051.png">
+
+
+<link rel="canonical" href="http://scatteredream.github.io/2025/01/12/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2025/01/12/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/","path":"2025/01/12/网络安全/","title":"计算机网络安全"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>计算机网络安全 | scatteredream's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">scatteredream's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E9%9D%A2%E4%B8%B4%E7%9A%84%E5%AE%89%E5%85%A8%E5%A8%81%E8%83%81"><span class="nav-number">1.</span> <span class="nav-text">计算机面临的安全威胁</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">攻击类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E6%8E%AA%E6%96%BD"><span class="nav-number">1.2.</span> <span class="nav-text">安全措施</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Authentication%EF%BC%88%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%EF%BC%89"><span class="nav-number">1.2.1.</span> <span class="nav-text">Authentication（身份验证）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E7%82%B9"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">重点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Authorization%EF%BC%88%E6%8E%88%E6%9D%83%EF%BC%89"><span class="nav-number">1.2.2.</span> <span class="nav-text">Authorization（授权）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90-1"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E7%82%B9-1"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">重点</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB"><span class="nav-number">1.2.3.</span> <span class="nav-text">区别与联系</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E7%B1%BB%E5%AF%86%E9%92%A5%E4%BD%93%E5%88%B6"><span class="nav-number">2.1.</span> <span class="nav-text">两类密钥体制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86"><span class="nav-number">2.1.1.</span> <span class="nav-text">对称加密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AC%E9%92%A5%E5%8A%A0%E5%AF%86%EF%BC%88%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%EF%BC%89"><span class="nav-number">2.1.2.</span> <span class="nav-text">公钥加密（非对称加密）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%89%B4%E5%88%AB%EF%BC%88Authentication%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">鉴别（Authentication）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%A5%E6%96%87%E9%89%B4%E5%88%AB"><span class="nav-number">2.2.1.</span> <span class="nav-text">报文鉴别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">数字签名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E5%87%BD%E6%95%B0"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">哈希函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E5%90%88%E6%8A%A5%E6%96%87%E9%89%B4%E5%88%AB%E7%A0%81%EF%BC%88MAC%EF%BC%89%E5%AE%9E%E7%8E%B0%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E6%8A%A5%E6%96%87%E9%89%B4%E5%88%AB"><span class="nav-number">2.2.1.3.</span> <span class="nav-text">结合报文鉴别码（MAC）实现数字签名报文鉴别</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BD%93%E9%89%B4%E5%88%AB"><span class="nav-number">2.2.2.</span> <span class="nav-text">实体鉴别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%B9%E7%A7%B0%E5%AF%86%E9%92%A5"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">对称密钥</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%AF%86%E9%92%A5"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">非对称密钥</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%86%E9%92%A5%E5%88%86%E9%85%8D%E4%B8%8E%E7%AE%A1%E7%90%86"><span class="nav-number">2.3.</span> <span class="nav-text">密钥分配与管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E7%A7%B0%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2"><span class="nav-number">2.3.1.</span> <span class="nav-text">对称密钥交换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RSA"><span class="nav-number">2.3.1.1.</span> <span class="nav-text">RSA</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9A%BE%E7%82%B9%EF%BC%9A%E5%A4%A7%E6%95%B0%E5%9B%A0%E5%BC%8F%E5%88%86%E8%A7%A3"><span class="nav-number">2.3.1.1.1.</span> <span class="nav-text">难点：大数因式分解</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">2.3.1.1.2.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RSA-%E7%9A%84%E7%BC%BA%E9%99%B7"><span class="nav-number">2.3.1.1.3.</span> <span class="nav-text">RSA 的缺陷</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Diffle-Hellman-%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2"><span class="nav-number">2.3.1.2.</span> <span class="nav-text">Diffle-Hellman 密钥交换</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9A%BE%E7%82%B9%EF%BC%9A%E7%A6%BB%E6%95%A3%E5%AF%B9%E6%95%B0"><span class="nav-number">2.3.1.2.1.</span> <span class="nav-text">难点：离散对数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF-1"><span class="nav-number">2.3.1.2.2.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ECDHE"><span class="nav-number">2.3.1.2.3.</span> <span class="nav-text">ECDHE</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%86%E9%92%A5%E5%88%86%E5%8F%91%E4%B8%AD%E5%BF%83%EF%BC%88KDC%EF%BC%89"><span class="nav-number">2.3.1.3.</span> <span class="nav-text">密钥分发中心（KDC）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AC%E9%92%A5%E4%BD%93%E5%88%B6%EF%BC%9ACA"><span class="nav-number">2.3.2.</span> <span class="nav-text">公钥体制：CA</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CA-%E6%A0%87%E5%87%86%EF%BC%9AX-509%EF%BC%88PKI%EF%BC%89"><span class="nav-number">2.3.2.1.</span> <span class="nav-text">CA 标准：X.509（PKI）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CA-%E4%BF%A1%E4%BB%BB%E9%93%BE%EF%BC%9A%E5%A4%9A%E7%BA%A7%E8%AE%A4%E8%AF%81%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.3.2.2.</span> <span class="nav-text">CA 信任链：多级认证系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CA-%E6%92%A4%E9%94%80%E5%90%8D%E5%8D%95"><span class="nav-number">2.3.2.3.</span> <span class="nav-text">CA 撤销名单</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTPS-SSL-TLS"><span class="nav-number">3.</span> <span class="nav-text">HTTPS (SSL&#x2F;TLS)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E5%B1%82%E5%AE%89%E5%85%A8%EF%BC%88TLS%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">传输层安全（TLS）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TLS-%E6%8F%A1%E6%89%8B%EF%BC%88TLS-1-2%EF%BC%89"><span class="nav-number">3.1.1.</span> <span class="nav-text">TLS 握手（TLS 1.2）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RSA-%E6%8F%A1%E6%89%8B"><span class="nav-number">3.1.1.1.</span> <span class="nav-text">RSA 握手</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E5%A5%97%E4%BB%B6%EF%BC%88Cipher-Suite%EF%BC%89"><span class="nav-number">3.1.1.1.1.</span> <span class="nav-text">加密套件（Cipher Suite）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%89%8D%E5%90%91%E5%AE%89%E5%85%A8%E6%80%A7%EF%BC%88Forward-Secrecy%EF%BC%89"><span class="nav-number">3.1.1.1.2.</span> <span class="nav-text">前向安全性（Forward Secrecy）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ECDHE-%E6%8F%A1%E6%89%8B"><span class="nav-number">3.1.1.2.</span> <span class="nav-text">ECDHE 握手</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#TLS-False-Start"><span class="nav-number">3.1.1.2.1.</span> <span class="nav-text">TLS False Start</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TLS-%E8%AE%B0%E5%BD%95"><span class="nav-number">3.1.2.</span> <span class="nav-text">TLS 记录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TLS-%E6%BC%8F%E6%B4%9E"><span class="nav-number">3.1.3.</span> <span class="nav-text">TLS 漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%BA%94%E5%AF%B9TLS%E6%BC%8F%E6%B4%9E%EF%BC%9F"><span class="nav-number">3.1.3.1.</span> <span class="nav-text">如何应对TLS漏洞？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TLS-1-3"><span class="nav-number">3.1.4.</span> <span class="nav-text">TLS 1.3</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-RTT%EF%BC%88TLS-1-2%EF%BC%89"><span class="nav-number">3.1.4.1.</span> <span class="nav-text">2-RTT（TLS 1.2）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-RTT"><span class="nav-number">3.1.4.2.</span> <span class="nav-text">1-RTT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0-RTT"><span class="nav-number">3.1.4.3.</span> <span class="nav-text">0-RTT</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTPS-%E4%BC%98%E5%8C%96%EF%BC%88TLS-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">HTTPS 优化（TLS 性能优化）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E4%BC%98%E5%8C%96"><span class="nav-number">3.2.1.</span> <span class="nav-text">硬件优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E4%BC%98%E5%8C%96"><span class="nav-number">3.2.2.</span> <span class="nav-text">软件优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E4%BC%98%E5%8C%96%EF%BC%9A%E8%8A%82%E7%9C%81RTT"><span class="nav-number">3.2.3.</span> <span class="nav-text">协议优化：节省RTT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%81%E4%B9%A6%E4%BC%98%E5%8C%96%EF%BC%9A%E8%8A%82%E7%9C%81%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%AA%8C%E8%AF%81%E6%97%B6%E9%97%B4"><span class="nav-number">3.2.4.</span> <span class="nav-text">证书优化：节省客户端验证时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%9A%E8%AF%9D%E5%A4%8D%E7%94%A8%EF%BC%9A%E5%A4%8D%E7%94%A8%E4%BC%9A%E8%AF%9D%E5%AF%86%E9%92%A5"><span class="nav-number">3.2.5.</span> <span class="nav-text">会话复用：复用会话密钥</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SSH"><span class="nav-number">4.</span> <span class="nav-text">SSH</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#IPsec"><span class="nav-number">5.</span> <span class="nav-text">IPsec</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">碎梦</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">168</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/01/12/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="计算机网络安全 | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计算机网络安全
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-12 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-12T00:00:00+08:00">2025-01-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-03 21:01:27" itemprop="dateModified" datetime="2025-05-03T21:01:27+08:00">2025-05-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%BD%91/" itemprop="url" rel="index"><span itemprop="name">计网</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="计算机面临的安全威胁"><a href="#计算机面临的安全威胁" class="headerlink" title="计算机面临的安全威胁"></a>计算机面临的安全威胁</h1><h2 id="攻击类型"><a href="#攻击类型" class="headerlink" title="攻击类型"></a>攻击类型</h2><p><a target="_blank" rel="noopener" href="https://javaguide.cn/cs-basics/network/network-attack-means.html">网络攻击常见手段总结 | JavaGuide</a> </p>
+<p><strong>被动攻击</strong>：也叫截获，流量分析。</p>
+<p><strong>主动攻击</strong>：</p>
+<ul>
+<li><p><strong>篡改报文</strong>。</p>
+</li>
+<li><p><strong>恶意程序</strong>（病毒、蠕虫、木马、流氓软件、漏洞入侵、逻辑炸弹）</p>
+</li>
+<li><p><strong>拒绝服务</strong>（DoS, Denial of Service）：从互联网的一个服务器A发送大量信息到另一个服务器B，使得服务器B崩溃，拒绝服务。从多个服务器发分组又叫做分布式拒绝服务（DDoS, Distributed DoS）。负载均衡（anycast…）</p>
+</li>
+<li><p><strong>交换机中毒</strong>：发送大量伪造MAC帧，迅速填满交换机的交换表，使交换机无法正常提供服务。</p>
+</li>
+</ul>
+<h2 id="安全措施"><a href="#安全措施" class="headerlink" title="安全措施"></a>安全措施</h2><ul>
+<li><strong>机密性</strong>：密码技术，加密报文信息；对称加密</li>
+<li><strong>信息完整性</strong>：防止报文信息被篡改；非对称加密，签名-鉴别</li>
+<li><strong>端点鉴别</strong>（Authentication）：鉴别对方的真实身份；</li>
+</ul>
+<ul>
+<li><strong>访问控制</strong>（Authorization）：确认用户的权限级别，能够进行什么样的操作。</li>
+</ul>
+<h3 id="Authentication（身份验证）"><a href="#Authentication（身份验证）" class="headerlink" title="Authentication（身份验证）"></a>Authentication（身份验证）</h3><p>确认用户的身份，确保用户是他声称的那个人。</p>
+<p>验证用户的凭证（如用户名/密码、指纹、OTP 等）。</p>
+<h4 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h4><ul>
+<li>登录网站时输入用户名和密码。</li>
+<li>使用指纹、面部识别或其他生物识别方式解锁设备。</li>
+<li>输入短信验证码进行二次验证。</li>
+</ul>
+<h4 id="重点"><a href="#重点" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>“你是谁？”</li>
+<li>解决的是<strong>身份问题</strong>。</li>
+</ul>
+<h3 id="Authorization（授权）"><a href="#Authorization（授权）" class="headerlink" title="Authorization（授权）"></a>Authorization（授权）</h3><p>确定已经通过身份验证的用户是否有权访问某资源或执行某操作。</p>
+<p>控制用户能访问的资源或功能。</p>
+<h4 id="例子-1"><a href="#例子-1" class="headerlink" title="例子"></a>例子</h4><ul>
+<li>一个普通用户登录后不能访问管理员控制面板。</li>
+<li>文件系统中，只有特定权限的用户可以修改文件。</li>
+<li>云服务中，用户可能只能管理自己的项目，不能访问其他人的数据。</li>
+</ul>
+<h4 id="重点-1"><a href="#重点-1" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>“你可以做什么？”</li>
+<li>解决的是<strong>权限问题</strong>。</li>
+</ul>
+<h3 id="区别与联系"><a href="#区别与联系" class="headerlink" title="区别与联系"></a>区别与联系</h3><table>
+<thead>
+<tr>
+<th><strong>对比项</strong></th>
+<th><strong>Authentication（身份验证）</strong></th>
+<th><strong>Authorization（授权）</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>目的</strong></td>
+<td>确认用户身份</td>
+<td>确定用户访问权限</td>
+</tr>
+<tr>
+<td><strong>处理对象</strong></td>
+<td>用户的身份</td>
+<td>用户的权限</td>
+</tr>
+<tr>
+<td><strong>执行顺序</strong></td>
+<td>先进行身份验证</td>
+<td>只有通过身份验证后才能进行授权</td>
+</tr>
+<tr>
+<td><strong>核心问题</strong></td>
+<td>用户是否真实有效？</td>
+<td>用户能访问哪些资源或执行哪些操作？</td>
+</tr>
+<tr>
+<td><strong>技术示例</strong></td>
+<td>密码验证、2FA、OAuth 登录</td>
+<td>角色权限分配（RBAC）、ACL、API Token</td>
+</tr>
+</tbody></table>
+<p><code>Authentication</code> 是 <code>Authorization</code> 的前提。<br> 一个用户必须先证明“自己是谁”，然后才能被系统允许或限制访问某些资源或执行操作。</p>
+<h1 id="加密算法"><a href="#加密算法" class="headerlink" title="加密算法"></a>加密算法</h1><h2 id="两类密钥体制"><a href="#两类密钥体制" class="headerlink" title="两类密钥体制"></a>两类密钥体制</h2><h3 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%B0%8D%E7%A8%B1%E5%AF%86%E9%91%B0%E5%8A%A0%E5%AF%86">对称加密</a></h3><p>双方使用同一把密钥，不对外公开，使用密钥将报文信息进行加密或者进行解密。</p>
+<ul>
+<li><p><strong>DES</strong>：密钥共64位，8位用于奇偶校验，实际为56位有效。</p>
+</li>
+<li><p><strong>3DES</strong>：使用两个DES密钥，先用K1加密，再用K2解密，再用K1加密</p>
+</li>
+<li><p><strong>AES</strong>：使用分组加密，密钥长度为128 192 256三种</p>
+</li>
+<li><p><strong>一个传统保管箱，开门和关门都是使用同一条钥匙，这是对称加密</strong> </p>
+</li>
+<li><p>只支持一对一通信。</p>
+</li>
+</ul>
+<h3 id="公钥加密（非对称加密）"><a href="#公钥加密（非对称加密）" class="headerlink" title="公钥加密（非对称加密）"></a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%AC%E5%BC%80%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86">公钥加密（非对称加密）</a></h3><ul>
+<li>使用密钥生成器生成密钥对，一个是公钥（对外公开），一个是私钥（自己保留）。</li>
+<li>已知其中一个密钥的情况下，几乎不可能知道另外一个密钥。</li>
+<li>私钥加密的数据，只能用公钥解密。公钥加密的数据，只能用私钥解密。<ul>
+<li>其实不应该叫做加密和解密，应该称作D运算和E运算这两个互逆的运算，没有规定他们谁先谁后。</li>
+<li>更准确的说法是私钥参与D运算，公钥参与E运算。</li>
+</ul>
+</li>
+<li><strong>一个公开的邮箱，投递口是任何人都可以寄信进去的，这可视为公钥；</strong></li>
+<li><strong>而只有信箱主人拥有钥匙可以打开信箱，这就视为私钥。</strong></li>
+<li>支持多对一的通信。</li>
+</ul>
+<h2 id="鉴别（Authentication）"><a href="#鉴别（Authentication）" class="headerlink" title="鉴别（Authentication）"></a>鉴别（Authentication）</h2><h3 id="报文鉴别"><a href="#报文鉴别" class="headerlink" title="报文鉴别"></a>报文鉴别</h3><p>主要是鉴别报文是否被篡改。</p>
+<h4 id="数字签名"><a href="#数字签名" class="headerlink" title="数字签名"></a>数字签名</h4><p>decryption and encryption</p>
+<p>A要发出信息，并进行数字签名，将报文用私钥SK<del>A</del>进行D运算（签名），其他人只能用公钥PK<del>A</del>进行E运算（鉴别）。</p>
+<ul>
+<li><strong>防止篡改报文</strong>：没人知道A的私钥SK<del>A</del>，窃听者使用公钥PK<del>A</del>进行E运算得出明文，篡改报文之后再D运算，另一边使用公钥PK<del>A</del>解析出的明文将会是不可读的，因此不会被欺骗。</li>
+<li><strong>不可否认</strong>：既然信息明文可读，就说明没有被篡改过，而拥有私钥的只有A一个人，A就不能抵赖自己曾经的签名。</li>
+</ul>
+<p>上述方法是对报文本身进行了私钥加密，公钥直接可以解出报文具体内容，如果要用非对称加密实现报文内容的保密，可以在A用私钥D运算之后，再用B的公钥E运算，这样就彻底加密了报文内容，B收到以后先用B的私钥D运算，再用A的公钥E运算。</p>
+<h4 id="哈希函数"><a href="#哈希函数" class="headerlink" title="哈希函数"></a><a href="../../Hash.md">哈希函数</a></h4><p>是一种摘要算法，将任意长度的报文经过哈希函数可以的到固定长度的字符串。</p>
+<h4 id="结合报文鉴别码（MAC）实现数字签名报文鉴别"><a href="#结合报文鉴别码（MAC）实现数字签名报文鉴别" class="headerlink" title="结合报文鉴别码（MAC）实现数字签名报文鉴别"></a>结合报文鉴别码（MAC）实现数字签名报文鉴别</h4><p>Message Authentication Code, MAC</p>
+<p>H(X) 代表 X 的哈希值；D(X) 代表 X 经过私钥的D运算以后的结果；E(X) 代表 X 经过 公钥的E运算之后的结果</p>
+<p>$D(E(X)) = X$          $E(D(X)) = X$ </p>
+<p>扩展报文实现的数字签名可以分为三类：</p>
+<p>$A + H(A)$ ：只篡改报文A或者H(A)可以鉴别出来，但是直接换一个 X + H(X) 直接会蒙混过关，由此引出了使用密钥K来进行哈希运算的方法。</p>
+<p>$A + H(A,K)$： 使用对称密钥$K$，如果报文$A$被篡改成$X$，但是攻击者不知道密钥，因此无法伪造出哈希值$H(X,K)$，另一边根据密钥计算出$H(X,K)$，就能发现报文被篡改过。这样将密钥拼接在正文之后，得出的散列值就是<strong>HMAC</strong>。JWT(Json Web Token)采用的数字签发就可以采用这样的方式 （HS256 代表 HMAC 散列函数为SHA-256）**对密钥K<u>严格要求保密</u>**。<a target="_blank" rel="noopener" href="https://ryan4yin.space/posts/jwt-algorithm-key-generation/">JWT 签名算法 HS256、RS256 及 ES256 及密钥生成 - This Cute World</a> </p>
+<p>$A + D(H(A))$：使用私钥对报文的哈希进行D运算，其他人使用公钥对密文进行E运算能够得出哈希值，将这个哈希值和报文段的哈希值比较即可。如果$A$被篡改为$X$，攻击者因为不知道发送者的私钥，因此无法得出一个正确的$D(H(X))$，这时候发给接收者，接受者再对攻击者伪造的哈希值密文进行E运算，得出哈希值肯定和真正的$H(X)$不同，这就是RS256和ES256的原理。**由此方法扩展出的报文<u>不可伪造，也不可否认</u>**，同时可以运用到分布式架构中，一个服务签发，其他服务验证只需要公钥即可。ES256（ECDSA）使用椭圆曲线计算公钥。</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/kirito-c/p/12402066.html">JWT 签名算法 HS256、RS256 及 ES256 及密钥生成 - 於清樂 - 博客园</a> </p>
+<h3 id="实体鉴别"><a href="#实体鉴别" class="headerlink" title="实体鉴别"></a>实体鉴别</h3><h4 id="对称密钥"><a href="#对称密钥" class="headerlink" title="对称密钥"></a>对称密钥</h4><p>主要是验证来访者的确是访问者，也就是鉴别身份。</p>
+<p>相比于报文鉴别，实体鉴别只需要鉴别一次发送者即可，后续传输不需要鉴别，使用<strong>共享对称密钥</strong>，如果第三方C截获了A发给B的验证信息，并未破译报文，而是直接伪装成A给B发消息，这样B就会错误地与C建立起联系。把以前窃听到的数据原封不动地重新发送给接收方，这就叫 <strong>重放攻击</strong>。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E9%87%8D%E6%94%BE%E6%94%BB%E5%87%BB/2229240">重放攻击_百度百科</a> </p>
+<p>重放攻击的基本原理就是把以前<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%AA%83%E5%90%AC/1624599?fromModule=lemma_inlink">窃听</a>到的数据原封不动地重新发送给接收方。很多时候，网络上传输的数据是<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8A%A0%E5%AF%86/752748?fromModule=lemma_inlink">加密</a>过的，此时窃听者无法得到数据的准确意义。但如果他知道这些数据的作用，就可以在不知道数据内容的情况下通过再次发送这些数据达到愚弄接收端的目的。例如，有的系统会将鉴别信息进行简单加密后进行传输，这时攻击者虽然无法窃听<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%AF%86%E7%A0%81/65553?fromModule=lemma_inlink">密码</a>，但他们却可以首先截取加密后的口令然后将其重放，从而利用这种方式进行有效的攻击。再比如，假设网上存款系统中，一条消息表示用户支取了一笔存款，攻击者完全可以多次发送这条消息而偷窃存款。</p>
+</blockquote>
+<p>因此采取的措施就是尽量能够让B端验证清楚A的身份。K(X)表示用密钥加密过的X</p>
+<p>A先发身份信息 + 一个大随机不重复数<code>RA</code>，B收到后响应一个<code>RB</code>和<code>K(RA)</code>，因此对于A端而言B端是可信的；A端再发送<code>K(RB)</code>，因此对于B端而言A端是可信的。需要注意的是每次会话都都需要重新验证，并且需要有足够的空间存储不同会话的不同随机数。</p>
+<h4 id="非对称密钥"><a href="#非对称密钥" class="headerlink" title="非对称密钥"></a>非对称密钥</h4><p>对于上文的不重复随机数，B可以用B自己的私钥加密RA，A用B的公钥解密得出RA；A用自己的私钥加密RB，B用A的公钥解密RB。这里C可以生成自己的私钥和公钥，分别截获RA和RB，仍然能够冒充A，与B进行通信。不过A与B根本没有进行通信，A端很容易察觉到。</p>
+<p><strong>中间人攻击</strong>：假设AB通信双方并没有提前知道对方的公钥是什么。</p>
+<p><img src="C:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241129155621051.png" alt="image-20241129155621051"></p>
+<p>C截获A的身份验证信息和RB，用自己的私钥加密RB得到D<del>C</del>(RB)返回给B，同时把RB转发给A，A向对方索取公钥，C就把自己的公钥发给A，但是仍然把公钥的请求转发给A，A发出了自己的D<del>A</del>(RB)和公钥，但均被C所截获。</p>
+<p>A跟B开始建立通信，B就把发送的数据用C的公钥加密，C直接可以用自己的私钥解密，解密出来以后再用A的公钥加密，发给A，看似A和B建立了保密通信，实际上C能够神不知鬼不觉地窃取信息。</p>
+<blockquote>
+<p>SSL劫持</p>
+<p>当今绝大部分网站采用HTTPS方式进行访问，也就是用户与网站服务器间建立<a target="_blank" rel="noopener" href="https://info.support.huawei.com/info-finder/encyclopedia/zh/SSL.html">SSL</a>连接，基于SSL证书进行数据验证和加密。HTTPS可以在一定程度上减少中间人攻击，但是攻击者还是会使用各种技术尝试破坏HTTPS，SSL劫持就是其中的一种。SSL劫持也称为SSL证书欺骗，攻击者伪造网站服务器证书，公钥替换为自己的公钥，然后将虚假证书发给用户。此时用户浏览器会提示不安全，但是如果用户安全意识不强继续浏览，攻击者就可以控制用户和服务器之间的通信，解密流量，窃取甚至篡改数据。</p>
+</blockquote>
+<h2 id="密钥分配与管理"><a href="#密钥分配与管理" class="headerlink" title="密钥分配与管理"></a>密钥分配与管理</h2><h3 id="对称密钥交换"><a href="#对称密钥交换" class="headerlink" title="对称密钥交换"></a>对称密钥交换</h3><h4 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h4><h5 id="难点：大数因式分解"><a href="#难点：大数因式分解" class="headerlink" title="难点：大数因式分解"></a>难点：大数因式分解</h5><p>公开的数字：公钥D，N</p>
+<p><img src="C:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241129230424076-1732894652386-1.png" alt="image-20241129230424076"></p>
+<p>难点：算出T的值，也就是要分解N。</p>
+<p><img src="C:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241129230521315-1732944264022-8.png" alt="image-20241129230521315"></p>
+<h5 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h5><ul>
+<li>使用场景较广泛，适合需要加密数据、验证签名的场合。</li>
+<li>不适合直接交换大数据（效率较低）。</li>
+</ul>
+<h5 id="RSA-的缺陷"><a href="#RSA-的缺陷" class="headerlink" title="RSA 的缺陷"></a>RSA 的缺陷</h5><p>没有前向保密性，所有的数字（质数乘积N，公钥E）必须提前沟通好，依赖于长期的静态密钥对（公钥和私钥）来交换对称密钥，而没有使用每次会话生成的临时密钥对。在 RSA 密钥交换过程中，如果服务器的私钥被泄露，攻击者可以解密所有使用该私钥加密的对称密钥，进而恢复以前的会话数据，从而破坏了前向保密性。</p>
+<h4 id="Diffle-Hellman-密钥交换"><a href="#Diffle-Hellman-密钥交换" class="headerlink" title="Diffle-Hellman 密钥交换"></a>Diffle-Hellman 密钥交换</h4><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/599518034">一文搞懂Diffie-Hellman密钥交换协议 - 知乎</a> </p>
+<h5 id="难点：离散对数"><a href="#难点：离散对数" class="headerlink" title="难点：离散对数"></a>难点：离散对数</h5><p>公开的数字：P、G、双方的公钥。</p>
+<ul>
+<li><p>正向计算简单，逆向计算难（即在有限域上计算  $g^x \mod p$ 的逆运算很难）</p>
+</li>
+<li><p>依赖于离散对数的计算难度，使用的素数位数越长，安全性越高。</p>
+</li>
+<li><p>易受中间人攻击，因此通常结合认证机制（如数字签名）使用。</p>
+</li>
+</ul>
+<h5 id="使用场景-1"><a href="#使用场景-1" class="headerlink" title="使用场景"></a>使用场景</h5><ul>
+<li>专用于安全密钥交换，通常与对称加密算法结合使用。</li>
+<li>不支持数据加密或签名。</li>
+</ul>
+<p>由8和19无法逆推回x与y，由$19^x \mod 23 = 8^y \mod 23$ 也无法推出x和y的值</p>
+<p><img src="C:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241129230002490.png" alt="image-20241129230002490"></p>
+<h5 id="ECDHE"><a href="#ECDHE" class="headerlink" title="ECDHE"></a>ECDHE</h5><p>static DH算法 – &gt; DHE算法 – &gt; ECDHE算法</p>
+<p><strong>static DH</strong> 算法里有一方的私钥是静态的，也就说每次密钥协商的时候有一方的私钥都是一样的，一般是服务器方固定，即 a 不变，客户端的私钥则是随机生成的。 于是，DH 交换密钥时就只有客户端的公钥是变化，而服务端公钥是不变的，那么随着时间延长，黑客就会截获海量的密钥协商过程的数据，因为密钥协商的过程有些数据是公开的，黑客就可以依据这些数据暴力破解出服务器的私钥，然后就可以计算出会话密钥了，于是之前截获的加密数据会被破解，所以 static DH 算法<strong>不具备前向安全性</strong>。</p>
+<p><strong>DHE</strong> </p>
+<ul>
+<li><strong>Ephemeral（临时密钥）</strong>：在 DHE 中，”Ephemeral” 表示每次会话都生成新的密钥对（临时密钥）。因此，即使密钥在某一时刻被泄露，它也无法用于恢复以前的通信，增强了前向保密性（forward secrecy）。</li>
+</ul>
+<p>G、P可以固定，DHE 每次需要传递的数据就是计算出来的公钥，不过大数乘除性能不好，于是有了ECDHE，用ECC提高性能。</p>
+<p><strong>ECDHE</strong>（Elliptic Curve Diffie-Hellman Ephemeral） 是 Diffie-Hellman 协议的椭圆曲线版本，使用椭圆曲线加密（ECC，Elliptic Curve Cryptography）来代替传统的基于大数的计算。椭圆曲线加密在相同的安全级别下，所需的密钥长度比传统的 DH 小得多，从而提高了计算效率。</p>
+<h4 id="密钥分发中心（KDC）"><a href="#密钥分发中心（KDC）" class="headerlink" title="密钥分发中心（KDC）"></a>密钥分发中心（KDC）</h4><p>Key Distribution Center</p>
+<h3 id="公钥体制：CA"><a href="#公钥体制：CA" class="headerlink" title="公钥体制：CA"></a>公钥体制：CA</h3><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%AC%E9%96%8B%E9%87%91%E9%91%B0%E8%AA%8D%E8%AD%89">Certificate Authority 证书权威机构</a></p>
+<p>除非A与B线下沟通好公钥，不然总是有可能会被中间人攻击（即中间人会截获请求者的公钥，替换成自己的公钥），那么如何保证B的公钥能准确无误传到A手上不被篡改呢？需要第三方进行数字签名，CA用自己的私钥将报文信息数字签名，也就是MAC报文鉴别码。最终报文鉴别码附在报文后面$B + D(H(B))$</p>
+<p>这里的报文B包含：</p>
+<ul>
+<li>B的身份验证信息（我是B）</li>
+<li>B的公钥（我的公钥是xxx）</li>
+</ul>
+<p>因此，B需要提供证书，A需要把证书的报文部分进行哈希运算，然后用报文中B提供的公钥进行E运算，看得出的结果是否相同，如果不同说明证书被篡改，不可信。一切的基础是建立在CA上面，CA是一个大家都认可的权威机构</p>
+<h4 id="CA-标准：X-509（PKI）"><a href="#CA-标准：X-509（PKI）" class="headerlink" title="CA 标准：X.509（PKI）"></a>CA 标准：X.509（PKI）</h4><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%AC%E9%96%8B%E9%87%91%E9%91%B0%E8%AA%8D%E8%AD%89">公开密钥认证 - 维基百科，自由的百科全书</a> Public Key Infrastructure</p>
+<p><strong>数字证书标准</strong>：</p>
+<ul>
+<li>X.509 版本</li>
+<li>数字证书名称、序列号</li>
+<li>本数字签名证书使用的签名算法（CA进行数字签名的非对称算法）</li>
+<li>数字签名的公钥（私钥由签发者保存）</li>
+<li>签发者的唯一标识符</li>
+<li>数字证书的有效期</li>
+<li>数字证书的主体名（数字证书拥有者及其拥有的公钥的唯一标识符）</li>
+</ul>
+<h4 id="CA-信任链：多级认证系统"><a href="#CA-信任链：多级认证系统" class="headerlink" title="CA 信任链：多级认证系统"></a>CA 信任链：多级认证系统</h4><p>万一中级证书不能信任了，还可以让根证书再找一个中级证书，因为信任根证书，也自然信任这个新的中级证书，但如果根证书直接信任某个网站的证书，万一根证书被攻破不能信任了，那就找不到可以信任的了。</p>
+<p><img src="C:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241129222025691.png" alt="image-20241129222025691"></p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%A0%B9%E8%AF%81%E4%B9%A6">根证书</a>：所有信任链的起点，使用私钥自签。根证书获得广泛认可，通常已预先安装在各种软件（包括<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F">操作系统</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BD%91%E9%A1%B5%E6%B5%8F%E8%A7%88%E5%99%A8">浏览器</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E9%83%B5%E4%BB%B6%E7%94%A8%E6%88%B6%E7%AB%AF">电邮软件</a>等），作为<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BF%A1%E4%BB%BB%E9%8F%88">信任链</a>的起点，来自于公认可靠的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%94%BF%E5%BA%9C%E6%9C%BA%E5%85%B3">政府机关</a>（如<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A6%99%E6%B8%AF%E9%83%B5%E6%94%BF">香港邮政</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8F%B0%E7%81%A3%E7%B6%B2%E8%B7%AF%E8%B3%87%E8%A8%8A%E4%B8%AD%E5%BF%83">台湾网络信息中心</a>）、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AF%81%E4%B9%A6%E9%A2%81%E5%8F%91%E6%9C%BA%E6%9E%84">证书颁发机构</a>公司（如<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/DigiCert">DigiCert</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Google">Google</a>）、非营利组织（如<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Let's_Encrypt">Let’s Encrypt</a>）等，与各大软件商透过严谨的核认程序才在不同的软件广泛部署。由于部署程序复杂费时，需要行政人员的授权及机构法人身份的核认，一张根证书有效期可能长达二十年以上。在某些企业，也可能会在内部电脑自行安装企业自签的根证书，以支持<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%86%85%E9%83%A8%E7%BD%91">内部网</a>的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%BD%AF%E4%BB%B6">企业级软件</a>；但是这些证书可能未被广泛认可，只在企业内部适用。</p>
+<p><strong>中介证书</strong>：认证机构的一个重要任务就是为客户签发证书，虽然广泛认可的认证机构都已拥有根证书，相对应的私钥可用以签署其他证书，但因为<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%AF%86%E9%92%A5%E7%AE%A1%E7%90%86">密钥管理</a>和行政考虑，一般会先行签发中介证书，才为客户作数字签署。中介证书的有效期会较根证书为短，并可能对不同类别的客户有不同的中介证书作分工。</p>
+<p><strong>TLS 服务器证书</strong>：服务器通常以域名形式在互联网上提供服务，服务器证书上<strong>主体</strong>的<strong>通用名称</strong>就会是相应的域名，相关机构名称则写在<strong>组织</strong>或<strong>单位</strong>一栏上。服务器证书（包括公钥）和私钥会安装于服务器（例如<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Apache_HTTP_Server">Apache</a>），等待客户端连接时<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%8F%A1%E6%89%8B_(%E6%8A%80%E6%9C%AF)">协议加密细节</a>。客户端的软件（如浏览器）会执行<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E8%AA%8D%E8%AD%89%E8%B7%AF%E5%BE%91%E9%A9%97%E8%AD%89%E7%AE%97%E6%B3%95&action=edit&redlink=1">认证路径验证算法</a>以确保安全，如果未能肯定加密通道是否安全（例如证书上的主体名称不对应网站域名、服务器使用了自签证书、或加密算法不够强），可能会警告用户。</p>
+<p><strong>TLS 客户端证书</strong>：有时候，某些TLS服务器可能会在建立加密通道时，要求客户端提供客户端证书，以验证<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B0%E5%AD%97%E8%BA%AB%E4%BB%BD">身份</a>及<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%AD%98%E5%8F%96%E6%8E%A7%E5%88%B6">控制访问权限</a>。客户端证书包含电子邮件地址或个人姓名，而不是主机名。但客户端证书比较不常见，因为考虑到技术门槛及成本因素，通常都是由服务提供者验证客户身份，而不是依赖第三方认证机构。通常，需要使用到客户端证书的服务都是内部网的企业级软件，他们会设立自己的内部根证书，由企业的技术人员在企业内部的电脑安装相关客户端证书以便使用。在公开的互联网，大多数网站都是使用<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%AF%86%E7%A2%BC_(%E8%AA%8D%E8%AD%89)">登录密码</a>和<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Cookie">Cookie</a>来验证用户，而不是客户端证书。客户端证书在<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%81%A0%E7%A8%8B%E9%81%8E%E7%A8%8B%E8%AA%BF%E7%94%A8">RPC系统</a>中更常见，用于验证连接设备的许可授权。</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%87%AA%E7%AD%BE%E8%AF%81%E4%B9%A6">自签证书</a>：在用于小范围测试等目的的时候，用户也可以自己生成数字证书，但没有任何可信赖的人签名，这种自签名证书通常不会被广泛信任，使用时可能会遇到电脑软件的安全警告。</p>
+<h4 id="CA-撤销名单"><a href="#CA-撤销名单" class="headerlink" title="CA 撤销名单"></a>CA 撤销名单</h4><p>CA 撤销名单：尚未到期就被<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AF%81%E4%B9%A6%E9%A2%81%E5%8F%91%E6%9C%BA%E6%9E%84">证书颁发机构</a>吊销的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6">数字证书</a>的名单。</p>
+<ul>
+<li>吊销：该证书被不可逆的吊销。例如，它被不当的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AF%81%E4%B9%A6%E9%A2%81%E5%8F%91%E6%9C%BA%E6%9E%84">证书颁发机构</a>颁发了证书，或者私钥被认为已经破坏。被吊销的最常见的原因是用户不再独有私钥，而私钥则被窃取。</li>
+<li>吊扣：这个状态是可逆的。</li>
+</ul>
+<p>每个CA都有对应的CA证书撤销名单，里面包含着证书的序列号。有 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%9C%A8%E7%BA%BF%E8%AF%81%E4%B9%A6%E7%8A%B6%E6%80%81%E5%8D%8F%E8%AE%AE">OCSP</a> 和 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AF%81%E4%B9%A6%E5%90%8A%E9%94%80%E5%88%97%E8%A1%A8">CRL</a> 两种形式</p>
+<blockquote>
+<p>非关键 CA 颁发者: URI: <a target="_blank" rel="noopener" href="http://secure.globalsign.com/cacert/gsrsaovsslca2018.crt">http://secure.globalsign.com/cacert/gsrsaovsslca2018.crt</a> </p>
+<p>OCSP 响应者: URI: <a target="_blank" rel="noopener" href="http://ocsp.globalsign.com/gsrsaovsslca2018">http://ocsp.globalsign.com/gsrsaovsslca2018</a></p>
+</blockquote>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/%E7%BD%91%E7%BB%9C/https%E4%BC%98%E5%8C%96/crl.png" alt="img"></p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/%E7%BD%91%E7%BB%9C/https%E4%BC%98%E5%8C%96/ocsp.png" alt="img"></p>
+<h1 id="HTTPS-SSL-TLS"><a href="#HTTPS-SSL-TLS" class="headerlink" title="HTTPS (SSL/TLS)"></a>HTTPS (SSL/TLS)</h1><p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/2_http/http_interview.html#http-%E4%B8%8E-https">HTTPS  HTTP</a> </p>
+<h2 id="传输层安全（TLS）"><a href="#传输层安全（TLS）" class="headerlink" title="传输层安全（TLS）"></a>传输层安全（TLS）</h2><p>Transport Layer Security</p>
+<h3 id="TLS-握手（TLS-1-2）"><a href="#TLS-握手（TLS-1-2）" class="headerlink" title="TLS 握手（TLS 1.2）"></a>TLS 握手（TLS 1.2）</h3><p>在TCP threeway handshake之后，就会开始TLS handshake</p>
+<p>两种交换会话密钥的算法：<a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/2_http/https_rsa.html#rsa-%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B">RSA 握手</a> 和 <a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/2_http/https_ecdhe.html">ECDHE 握手</a> 后者支持前向安全，现在使用更加广泛</p>
+<h4 id="RSA-握手"><a href="#RSA-握手" class="headerlink" title="RSA 握手"></a>RSA 握手</h4><p><img src="C:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241130161720294.png" alt="image-20241130161720294"></p>
+<ol>
+<li><strong>ClientHello</strong>: 客户端向服务器发送随机数<code>client random</code>，TLS版本，支持的加密套件列表。</li>
+<li><strong>ServerHello</strong>: 服务器响应随机数<code>server random</code>，确认好加密套件，下发服务器证书(<code>Certificate</code>)。<ul>
+<li>证书里有用于<code>premaster</code>加密的服务器公钥</li>
+</ul>
+</li>
+<li><strong>Client Key Exchange</strong>: 客户端证书验证通过后，生成另一个随机数<code>premaster secret</code>，通过<strong>服务器证书的公钥</strong>加密</li>
+<li>服务器用私钥解密获取<code>premaster secret</code>，双方根据<code>premaster secret</code>和两个随机数生成<code>session key</code> </li>
+<li><strong>Change Cipher Spec</strong>: 客户端通知接下来要使用会话密钥进行通信了，之前都是明文通信。切换加密标准</li>
+<li><strong>Finishd</strong>: 客户端计算之前发出的明文消息的摘要（Hash），再用<code>session key</code>加密后发给服务端</li>
+<li>服务端重复5,6步，双方认证加解密无问题，则可以开始正式发送用<code>session key</code>加密后的<code>application data</code> </li>
+</ol>
+<p><img src="https://ask.qcloudimg.com/http-save/4069756/e6zkf4qwi7.jpeg" alt="img"></p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/%E7%BD%91%E7%BB%9C/https/https_rsa.png" alt="img"> </p>
+<h5 id="加密套件（Cipher-Suite）"><a href="#加密套件（Cipher-Suite）" class="headerlink" title="加密套件（Cipher Suite）"></a>加密套件（Cipher Suite）</h5><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43408952/article/details/124715927">TLS 各种加密套件_tls加密套件-CSDN博客</a> </p>
+<p><strong>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</strong> </p>
+<ul>
+<li><strong>密钥交换策略</strong>（Key Exchange/Arrangement）：用于交换对称密钥。<strong>RSA</strong>、DH、DHE、<strong>ECDHE</strong>、PSK</li>
+<li><strong>数字签名算法</strong>（Authentication）：用于验证证书。<strong>RSA</strong>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E7%AE%97%E6%B3%95"><strong>DSA</strong></a> 、ECDSA</li>
+<li><strong>对称加密算法</strong>（Block/stream ciphers）：用于加密消息流。<strong>ChaCha20</strong>、<strong>AES</strong>、DES等</li>
+<li><strong>MAC 算法</strong>（Message authentication）：用于创建报文鉴别码，例如<strong>SHA-256</strong>，MD5，消息流每个<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B0%E6%8D%AE%E5%9D%97">数据块</a>的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8A%A0%E5%AF%86%E6%95%A3%E5%88%97">加密散列</a>。(分块加密信息以后的报文摘要)</li>
+</ul>
+<h5 id="前向安全性（Forward-Secrecy）"><a href="#前向安全性（Forward-Secrecy）" class="headerlink" title="前向安全性（Forward Secrecy）"></a>前向安全性（Forward Secrecy）</h5><p>共享密钥被攻破不会导致之前的会话信息全部泄露。Perfect Forward Secrecy</p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/45203206">如何理解前向安全性？和完美前向保密（perfect forward secrecy）区别？ - 知乎</a> </p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/348420897">有了共享密钥为什么还需要会话密钥？ - 知乎</a> </p>
+<p><strong>有了premaster key为什么要session key？</strong> </p>
+<p>RSA握手中不把premaster key直接当做对称密钥，单次session key泄露不会造成之前的会话信息都泄露。</p>
+<p>前向安全性问题出在共享密钥上，RSA握手的共享公-私密钥对是长期不变的，也就是说如果服务端用于RSA加密的私钥泄露会导致之前的会话信息全部暴露。如果对每次会话都生成一对RSA密钥对，理论可行，但是性能不如后面要介绍的ECDHE。</p>
+<p> 双<strong>RSA</strong>虽然也能实现<strong>PFS</strong>，但是效率太差，没有公司会采用， 基本都是<strong>RSA + ECDHE</strong>。 </p>
+<h4 id="ECDHE-握手"><a href="#ECDHE-握手" class="headerlink" title="ECDHE 握手"></a>ECDHE 握手</h4><p>椭圆曲线最重要的参数是<strong>椭圆曲线类型</strong>（基点G）[RSA 算法的替代品：X25519/Ed25519 使用记录 | 存在感消失的地方|ω•`)](<a target="_blank" rel="noopener" href="https://akarin.dev/2021/09/16/a-taste-of-curve25519/">https://akarin.dev/2021/09/16/a-taste-of-curve25519/</a>)  </p>
+<p><img src="C:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241130165130228.png" alt="image-20241130165130228"></p>
+<ol>
+<li><strong>ClientHello</strong>: 客户端向服务器发送<strong>随机数</strong>client random，TLS版本，支持的加密套件列表</li>
+<li><strong>ServerHello</strong>: 服务器响应<strong>随机数</strong>server random，确认好双方都支持的加密套件，同时下发服务器<strong>证书</strong>(<code>certificate</code>)<ul>
+<li>证书中的公钥用于鉴别自己发出的签名有效。</li>
+</ul>
+</li>
+<li><strong>Server Key Exchange</strong>: 生成随机数作为<strong>临时私钥</strong>，保留在本地。公开<strong>椭圆曲线</strong>基点G，一般是X25519，根据G和临时生成的私钥，算出<strong>公钥</strong>发给客户端。为了保证公钥不被篡改，同时会使用RSA进行数字签名。</li>
+<li><strong>Client Key Exchange</strong>: 客户端验证通过后，生成自己临时私钥，根据基点G算出<strong>公钥</strong>，发送给服务器。</li>
+<li>这样，双方知道了对方的公钥，就可以开始算共享密钥了。</li>
+<li>之后的步骤就是互相发送change cipher spec+finished，ECDHE可以在客户端发完信息之后可以直接开始发送<code>application data</code> </li>
+</ol>
+<p><img src="https://ask.qcloudimg.com/http-save/4069756/0mhr8kq63w.jpeg" alt="img"></p>
+<p>==抓包实战== </p>
+<p><u>搭建https server（springboot）</u></p>
+<ol>
+<li><strong>生成自签名证书</strong>，使用jdk的keytool生成证书</li>
+</ol>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -genkey -<span class="keyword">alias</span> wxl -keyalg RSA -keysize <span class="number">2048</span> -storetype PKCS12 -keystore wxl-ssl-<span class="keyword">key</span>.p12 -validity <span class="number">3650</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>-genkey：表示要创建一个新的密钥</li>
+<li>-alias：keystore别名</li>
+<li>-keyalg：加密算法</li>
+<li>-keysize：密钥长度</li>
+<li>-storetype：密钥类型</li>
+<li>-keystore：文件存放位置</li>
+<li>-validity：密钥有效期，单位为天</li>
+</ul>
+<ol start="2">
+<li><strong>springboot配置https</strong></li>
+</ol>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8443</span></span><br><span class="line">  <span class="attr">ssl:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">key-store:</span> <span class="string">classpath:wxl-ssl-key.p12</span></span><br><span class="line">    <span class="attr">key-store-password:</span> <span class="number">123456</span></span><br><span class="line">    <span class="attr">key-store-type:</span> <span class="string">PKCS12</span></span><br><span class="line">    <span class="attr">enabled-protocols:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TLSv1.2</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>enabled-protocols表示支持启用的TLS版本，这里配置仅TLS1.2</li>
+</ul>
+<p><u>请求并抓包</u></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https://localhost:8443/hello -k</span><br></pre></td></tr></table></figure>
+
+<p>tcp.port == 8443</p>
+<h5 id="TLS-False-Start"><a href="#TLS-False-Start" class="headerlink" title="TLS False Start"></a>TLS False Start</h5><p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000004003319">https - TLS False Start究竟是如何加速网站的 - 野狗科技官方专栏 - SegmentFault 思否</a> </p>
+<p><img src="https://ask.qcloudimg.com/http-save/4069756/0mhr8kq63w.jpeg" alt="img"></p>
+<blockquote>
+<p>The recommended whitelists are such that if cryptographic algorithms suitable for forward secrecy would possibly be negotiated, no False Start will take place if the current handshake fails to provide forward secrecy.</p>
+<p><a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc7918">RFC 7918 - Transport Layer Security (TLS) False Start</a> </p>
+</blockquote>
+<p>ECDHE和DHE支持前向保密，所以可以使用TLS抢跑。</p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1420297">90%的人都不懂的TLS握手优化-腾讯云开发者社区-腾讯云</a> </p>
+<h3 id="TLS-记录"><a href="#TLS-记录" class="headerlink" title="TLS 记录"></a>TLS 记录</h3><p>TLS 握手主要用来解决服务器的可信度问题，TLS 记录可以解决报文的压缩、加密和数据认证的问题。</p>
+<p><img src="C:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241130224715135.png" alt="image-20241130224715135"></p>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/HTTP/%E8%AE%B0%E5%BD%95%E5%8D%8F%E8%AE%AE.png" alt="img"></p>
+<h3 id="TLS-漏洞"><a href="#TLS-漏洞" class="headerlink" title="TLS 漏洞"></a>TLS 漏洞</h3><hr>
+<p><u><strong>协议设计上的漏洞</strong></u>：一些漏洞源于TLS协议本身的设计缺陷，通常会在新版本中修复：</p>
+<p><strong>BEAST（Browser Exploit Against SSL/TLS）</strong></p>
+<ul>
+<li><strong>描述</strong>：BEAST 攻击利用 TLS 1.0 中的 CBC 模式实现的设计缺陷，通过中间人攻击窃取加密数据。</li>
+<li><strong>修复</strong>：TLS 1.1 和更高版本已经修复了该问题，同时推荐使用 AES-GCM 等替代的加密模式。</li>
+</ul>
+<p><strong>CRIME（Compression Ratio Info-leak Made Easy）</strong></p>
+<ul>
+<li><strong>描述</strong>：通过利用TLS压缩功能，攻击者可以猜测敏感数据（如会话Cookie）。</li>
+<li><strong>修复</strong>：禁用TLS压缩功能。</li>
+</ul>
+<p><strong>POODLE（Padding Oracle On Downgraded Legacy Encryption）</strong></p>
+<ul>
+<li><strong>描述</strong>：POODLE 利用 SSL 3.0 中的填充漏洞进行攻击，针对使用CBC模式的实现。</li>
+<li><strong>修复</strong>：废弃 SSL 3.0 并采用更安全的协议版本（如 TLS 1.2+）。</li>
+</ul>
+<p><strong>Downgrade Attacks</strong></p>
+<ul>
+<li><strong>描述</strong>：攻击者通过中间人攻击强制客户端和服务器降级到不安全的协议版本（如 SSL 3.0 或早期 TLS 版本）。</li>
+<li><strong>修复</strong>：使用 <strong>TLS_FALLBACK_SCSV</strong> 标记防止协议降级攻击。</li>
+</ul>
+<p><strong>Logjam</strong></p>
+<ul>
+<li><strong>描述</strong>：Logjam 攻击利用 Diffie-Hellman 密钥交换中的弱参数（512位素数），允许攻击者破解加密。</li>
+<li><strong>修复</strong>：升级到更强的密钥（2048位或以上），并禁用弱算法。</li>
+</ul>
+<hr>
+<p><u><strong>实现上的漏洞</strong></u>：许多漏洞是由于TLS库实现中存在的错误或疏漏，而不是协议本身的问题。</p>
+<p><strong>Heartbleed</strong></p>
+<ul>
+<li><strong>描述</strong>：这是 OpenSSL 的实现漏洞，允许攻击者通过 Heartbeat 扩展读取服务器内存中的敏感数据（如私钥）。</li>
+<li><strong>修复</strong>：修复受影响的 OpenSSL 版本，更新到无漏洞的版本。</li>
+</ul>
+<p><strong>ROBOT（Return Of Bleichenbacher’s Oracle Threat）</strong></p>
+<ul>
+<li><strong>描述</strong>：利用某些TLS实现中的 RSA 加密模式缺陷，通过构造恶意数据包破解私钥。</li>
+<li><strong>修复</strong>：修复实现并采用更安全的加密模式。</li>
+</ul>
+<p><strong>Zero-Length Padding</strong></p>
+<ul>
+<li><strong>描述</strong>：某些TLS实现接受零长度的填充，可能被攻击者利用进行漏洞利用。</li>
+<li><strong>修复</strong>：严格遵循协议规范，确保填充字段符合要求。</li>
+</ul>
+<hr>
+<p><u><strong>配置和使用上的问题</strong></u>：即使TLS协议和实现没有漏洞，不当的配置或使用也可能导致安全隐患。</p>
+<p><strong>弱密码套件</strong></p>
+<ul>
+<li>使用已知不安全的加密算法或过短的密钥长度（如RC4或1024位RSA）。</li>
+<li><strong>解决方法</strong>：禁用弱密码套件，使用推荐的安全算法（如 AES-GCM、ChaCha20-Poly1305）。</li>
+</ul>
+<p><strong>过期或伪造的证书</strong></p>
+<ul>
+<li>如果服务器使用过期、伪造或不可信的证书，攻击者可以进行中间人攻击。</li>
+<li><strong>解决方法</strong>：确保证书可信且未过期，并使用 Certificate Transparency 来检测伪造证书。</li>
+</ul>
+<p><strong>主机名验证问题</strong></p>
+<ul>
+<li>一些TLS实现未正确验证证书中的主机名，可能导致攻击者伪装成合法服务器。</li>
+<li><strong>解决方法</strong>：强制严格的主机名验证。</li>
+</ul>
+<p><strong>会话恢复漏洞</strong></p>
+<ul>
+<li>TLS会话恢复功能（如会话ID或会话票据）在设计或实现上可能存在漏洞，导致会话劫持。</li>
+<li><strong>解决方法</strong>：确保会话恢复机制的实现安全，并定期刷新密钥。</li>
+</ul>
+<hr>
+<p><u><strong>环境相关漏洞</strong></u></p>
+<p><strong>硬件漏洞</strong></p>
+<ul>
+<li>硬件加速器或HSM（硬件安全模块）可能存在漏洞，攻击者可以利用其生成弱密钥或泄露数据。</li>
+</ul>
+<p><strong>随机数生成问题</strong></p>
+<ul>
+<li>如果随机数生成器的质量不足，攻击者可能预测到密钥。</li>
+<li><strong>解决方法</strong>：使用高质量的随机数生成器（如 /dev/urandom 或硬件随机数生成器）。</li>
+</ul>
+<p><strong>中间人攻击</strong></p>
+<ul>
+<li>攻击者通过篡改DNS或ARP欺骗迫使客户端连接到恶意服务器，伪装成合法的TLS服务。</li>
+<li><strong>解决方法</strong>：使用 HSTS（HTTP Strict Transport Security）和证书锁定（Certificate Pinning）。</li>
+</ul>
+<hr>
+<p><u><strong>社会工程和弱安全操作</strong></u>：即使TLS协议本身非常安全，攻击者可能利用社会工程或操作疏漏来绕过安全机制</p>
+<ul>
+<li>攻击者诱骗用户接受不可信的证书。</li>
+<li>管理员错误配置服务器，允许使用过时的协议版本。</li>
+</ul>
+<hr>
+<h4 id="如何应对TLS漏洞？"><a href="#如何应对TLS漏洞？" class="headerlink" title="如何应对TLS漏洞？"></a>如何应对TLS漏洞？</h4><ol>
+<li><strong>升级协议和实现</strong><ul>
+<li>确保使用最新版本的TLS（推荐TLS 1.2或TLS 1.3）。</li>
+<li>定期更新TLS库（如OpenSSL、BoringSSL、GnuTLS）。</li>
+</ul>
+</li>
+<li><strong>禁用弱配置</strong><ul>
+<li>禁用SSL 2.0、SSL 3.0和TLS 1.0。</li>
+<li>禁用RC4和其他已知不安全的密码套件。</li>
+</ul>
+</li>
+<li><strong>安全的服务器配置</strong><ul>
+<li>强制使用强加密算法。</li>
+<li>使用2048位以上的密钥和推荐的椭圆曲线（如 P-256）。</li>
+</ul>
+</li>
+<li><strong>监控和检测</strong><ul>
+<li>定期扫描服务器的TLS配置，使用工具如 SSL Labs 的服务器测试工具。</li>
+<li>监控网络流量中的潜在攻击行为。</li>
+</ul>
+</li>
+</ol>
+<h3 id="TLS-1-3"><a href="#TLS-1-3" class="headerlink" title="TLS 1.3"></a>TLS 1.3</h3><p><img src="https://cdn.xiaolincoding.com//mysql/other/0877fe78380bf34ad3b28768e59fb53a.png" alt="图片"></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/28850798">TLS 1.3科普——新特性与协议实现 - 知乎</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/187262056">TLS 1.3 进行时 - 知乎</a> </p>
+<h4 id="2-RTT（TLS-1-2）"><a href="#2-RTT（TLS-1-2）" class="headerlink" title="2-RTT（TLS 1.2）"></a>2-RTT（TLS 1.2）</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wusanga/p/17386098.html">TLS1.2握手流程分析（RSA，ECDHE），和TLS1.3区别 - wuworker - 博客园</a> </p>
+<p><img src="https://pic2.zhimg.com/v2-485b564d2209a3108575a1b13a52d715_1440w.jpg" alt="img"></p>
+<h4 id="1-RTT"><a href="#1-RTT" class="headerlink" title="1-RTT"></a>1-RTT</h4><p>TLS1.2 为了考虑各种兼容性，保留了许多加密套件，这就使得客户端必须提前和服务端协商好用哪一种加密套件，这也导致了必须空出一个RTT专门协商，因此变成2-RTT。1.3只剩下5种，省去协商步骤，变成了1-RTT。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">TLS_AES_256_GCM_SHA384</span><br><span class="line">TLS_CHACHA20_POLY1305_SHA256</span><br><span class="line">TLS_AES_128_GCM_SHA256</span><br><span class="line">TLS_AES_128_CCM_8_SHA256</span><br><span class="line">TLS_AES_128_CCM_SHA256</span><br></pre></td></tr></table></figure>
+
+<p>TLS 1.3 在之前版本的基础上删除了那些不安全的加密算法，这些加密算法包括：</p>
+<ul>
+<li>RSA 密钥传输 —— 不支持前向安全性</li>
+<li>CBC 模式密码 —— 易受 BEAST 和 Lucky 13 攻击</li>
+<li>RC4 流密码 —— 在 HTTPS 中使用并不安全</li>
+<li>SHA-1 哈希函数 —— 建议以 SHA-2 取而代之</li>
+<li>任意 Diffie-Hellman 组—— CVE-2016-0701 漏洞</li>
+<li>输出密码 —— 易受 FREAK 和 LogJam 攻击</li>
+</ul>
+<p>TLS 1.3 只支持<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AE%A4%E8%AF%81%E5%8A%A0%E5%AF%86">AEAD认证模式</a> 同时完成加密和完整性校验，不再允许对加密报文进行压缩、不再允许双方发起重协商，密钥的改变不再需要发送change_cipher_spec报文给对方。对称加密算法只有AES，Chacha20，摘要算法只有 SHA，密钥交换算法只有ECDHE。</p>
+<p><img src="https://pic2.zhimg.com/v2-91669b8728eb5b0fa2d88730425f9391_1440w.jpg" alt="img"></p>
+<h4 id="0-RTT"><a href="#0-RTT" class="headerlink" title="0-RTT"></a>0-RTT</h4><p><img src="https://pic4.zhimg.com/v2-083c00146d71e75adbcab401e57c90e1_1440w.jpg" alt="img"></p>
+<p><img src="https://cdn.xiaolincoding.com//mysql/other/59539201f006d7dc0a06333617e5ea85.png" alt="图片"></p>
+<h2 id="HTTPS-优化（TLS-性能优化）"><a href="#HTTPS-优化（TLS-性能优化）" class="headerlink" title="HTTPS 优化（TLS 性能优化）"></a><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1420297">HTTPS 优化（TLS 性能优化）</a></h2><p>上文的TLS漏洞已经说明了提高安全性的措施，下列措施为提高TLS性能的措施</p>
+<h3 id="硬件优化"><a href="#硬件优化" class="headerlink" title="硬件优化"></a>硬件优化</h3><ul>
+<li>计算密集型任务，升级的是<strong>CPU</strong>而不是网卡等IO设备，如果CPU有针对 <strong>AES-NI</strong> 的特性，可以使用AES，否则可以选择chacha20</li>
+</ul>
+<h3 id="软件优化"><a href="#软件优化" class="headerlink" title="软件优化"></a>软件优化</h3><ul>
+<li>升级Linux，升级OpenSSL</li>
+</ul>
+<h3 id="协议优化：节省RTT"><a href="#协议优化：节省RTT" class="headerlink" title="协议优化：节省RTT"></a>协议优化：节省RTT</h3><p>（整体的握手过程还是需要的）</p>
+<ul>
+<li><strong>密钥交换算法</strong>：使用<code>ECDHE</code>而不是<code>RSA</code>，<code>ECDHE</code>支持前向安全，因此也支持 <code>TLS False Start</code>，发送ClientKeyExchange的同时可以开始发送<code>application data</code>节省 <code>1 RTT</code>。</li>
+<li><strong>升级TLS版本</strong>：TLS 1.3 相比于 TLS 1.2 废除了不安全的加密套件，总数变少，因此不需要协商套件的过程，可以节省<code>1 RTT</code>。</li>
+</ul>
+<h3 id="证书优化：节省客户端验证时间"><a href="#证书优化：节省客户端验证时间" class="headerlink" title="证书优化：节省客户端验证时间"></a>证书优化：节省客户端验证时间</h3><ul>
+<li><strong>证书类型</strong>：在相同的安全强度下，<code>ECDSA</code> 椭圆曲线证书相比于 <code>RSA</code> 证书的密钥长度减少很多，减少了验证证书完整性的时间。</li>
+<li><strong>证书验证流程</strong>：验证证书信任链的时候，<code>OCSP</code> 相比于 <code>CRL</code> 实时性更高，不用逐行读取文件；<ul>
+<li>进一步提升性能可以启用<code>OCSP Stapling</code>，服务器周期性地向 CA 获取证书状态，CA会在状态上签名防止篡改，在发出ServerHello的同时也把有效信息发给客户端。</li>
+</ul>
+</li>
+</ul>
+<h3 id="会话复用：复用会话密钥"><a href="#会话复用：复用会话密钥" class="headerlink" title="会话复用：复用会话密钥"></a>会话复用：复用会话密钥</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/mrpre/article/details/77868669">TLS/SSL 协议详解 (22)会话复用_ssl会话复用-CSDN博客</a> 抓包</p>
+<p><strong>以下技术都是建立在已经建立过一次连接的基础上的，可以节省第一次以后会话的RTT，是用来免去握手过程的</strong></p>
+<ul>
+<li><strong>Session ID</strong>：将与每个客户端的会话密钥缓存在服务器内存里，形成 id-key的键值对形式，ClientHello带上session id，节省<code>1 RTT</code>，缺点是不支持分布式和消耗服务器内存。</li>
+</ul>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/%E7%BD%91%E7%BB%9C/https%E4%BC%98%E5%8C%96/sessionid.png" alt="img"></p>
+<ul>
+<li><strong>Session Ticket</strong>：服务器可以将会话密钥再次用<strong>只有自己知道的密钥</strong>加密，然后附上有效期进行签发，以session ticket的形式交给客户端进行缓存，ClientHello带上ticket，服务器验证有效期（类似JWT）也能节省 <code>1 RTT</code> ，分布式之间需要共享这个密钥。</li>
+</ul>
+<p><img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/ImageHost4@main/%E7%BD%91%E7%BB%9C/https%E4%BC%98%E5%8C%96/ticket.png" alt="img"></p>
+<ul>
+<li><strong>Pre-shared Key</strong>：TLS 1.3 引入的新特性，将 Session Ticket 和 早期的 application data 一并发送给服务器 直接变成<code>0-RTT</code> ，因为不用协商套件。</li>
+</ul>
+<p><img src="C:/Users/Lenovo/Pictures/markdownfile/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8.assets/image-20241130172210036.png" alt="image-20241130172210036"></p>
+<p>会话复用会影响前向安全性，还可能会受到重放攻击，解决方案：</p>
+<ul>
+<li>只对幂等请求（GET）开放0-RTT；</li>
+<li>对session ticket添加有效期；</li>
+</ul>
+<h1 id="SSH"><a href="#SSH" class="headerlink" title="SSH"></a>SSH</h1><p><strong><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Secure_Shell">SSH</a> （Secure Shell）</strong> 基于 TCP 协议，通过加密和认证机制实现安全的访问和文件传输等业务。</p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV13P4y1o76u">SSH 握手详解 - bilibili 技术蛋老师</a> </p>
+<p>SSH 的经典用途是登录到远程电脑中执行命令。除此之外，SSH 也支持隧道协议、端口映射和 X11 连接（允许用户在本地运行远程服务器上的图形应用程序）。借助 SFTP（SSH File Transfer Protocol） 或 SCP（Secure Copy Protocol） 协议，SSH 还可以安全传输文件。</p>
+<p>SSH 使用客户端-服务器模型，默认端口是 22。SSH 是一个守护进程，负责实时监听客户端请求，并进行处理。大多数现代操作系统都提供了 SSH。</p>
+<p>如下图所示，SSH Client（SSH 客户端）和 SSH Server（SSH 服务器）通过公钥交换生成共享的对称加密密钥，用于后续的加密通信。</p>
+<p><img src="https://oss.javaguide.cn/github/javaguide/cs-basics/network/ssh-client-server.png" alt="SSH:安全的网络传输协议"></p>
+<p>SSH以<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86">非对称加密</a>实现<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81">身份验证</a>：</p>
+<p>身份验证有多种途径，例如其中一种方法是使用自动生成的公钥-私钥对来简单地加密网络连接，随后使用密码认证进行登录；另一种方法是人工生成一对公钥和私钥，通过生成的密钥进行认证，这样就可以在不输入密码的情况下登录。任何人都可以自行生成密钥。公钥需要放在待访问的电脑之中，而对应的私钥需要由用户自行保管。认证过程基于生成出来的私钥，但整个认证过程中私钥本身不会传输到网络中。</p>
+<h1 id="IPsec"><a href="#IPsec" class="headerlink" title="IPsec"></a>IPsec</h1><img src="https://download.huawei.com/mdl/image/download?uuid=17c579f40e0b440e98a35544fcbbd3dc" alt="IPsec加密验证过程" style="zoom:150%;" />
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tls/" rel="tag"># tls</a>
+              <a href="/tags/https/" rel="tag"># https</a>
+              <a href="/tags/%E5%AF%86%E9%92%A5/" rel="tag"># 密钥</a>
+              <a href="/tags/RSA/" rel="tag"># RSA</a>
+              <a href="/tags/ECDHE/" rel="tag"># ECDHE</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/10/L3%EF%BC%9A%E4%BC%A0%E8%BE%93%E5%B1%82/" rel="prev" title="传输层">
+                  <i class="fa fa-angle-left"></i> 传输层
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/14/L4%EF%BC%9A%E5%BA%94%E7%94%A8%E5%B1%82/" rel="next" title="应用层">
+                  应用层 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">碎梦</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/scatteredream" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
