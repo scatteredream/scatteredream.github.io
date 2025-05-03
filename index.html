@@ -20,15 +20,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"always","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="树欲静而风不止。       .nav-container {         display: flex;         gap: 2rem;         padding: 1.5rem;         background: #f8f9fa;         border-radius: 12px;         max-width: fit-content;     }">
+    <meta name="description" content="树欲静而风不止。     &#x2F;* 新增包裹容器 *&#x2F; .grid-wrapper {     display: flex;     justify-content: center;     align-items: center;     &#x2F;* min-height: 100vh;  如果不需要全屏居中可删除这行 *&#x2F;     padding: 2rem; } .grid-container {">
 <meta property="og:type" content="website">
 <meta property="og:title" content="碎梦">
 <meta property="og:url" content="http://scatteredream.github.io/index.html">
 <meta property="og:site_name" content="scatteredream&#39;s blog">
-<meta property="og:description" content="树欲静而风不止。       .nav-container {         display: flex;         gap: 2rem;         padding: 1.5rem;         background: #f8f9fa;         border-radius: 12px;         max-width: fit-content;     }">
+<meta property="og:description" content="树欲静而风不止。     &#x2F;* 新增包裹容器 *&#x2F; .grid-wrapper {     display: flex;     justify-content: center;     align-items: center;     &#x2F;* min-height: 100vh;  如果不需要全屏居中可删除这行 *&#x2F;     padding: 2rem; } .grid-container {">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-04-26T05:20:38.000Z">
-<meta property="article:modified_time" content="2025-05-03T14:40:15.262Z">
+<meta property="article:modified_time" content="2025-05-03T15:42:02.440Z">
 <meta property="article:author" content="碎梦">
 <meta name="twitter:card" content="summary">
 
@@ -170,13 +170,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-count">60</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -217,68 +217,147 @@
       
       
       <div class="post-body">
-          <blockquote class="blockquote-center">树欲静而风不止。</blockquote><span style="jus"></span>
+          <blockquote class="blockquote-center">树欲静而风不止。</blockquote>
+
 
 <style>
-    .nav-container {
-        display: flex;
-        gap: 2rem;
-        padding: 1.5rem;
-        background: #f8f9fa;
-        border-radius: 12px;
-        max-width: fit-content;
-    }
 
-    .nav-link {
-        position: relative;
-        text-decoration: none;
-        color: #2c3e50;
-        font-weight: 600;
-        font-size: 1.1rem;
-        padding: 0.5rem 1.2rem;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        background: white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .nav-link:hover {
-        color: #3498db;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(52,152,219,0.25);
-    }
-    
-    .nav-link:active {
-        transform: translateY(0);
-        color: #2980b9;
-    }
-    
-    .nav-link::after {
-        content: '';
-        position: absolute;
-        width: 0;
-        height: 2px;
-        bottom: 0;
-        left: 50%;
-        background: #3498db;
-        transition: all 0.3s ease;
-    }
-    
-    .nav-link:hover::after {
-        width: 100%;
-        left: 0;
-    }
-    
-    .nav-link:visited {
-        color: #8e44ad;
-    }
+/* 新增包裹容器 */
+.grid-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* min-height: 100vh;  如果不需要全屏居中可删除这行 */
+    padding: 2rem;
+}
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.1rem;
+    padding: 2rem;
+    background: ;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+}
+
+.grid-item {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.grid-link {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 1rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+/* 悬停动画 */
+.grid-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(52,152,219,0.2);
+    color: #3498db;
+}
+
+/* 点击效果 */
+.grid-link:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* 下划线动画 */
+.grid-link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 8px;
+    left: 50%;
+    background: #3498db;
+    transition: all 0.3s ease;
+}
+
+.grid-link:hover::after {
+    width: 70%;
+    left: 15%;
+}
+
+/* 状态指示
+.grid-link:visited {
+    color: #8e44ad;
+} */
+
+/* 九宫格边框动画 */
+.grid-item:hover::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border: 2px solid rgba(52,152,219,0.3);
+    border-radius: 12px;
+    animation: borderGlow 1.5s infinite;
+}
+
+@keyframes borderGlow {
+    0% { opacity: 0.8; }
+    50% { opacity: 0.3; }
+    100% { opacity: 0.8; }
+}
 </style>
-
-<div class="nav-container">
-    <a href="https://scatteredream.github.io/2025/02/03/rpc-interpretation/" class="nav-link">RPC代码剖析</a>
+<div class="grid-wrapper">
+<div class="grid-container">
+    <div class="grid-item">
+        <a href="https://scatteredream.github.io/2025/02/03/rpc-interpretation/" class="grid-link">RPC</a>
+    </div>
+    <div class="grid-item">
+        <a href="https://scatteredream.github.io/2024/10/20/%E9%BB%91%E9%A9%AC%E7%82%B9%E8%AF%84%E4%BC%98%E5%8C%96" class="grid-link">口碑</a>
+    </div>
+    <div class="grid-item">
+        <a href="https://scatteredream.github.io/categories/spring/" class="grid-link">Spring</a>
+    </div>
+    <div class="grid-item">
+        <a href="https://scatteredream.github.io/categories/redis/" class="grid-link">Redis</a>
+    </div>
+    <div class="grid-item">
+        <a href="https://scatteredream.github.io/categories/mysql/" class="grid-link">MySQL</a>
+    </div>
+    <div class="grid-item">
+        <a href="https://scatteredream.github.io/categories/web-development/" class="grid-link">JavaWeb</a>
+    </div>
+    <div class="grid-item">
+        <a href="https://scatteredream.github.io/categories/jdk/" class="grid-link">JavaSE</a>
+    </div>
+    <div class="grid-item">
+        <a href="https://scatteredream.github.io/categories/juc/" class="grid-link">JUC</a>
+    </div>
+    <div class="grid-item">
+        <a href="https://scatteredream.github.io/categories/jvm/" class="grid-link">JVM</a>
+    </div>
+    <div class="grid-item">
+        <a href="https://scatteredream.github.io/categories/%E8%AE%A1%E7%BD%91/" class="grid-link">计网</a>
+    </div>
+    <div class="grid-item">
+        <a href="https://scatteredream.github.io/categories/OS/" class="grid-link">OS</a>
+    </div>
+    <div class="grid-item">
+        <a href="https://scatteredream.github.io/categories/review/" class="grid-link">面试</a>
+    </div>
 </div>
-<div class="nav-container">
-<a href="https://scatteredream.github.io/2024/10/20/%E9%BB%91%E9%A9%AC%E7%82%B9%E8%AF%84%E4%BC%98%E5%8C%96" class="nav-link">口碑平台技术总结</a>
 </div>
       </div>
       
