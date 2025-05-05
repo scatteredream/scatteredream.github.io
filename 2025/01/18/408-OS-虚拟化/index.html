@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Arvo:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="CPU Virtualization进程（process）操作系统：早期是一些函数库，然后发展出了保护的作用（内核态与用户态），之后是多道程序（多进程、多线程） 软件设计思维：分离机制与策略  机制：如何进行上下文切换？ 策略：什么情况下，应该切换到谁？  进程：程序没有运行的时候，就是硬盘中静态的代码，程序开始运行了，就在内存中开辟属于自己的空间，进程可以看作是操作系统对程序运行的一种抽象。 进">
+<meta property="og:type" content="article">
+<meta property="og:title" content="虚拟化">
+<meta property="og:url" content="http://scatteredream.github.io/2025/01/18/408-OS-%E8%99%9A%E6%8B%9F%E5%8C%96/index.html">
+<meta property="og:site_name" content="scatteredream&#39;s blog">
+<meta property="og:description" content="CPU Virtualization进程（process）操作系统：早期是一些函数库，然后发展出了保护的作用（内核态与用户态），之后是多道程序（多进程、多线程） 软件设计思维：分离机制与策略  机制：如何进行上下文切换？ 策略：什么情况下，应该切换到谁？  进程：程序没有运行的时候，就是硬盘中静态的代码，程序开始运行了，就在内存中开辟属于自己的空间，进程可以看作是操作系统对程序运行的一种抽象。 进">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241207204834626.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241207204852570.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/202209241609976.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241207194358704.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241207200809875.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/687474703a2f2f692e696d6775722e636f6d2f6b307431652e706e67">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/7/70/VirtualMem01.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210205158811.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210205227715.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210205528802.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210205438635.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241211001125226.png">
+<meta property="og:image" content="https://miro.medium.com/v2/resize:fit:1313/1*82aSNHRAkNNinGuPpsl6TQ.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240922142056246.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210222509968.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210222527700.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210222438918.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210221647796.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210222820688.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210223130088.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210223253160.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210223340586.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240922142709440.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-ccf3e0ea94a135e7f8548f3e9ef42813_1440w.jpg">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-12148c36cd07924a26e0ce35b67f29eb_1440w.jpg">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1075436-20190809172852450-661010612.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212120853391.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212122549686.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212124132429.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212131757567.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212131846711.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212131859962.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212134843225.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212210406110.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212210703824.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212213305035-1734010396522-12.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/8904fb89ae0c49c4b0f2f7b5a0a7b099.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212214704876.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240924221042539.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213134804005.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213135215659.png">
+<meta property="og:image" content="https://i.stack.imgur.com/R19zY.png">
+<meta property="og:image" content="https://i.sstatic.net/Bswtz.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213141353216.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1006507-20161224105816979-1390337413.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213145818889.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/121-1.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213153405737.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213153341054.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/slide_1.jpg">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213175231404.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213175332544.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213175411886.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213184105746.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/41aee01a98aa03f4c3d75ef4c2c7749a.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213214150106.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1059417-20220925215845353-1129676397.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1059417-20220925221038426-1637796167.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-50e72a482d4b10604708f5e6a6c76435_r.jpg">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213232325106.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/overview.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/20032_0.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210230312259.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/slab-org.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/understand-html037.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-90fe0938cf0c8ab8836257ed587654d1_1440w.jpg">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241214003409861.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/vzb3z8uo.png">
+<meta property="og:image" content="https://miro.medium.com/v2/resize:fit:1313/0*DgRx8tGpS1T0St_b.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/202209241611674.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/73bc553b295b04f7a2bc634b6bd10ab9.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241214175132236.png">
+<meta property="article:published_time" content="2025-01-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-05T03:42:43.319Z">
+<meta property="article:author" content="碎梦">
+<meta property="article:tag" content="分段">
+<meta property="article:tag" content="分页">
+<meta property="article:tag" content="进程">
+<meta property="article:tag" content="cpu调度">
+<meta property="article:tag" content="SWAP">
+<meta property="article:tag" content="mmap">
+<meta property="article:tag" content="SLAB&#x2F;伙伴系统">
+<meta property="article:tag" content="page-cache">
+<meta property="article:tag" content="copy-on-write">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241207204834626.png">
+
+
+<link rel="canonical" href="http://scatteredream.github.io/2025/01/18/408-OS-%E8%99%9A%E6%8B%9F%E5%8C%96/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2025/01/18/408-OS-%E8%99%9A%E6%8B%9F%E5%8C%96/","path":"2025/01/18/408-OS-虚拟化/","title":"虚拟化"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>虚拟化 | scatteredream's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">scatteredream's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CPU-Virtualization"><span class="nav-number">1.</span> <span class="nav-text">CPU Virtualization</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%EF%BC%88process%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">进程（process）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%88%9B%E5%BB%BA"><span class="nav-number">1.1.1.</span> <span class="nav-text">进程创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81"><span class="nav-number">1.1.2.</span> <span class="nav-text">进程状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.3.</span> <span class="nav-text">进程的数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8BAPI"><span class="nav-number">1.1.4.</span> <span class="nav-text">进程API</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#fork-wait-exec"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">fork wait exec</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shell"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">shell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#signals-and-users"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">signals and users</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%BA%E5%88%B6%EF%BC%9A%E5%8F%97%E9%99%90-%E7%9B%B4%E6%8E%A5%E6%89%A7%E8%A1%8C"><span class="nav-number">1.2.</span> <span class="nav-text">机制：受限 直接执行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Limited-Direct-Execution"><span class="nav-number">1.2.1.</span> <span class="nav-text">Limited Direct Execution</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#syscall-amp-trap"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">syscall &amp; trap</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Limited-Direct-Execution-Timer-Interrupt"><span class="nav-number">1.2.2.</span> <span class="nav-text">Limited Direct Execution(Timer Interrupt)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2%EF%BC%88context-switch%EF%BC%89"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">上下文切换（context switch）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#kernel-stack-vs-Process-Control-Block"><span class="nav-number">1.2.2.1.1.</span> <span class="nav-text">kernel stack  vs Process Control Block</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%96%E7%95%A5%EF%BC%9ACPU-%E8%B0%83%E5%BA%A6"><span class="nav-number">1.3.</span> <span class="nav-text">策略：CPU 调度</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%AD%96%E7%95%A5"><span class="nav-number">1.3.1.</span> <span class="nav-text">基本策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%B9%E5%A4%84%E7%90%86"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">批处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%A4%E4%BA%92%E5%BC%8F"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">交互式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">实时系统</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%85%88%E7%BA%A7%E4%B8%94%E6%97%A0%E9%9C%80%E5%85%88%E9%AA%8C%E7%9F%A5%E8%AF%86%E7%9A%84%E8%B0%83%E5%BA%A6%EF%BC%9A%E5%A4%9A%E7%BA%A7%E5%8F%8D%E9%A6%88%E9%98%9F%E5%88%97-MLFQ"><span class="nav-number">1.3.2.</span> <span class="nav-text">基于优先级且无需先验知识的调度：多级反馈队列 MLFQ</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Memory-Virtualization"><span class="nav-number">2.</span> <span class="nav-text">Memory Virtualization</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%8F%E4%B8%AA%E7%A8%8B%E5%BA%8F%E5%91%98%E9%83%BD%E5%BA%94%E8%AF%A5%E7%9F%A5%E9%81%93%E7%9A%84%E6%97%B6%E5%BB%B6"><span class="nav-number">2.1.</span> <span class="nav-text">每个程序员都应该知道的时延</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E3%80%81%E5%88%86%E6%AE%B5%EF%BC%88segmentation%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">地址空间、分段（segmentation）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">2.2.1.</span> <span class="nav-text">虚拟内存的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%AE%9A%E4%BD%8D%EF%BC%88relocation%EF%BC%89"><span class="nav-number">2.2.2.</span> <span class="nav-text">重定位（relocation）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-number">2.2.3.</span> <span class="nav-text">实现虚拟内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%AE%B5"><span class="nav-number">2.2.4.</span> <span class="nav-text">分段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#segmentation"><span class="nav-number">2.2.4.1.</span> <span class="nav-text">segmentation</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%A8%E4%BA%8E%E4%BF%9D%E6%8A%A4%E7%9A%84%E9%A2%9D%E5%A4%96%E7%8A%B6%E6%80%81%E5%AD%97"><span class="nav-number">2.2.4.1.1.</span> <span class="nav-text">用于保护的额外状态字</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%86%E6%AE%B5%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">2.2.4.1.2.</span> <span class="nav-text">分段的问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%AE%B5%E8%A1%A8%EF%BC%9A%E6%9B%B4%E7%BB%86%E7%B2%92%E5%BA%A6%E7%9A%84%E5%88%86%E6%AE%B5"><span class="nav-number">2.2.4.1.3.</span> <span class="nav-text">段表：更细粒度的分段</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%8F%E5%B0%91%E7%A2%8E%E7%89%87"><span class="nav-number">2.2.4.2.</span> <span class="nav-text">减少碎片</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A9%BA%E9%97%B2%E7%A9%BA%E9%97%B4%E7%9A%84%E7%AE%A1%E7%90%86"><span class="nav-number">2.3.</span> <span class="nav-text">空闲空间的管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%BA%E5%88%B6%EF%BC%9A%E5%88%86%E5%89%B2%E4%B8%8E%E5%90%88%E5%B9%B6"><span class="nav-number">2.3.1.</span> <span class="nav-text">机制：分割与合并</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98-API"><span class="nav-number">2.3.2.</span> <span class="nav-text">内存 API</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#malloc"><span class="nav-number">2.3.2.1.</span> <span class="nav-text">malloc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#free"><span class="nav-number">2.3.2.2.</span> <span class="nav-text">free</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B5%8C%E5%85%A5-free-list-%E5%88%B0%E5%86%85%E5%AD%98%E4%B8%AD"><span class="nav-number">2.3.3.</span> <span class="nav-text">嵌入 free list 到内存中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%96%E7%95%A5%EF%BC%9A%E8%BF%9E%E7%BB%AD%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">2.3.4.</span> <span class="nav-text">策略：连续内存分配</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%AD%96%E7%95%A5%EF%BC%9A%E7%A9%BA%E9%97%B2%E9%93%BE%E8%A1%A8"><span class="nav-number">2.3.4.1.</span> <span class="nav-text">基本策略：空闲链表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B1%A0%EF%BC%88memory-pool%EF%BC%89"><span class="nav-number">2.3.4.2.</span> <span class="nav-text">内存池（memory pool）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%AD%96%E7%95%A5"><span class="nav-number">2.3.4.3.</span> <span class="nav-text">其他策略</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E9%A1%B5%EF%BC%88paging%EF%BC%89"><span class="nav-number">2.4.</span> <span class="nav-text">分页（paging）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E2%80%94%E2%80%94%E7%89%A9%E7%90%86%E9%A1%B5%E5%8F%B7%E8%BD%AC%E6%8D%A2"><span class="nav-number">2.4.1.</span> <span class="nav-text">虚拟——物理页号转换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E5%B8%A7%E3%80%81%E9%A1%B5%E5%B8%A7%E5%8F%B7%E3%80%81%E8%99%9A%E6%8B%9F%E9%A1%B5%E5%8F%B7"><span class="nav-number">2.4.1.1.</span> <span class="nav-text">页帧、页帧号、虚拟页号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%8E%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%AE%BF%E5%AD%98%E5%9F%BA%E6%9C%AC%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.4.1.2.</span> <span class="nav-text">从虚拟地址访存基本步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E8%A1%A8%E5%BC%80%E9%94%80"><span class="nav-number">2.4.1.3.</span> <span class="nav-text">页表开销</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E8%A1%A8%E6%80%BB%E7%BB%93"><span class="nav-number">2.4.1.4.</span> <span class="nav-text">页表总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%AB%E8%A1%A8-TLB"><span class="nav-number">2.4.2.</span> <span class="nav-text">快表 TLB</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E5%AE%9E%E7%8E%B0-TLB-%E6%8E%A7%E5%88%B6%E6%B5%81"><span class="nav-number">2.4.2.1.</span> <span class="nav-text">硬件实现 TLB 控制流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E5%AE%9E%E7%8E%B0-TLB-%E6%8E%A7%E5%88%B6%E6%B5%81"><span class="nav-number">2.4.2.2.</span> <span class="nav-text">软件实现 TLB 控制流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLB-%E5%86%85%E5%AE%B9"><span class="nav-number">2.4.2.3.</span> <span class="nav-text">TLB 内容</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%A6%82%E8%A7%88"><span class="nav-number">2.4.2.3.1.</span> <span class="nav-text">概览</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">2.4.2.3.2.</span> <span class="nav-text">上下文切换</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BE%8B%EF%BC%9AMIPS-TLB-Entry"><span class="nav-number">2.4.2.3.3.</span> <span class="nav-text">例：MIPS TLB Entry</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%B7%E6%96%B0%E3%80%81%E6%9B%BF%E6%8D%A2"><span class="nav-number">2.4.2.4.</span> <span class="nav-text">刷新、替换</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#TLB-flush"><span class="nav-number">2.4.2.4.1.</span> <span class="nav-text">TLB flush</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E6%9B%B4%E6%96%B0%E7%AD%96%E7%95%A5"><span class="nav-number">2.4.2.4.2.</span> <span class="nav-text">缓存更新策略</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%88%86%E9%A1%B5"><span class="nav-number">2.5.</span> <span class="nav-text">优化分页</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A9%E5%A4%A7%E9%A1%B5%E9%9D%A2%E5%A4%A7%E5%B0%8F%EF%BC%88Bigger-Pages%EF%BC%89"><span class="nav-number">2.5.1.</span> <span class="nav-text">扩大页面大小（Bigger Pages）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%AE%B5-%E5%88%86%E9%A1%B5%EF%BC%88Hybrid-Approach%EF%BC%89"><span class="nav-number">2.5.2.</span> <span class="nav-text">分段 + 分页（Hybrid Approach）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E9%A1%B5%E8%A1%A8%E7%9A%84%E5%B1%80%E9%99%90"><span class="nav-number">2.5.2.1.</span> <span class="nav-text">线性页表的局限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AE%B5%E9%A1%B5%E7%BB%93%E5%90%88"><span class="nav-number">2.5.2.2.</span> <span class="nav-text">段页结合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%BA%E9%99%B7"><span class="nav-number">2.5.2.3.</span> <span class="nav-text">缺陷</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BA%A7%E9%A1%B5%E8%A1%A8%EF%BC%88Multi-level-Page-Tables%EF%BC%89"><span class="nav-number">2.5.3.</span> <span class="nav-text">多级页表（Multi-level Page Tables）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E8%A1%A8%E7%9B%AE%E5%BD%95-%E9%A1%B5%E8%A1%A8-%E5%86%85%E5%AD%98"><span class="nav-number">2.5.3.1.</span> <span class="nav-text">页表目录-页表-内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fill-the-pages"><span class="nav-number">2.5.3.2.</span> <span class="nav-text">fill the pages</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BE%8B%EF%BC%9A30%E4%BD%8D%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80"><span class="nav-number">2.5.3.2.1.</span> <span class="nav-text">例：30位虚拟地址</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E7%9A%8432%E4%BD%8D%E5%92%8C64%E4%BD%8D%E9%A1%B5%E8%A1%A8"><span class="nav-number">2.5.3.2.2.</span> <span class="nav-text">实际的32位和64位页表</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TLB-%E6%8E%A7%E5%88%B6%E6%B5%81"><span class="nav-number">2.5.3.3.</span> <span class="nav-text">TLB 控制流</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%92%E6%8E%92%E9%A1%B5%E8%A1%A8%EF%BC%88Inverted-Page-Table%EF%BC%89"><span class="nav-number">2.5.4.</span> <span class="nav-text">倒排页表（Inverted Page Table）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2%E5%88%B0%E7%A3%81%E7%9B%98%EF%BC%88Swap%EF%BC%89"><span class="nav-number">2.5.5.</span> <span class="nav-text">交换到磁盘（Swap）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B6%85%E8%B6%8A%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98"><span class="nav-number">2.6.</span> <span class="nav-text">超越物理内存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%BA%E5%88%B6"><span class="nav-number">2.6.1.</span> <span class="nav-text">机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4"><span class="nav-number">2.6.1.1.</span> <span class="nav-text">交换空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E9%94%99%E8%AF%AF%EF%BC%88page-fault%EF%BC%89"><span class="nav-number">2.6.1.2.</span> <span class="nav-text">页错误（page fault）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BF%E5%AD%98%E6%9C%BA%E5%88%B6%E6%80%BB%E7%BB%93"><span class="nav-number">2.6.1.3.</span> <span class="nav-text">访存机制总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Swap-%E9%A1%B5%E9%9D%A2%E7%BD%AE%E6%8D%A2%E7%AD%96%E7%95%A5"><span class="nav-number">2.6.2.</span> <span class="nav-text">Swap 页面置换策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%AD%96%E7%95%A5-1"><span class="nav-number">2.6.2.1.</span> <span class="nav-text">基本策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E6%AF%94%E8%BE%83"><span class="nav-number">2.6.2.2.</span> <span class="nav-text">性能比较</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%8C%E5%85%A8%E9%9A%8F%E6%9C%BA%E8%AE%BF%E9%97%AE"><span class="nav-number">2.6.2.2.1.</span> <span class="nav-text">完全随机访问</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BA%8C%E5%85%AB%E5%AE%9A%E5%BE%8B"><span class="nav-number">2.6.2.2.2.</span> <span class="nav-text">二八定律</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E9%A1%BA%E5%BA%8F%E8%AE%BF%E9%97%AE"><span class="nav-number">2.6.2.2.3.</span> <span class="nav-text">循环顺序访问</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LRU-%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.6.2.3.</span> <span class="nav-text">LRU 实现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%BF%91%E4%BC%BC-LRU%EF%BC%9A%E6%97%B6%E9%92%9F%E7%AE%97%E6%B3%95"><span class="nav-number">2.6.2.3.1.</span> <span class="nav-text">近似 LRU：时钟算法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%84%8F%E4%BD%8D"><span class="nav-number">2.6.2.3.2.</span> <span class="nav-text">脏位</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#LRU-K"><span class="nav-number">2.6.2.3.3.</span> <span class="nav-text">LRU-K</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96-Swap-%E7%AD%96%E7%95%A5"><span class="nav-number">2.6.3.</span> <span class="nav-text">其他 Swap 策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E7%9A%84%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.7.</span> <span class="nav-text">完整的虚拟内存系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#VAX-VMS-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.7.1.</span> <span class="nav-text">VAX&#x2F;VMS 虚拟内存系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="nav-number">2.7.1.1.</span> <span class="nav-text">地址空间</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E8%BF%9B%E7%A8%8B%E5%85%B1%E4%BA%AB%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4"><span class="nav-number">2.7.1.1.1.</span> <span class="nav-text">应用进程共享内核空间</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E9%A1%B5%E8%A1%A8"><span class="nav-number">2.7.1.1.2.</span> <span class="nav-text">优化页表</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%A9%BA%E6%8C%87%E9%92%88"><span class="nav-number">2.7.1.1.3.</span> <span class="nav-text">空指针</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%83%B0%E6%80%A7%E4%BC%98%E5%8C%96%EF%BC%88Lazy%EF%BC%89"><span class="nav-number">2.7.1.2.</span> <span class="nav-text">惰性优化（Lazy）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%86%99%E5%85%A5%E6%97%B6%E5%A4%8D%E5%88%B6-copy-on-write"><span class="nav-number">2.7.1.2.1.</span> <span class="nav-text">写入时复制 copy-on-write</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%89%E9%9C%80%E8%B0%83%E9%A1%B5-demand-paging"><span class="nav-number">2.7.1.2.2.</span> <span class="nav-text">按需调页 demand paging</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SWAP-%E7%AD%96%E7%95%A5"><span class="nav-number">2.7.1.3.</span> <span class="nav-text">SWAP 策略</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%9B%BF%E6%8D%A2%E7%AD%96%E7%95%A5%EF%BC%9ASecond-Chance-FIFO"><span class="nav-number">2.7.1.3.1.</span> <span class="nav-text">替换策略：Second Chance FIFO</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%89%B9%E9%87%8F%E6%8D%A2%E5%87%BA%EF%BC%9Apage-clustering"><span class="nav-number">2.7.1.3.2.</span> <span class="nav-text">批量换出：page clustering</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.7.2.</span> <span class="nav-text">Linux 虚拟内存系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4-1"><span class="nav-number">2.7.2.1.</span> <span class="nav-text">地址空间</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4%EF%BC%88kmalloc%EF%BC%89"><span class="nav-number">2.7.2.1.1.</span> <span class="nav-text">逻辑内核空间（kmalloc）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4%EF%BC%88vmalloc%EF%BC%89"><span class="nav-number">2.7.2.1.2.</span> <span class="nav-text">虚拟内核空间（vmalloc）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">2.7.2.2.</span> <span class="nav-text">内存分配</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">2.7.2.2.1.</span> <span class="nav-text">虚拟内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#malloc-1"><span class="nav-number">2.7.2.2.1.1.</span> <span class="nav-text">malloc</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#brk"><span class="nav-number">2.7.2.2.1.2.</span> <span class="nav-text">brk</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#mmap"><span class="nav-number">2.7.2.2.1.3.</span> <span class="nav-text">mmap</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">2.7.2.2.2.</span> <span class="nav-text">物理内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BC%99%E4%BC%B4%E7%B3%BB%E7%BB%9F%EF%BC%88Buddy-system%EF%BC%89"><span class="nav-number">2.7.2.2.2.1.</span> <span class="nav-text">伙伴系统（Buddy system）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%88%86%E7%A6%BB%E7%A9%BA%E9%97%B2%E5%88%97%E8%A1%A8%EF%BC%88SLAB-segregated-free-lists%EF%BC%89"><span class="nav-number">2.7.2.2.2.2.</span> <span class="nav-text">分离空闲列表（SLAB, segregated free lists）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E8%A1%A8%E7%BB%93%E6%9E%84"><span class="nav-number">2.7.2.3.</span> <span class="nav-text">页表结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E5%A4%A7%E7%9A%84%E9%A1%B5%E5%A4%A7%E5%B0%8F%EF%BC%88huge-pages%EF%BC%89"><span class="nav-number">2.7.2.4.</span> <span class="nav-text">更大的页大小（huge pages）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8F%90%E5%8D%87-TLB-%E5%91%BD%E4%B8%AD%E7%8E%87"><span class="nav-number">2.7.2.4.1.</span> <span class="nav-text">提升 TLB 命中率</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%94%B3%E8%AF%B7"><span class="nav-number">2.7.2.4.2.</span> <span class="nav-text">如何申请</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%BA%E9%99%B7-1"><span class="nav-number">2.7.2.4.3.</span> <span class="nav-text">缺陷</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Page-Cache-Disk-Cache"><span class="nav-number">2.7.2.5.</span> <span class="nav-text">Page Cache&#x2F;Disk Cache</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Memory-mapped-I-O"><span class="nav-number">2.7.2.5.1.</span> <span class="nav-text">Memory-mapped I&#x2F;O</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Buffered-I-O"><span class="nav-number">2.7.2.5.2.</span> <span class="nav-text">Buffered I&#x2F;O</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E6%9C%BA%E5%88%B6"><span class="nav-number">2.7.2.5.2.1.</span> <span class="nav-text">读取机制</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%86%99%E5%85%A5%E6%9C%BA%E5%88%B6"><span class="nav-number">2.7.2.5.2.2.</span> <span class="nav-text">写入机制</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%84%8F%E9%A1%B5%E5%88%B7%E7%9B%98"><span class="nav-number">2.7.2.5.3.</span> <span class="nav-text">脏页刷盘</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Direct-I-O"><span class="nav-number">2.7.2.5.4.</span> <span class="nav-text">Direct I&#x2F;O</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B5%E9%9D%A2%E7%BD%AE%E6%8D%A2%EF%BC%9A2Q"><span class="nav-number">2.7.2.6.</span> <span class="nav-text">页面置换：2Q</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%AD%96%E7%95%A5-1"><span class="nav-number">2.7.2.7.</span> <span class="nav-text">其他策略</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8"><span class="nav-number">2.7.3.</span> <span class="nav-text">安全</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%92%88%E5%AF%B9%E7%94%A8%E6%88%B7%E7%A8%8B%E5%BA%8F%EF%BC%9A%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E6%94%BB%E5%87%BB"><span class="nav-number">2.7.3.1.</span> <span class="nav-text">针对用户程序：缓冲区溢出攻击</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%92%88%E5%AF%B9%E5%86%85%E6%A0%B8%E7%A8%8B%E5%BA%8F%EF%BC%9AMeltdown-amp-Spectre"><span class="nav-number">2.7.3.2.</span> <span class="nav-text">针对内核程序：Meltdown &amp; Spectre</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E8%99%9A%E6%8B%9F%E5%8C%96%E6%80%BB%E7%BB%93"><span class="nav-number">2.8.</span> <span class="nav-text">内存虚拟化总结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="碎梦"
+      src="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+  <p class="site-author-name" itemprop="name">碎梦</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">115</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/01/18/408-OS-%E8%99%9A%E6%8B%9F%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="虚拟化 | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          虚拟化
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-18 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-18T00:00:00+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-05 11:42:43" itemprop="dateModified" datetime="2025-05-05T11:42:43+08:00">2025-05-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/OS/" itemprop="url" rel="index"><span itemprop="name">OS</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="CPU-Virtualization"><a href="#CPU-Virtualization" class="headerlink" title="CPU Virtualization"></a>CPU Virtualization</h1><h2 id="进程（process）"><a href="#进程（process）" class="headerlink" title="进程（process）"></a>进程（process）</h2><p><strong>操作系统</strong>：早期是一些函数库，然后发展出了保护的作用（内核态与用户态），之后是多道程序（多进程、多线程）</p>
+<p><strong>软件设计思维</strong>：分离机制与策略</p>
+<ul>
+<li>机制：如何进行上下文切换？</li>
+<li>策略：什么情况下，应该切换到谁？</li>
+</ul>
+<p><strong>进程</strong>：程序没有运行的时候，就是硬盘中静态的代码，程序开始运行了，就在内存中开辟属于自己的空间，进程可以看作是操作系统对程序运行的一种抽象。</p>
+<h3 id="进程创建"><a href="#进程创建" class="headerlink" title="进程创建"></a>进程创建</h3><ul>
+<li>内存地址空间，特定CPU寄存器的值</li>
+<li><strong>内存分配</strong>：程序代码、静态数据、运行时数据（包括堆栈和IO设置）</li>
+<li><strong>栈空间</strong>（Stack）：可以由<code>main</code>传参进行初始化，主要存放局部变量、函数参数和返回地址</li>
+<li><strong>用于IO的文件描述符</strong>（Descriptor）：默认开启<code>stdin</code> <code>stdout</code> <code>stderr</code>三个文件</li>
+<li><strong>堆空间</strong>（Heap）：用于在程序运行时动态地向OS申请一片内存(<code>malloc</code>)</li>
+<li>在进程创建之后，OS将CPU控制权给到程序，开始执行<code>main</code></li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241207204834626.png" alt="image-20241207204834626"></p>
+<h3 id="进程状态"><a href="#进程状态" class="headerlink" title="进程状态"></a>进程状态</h3><p>加载到内存的进程基本状态如下三种</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241207204852570.png" alt="image-20241207204852570"></p>
+<ul>
+<li><strong>运行中</strong>：运行中的进程，也可以被反向调度</li>
+<li><strong>待运行</strong>（就绪）：就绪的程序随时可以运行，等待调度</li>
+<li><strong>阻塞</strong>：程序运行到不需要CPU的部分（比如IO）就会到阻塞状态，等IO任务完成会变成就绪</li>
+<li>OS选择在进程发起IO时切换到别的进程，这样可以保持CPU繁忙，<strong>在IO结束时没有选择切换回去，这就是策略</strong></li>
+</ul>
+<h3 id="进程的数据结构"><a href="#进程的数据结构" class="headerlink" title="进程的数据结构"></a>进程的数据结构</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// the registers xv6 will save and restore</span></span><br><span class="line"><span class="comment">// to stop and subsequently restart a process</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">context</span> &#123;</span></span><br><span class="line">    <span class="type">int</span> eip;<span class="comment">//instruction ptr </span></span><br><span class="line">    <span class="type">int</span> esp;<span class="comment">//stack ptr</span></span><br><span class="line">    <span class="type">int</span> ebx;</span><br><span class="line">    <span class="type">int</span> ecx;</span><br><span class="line">    <span class="type">int</span> edx;</span><br><span class="line">    <span class="type">int</span> esi;</span><br><span class="line">    <span class="type">int</span> edi;</span><br><span class="line">    <span class="type">int</span> ebp;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// the different states a process can be in</span></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">proc_state</span> &#123;</span> UNUSED, EMBRYO, SLEEPING,</span><br><span class="line">RUNNABLE, RUNNING, ZOMBIE &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// the information xv6 tracks about each process</span></span><br><span class="line"><span class="comment">// including its register context and state</span></span><br><span class="line"><span class="comment">// PCB</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">proc</span> &#123;</span></span><br><span class="line">    <span class="type">char</span> *mem; <span class="comment">// Start of process memory</span></span><br><span class="line">    uint sz; <span class="comment">// Size of process memory</span></span><br><span class="line">    <span class="type">char</span> *kstack; <span class="comment">// Bottom of kernel stack for this process</span></span><br><span class="line">    <span class="class"><span class="keyword">enum</span> <span class="title">proc_state</span> <span class="title">state</span>;</span> <span class="comment">// Process state</span></span><br><span class="line">    <span class="type">int</span> pid; <span class="comment">// Process ID</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">parent</span>;</span> <span class="comment">// Parent process</span></span><br><span class="line">    <span class="type">void</span> *chan; <span class="comment">// If !zero, sleeping on chan</span></span><br><span class="line">    <span class="type">int</span> killed; <span class="comment">// If !zero, has been killed</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">ofile</span>[<span class="title">NOFILE</span>];</span> <span class="comment">// Open files</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">inode</span> *<span class="title">cwd</span>;</span> <span class="comment">// Current directory</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">context</span> <span class="title">context</span>;</span> <span class="comment">// Switch here to run process</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">trapframe</span> *<span class="title">tf</span>;</span> <span class="comment">// Trap frame for the current interrupt</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p> A process list contains information about all processes in the system. Each entry is found in what is sometimes called a process control block (<strong>PCB</strong>), which is really just a structure that contains information about a specific process. </p>
+</blockquote>
+<ul>
+<li><strong>上下文</strong>：指令指针、栈指针等都是CPU物理寄存器的内容，指令得以继续执行的关键，在恢复进程时很重要。</li>
+<li><strong>进程状态</strong></li>
+<li><strong>其他的静态信息</strong>：进程地址空间，父进程、中断信息、打开的文件等。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/202209241609976.png" alt="vfs"></p>
+<h3 id="进程API"><a href="#进程API" class="headerlink" title="进程API"></a>进程API</h3><h4 id="fork-wait-exec"><a href="#fork-wait-exec" class="headerlink" title="fork wait exec"></a>fork wait exec</h4><ul>
+<li><strong>fork</strong>：复制一个和父进程一样的子进程（子进程直接从fork返回然后继续执行）子进程的内存空间和父进程是独立的，并且变量的值大部分一样，</li>
+<li><strong>wait</strong>：子进程创建后，根据OS调度（schedule）决定先后顺序，wait可以使父进程等子进程执行完再开始运行</li>
+<li><strong>exec</strong>：当前进程不想运行和之前一样的代码，可以调用exec加参数运行其他代码，新的程序会替代原来进程的所有信息，因此exec后边的代码是不会被执行的。</li>
+</ul>
+<h4 id="shell"><a href="#shell" class="headerlink" title="shell"></a>shell</h4><ul>
+<li>shell的基本原理就是主进程fork wait 子进程这边exec 运行其他程序，运行完成主进程wait结束，继续进行其他操作</li>
+<li><strong>输出重定向</strong>（redirecting）：默认输出就是标准输出流，如果你想重定向到一个文件，应当关闭stdout然后重新打开一个你想要的文件描述符。</li>
+<li><strong>管道</strong>（pipe）：也类似与输出重定向，上一个的输出无缝作为下一个的输入</li>
+<li><strong>有用的cli工具</strong>：top(table of processes), ps(process status), man(manual)…</li>
+</ul>
+<h4 id="signals-and-users"><a href="#signals-and-users" class="headerlink" title="signals and users"></a>signals and users</h4><blockquote>
+<p>For example, control-c sends a SIGINT (interrupt) to the process (normally terminating it) and control-z sends a SIGTSTP (stop) signal thus pausing the process in mid-execution (you can resume it later with a command, e.g., the fg built-in command found in many shells).</p>
+<p>receive and process those signals within individual processes, and  send signals to individual processes as well as entire process groups.</p>
+</blockquote>
+<p><code>signal()</code>可以使进程能够监听到上述这些信号，暂停现有程序执行，然后对信号做出一定的响应</p>
+<blockquote>
+<p>Users generally can only control their own processes; it is the job of the operating system to parcel out resources (such as CPU, memory, and disk) to each user (and their processes) to meet overall system goals.</p>
+</blockquote>
+<p>用户等级决定他们是否有权利发出某些特定的信号</p>
+<hr>
+<h2 id="机制：受限-直接执行"><a href="#机制：受限-直接执行" class="headerlink" title="机制：受限 直接执行"></a>机制：受限 直接执行</h2><h3 id="Limited-Direct-Execution"><a href="#Limited-Direct-Execution" class="headerlink" title="Limited Direct Execution"></a>Limited Direct Execution</h3><p><strong>直接执行</strong>：直接在CPU上运行程序。</p>
+<p><strong>受限</strong>：一个进程要调用I/O，但是还不能让进程完全控制系统。</p>
+<p><strong>用户模式</strong>（user mode）：应用程序不能完全控制硬件资源，如果硬要发起IO请求，CPU会出现异常，OS将终止进程</p>
+<p><strong>内核模式</strong>（kernel mode）：操作系统可以完全掌控硬件。</p>
+<blockquote>
+<p>When changing protection levels from user to kernel mode, the kernel shouldn’t use the stack of the user process, because it may not be valid. The user process may be <strong>malicious</strong> or <strong>contain an error that causes the user %esp to contain an address that is not part of the process’s user memory</strong>.</p>
+</blockquote>
+<h4 id="syscall-amp-trap"><a href="#syscall-amp-trap" class="headerlink" title="syscall &amp; trap"></a>syscall &amp; trap</h4><p><strong>系统调用</strong>（system call）：允许内核小心地向用户暴露某些关键功能。执行<strong>trap</strong>指令，进入操作系统内核，将特权级别提升至内核模式，完成之后return from trap，返回值并将特权级别降低至用户模式。</p>
+<blockquote>
+<p>Typical user applications run in user mode, and use a system call to trap into the kernel to request operating system services.</p>
+</blockquote>
+<p>系统调用的参数放到一个指定的寄存器处，系统调用号也放到指定寄存器，需要仔细遵循约定来正确处理参数与返回值，高级语言通常屏蔽了底层硬件细节，因此需要使用汇编语言：</p>
+<ul>
+<li><strong>系统调用</strong>：用户程序通过陷阱指令请求内核服务（如文件操作、进程管理）。例如，在x86中：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov eax, 1   ; 系统调用号 (exit)</span><br><span class="line">mov ebx, 0   ; 参数 (退出码)</span><br><span class="line">int 0x80     ; 触发陷阱</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>中断处理</strong>：硬件设备通过中断向量触发陷阱，操作系统用汇编语言编写中断向量表。</li>
+<li><strong>异常处理</strong>：陷阱用于处理非法操作（如除零或非法内存访问）。</li>
+</ul>
+<p><strong>陷阱表</strong>（trap table）：用户态不能执行io等直接操控底层硬件，否则就是非法的。进入内核态以后也不能随便寻址执行程序，必须跳到指定地址去执行对应的程序，这个指定的程序地址是<strong>内核</strong>（kernel）在启动时通过<strong>陷阱表</strong>告诉硬件的。用户程序也不能够识别陷阱表的内容。</p>
+<blockquote>
+<p>The trap instruction saves register state carefully, changes the hardware status to kernel mode, and jumps into the OS to a pre-specified destination: the trap table.</p>
+<p>When the OS finishes servicing a system call, it returns to the user program via another special return-from-trap instruction, which reduces privilege and returns control to the instruction after the trap that jumped into the OS</p>
+</blockquote>
+<p>Limited Direct Execution Timeline：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241207194358704.png" alt="image-20241207194358704"></p>
+<ul>
+<li><p>要么是内核态要么是用户态，在用户进程开始执行之前（main）的准备工作肯定是由内核态完成，因此就要return from trap，切换到用户态。跳转到main函数</p>
+</li>
+<li><p>执行系统调用或者响应中断时，通过trap指令，cpu控制权腾给os，陷入内核态，执行的是与之前不同的程序，就需要保存执行的现场以便之后继续执行，将cpu寄存器上的内容先保存到<strong>内核栈（kernel stack）</strong>。</p>
+</li>
+<li><p>在系统调用结束之后把内核栈的内容弹出恢复到CPU寄存器上，切换回用户模式，继续执行之前的内容，最后main函数返回，同时通过exit()进行trap，进入内核态，做清理工作。</p>
+</li>
+</ul>
+<h3 id="Limited-Direct-Execution-Timer-Interrupt"><a href="#Limited-Direct-Execution-Timer-Interrupt" class="headerlink" title="Limited Direct Execution(Timer Interrupt)"></a>Limited Direct Execution(Timer Interrupt)</h3><p><strong>直接执行（Direct Execution）</strong>：用户进程占用CPU，OS作为一个程序并没有在运行。问题在于OS如何重新获得CPU的控制权，以便在操控程序运行取得主动权。</p>
+<p><strong>协作</strong>：OS只能等待被动的系统调用或者触发异常才会重新获得CPU控制权。</p>
+<p><strong>非协作</strong>：时钟硬件设备可以编程为若干毫秒产生一次中断信号，CPU 检测到时钟中断信号后，暂停当前正在运行的任务，跳转到内核中预定义的<strong>中断服务例程（ISR, Interrupt Service Routine）</strong>处理</p>
+<p>CPU必须在硬件层面实现能够保存用户程序运行的现场（trap的精髓）</p>
+<ul>
+<li><p><strong>操作系统处理时钟中断</strong>操作系统在时钟中断处理程序中执行以下任务：</p>
+<ul>
+<li><p>更新系统时间。</p>
+</li>
+<li><p>检查是否需要切换任务（触发<strong>任务调度</strong>）。</p>
+</li>
+<li><p>处理延迟或周期性任务（如超时处理、定时器事件等）。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241207200809875.png" alt="image-20241207200809875"></p>
+<p>如图 hardware部分 需要在响应时钟中断时，把进程A的运行现场（寄存器）保存到内核栈中，然后跳转到trap处理程序。</p>
+<h4 id="上下文切换（context-switch）"><a href="#上下文切换（context-switch）" class="headerlink" title="上下文切换（context switch）"></a>上下文切换（context switch）</h4><p>然后操作系统调用switch进行进程的切换A到B，因为一段时间内A都不会再运行，这时候就需要把A的寄存器内容保存到其进程空间（内存空间）</p>
+<h5 id="kernel-stack-vs-Process-Control-Block"><a href="#kernel-stack-vs-Process-Control-Block" class="headerlink" title="kernel stack  vs Process Control Block"></a><code>kernel stack</code>  vs <code>Process Control Block</code></h5><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/likui360/p/6224624.html">Linux 系统中堆栈的使用方法 - 扫地猿 - 博客园</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/188577062">浅谈Linux 中的进程栈、线程栈、内核栈、中断栈 - 知乎</a></p>
+<p>当进程在用户态运行时，使用的是用户栈，当进程陷入到内核态时，这些内核代码所使用的栈并不是原先进程用户空间中的栈，而是一个单独内核空间的栈，这个称作进程内核栈，内核栈保存进程在内核态运行的相关信息，一旦进程返回到用户态后，内核栈中保存的信息无效，会全部恢复，因此每次进程从用户态陷入内核的时候得到的内核栈都是空的。所以在进程陷入内核的时候，直接把内核栈的栈顶地址给堆栈指针寄存器就可以了。</p>
+<p>当位于用户空间的进程进行系统调用时，进程用户栈的地址会被存进内核栈中，CPU堆栈指针寄存器中的内容也会变为内核栈的地址。当系统调用执行完毕，进程从内核栈找到用户栈的地址，继续在用户空间中执行，此时CPU堆栈指针寄存器就变为了用户栈的地址。各进程独立的。进程运行时分用户态跟内核态，所以需要有内核栈和常说的堆栈段，寻址方式是相同的，都是查LDT和页表进行地址映射，但二者段描述符里的特权级不同，为了区分用户态和内核态。</p>
+<p>为什么每个进程都有一个内核栈，而不是所有进程共用一个。老的UNIX和Linux当时就是每个CPU只有一个内核栈，那个时候不会出现“执行到一半的时候上下文切换”，因为不允许用户态程序抢占正在执行系统调用的另一个用户态程序。后来每个进程一个内核栈了，就可以发生“执行到一半的时候上下文切换”了</p>
+<p>语言书里面讲的堆、栈大部分都是用户态的概念，用户态的堆、栈对应用户进程虚拟地址空间里的一个区域，栈向下增长，堆用malloc分配，向上增长。</p>
+<ul>
+<li>中断发生时，寄存器先保存到内核栈；如果需要切换进程，内核会将内核栈中的寄存器内容转存到进程结构中。</li>
+<li><strong>内核栈</strong>主要用于快速保存和恢复寄存器内容，适用于临时的上下文切换或中断处理。</li>
+<li><strong>进程结构</strong>适用于更复杂的进程调度和长时间的上下文切换，提供长期的状态保存。proc结构体中的context字段就是用来保存寄存器信息的（xv6）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><strong>方面</strong></th>
+<th><strong>内核栈</strong></th>
+<th><strong>进程结构（PCB）</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>保存时机</strong></td>
+<td>短暂事件（如中断、系统调用）</td>
+<td>进程调度时</td>
+</tr>
+<tr>
+<td><strong>存储位置</strong></td>
+<td>当前进程的内核栈</td>
+<td>PCB 或其他持久性数据结构</td>
+</tr>
+<tr>
+<td><strong>存储时间</strong></td>
+<td><strong>临时保存</strong>，内核处理结束后直接恢复</td>
+<td><strong>长期保存</strong>，直至进程切换回来</td>
+</tr>
+<tr>
+<td><strong>访问开销</strong></td>
+<td>较低，直接访问内核栈</td>
+<td>较高，涉及更多内存操作</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>快速上下文切换、临时中断处理</td>
+<td>进程调度或长时间上下文切换</td>
+</tr>
+<tr>
+<td><strong>局限性</strong></td>
+<td>不能长期存储</td>
+<td>开销大，需要额外的数据结构</td>
+</tr>
+<tr>
+<td>优点</td>
+<td>连续内存块，访问效率较高，内核处理完直接恢复</td>
+<td>寄存器信息可以跨多个调度周期存储</td>
+</tr>
+</tbody></table>
+<p>进程调度，需要把B的现场信息从进程空间中恢复到寄存器里，然后恢复到用户态，跳转到B的PC，执行B的内容。</p>
+<p><strong>并发</strong>：系统调用时触发中断。</p>
+<hr>
+<h2 id="策略：CPU-调度"><a href="#策略：CPU-调度" class="headerlink" title="策略：CPU 调度"></a>策略：CPU 调度</h2><h3 id="基本策略"><a href="#基本策略" class="headerlink" title="基本策略"></a>基本策略</h3><h4 id="批处理"><a href="#批处理" class="headerlink" title="批处理"></a>批处理</h4><p><strong>FIFO</strong>：先到先得，计算密集型会阻塞io密集型，降低效率</p>
+<p><strong>SJF</strong>：Shortest Job First 最短工作优先，<u>同时到达</u>，先进行最短的工作</p>
+<p><strong>STCF</strong>：Shortest Time-to-Complete First 最短完成时间优先，针对<u>随时到达</u>的情况，到达时比较里完成还有多少时间，首次出现了任务切换的概念。</p>
+<h4 id="交互式"><a href="#交互式" class="headerlink" title="交互式"></a>交互式</h4><p>以上能够逐步优化 T<del>周转</del> = T<del>完成</del> - T<del>到达</del>，但是对于T<del>响应</del> = T<del>首次运行</del> - T<del>到达</del> 不友好，因为完成时间最长的必须等其他任务完成，自己才能继续。</p>
+<p>交互式的任务对于响应时间很敏感。因此需要另外一种调度策略</p>
+<p><strong>RR</strong>：Round-Robin 轮转，运行一个任务到时间片就切换到下一个任务（context switch）</p>
+<ul>
+<li>上下文的切换需要时间，因此时间片的大小也应该选择恰当</li>
+</ul>
+<p><strong>Overlap</strong>：重叠，如果A任务有IO，当A因为IO而空出CPU时，CPU就应该去服务B</p>
+<p><strong>不可预知性</strong>：调度程序不知道到来的任务持续多长时间。</p>
+<h4 id="实时系统"><a href="#实时系统" class="headerlink" title="实时系统"></a>实时系统</h4><p>准时比准确更加重要</p>
+<h3 id="基于优先级且无需先验知识的调度：多级反馈队列-MLFQ"><a href="#基于优先级且无需先验知识的调度：多级反馈队列-MLFQ" class="headerlink" title="基于优先级且无需先验知识的调度：多级反馈队列 MLFQ"></a>基于优先级且无需先验知识的调度：多级反馈队列 MLFQ</h3><p>MLFQ：Multi-Level Feedback Queue，多级反馈队列</p>
+<ul>
+<li>设置不同的优先级，每个任务刚到达都是最高级</li>
+<li>级别低的任务必须先让级别高的执行完</li>
+<li>相同级别的任务轮转执行</li>
+<li>在同一个优先级执行时间达到阈值就降低优先级：防止高优先级一直占据CPU，如果采用每次执行的计时方法可能会有恶意占据CPU的情况发生</li>
+<li>每隔一段时间就重置所有任务的优先级为最高：防止低优先级变成饥饿状态</li>
+</ul>
+<h1 id="Memory-Virtualization"><a href="#Memory-Virtualization" class="headerlink" title="Memory Virtualization"></a>Memory Virtualization</h1><h2 id="每个程序员都应该知道的时延"><a href="#每个程序员都应该知道的时延" class="headerlink" title="每个程序员都应该知道的时延"></a>每个程序员都应该知道的时延</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/687474703a2f2f692e696d6775722e636f6d2f6b307431652e706e67" alt="img"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">L1 cache reference ......................... 0.5 ns</span><br><span class="line">Branch mispredict ............................ 5 ns</span><br><span class="line">L2 cache reference ........................... 7 ns</span><br><span class="line">Mutex lock/unlock ........................... 25 ns</span><br><span class="line">Main memory reference ...................... 100 ns             </span><br><span class="line">Compress 1 KB with Zippy ................. 3,000 ns  =       3 µs</span><br><span class="line">Send 2 KB over 1 Gbps network ........... 20,000 ns  =      20 µs</span><br><span class="line">SSD random read ........................ 150,000 ns  =     150 µs</span><br><span class="line">Read 1 MB sequentially from memory ..... 250,000 ns  =     250 µs</span><br><span class="line">Round trip within same datacenter ...... 500,000 ns  =     500 µs  =  0.5 ms</span><br><span class="line">Read 1 MB sequentially from SSD ...... 1,000,000 ns  =   1,000 µs  =    1 ms</span><br><span class="line">Disk seek ........................... 10,000,000 ns  =  10,000 µs  =   10 ms</span><br><span class="line">Read 1 MB sequentially from disk .... 20,000,000 ns  =  20,000 µs  =   20 ms</span><br><span class="line">Send packet CA-&gt;Netherlands-&gt;CA .... 150,000,000 ns  = 150,000 µs  =  150 ms</span><br></pre></td></tr></table></figure>
+
+<h2 id="地址空间、分段（segmentation）"><a href="#地址空间、分段（segmentation）" class="headerlink" title="地址空间、分段（segmentation）"></a>地址空间、分段（segmentation）</h2><p><img src="https://upload.wikimedia.org/wikipedia/commons/7/70/VirtualMem01.png" alt="img"></p>
+<p><strong>地址空间</strong>：程序认为自己独占了这片内存空间，以为自己是连续的内存空间。低位是代码，堆往上递增，栈往下反向增长。</p>
+<p>实际上是在物理内存中申请了一片连续的内存空间分配给进程，进程根据指令寻址的时候，操作系统将虚拟地址 <strong>重定位</strong> 到真正的物理地址。虚拟地址从0开始，因此虚拟地址实际上就是物理地址的偏移量。直接打印指针变量的值是虚拟地址而不是物理地址。</p>
+<h3 id="虚拟内存的作用"><a href="#虚拟内存的作用" class="headerlink" title="虚拟内存的作用"></a>虚拟内存的作用</h3><p><strong>隔离进程</strong>：物理内存通过虚拟地址空间访问，虚拟地址空间与进程一一对应。每个进程都认为自己拥有了整个物理内存，进程之间彼此隔离，一个进程中的代码无法更改正在由另一进程或操作系统使用的物理内存。</p>
+<p><strong>提升物理内存利用率</strong>：有了虚拟地址空间后，操作系统只需要将进程当前正在使用的部分数据或指令加载入物理内存。</p>
+<p><strong>简化内存管理</strong>：进程都有一个一致且私有的虚拟地址空间，程序员不用和真正的物理内存打交道，而是借助虚拟地址空间访问物理内存，从而简化了内存管理。</p>
+<p><strong>多个进程共享物理内存</strong>：进程在运行过程中，会加载许多操作系统的动态库。这些库对于每个进程而言都是公用的，它们在内存中实际只会加载一份，这部分称为共享内存。</p>
+<p><strong>提高内存使用安全性</strong>：控制进程对物理内存的访问，隔离不同进程的访问权限，提高系统的安全性。</p>
+<p><strong>提供更大的可使用内存空间</strong>：可以让程序拥有超过系统物理内存大小的可用内存空间。这是因为当物理内存不够用时，可以利用磁盘充当，将物理内存页（通常大小为 4 KB）保存到磁盘文件（会影响读写速度），数据或代码页会根据需要在物理内存与磁盘之间移动。</p>
+<hr>
+<p>著作权归JavaGuide(javaguide.cn)所有 基于MIT协议 原文链接：<a target="_blank" rel="noopener" href="https://javaguide.cn/cs-basics/operating-system/operating-system-basic-questions-02.html">https://javaguide.cn/cs-basics/operating-system/operating-system-basic-questions-02.html</a></p>
+<h3 id="重定位（relocation）"><a href="#重定位（relocation）" class="headerlink" title="重定位（relocation）"></a>重定位（relocation）</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210205158811.png" alt="image-20241210205158811"></p>
+<p><code>Virtual Address + Base = Physical Address</code> </p>
+<p><strong>静态重定位</strong>：用软件实现，直接将指令中的虚拟地址用计算的真实物理地址覆盖。</p>
+<ul>
+<li>缺点：不安全，不方便更改。</li>
+</ul>
+<p><strong>动态重定位</strong>：用硬件实现，也就是CPU中的==MMU==，里面两个最基本的寄存器：<strong>基址寄存器</strong>、<strong>界限寄存器</strong>。将指令中的虚拟地址和基址相加得出真实物理地址，然后取得从硬件层面取得对应地址的值。这一切都是用硬件进行的。</p>
+<ul>
+<li>安全性：用界限（bound）和虚拟地址比较，如果超过了界限，说明虚拟地址访问越界，抛出异常</li>
+<li>便于更改：改变寄存器的值即可实现基址的改变</li>
+<li>性能高：硬件实现性能好</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210205227715.png" alt="image-20241210205227715"></p>
+<h3 id="实现虚拟内存"><a href="#实现虚拟内存" class="headerlink" title="实现虚拟内存"></a>实现虚拟内存</h3><p><strong>实现虚拟内存机制的硬件支持：MMU</strong></p>
+<ul>
+<li><p>划分用户空间和内核空间</p>
+</li>
+<li><p>一对基址寄存器和界限寄存器，专门用来进行地址转换的电路</p>
+</li>
+<li><p>专门用来判断是否越界的电路，判断越界之后应当向CPU抛出异常</p>
+</li>
+<li><p>特权指令：操作系统应当能够设置上述寄存器的值</p>
+</li>
+<li><p>特权指令：操作系统应当告诉硬件发现异常应该执行哪些代码（Exception Handler）</p>
+</li>
+</ul>
+<p><strong>实现虚拟内存机制的软件支持：OS</strong></p>
+<ul>
+<li>内存管理：分配机制、释放机制、空闲空间的管理——free list</li>
+<li>切换上下文时正确设置对应的寄存器</li>
+<li>抛出异常（内存访问越界、非法指令）时执行特定的处理代码</li>
+</ul>
+<p><strong>地址空间的不足</strong>：内部碎片（inner fragment）栈和堆之间未使用的空间也分配给整个地址空间，浪费较大</p>
+<h3 id="分段"><a href="#分段" class="headerlink" title="分段"></a>分段</h3><h4 id="segmentation"><a href="#segmentation" class="headerlink" title="segmentation"></a>segmentation</h4><p><strong>段式管理</strong>：以段(—段连续的物理内存)的形式管理/分配物理内存。应用程序的虚拟地址空间被分为大小不等的段，段是有实际意义的，每个段定义了一组逻辑信息，例如有主程序段 MAIN、子程序段 X、数据段 D 及栈段 S 等。然后给每个段都配一对基址寄存器和界限寄存器。</p>
+<p>例：0-16KB的虚拟地址空间，虚拟地址14位，高2位为段号，低12位为最大4KB的段空间。虚拟地址 = 段号 + 偏移 </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT</span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset = VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])</span><br><span class="line">	RaiseException(PROTECTION_FAULT)<span class="comment">//抛出异常</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PhysAddr = Base[Segment] + Offset<span class="comment">//基址+偏移</span></span><br><span class="line">	Register = AccessMemory(PhysAddr)<span class="comment">//访存</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210205528802.png" alt="image-20241210205528802"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210205438635.png" alt="image-20241210205438635"></p>
+<table>
+<thead>
+<tr>
+<th>段名称</th>
+<th>段号</th>
+<th>基址寄存器</th>
+<th>界限寄存器</th>
+<th>是否正向增长</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>代码</td>
+<td>00</td>
+<td>26 KB</td>
+<td>2 KB</td>
+<td>1</td>
+</tr>
+<tr>
+<td>堆</td>
+<td>01</td>
+<td>28 KB</td>
+<td>2 KB</td>
+<td>1</td>
+</tr>
+<tr>
+<td>栈</td>
+<td>11</td>
+<td>18 KB</td>
+<td>2 KB</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<p>现在要判断虚拟地址15KB的真实地址：<code>11 11 00000 00000</code> 可见段号为 11，偏移 3 KB，栈空间反向增长，最大段空间为 4 KB，实际上就是计算15KB离全1有多远：3KB - 4KB = -1 KB,因此在基址寄存器减1KB即为实际物理地址。</p>
+<h5 id="用于保护的额外状态字"><a href="#用于保护的额外状态字" class="headerlink" title="用于保护的额外状态字"></a>用于保护的额外状态字</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241211001125226.png" alt="image-20241211001125226"></p>
+<h5 id="分段的问题"><a href="#分段的问题" class="headerlink" title="分段的问题"></a>分段的问题</h5><ul>
+<li><strong>外部碎片</strong>：每个分段的大小不一致，因此产生了大小不一致的碎片，无法使空间得到有效利用。</li>
+<li><strong>不支持稀疏的大堆</strong>：Another problem is that some segments could have a larger size and since this segment can’t be “broken” into smaller pieces, it must be fully allocated in memory. 分段大小是固定的，并不能将其拆成小段，申请了一段物理内存，寄存器的基址和界限已经确定好，这部分物理空间就不能再由其他的进程使用了，因此不支持按需分配。</li>
+<li>Segments of unequal size not suited as well for swapping.</li>
+</ul>
+<h5 id="段表：更细粒度的分段"><a href="#段表：更细粒度的分段" class="headerlink" title="段表：更细粒度的分段"></a>段表：更细粒度的分段</h5><p>细粒度分段需要进一步硬件支持，并且在内存中存储 段表 （segment table）</p>
+<p>分段机制下的虚拟地址由两部分组成：</p>
+<ul>
+<li><strong>段号</strong>：标识着该虚拟地址属于整个虚拟地址空间中的哪一个段。</li>
+<li><strong>段内偏移量</strong>：相对于该段起始地址的偏移量。</li>
+</ul>
+<p>具体的地址翻译过程如下：</p>
+<ol>
+<li>MMU 首先解析得到虚拟地址中的段号；</li>
+<li>通过段号去该应用程序的段表中取出对应的段信息（找到对应的段表项）；</li>
+<li>从段信息中取出该段的起始地址（物理地址）加上虚拟地址中的段内偏移量得到最终的物理地址。</li>
+</ol>
+<p><img src="https://miro.medium.com/v2/resize:fit:1313/1*82aSNHRAkNNinGuPpsl6TQ.png" alt="img">分段机制下的地址翻译过程</p>
+<p>段表中还存有诸如段长(可用于检查虚拟地址是否超出合法范围)、段类型（该段的类型，例如代码段、数据段等）等信息。</p>
+<p><strong>通过段号一定要找到对应的段表项吗？得到最终的物理地址后对应的物理内存一定存在吗？</strong></p>
+<p>不一定。段表项可能并不存在：</p>
+<ul>
+<li><strong>段表项被删除</strong>：软件错误、软件恶意行为等情况可能会导致段表项被删除。</li>
+<li><strong>段表项还未创建</strong>：如果系统内存不足或者无法分配到连续的物理内存块就会导致段表项无法被创建。</li>
+</ul>
+<h4 id="减少碎片"><a href="#减少碎片" class="headerlink" title="减少碎片"></a>减少碎片</h4><ul>
+<li><p><strong>内存紧缩</strong>（compact）：内存存储不下程序，会把暂时休息的第一个进程方法放入磁盘，过段时间移除进程b放入进程a，这样会让内存中出现空洞，所以要将进程整体往下移动。必须将运行中的进程中断，将所有分散的内存碎片压到连续的部分中，然后再将新的基址和界限移动到寄存器中，进程按照新的上下文继续执行。缺点是代价太高，性能不好</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240922142056246.png" alt="image-20240922142056246"></p>
+</li>
+<li><p><strong>改善空闲列表</strong>（free list）：分配内存的时候采取一定的策略，尽量减轻内存碎片的现象，但也无法根除碎片的出现</p>
+</li>
+</ul>
+<h2 id="空闲空间的管理"><a href="#空闲空间的管理" class="headerlink" title="空闲空间的管理"></a>空闲空间的管理</h2><p>维护一个空闲空间的列表（freelist）</p>
+<h3 id="机制：分割与合并"><a href="#机制：分割与合并" class="headerlink" title="机制：分割与合并"></a>机制：分割与合并</h3><p>splitting</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210222509968.png" alt="image-20241210222509968"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210222527700.png" alt="image-20241210222527700"></p>
+<p>coalescing</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210222438918.png" alt="image-20241210222438918"></p>
+<h3 id="内存-API"><a href="#内存-API" class="headerlink" title="内存 API"></a>内存 API</h3><h4 id="malloc"><a href="#malloc" class="headerlink" title="malloc"></a>malloc</h4><p><code>void* malloc(int size)</code> 申请大小为size的连续字节空间（虚拟意义上的连续），返回一个指向这个空间首部的指针</p>
+<p>除了用户申请的空间之外，在malloc时还会申请一个头部Header，size用来表示申请空间的大小，magic魔数用来验证完整性<a target="_blank" rel="noopener" href="https://www.cnblogs.com/whiteBear/p/16729327.html">延迟分配：提供内存利用率的三种机制 - 牛犁heart - 博客园</a></p>
+<ul>
+<li>malloc只是分配了虚拟内存，程序真正访问才会触发页错误给这些虚拟页分配物理页框（demand paging）</li>
+<li>在标准 C 库中，提供了 malloc / free 函数分配释放内存，这两个函数底层是由 brk，mmap，munmap 这些系统调用实现的。 (<em>详见Linux虚拟内存系统</em>) 不过跟直接调用还是有区别的。</li>
+</ul>
+<h4 id="free"><a href="#free" class="headerlink" title="free"></a>free</h4><p><code>void free(void* ptr)</code> 将指针ptr所指向的已分配空间释放掉，依据的信息是<strong>分配内存的Header部分</strong> ，因此malloc的size并不是真正的大小，还要分配头部<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210221647796.png" alt="image-20241210221647796"></p>
+<h3 id="嵌入-free-list-到内存中"><a href="#嵌入-free-list-到内存中" class="headerlink" title="嵌入 free list 到内存中"></a>嵌入 free list 到内存中</h3><p>free list 本身也需要存储在内存中，这里我们知道：空闲的块作为空闲节点有额外的简单数据结构（int size, node* next），已分配的块同样也有简单的数据结构（int size, int magic），因此堆实际上是一个空闲内存和已分配的内存的混合。</p>
+<ul>
+<li>未分配空间</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210222820688.png" alt="image-20241210222820688"></p>
+<ul>
+<li>连续分配了3个100字节的空间</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210223130088.png" alt="image-20241210223130088"></p>
+<ul>
+<li>中间出现了空隙，可以看到空闲列表的头节点（head）发生了变化，两个空闲的块通过链表连接起来</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210223253160.png" alt="image-20241210223253160"></p>
+<ul>
+<li>全部释放之后，出现了4个空闲的块，但是还没有合并（merge）</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210223340586.png" alt="image-20241210223340586"></p>
+<h3 id="策略：连续内存分配"><a href="#策略：连续内存分配" class="headerlink" title="策略：连续内存分配"></a>策略：连续内存分配</h3><h4 id="基本策略：空闲链表"><a href="#基本策略：空闲链表" class="headerlink" title="基本策略：空闲链表"></a>基本策略：空闲链表</h4><ul>
+<li><strong>Best Fit</strong>：遍历整个列表，找到跟分配块大小最接近的空闲块，尽量减少碎片大小。细小碎片多，开销大。</li>
+<li><strong>Worst Fit</strong>：遍历整个列表，找到跟分配块大小差距最大的，分割之后将剩余块加入空闲列表。碎片过量，开销大。</li>
+<li><strong>First Fit</strong>：第一次找到足够大的块就直接分配。会让开头部分有许多小的碎片，可以通过按地址排序，便于合并操作。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240922142709440.png" alt="image-20240922142709440"></p>
+<ul>
+<li><strong>Next Fit</strong>：每次查找都从上次结束的地方开始，剩下逻辑依然是首次匹配，可以减少开头部分过多的小碎片，将其分散到其他地方。</li>
+</ul>
+<p><strong>位图</strong>：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-ccf3e0ea94a135e7f8548f3e9ef42813_1440w.jpg" alt="img"></p>
+<h4 id="内存池（memory-pool）"><a href="#内存池（memory-pool）" class="headerlink" title="内存池（memory pool）"></a>内存池（memory pool）</h4><p>如果能将一大块内存分成多个小内存（称为内存池），不同的内存池又按照不同的「尺寸」分成大小相同的内存块（比如分别按照32, 64, 128……字节），同一内存池中的空闲内存块按照free list的方式连接。每次分配的时候，选择和申请的的内存在「尺寸」上最接近的内存池，比如申请60字节的内存，就直接从单个内存块大小为64字节的内存池的free list上分配。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-12148c36cd07924a26e0ce35b67f29eb_1440w.jpg" alt="img" style="zoom:150%;" />
+
+<p>需要结合系统实际的内存分配需求，对内存池的大小进行合理的划分。比如一个系统常用的是256字节以下的内存申请，那设置过多的256字节以上的内存池，就会造成内存资源的闲置和浪费。</p>
+<h4 id="其他策略"><a href="#其他策略" class="headerlink" title="其他策略"></a>其他策略</h4><p>Linux 发展出两种基于内存池的分配策略，<em>详见 Linux 实现</em></p>
+<ul>
+<li><strong>Buddy system</strong>: 将内存池划分为以2^n^为大小的类型，同一内存池中的空闲块大小相同，如果空闲块是相邻的则合并，将合并后的块加入更大的内存池中</li>
+<li><strong>SLAB</strong>: 伙伴系统是按页分配的，但内核经常会申请一些特定大小的内存，往往不到一页，如果仍然使用伙伴系统将造成很多内部碎片，SLAB为它们分配了内核对象缓存，专门的连续内存区，依然使用内存池的思路，但是池子变得比以前更小。</li>
+</ul>
+<h2 id="分页（paging）"><a href="#分页（paging）" class="headerlink" title="分页（paging）"></a>分页（paging）</h2><h3 id="虚拟——物理页号转换"><a href="#虚拟——物理页号转换" class="headerlink" title="虚拟——物理页号转换"></a>虚拟——物理页号转换</h3><h4 id="页帧、页帧号、虚拟页号"><a href="#页帧、页帧号、虚拟页号" class="headerlink" title="页帧、页帧号、虚拟页号"></a>页帧、页帧号、虚拟页号</h4><p><strong>分页机制</strong>：将虚拟的地址替换成物理地址，用大小相等的页代替大小不等的段。原来一个进程是代码段和数据段不等，分配的内存空间也不一样，现在将段继续拆分成大小相等的页表项，这样从根本上解决了外部碎片的问题。</p>
+<p><strong>页帧（Page Frame）</strong>：物理内存中存放数据的最小单位。当一个虚拟页被映射到物理页时，数据会存放在对应的<strong>页帧</strong>中。假设一个进程的虚拟地址空间中有一个虚拟页，虚拟地址 <code>0x1000</code> 对应的虚拟页页号是 <code>0x1</code>，偏移量为0。此时，操作系统通过页表将虚拟页 <code>0x1</code> 映射到物理内存中的一个页帧 <code>0x3</code>，即物理地址为 <code>0x3000</code>。那么，当该进程访问虚拟地址 <code>0x1000</code> 时，CPU 会通过页表将其转换为物理地址 <code>0x3000</code>，并在页帧 <code>0x3</code> 中访问数据。页帧大小固定为PageSize</p>
+<p><strong>虚拟地址（Virtual Address）= 虚拟页号（VPN, Virtual Page Number） + 偏移量（Offset）</strong></p>
+<p><strong>页表项（Page Table Entry）= 物理页号（PFN, Page Frame Number）+ 保留的功能位</strong></p>
+<p><strong>页表的物理地址</strong>：加载到<strong>页表基址寄存器（PTBR, Page Table Base Register）</strong>，一个<strong>页表项（PTE）</strong>分为<strong>物理页号（PFN）</strong>，有效位valid，读写权限位protection，内核模式位，脏位dirty，引用reference，存在位present等功能位。</p>
+<h4 id="从虚拟地址访存基本步骤"><a href="#从虚拟地址访存基本步骤" class="headerlink" title="从虚拟地址访存基本步骤"></a>从虚拟地址访存基本步骤</h4><ul>
+<li><p><code>VirtualAddress = VPN + Offset</code> </p>
+</li>
+<li><p><code>PTE Address(Physical) = VPN * PageSize + PTBR</code> PTE保存着PFN以及其他功能位</p>
+</li>
+<li><p><code>Physical Address = PFN * PageSize + Offset</code> </p>
+</li>
+<li><p>实际上VPN PFN Offset都是通过和MASK（作用和子网掩码相同）相与，然后PFN移位后和Offset相或。</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Extract the VPN from the virtual address</span></span><br><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line"><span class="comment">// Form the address of the page-table entry (PTE)</span></span><br><span class="line">PTEAddr = PTBR + (VPN * <span class="keyword">sizeof</span>(PTE))</span><br><span class="line"><span class="comment">// Fetch the PTE</span></span><br><span class="line">PTE = AccessMemory(PTEAddr)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if process can access the page</span></span><br><span class="line"><span class="keyword">if</span> (PTE.Valid == False)<span class="comment">// Valid bit = 0</span></span><br><span class="line">	RaiseException(SEGMENTATION_FAULT) <span class="comment">//illegal memory access</span></span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (CanAccess(PTE.ProtectBits) == False)</span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="comment">// Access OK: form physical address and fetch it</span></span><br><span class="line">    offset = VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">    PhysAddr = (PTE.PFN &lt;&lt; PFN_SHIFT) | offset</span><br><span class="line">    Register = AccessMemory(PhysAddr)</span><br></pre></td></tr></table></figure>
+
+<p><strong>一些功能位</strong></p>
+<ul>
+<li>Protection bit：权限位，保护位 r w x，如果违反了越权访问，就要陷入OS</li>
+<li>Valid bit：有效位，虚拟地址空间并不是全部都要分配，如果访问了还没有分配的（valid bit = 0）就是非法访问，将会抛出异常陷入OS</li>
+<li>Dirty bit：脏位，页面带入内存之后是否被修改过</li>
+<li>Present bit：存在位，表示内存页在内存中还是已经被换出</li>
+<li>Reference bit：参考位，追踪页面是否被访问</li>
+</ul>
+<h4 id="页表开销"><a href="#页表开销" class="headerlink" title="页表开销"></a>页表开销</h4><ul>
+<li><strong>内存开销</strong>：每个页表项需要4B，页大小（PageSize）是4KB，要虚拟出一个4GB的空间，就要有4GB/4KB * 4B =4MB 空间来存储。对每个进程操作系统都要有4MB的空间用于页表的储存，开销很大。页表是按照页号进行索引查找的，这就需要本身是一段连续的内存空间，页表就是一个大的数组，实际上页表在物理上也连续。</li>
+<li><strong>性能开销</strong>：对于每个内存引用，都要额外引入一次内存引用，效率不高,每一次访存都多了一步访问页表，性能显著下降</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1075436-20190809172852450-661010612.png" alt="img"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212120853391.png" alt="image-20241212120853391"></p>
+<h4 id="页表总结"><a href="#页表总结" class="headerlink" title="页表总结"></a>页表总结</h4><p><strong>Pros</strong>:</p>
+<ul>
+<li>No external fragments</li>
+<li>Flexible, good support for sparse address space</li>
+</ul>
+<p><strong>Cons</strong>:</p>
+<ul>
+<li>Physical Space costs (Page table)</li>
+<li>Speed Costs (extra memory access)</li>
+</ul>
+<h3 id="快表-TLB"><a href="#快表-TLB" class="headerlink" title="快表 TLB"></a>快表 TLB</h3><p><strong>如果想要快速的缓存，他就必须小，因为光速和其他物理限制会起作用</strong></p>
+<p><strong>TLB</strong>：因为有二八定律，所以MMU要记下经常使用的虚拟页号，将VPN与PFN的映射关系存在 <strong>TLB</strong> 快表中（<strong>Translation Lookaside Buffer</strong> aka. <strong>Address Translation Cache</strong>）</p>
+<h4 id="硬件实现-TLB-控制流"><a href="#硬件实现-TLB-控制流" class="headerlink" title="硬件实现 TLB 控制流"></a>硬件实现 TLB 控制流</h4><p>CISC 将tlb miss逻辑全权交给硬件负责，拿着虚拟页号 VPN 去 TLB 中查询</p>
+<ul>
+<li>TLB hit：直接访存(<code>AccessMemory</code>)</li>
+<li><strong>TLB miss：查页表，查到PFN后写入TLB（<code>TLB_Insert</code>），重新执行TLB查询操作（<code>RetryInstruction</code>）</strong>  </li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212122549686.png" alt="image-20241212122549686"></p>
+<p>硬件实现：需要PTBR（x86架构中为CR3寄存器），页表的确切格式是写死在硬件里的（x86中为多级页表）</p>
+<h4 id="软件实现-TLB-控制流"><a href="#软件实现-TLB-控制流" class="headerlink" title="软件实现 TLB 控制流"></a>软件实现 TLB 控制流</h4><p>RISC 将tlb miss看作一个异常，陷入OS，执行对应的处理程序</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212124132429.png" alt="image-20241212124132429"></p>
+<p><strong>软件实现的好处</strong>：可以随时更改，可扩展性强，页表的数据结构由操作系统自行决定，</p>
+<p><strong>注意的问题</strong>：</p>
+<ul>
+<li>TLBmissHandler和一般的trap不同，一般return from trap 会从陷入后的地方继续执行，而TLBmiss则会从<strong>重试</strong>陷入之前的程序，因此保存的上下文很重要，尤其是程序计数器</li>
+<li>TLBmissHandler也是代码，要访存，须谨防无限递归tlb miss的问题，可以专门把一块TLB的空间划给TLBmiss处理程序使用；或者也可以不使用虚拟内存，直接把代码物理地址告诉硬件（unmapped，陷阱表）</li>
+</ul>
+<h4 id="TLB-内容"><a href="#TLB-内容" class="headerlink" title="TLB 内容"></a>TLB 内容</h4><h5 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h5><p><code>VPN | PFN | other bits</code></p>
+<p>是一个全相联（fully-associative）的cache结构，硬件会并行地查找这些项，</p>
+<p><strong>other bits</strong>：</p>
+<ul>
+<li><p>protection：访问权限</p>
+</li>
+<li><p>valid：表示TLB是否记录着一个有效的<code>VPN-&gt;PFN</code>映射，PTE的有效位为0表示这是一个并未被应用申请过的非法地址</p>
+</li>
+<li><p>dirty：脏位</p>
+</li>
+<li><p>asid：access space id，地址空间id，用来标识不同进程的TLB条目<a target="_blank" rel="noopener" href="https://blog.csdn.net/Rong_Toa/article/details/110758233">Linux进程管理+内存管理：进程切换的TLB处理（ASID-address space ID、PCID-process context ID）_进程的asid-CSDN博客</a> </p>
+</li>
+</ul>
+<h5 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h5><p>TLB集成在CPU内部的MMU，因此一定会有上下文切换的问题，VPN一样的条目会导致数据错误</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212131757567.png" alt="image-20241212131757567"></p>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li>上下文切换的时候将所有 TLB 条目的<strong>有效位</strong>置0（flush），下一个进程可以随便覆盖</li>
+<li>使用ASID（类似于pid）记录这个TLB条目属于哪个进程</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212131846711.png" alt="image-20241212131846711"></p>
+<p><strong>PFN一样的条目</strong>：可能是共享代码页，这样可以减少额外分配物理页</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212131859962.png" alt="image-20241212131859962"></p>
+<h5 id="例：MIPS-TLB-Entry"><a href="#例：MIPS-TLB-Entry" class="headerlink" title="例：MIPS TLB Entry"></a>例：MIPS TLB Entry</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212134843225.png" alt="image-20241212134843225"></p>
+<p>0-18 VPN  19 Global 进程间共享  24-31 ASID 进程空间 </p>
+<h4 id="刷新、替换"><a href="#刷新、替换" class="headerlink" title="刷新、替换"></a>刷新、替换</h4><h5 id="TLB-flush"><a href="#TLB-flush" class="headerlink" title="TLB flush"></a>TLB flush</h5><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/66971714">TLB之flush操作[一] - 知乎</a> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/66994486">TLB之flush操作[二] - 知乎</a> <a target="_blank" rel="noopener" href="https://blog.csdn.net/Rong_Toa/article/details/110760995">Linux内存管理：TLB flush操作-CSDN博客</a> </p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Rong_Toa/article/details/110758233">Linux进程管理+内存管理：进程切换的TLB处理（ASID-address space ID、PCID-process context ID）_进程的asid-CSDN博客</a> </p>
+<p>在页表PTE的内容出现变化时，比如page fault时页面被换出，munmap()时映射被解除，就需要invalidate对应的TLB entry，有时这个操作也被称为flush（以下的讨论将统一称为flush）。</p>
+<p>当系统中各个cpu的TLB中的asid合起来不大于256个的时候，系统正常运行，一旦超过256的上限后，我们将全部TLB flush掉，并重新分配ASID，每达到256上限，都需要flush tlb并重新分配HW ASID。</p>
+<p>在多核系统中，虽然每个核心的MMU是独立的，但它们在访问<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=695131149&content_type=Answer&match_order=1&q=%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98&zhida_source=entity">共享内存</a>时需要进行协调。共享内存区域允许多个核心同时访问相同的物理内存，这对于核心间的通信或共享数据非常关键。MMU可以通过为不同的内存区域设置权限和属性，确保多个核心在访问这些共享区域时不会出现数据冲突或不一致的情况。这在多线程或多进程系统中，尤其在同步和内存一致性方面，显得尤为重要。</p>
+<h5 id="缓存更新策略"><a href="#缓存更新策略" class="headerlink" title="缓存更新策略"></a><a href="#eviction">缓存更新策略</a></h5><h2 id="优化分页"><a href="#优化分页" class="headerlink" title="优化分页"></a>优化分页</h2><h3 id="扩大页面大小（Bigger-Pages）"><a href="#扩大页面大小（Bigger-Pages）" class="headerlink" title="扩大页面大小（Bigger Pages）"></a>扩大页面大小（Bigger Pages）</h3><p>Linux</p>
+<ul>
+<li><p>对TLB更加友好，考虑到空间局部性，同一页能够访问更多数据，也就不用频繁地查页表了</p>
+</li>
+<li><p>增大页面大小，VPN<del>max</del>变小，每个虚拟页占空间4B，页表占用总空间减小；</p>
+</li>
+<li><p>但应用程序申请的并不一定是会充满整个页，所以会出现内部碎片（internal fragment）</p>
+</li>
+</ul>
+<h3 id="分段-分页（Hybrid-Approach）"><a href="#分段-分页（Hybrid-Approach）" class="headerlink" title="分段 + 分页（Hybrid Approach）"></a>分段 + 分页（Hybrid Approach）</h3><h4 id="线性页表的局限"><a href="#线性页表的局限" class="headerlink" title="线性页表的局限"></a>线性页表的局限</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212210406110.png" alt="image-20241212210406110"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212210703824.png" alt="image-20241212210703824"></p>
+<p>如图，虚拟空间是16KB，页面大小为1KB，因此页表共有16 entries，除去代码段，堆栈之间的空间是严重浪费的，就像分段会导致内部碎片一样，连续的线性页表也会导致内部碎片。</p>
+<h4 id="段页结合"><a href="#段页结合" class="headerlink" title="段页结合"></a>段页结合</h4><p>VAX/VMS</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212213305035-1734010396522-12.png" alt="image-20241212213305035"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/8904fb89ae0c49c4b0f2f7b5a0a7b099.png" alt="img"></p>
+<p>可以根据代码、堆、栈对页表进行分类，然后使用三个base-bound寄存器对，上下文切换时保存、恢复寄存器内容。更细粒度的分段可以使用段表。base存储段在物理内存的位置，bound表示段大小。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SN  = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SN_SHIFT</span><br><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; VPN_SHIFT</span><br><span class="line">AddressOfPTE = Base[SN] + (VPN * <span class="keyword">sizeof</span>(PTE))</span><br></pre></td></tr></table></figure>
+
+<h4 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h4><ul>
+<li>与分段的缺陷一样，只不过是将真正的数据部分换成了页表</li>
+<li>不灵活，假设地址空间有一定的使用模式，分段则需要为整个堆段预留连续空间，即使中间部分未使用也无法释放。<ul>
+<li>a large but sparsely-used heap 仍然可能导致大量的页表浪费</li>
+</ul>
+</li>
+<li>由于界限寄存器的存在，每个段有多少页是不确定的，因此每个段的页表大小也不确定，导致寻找足够的连续自由空间比较复杂。虽然节省内存但是有外部碎片问题</li>
+</ul>
+<h3 id="多级页表（Multi-level-Page-Tables）"><a href="#多级页表（Multi-level-Page-Tables）" class="headerlink" title="多级页表（Multi-level Page Tables）"></a>多级页表（Multi-level Page Tables）</h3><p>x86 ARM Linux Windows</p>
+<p>减小页表占用的空间，分散成多个页表，<strong>每张页表大小==相同==<strong>，</strong>并且刚好能填满一整个内存页</strong>，消灭了外部碎片</p>
+<p><strong>如果整页的PTE都是无效的（未分配），则完全不分配该页面的页表。</strong></p>
+<ul>
+<li>PDE的有效位：此条目指向的页是否有页表？PTE的有效位：此条目是否是一个有效的PFN映射？</li>
+<li>树形结构，不用的可以不分配页表空间。支持稀疏空间：不用的就不分配物理内存页</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212214704876.png" alt="image-20241212214704876"></p>
+<h4 id="页表目录-页表-内存"><a href="#页表目录-页表-内存" class="headerlink" title="页表目录-页表-内存"></a>页表目录-页表-内存</h4><p>CR3存的是页表目录（Page Directory）的基址，假设虚拟地址前4位是页表目录的编号，中间4位是页表（Page Table）编号，后12位为偏移。CR3找到了页表目录，根据前4位索引到PTE的PFN，根据中间4位找到页表中的PTE，PTE中存储着物理页的PFN。</p>
+<ul>
+<li><p>基本思想：基址 + 偏移 </p>
+</li>
+<li><p><code>VPN = PD_index | PT_index</code> </p>
+</li>
+<li><p><strong>页目录项</strong>地址: <code>PD_Entry_Addr = Page_Dir_Base + PD_index * sizeof(PD_Entry_Addr)</code> </p>
+</li>
+<li><p><strong>页表项</strong>地址：  <code>PT_Entry_Addr = PD_Entry.PFN &lt;&lt; SHIFT + PT_index * sizeof(PT_Entry_Addr)</code> </p>
+</li>
+<li><p>页面地址 ：<code>Page_Entry_Addr = PT_Entry.PFN &lt;&lt; SHIFT + Offset</code> </p>
+</li>
+</ul>
+<p>以16位虚拟地址为例：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240924221042539.png" alt="image-20240924221042539"></p>
+<ul>
+<li><strong>虚拟内存的要求</strong>：每一层级内部必须是连续的，因为分配物理内存空间只能一次性分配连续的一段</li>
+<li>单级页表要想实现页表只能一次性分配256个连续的entries。</li>
+<li>多级页表如果<strong>真的只有</strong>这3个地址所在的physical page被用到，那么只需要48 个entries就可以了</li>
+</ul>
+<p>在32位系统中，进程的虚拟地址空间为4GB，但某个进程实际使用的页只占其中的一小部分，其分布是稀疏的，因此非常适合使用多级页表这种稀疏的级联数组(<a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Radix_tree">radix tree</a>)来表示。</p>
+<h4 id="fill-the-pages"><a href="#fill-the-pages" class="headerlink" title="fill the pages"></a>fill the pages</h4><h5 id="例：30位虚拟地址"><a href="#例：30位虚拟地址" class="headerlink" title="例：30位虚拟地址"></a>例：30位虚拟地址</h5><p>目标：每张表填满一整个内存页 Page Size = 2^7^ * 4 B = 512 B，二级页表不能刚好占满一页</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213134804005.png" alt="image-20241213134804005"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213135215659.png" alt="image-20241213135215659"></p>
+<h5 id="实际的32位和64位页表"><a href="#实际的32位和64位页表" class="headerlink" title="实际的32位和64位页表"></a>实际的32位和64位页表</h5><p>在32位处理器中，采用4KB的page大小，则虚拟地址中低12位为offest，剩下高20位给页表，<strong>分成两级</strong>，每个级别占10个bit（10+10）。为什么32位系统的页表每级占10位，每个页的大小被设定为<code>4KB</code>而不是2KB或者8KB？</p>
+<p>如果index为10位，则其可索引的范围是1024个entris，32位系统中，每级页表的每个entry的大小为4个字节，则每个页表的大小刚好是4KB。页表首地址也是要按页对齐的，如果占不满一个页，页中剩下的空间也就浪费了。80386引入<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=102569108&content_type=Article&match_order=1&q=%E5%88%86%E9%A1%B5%E6%9C%BA%E5%88%B6&zhida_source=entity">分页机制</a>的时候应该就考虑过把页设置为多大是最合适的，显然4KB的页大小对内存的利用是最充分的。1024 * 4 = 4 K</p>
+<p><img src="https://i.stack.imgur.com/R19zY.png" alt="memory management - Why 32-bit Windows can maximum have 16TB Page File ..."></p>
+<p>为什么64位系统的页表<strong>每级占9位</strong>呢？为了和硬件配合，基于i386编写的linux也采用4KB的页大小作为<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=102569108&content_type=Article&match_order=1&q=%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86&zhida_source=entity">内存管理</a>的基本单位。处理器进入64位时代后，其实可以不再使用4KB作为一个页帧的大小，但可能为了提供硬件的向前兼容性以及和操作系统的兼容性吧，大部分64位处理器依然使用4KB作为默认的页大小（ARMv8-A还支持16KB和64KB的页大小）。因为64位系统中，每级页表的每个entry的大小为8个字节，如果index为9位，则每个页表的大小也刚好是4KB。</p>
+<p>512 * 8 = 4K </p>
+<p><img src="https://i.sstatic.net/Bswtz.png" alt="img"></p>
+<h4 id="TLB-控制流"><a href="#TLB-控制流" class="headerlink" title="TLB 控制流"></a>TLB 控制流</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213141353216.png" alt="image-20241213141353216"></p>
+<p>依然是先查TLB，TLB没有再查页表，先用PDBR加偏移 算出PDE的物理地址得到PTE所在的PFN，找到PTE之后根据PTE里面的PFN加偏移算出真实的物理地址。</p>
+<h3 id="倒排页表（Inverted-Page-Table）"><a href="#倒排页表（Inverted-Page-Table）" class="headerlink" title="倒排页表（Inverted Page Table）"></a>倒排页表（Inverted Page Table）</h3><p>PowerPC</p>
+<p>页表的映射反过来，PFN-&gt;VPN，除了VPN，还有使用此页的进程标识。通常使用Hash散列表来加快搜索。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1006507-20161224105816979-1390337413.png" alt="img"></p>
+<h3 id="交换到磁盘（Swap）"><a href="#交换到磁盘（Swap）" class="headerlink" title="交换到磁盘（Swap）"></a>交换到磁盘（Swap）</h3><p>之前的页表都需要直接访问物理内存，页表本身并没有在程序的地址空间中，因此页表必须时时刻刻在物理内存中</p>
+<p>VAX/VMS 把页表纳入内核的虚拟内存，允许在内存压力较大时将页表的一部分交换到磁盘。</p>
+<h2 id="超越物理内存"><a href="#超越物理内存" class="headerlink" title="超越物理内存"></a>超越物理内存</h2><p>虚拟内存本质是虚的，实际数据可以存储在任何地方：<strong>寄存器（TLB）</strong>、<strong>物理内存（DRAM）</strong>，甚至是<strong>磁盘（HDD SSD）</strong>，因此虚拟内存大小跟物理内存大小并没有直接的关系，编程人员只需提供<code>Virtual Address</code>，由硬件和OS负责剩下的步骤，这就提升了程序的易用性，也提升了处理程序的多样性，考虑页表的数据结构，页表存储的位置等问题。</p>
+<h3 id="机制"><a href="#机制" class="headerlink" title="机制"></a>机制</h3><h4 id="交换空间"><a href="#交换空间" class="headerlink" title="交换空间"></a>交换空间</h4><p>硬盘需要腾出一片专门的空间用来存放物理内存的内容，因此也需要进行编址。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213145818889.png" alt="image-20241213145818889"></p>
+<blockquote>
+<p>The code pages from this binary are initially found on disk, and when the program runs, they are loaded into memory (either all at once when the program starts execution, or, as in modern systems, one page at a time when needed). However, if the system needs to <strong>make room in physical memory for other needs</strong>, it can safely re-use the memory space for these code pages, knowing that it can later swap them in again from the on-disk binary in the file system.</p>
+</blockquote>
+<p><strong>虚拟内存提供了一种将磁盘和物理内存结合起来的方式</strong>：</p>
+<ul>
+<li>代码页从磁盘加载到内存，过一段时间被换出，随后在需要的时候又被换入。</li>
+<li>操作系统将整个物理内存看作“缓存”。</li>
+<li>当内存不足时，系统会将不常用的内存页换出到磁盘（称为交换或分页）。</li>
+<li>反之，如果需要使用换出的页面，系统会从磁盘重新加载到内存。</li>
+</ul>
+<h4 id="页错误（page-fault）"><a href="#页错误（page-fault）" class="headerlink" title="页错误（page fault）"></a>页错误（page fault）</h4><p><strong>存在位（presentation bit）</strong>：用来标识一个页是否在物理内存中，如果不在，对此内存地址的访问就会触发page fault（实际上是page miss），陷入OS</p>
+<p><strong>Why OS</strong> <strong>Handles This?：</strong>TLB miss可以由硬件实现，但是Page Fault并不需要，因为Page Fault的处理性能瓶颈在硬盘：硬盘的读写速度比内存慢很多，硬件处理性能提升并不明显，并且硬件必须添加其他复杂的机制（写死在硬件里）</p>
+<p>硬盘IO完成，更新PTE的PFN和存在位（也可以同时写入TLB中）然后Retry Instruction，IO过程中进程处于<strong>阻塞状态（blocked state）</strong>，OS可以在这段时间内切换到其他进程以提高CPU利用率。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/121-1.png" alt="Lightbox"></p>
+<p>上述是硬性的页错误（虚拟内存地址不在物理内存中），还有一种软性页错误（虚拟内存地址在物理内存中），<em>详见VAX/VMS</em></p>
+<p><strong>控制流</strong>：</p>
+<ul>
+<li>错误的严重程度：<ol>
+<li><code>segmentation fault</code>（<code>valid bit = 0</code>, 没有分配） </li>
+<li><code>protection fault</code>（<code>protect bits</code>, 权限不够）</li>
+<li><code>page fault</code>（<code>present bit = 0</code>, 不在内存里）</li>
+</ol>
+</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213153405737.png" alt="image-20241213153405737"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213153341054.png" alt="image-20241213153341054"></p>
+<p><strong>Page-Fault Handler by OS</strong>：</p>
+<ul>
+<li>找空闲的物理内存，记录其PFN<ul>
+<li>找不到就使用<strong>淘汰策略</strong>，把现在的物理内存页换一部分到磁盘里，腾出空间</li>
+<li>如果找到了就进行磁盘 I/O，系统调用会<strong>休眠</strong>，直到 I/O 完成。</li>
+</ul>
+</li>
+<li>换入完成就更新页表的存在位和PFN</li>
+</ul>
+<h4 id="访存机制总结"><a href="#访存机制总结" class="headerlink" title="访存机制总结"></a>访存机制总结</h4><p>首先到 MMU 集成的 TLB 中查询，TLB 中存储的是虚拟地址页号（VPN）和物理地址页号（PFN）的映射关系，TLB 命中则直接访问物理页框；之后就是之前正常的 CPU 访存过程，与操作系统没有关系。TLB 未命中则去找 CPU 集成的 Table Walk Unit，TWU 中的 CR3 寄存器存储着当前页目录（Page Directory）的物理地址页号PFN，如果内存中的页表没有对应的内容，则触发页错误（Page Fault）去磁盘中寻找，页表命中则更新 TLB，重试指令。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/slide_1.jpg" alt="Virtual to Physical Address Translation Effective Address TLB Lookup Page  Table Walk Update TLBPage Fault OS Table Walk Protection Check Physical  Address. - ppt download"></p>
+<h3 id="Swap-页面置换策略"><a href="#Swap-页面置换策略" class="headerlink" title="Swap 页面置换策略"></a><span id="eviction">Swap 页面置换策略</span></h3><p>$$<br>AMAT=(P_\text{Hit} \cdot T_\text{Mem})+(P_\text{Miss} \cdot T_\text{Disk})<br>$$</p>
+<p>Tmem = 100ns(100个时钟周期) Tdisk = 10ms（10000个时钟周期） 对性能影响极大</p>
+<h4 id="基本策略-1"><a href="#基本策略-1" class="headerlink" title="基本策略"></a>基本策略</h4><p>将物理内存看作虚拟内存的缓存，置换策略实际上就是缓存淘汰策略</p>
+<p><strong>局部性原理</strong></p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000043722445">缓存算法：LRU、LFU、随机替换等常见算法简介 - 个人文章 - SegmentFault 思否</a> </p>
+<p>我们能不能既享受 CPU Cache 的速度，又享受内存、硬盘巨大的容量和低廉的价格呢？前辈们已经探索出了答案，那就是，存储器中数据的局部性原理（Principle of Locality）</p>
+<ul>
+<li><p>**时间局部性(temporal locality)**：如果一个数据被访问了，那么它在短时间内还会被再次访问。如 LRU 缓存机制，将频繁访问的数据保存在内存中。</p>
+</li>
+<li><p>**空间局部性(spatial locality)**：如果一个数据被访问了，那么和它相邻的数据也很快会被访问。如果数组的 CPU 预读功能。</p>
+</li>
+<li><p><strong>OPT 最优</strong>：事先知道缓存的访问顺序（不可能）但是可以作为一个比较指标。</p>
+</li>
+<li><p><strong>无状态策略</strong>：</p>
+<ul>
+<li><p>FIFO：先进先出</p>
+</li>
+<li><p>Random：随机</p>
+</li>
+</ul>
+</li>
+<li><p><strong>LRU</strong>(Recently)基于上次被访问时间，<strong>LFU</strong>(Frequently)基于被访问的频率</p>
+</li>
+</ul>
+<p>基本有LRU FIFO Random，时钟算法（近似LRU），SecondChance（完善的FIFO），2Q（LRU+FIFO）</p>
+<p>LFU：当使用 mmap() 访问文件缓存页面时，无法计数，实现较为复杂，不适合操作系统对虚拟内存的管理</p>
+<h4 id="性能比较"><a href="#性能比较" class="headerlink" title="性能比较"></a>性能比较</h4><h5 id="完全随机访问"><a href="#完全随机访问" class="headerlink" title="完全随机访问"></a>完全随机访问</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213175231404.png" alt="image-20241213175231404"></p>
+<h5 id="二八定律"><a href="#二八定律" class="headerlink" title="二八定律"></a>二八定律</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213175332544.png" alt="image-20241213175332544"></p>
+<h5 id="循环顺序访问"><a href="#循环顺序访问" class="headerlink" title="循环顺序访问"></a>循环顺序访问</h5><p>依次引用第0到第49页，LRU和FIFO，缓存在50以内，命中率为0</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213175411886.png" alt="image-20241213175411886"></p>
+<ul>
+<li><p>LRU，基于<strong>时间局部性</strong>的策略，<strong>预测性强</strong>：对于访问频繁的页表项保留效果好。</p>
+<ul>
+<li>循环访问 n+1 页，但TLB只有n页容量，第一次TLB空的，全部 miss，由于空间限制，最后第n+1页会覆盖第1页。下一个循环开始第1页又 miss，第1页覆盖第2页内容，连锁的 miss</li>
+</ul>
+</li>
+<li><p>Random，实现简单，避免出现极端情况下LRU命中率极低的情况，<strong>不可预测</strong>：无法优化特定程序的访问模式。</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>优点</th>
+<th>缺点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>LRU</strong></td>
+<td>高命中率，适应访问局部性</td>
+<td>实现复杂，硬件成本高</td>
+<td>对性能敏感的高端系统</td>
+</tr>
+<tr>
+<td><strong>随机</strong></td>
+<td>实现简单，硬件成本低，性能稳定</td>
+<td>命中率较低，忽略访问规律</td>
+<td>简单的嵌入式系统或硬件资源有限的场景</td>
+</tr>
+</tbody></table>
+<h4 id="LRU-实现"><a href="#LRU-实现" class="headerlink" title="LRU 实现"></a>LRU 实现</h4><ul>
+<li>可以对每一页添加时间字段，可以在页表中也可以专门在物理内存中的一片区域（redis就是这么做的），但代价高。</li>
+</ul>
+<p>添加一个 <strong>reference bit</strong> 使用位（用页表或者bitmap存储）当页被访问（读或写）时，由硬件（MMU）将其置1，操作系统负责将其置0，1代表最近用过了，0代表最近没用过</p>
+<h5 id="近似-LRU：时钟算法"><a href="#近似-LRU：时钟算法" class="headerlink" title="近似 LRU：时钟算法"></a>近似 LRU：时钟算法</h5><p>维护一个循环列表，里面放着所有页的使用情况，时钟指针指向其中的一页，当需要替换页，如果use bit=1，将其置0，然后移动到下一页，直到寻找到第一个use bit = 0的页，将其换出</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213184105746.png" alt="image-20241213184105746"></p>
+<h5 id="脏位"><a href="#脏位" class="headerlink" title="脏位"></a>脏位</h5><p>dirty bit的优先级大于use bit 也由MMU维护，硬件会在发生<strong>写操作</strong>时自动设置脏位，页面换出首先考虑的是未被访问过的干净页，然后是被访问过的干净页。</p>
+<ol>
+<li><strong>标记页面是否被修改过</strong><ul>
+<li>当一个页面被写入（例如进程对该页面的内容进行了修改），操作系统会将该页面的脏位置为 <code>1</code>。</li>
+<li>如果页面从加载到内存以来未被修改，脏位保持为 <code>0</code>。</li>
+</ul>
+</li>
+<li><strong>决定页面是否需要写回磁盘</strong><ul>
+<li>如果一个页面需要被换出（从内存移到磁盘），操作系统会检查其脏位：<ul>
+<li><strong>脏位为 1</strong>：表示页面内容已被修改，需要将修改后的内容写回磁盘（例如文件或交换区）。</li>
+<li><strong>脏位为 0</strong>：页面未被修改，可以直接丢弃内存中的内容，因为磁盘上已有最新副本。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>减少不必要的磁盘写入</strong><ul>
+<li>通过脏位的判断，可以避免无意义的磁盘写入操作，提高性能。例如，如果页面内容没有修改，就无需将内存中的数据写回磁盘。</li>
+</ul>
+</li>
+</ol>
+<h5 id="LRU-K"><a href="#LRU-K" class="headerlink" title="LRU-K"></a>LRU-K</h5><p>LRU-K中的K代表最近使用的次数，因此LRU可以认为是LRU-1。LRU-K的主要目的是为了解决LRU算法“缓存污染”的问题，其核心思想是将“最近使用过1次”的判断标准扩展为“最近使用过K次”。相比LRU，LRU-K需要多维护一个队列，用于记录所有缓存数据被访问的历史。只有当数据的访问次数达到K次的时候，才将数据放入缓存。当需要淘汰数据时，LRU-K会淘汰第K次访问时间距当前时间最大的数据。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/41aee01a98aa03f4c3d75ef4c2c7749a.png" alt="img" style="zoom:200%;" /> 
+
+<ol>
+<li>数据第一次被访问，加入到访问历史列表；</li>
+<li>如果数据在访问历史列表里后没有达到K次访问，则按照一定规则（FIFO，LRU）淘汰；</li>
+<li>当访问历史队列中的数据访问次数达到K次后，将数据索引从历史队列删除，将数据移到缓存队列中，并缓存此数据，缓存队列重新按照时间排序；</li>
+<li>缓存数据队列中被再次访问后，重新排序；</li>
+<li>需要淘汰数据时，淘汰缓存队列中排在末尾的数据，即：淘汰“倒数第K次访问离现在最久”的数据。</li>
+</ol>
+<p>LRU-K具有LRU的优点，同时能够避免LRU的缺点，实际应用中LRU-2是综合各种因素后最优的选择，LRU-3或者更大的K值命中率会高，但适应性差，需要大量的数据访问才能将历史访问记录清除掉。</p>
+<h3 id="其他-Swap-策略"><a href="#其他-Swap-策略" class="headerlink" title="其他 Swap 策略"></a>其他 Swap 策略</h3><p><strong>页面置换策略</strong>：<u>which</u> page to <u>swap out</u>?</p>
+<p><strong>页面选择策略</strong>：when to <u>swap in</u> which page? </p>
+<ul>
+<li>OS决定何时将页面载入内存，大多数页面是按需载入(demand paging)</li>
+<li>有时会提前载入(prefetching)马上可能要被访问的页面，比如连续的代码页</li>
+</ul>
+<p><strong>写入磁盘策略</strong>：when and how to <u>swap out</u>? or not?</p>
+<ul>
+<li>不一定是内存满了才会开始交换，OS预留部分空闲空间，设置HW和LW，当可用页少于LW，就swap out，直到可用页数达到HW，有一个守护进程 <code>swapd</code> 专门做这件事情。</li>
+<li>交换本身是IO操作，可以通过聚集/分组的方式将多个等待写入写出的页合并操作，提高硬盘效率，执行单次大的写操作比许多小的写操作有效。</li>
+<li>数据一致性：脏页需要被换出（刷盘, sync）</li>
+</ul>
+<p><strong>颠簸（thrashing）</strong>: 内存被超额请求，os需要不断进行页面的置换，此时可能会考虑终止一些进程(linux oom killer会杀死内存密集型，一般这些都是低优先级的，也有一定的风险)</p>
+<h2 id="完整的虚拟内存系统"><a href="#完整的虚拟内存系统" class="headerlink" title="完整的虚拟内存系统"></a>完整的虚拟内存系统</h2><h3 id="VAX-VMS-虚拟内存系统"><a href="#VAX-VMS-虚拟内存系统" class="headerlink" title="VAX/VMS 虚拟内存系统"></a>VAX/VMS 虚拟内存系统</h3><h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><h5 id="应用进程共享内核空间"><a href="#应用进程共享内核空间" class="headerlink" title="应用进程共享内核空间"></a>应用进程共享内核空间</h5><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213214150106.png" alt="image-20241213214150106" style="zoom:150%;" />
+
+<ul>
+<li>地址空间的下半部分称为进程空间，前半段是代码和向下增长的堆（P0），后半段是向上增长的堆（P1），<strong>各自拥有一个页表</strong>，减少了内部碎片。</li>
+<li>地址空间的上半段称为系统空间S，只使用其中一半</li>
+</ul>
+<p>内核段包含在用户空间中，是所有的进程共享的，这样使得内核与用户程序之间数据交互更加方便，OS可以轻松地解析用户程序传入的指针。通过给系统空间设置保护位来确保内核的安全。</p>
+<h5 id="优化页表"><a href="#优化页表" class="headerlink" title="优化页表"></a>优化页表</h5><ul>
+<li>分出来的两个段，各自有一个页表[段页式管理]，减少了内部碎片 </li>
+<li>进程的虚拟地址空间也包含了内核段，因此可以把用户<strong>页表纳入受保护的内核虚拟内存</strong>中，当存储压力巨大时可以将页表换出到磁盘，有一定的访问性能开销。</li>
+</ul>
+<h5 id="空指针"><a href="#空指针" class="headerlink" title="空指针"></a>空指针</h5><p>NULL是一个宏，实际上就是0，虚拟地址0有效位始终是0，因此试图访问这个有效位会出现段错误异常，陷入OS终止进程</p>
+<h4 id="惰性优化（Lazy）"><a href="#惰性优化（Lazy）" class="headerlink" title="惰性优化（Lazy）"></a>惰性优化（Lazy）</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/whiteBear/p/16729327.html">延迟分配：提供内存利用率的三种机制 - 牛犁heart - 博客园</a> </p>
+<h5 id="写入时复制-copy-on-write"><a href="#写入时复制-copy-on-write" class="headerlink" title="写入时复制 copy-on-write"></a>写入时复制 copy-on-write</h5><p>如果要将一个页面从一个地址空间复制到另一个地址空间，会获取相同的指针，指向相同的资源。这个资源或许是内存中的数据，又或许是硬盘中的文件，直到某个应用真正需要<strong>修改某一页</strong>时，操作系统才会（惰性地）<strong>复制一份该页的专用副本</strong>给该应用，填充数据而其他所见的最初资源仍然保持不变。</p>
+<p>COW的优点：<strong>如果应用没有修改该资源，就不会产生副本，因此多个应用只是在读取操作时可以共享同一份资源，从而节省内存空间。</strong> <strong>fork 会复制应用 A 的很多关键数据，但不会复制应用 A 对应的物理内存页面，而是要监测这些物理内存的读写，只有这样才能让应用 A 和应用 B 正常运行</strong></p>
+<ul>
+<li>fork但未写入</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1059417-20220925215845353-1129676397.png" alt="image"></p>
+<ul>
+<li>fork后写入</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1059417-20220925221038426-1637796167.png" alt="image"></p>
+<p>fork()需要复制整个地址空间的内容，如果fork之后还调用了exec，这些地址空间内容又会被马上覆盖，做无用功，cow避免了大量不必要的复制操作，仍然保留正确的语义。</p>
+<h5 id="按需调页-demand-paging"><a href="#按需调页-demand-paging" class="headerlink" title="按需调页 demand paging"></a>按需调页 demand paging</h5><ul>
+<li><p><strong>按需调页</strong>是一种<strong>动态内存分配技术</strong>，更是一种优化技术，它把<strong>物理内存页面的分配推迟到不能再推迟为止</strong>。之所以能实现，是因为应用程序开始运行时，并不会访问虚拟内存空间中的全部内容。</p>
+</li>
+<li><p>由于<strong>程序的局部性原理</strong>，使得应用程序在执行的每个阶段，真正使用的内存页面只有一小部分，对于暂时不用的物理内存页，就可以分配由其他应用程序使用。因此，在不改变物理内存页面数量的情况下，请求调页能够提高系统的吞吐量。</p>
+</li>
+</ul>
+<p>当页添加到地址空间时，会在页表做一个标记（保留的操作系统字段），当进程真正访问到这个虚拟页时，操作系统才会真正寻找物理页并将其置零，映射到地址空间，这样就避免了申请了但是从来不访问 导致浪费的情况。</p>
+<h4 id="SWAP-策略"><a href="#SWAP-策略" class="headerlink" title="SWAP 策略"></a>SWAP 策略</h4><h5 id="替换策略：Second-Chance-FIFO"><a href="#替换策略：Second-Chance-FIFO" class="headerlink" title="替换策略：Second Chance FIFO"></a>替换策略：Second Chance FIFO</h5><p>利用的是软性的页错误</p>
+<ul>
+<li>用RSS(Resident Set Size)限制每个进程可以保存在内存中的最大页数，超过RSS就要“First out”，防止自私进程</li>
+<li>引入两个全局的页面表，一个记录空闲干净页，另一个记录脏页</li>
+<li>First Out 被换出的页面根据脏位添加到 干净页列表 或 脏页列表 的<strong>末尾</strong> </li>
+<li>另一个进程需要空闲页，会先去干净页列表中取出<strong>第一个</strong>空闲页</li>
+<li>如果换出页面的进程触发了page fault，则会从表中重新回收页，避免磁盘I/O </li>
+</ul>
+<h5 id="批量换出：page-clustering"><a href="#批量换出：page-clustering" class="headerlink" title="批量换出：page clustering"></a>批量换出：page clustering</h5><p>把大批量的页从上述的全局脏页列表中分组聚集到一起，一起写入到磁盘中，使IO次数减少，单次IO写入量更大，提高性能</p>
+<h3 id="Linux-虚拟内存系统"><a href="#Linux-虚拟内存系统" class="headerlink" title="Linux 虚拟内存系统"></a>Linux 虚拟内存系统</h3><p><strong>Linux 系统主要采用了分页管理，但是由于 Intel 处理器的发展史，Linux 系统无法避免分段管理</strong>。于是 Linux 就把所有段的基地址设为 <code>0</code>，也就意味着所有程序的地址空间都是线性地址空间（虚拟地址），相当于屏蔽了 CPU 逻辑地址的概念，所以段只被用于访问控制和内存保护。虚拟空间分布可分为<strong>用户态</strong>和<strong>内核态</strong>两部分</p>
+<h4 id="地址空间-1"><a href="#地址空间-1" class="headerlink" title="地址空间"></a>地址空间</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-50e72a482d4b10604708f5e6a6c76435_r.jpg" alt="img"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213232325106.png" alt="image-20241213232325106"></p>
+<ul>
+<li>0-3GB是用户空间，其中用户态的分布：代码段(.ELF)、全局变量（初始化的数据段）、BSS（未初始化的数据段）、堆内存（Heap）、映射区（mmap）、函数栈（Stack）、初始化参数（argument, environment）</li>
+<li>最高1GB为内核空间，存放内核的代码以及其他受保护的数据；像VAX/VMS一样，每个用户的进程空间内有着相同的内核。</li>
+<li>64位的地址空间：低128T为用户空间，高128T为内核空间，中间未定义</li>
+</ul>
+<h5 id="逻辑内核空间（kmalloc）"><a href="#逻辑内核空间（kmalloc）" class="headerlink" title="逻辑内核空间（kmalloc）"></a>逻辑内核空间（kmalloc）</h5><ul>
+<li><p>内核代码需要调用<code>kmalloc</code>申请，内核栈、页表等数据结构存储在这里</p>
+</li>
+<li><p>只能在物理内存中，不能被换出到磁盘</p>
+</li>
+<li><p><strong>严格的一对一直接映射</strong>：<code>0xC0000000</code> to <code>0x00000000</code>, <code>0xC0000FFF</code> to <code>0x00000FFF</code></p>
+<ul>
+<li><p>不需要进行复杂地址转换，直接将其当成物理地址即可，因此也不需要页表结构</p>
+</li>
+<li><p>连续的虚拟地址在物理上也一定是连续的</p>
+</li>
+<li><p>适合DMA</p>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>This makes memory allocated in this part of the kernel’s address space suitable for operations which need contiguous physical memory to work correctly, such as I/O transfers to and from devices via <strong>direct memory access (DMA)</strong></p>
+</blockquote>
+<h5 id="虚拟内核空间（vmalloc）"><a href="#虚拟内核空间（vmalloc）" class="headerlink" title="虚拟内核空间（vmalloc）"></a>虚拟内核空间（vmalloc）</h5><ul>
+<li>内核代码需要调用<code>vmalloc</code>申请，returns 指向连续虚拟内存区域的指针</li>
+<li>不是直接映射，因此连续的虚拟地址在物理上并不一定连续</li>
+<li>容易分配(easy to allocate), 因此适合大块缓冲区，因为连续的大块物理内存显然不容易找到</li>
+</ul>
+<p>在32位Linux中，虚拟内核空间可以让内核空间大于1GB</p>
+<blockquote>
+<p>Kernel virtual addresses, and their disconnection from <strong>a strict one-to-one mapping to physical memory</strong>, make this possible. However, with the move to 64-bit Linux, the need is less urgent, because the kernel is not confined to only the last 1 GB of the virtual address space. （64位就没那么重要了）</p>
+</blockquote>
+<h4 id="内存分配"><a href="#内存分配" class="headerlink" title="内存分配"></a>内存分配</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/overview.png" style="zoom:150%;" />
+
+<h5 id="虚拟内存管理"><a href="#虚拟内存管理" class="headerlink" title="虚拟内存管理"></a>虚拟内存管理</h5><h6 id="malloc-1"><a href="#malloc-1" class="headerlink" title="malloc"></a>malloc</h6><ul>
+<li><p>在不同OS中，malloc的实现也不同，有 dlmalloc, jemalloc, tcmalloc等实现</p>
+</li>
+<li><p>Linux中，用户可以显式调用mmap或者malloc分配，malloc底层基于mmap（大于128K）或brk（小于128K）</p>
+</li>
+<li><p>这两种方式分配的都是虚拟内存，没有分配物理内存。在第一次访问已分配的虚拟地址空间的时候，发生缺页中断，操作系统负责分配物理内存，然后建立虚拟内存和物理内存之间的映射关系。</p>
+</li>
+<li><p>大部分不建议使用brk，brk和sbrk分配的堆空间类似于缓冲池，调用它相当于增大缓冲池。用malloc可以重用前面空闲的内存空间，每次malloc从缓冲池获得内存，如果缓冲池不够了，malloc才会调用brk或sbrk扩充缓冲池，直到达到缓冲池大小的上限，free则将应用程序使用的内存空间归还给缓冲池。而free mmap会直接释放，将空间给操作系统，无法复用，一定会触发缺页中断。</p>
+</li>
+</ul>
+<h6 id="brk"><a href="#brk" class="headerlink" title="brk"></a>brk</h6><p>brk 的实现方式是移动Program break，将数据段的最高地址指针 _edata(end of data) 往高地址推（分配的内存小于 128KB），sbrk是通过增量来控制的，原理类似。</p>
+<ul>
+<li><p>同一个程序bss的结束地址是固定的，而heap的起始地址在每次运行的时候都会改变 <strong>ASLR</strong>。</p>
+</li>
+<li><p>当<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Address_space_layout_randomization">ASLR</a>（Address Space Layout Randomization）关闭时，<code>start_brk</code>和brk同时指向<code>data/bss</code>段的结束位置（<a target="_blank" rel="noopener" href="http://lxr.free-electrons.com/source/include/linux/mm_types.h?v=3.8#L364">end_data</a>）。</p>
+</li>
+<li><p>当ASLR打开时，<code>start_brk</code>和brk同时指向<code>data/bss</code>段的结束位置（<code>end_data</code>）再加上一个随机的brk偏移。</p>
+</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/20032_0.png" alt="img" style="zoom:150%;" />
+
+<p>brk的问题：</p>
+<p>使用brk连续申请了10K, 20K, 30K内存，前两部分释放了，但是不会归还给操作系统，如果再次申请内存小于30K，就可以复用空闲区域，但是如果申请40K，就会出现内部碎片问题，只能继续新申请40K内存，导致大量内存碎片问题</p>
+<h6 id="mmap"><a href="#mmap" class="headerlink" title="mmap"></a>mmap</h6><p>在用户进程空间内的内存映射段找一块空闲的虚拟内存（分配的内存大于 128k））—匿名空间，具体使用可见: <em>Memory-mapped I/O</em> </p>
+<h5 id="物理内存管理"><a href="#物理内存管理" class="headerlink" title="物理内存管理"></a>物理内存管理</h5><h6 id="伙伴系统（Buddy-system）"><a href="#伙伴系统（Buddy-system）" class="headerlink" title="伙伴系统（Buddy system）"></a>伙伴系统（Buddy system）</h6><p>Buddy分配系统在普通内存池的基础上，允许两个<strong>大小相同且相邻</strong>的内存块合并，合并之后的内存块的「尺寸」增大，因而将被移动到另一个内存池的free list上。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210230312259.png" alt="image-20241210230312259"></p>
+<p>总空间为2^N^，按照递归二分法分配内存，直到块大小刚好满足要求（显然这会导致内部碎片）当一个块释放的时候，allocator会检验与他相同大小的相邻块（buddy）是否空闲，若是则将二者合并，直到合并全部空闲内存。</p>
+<p>优点：buddy的地址很容易确认，既然是相邻，说明首部地址只差一位，这个位决定了他们在整个数中的层次</p>
+<p>在 Linux 系统中，连续内存管理采用了 <strong>伙伴系统（Buddy System）算法</strong> 来实现，对于内部碎片的问题，采用了SLAB进行解决。</p>
+<p>它把所有的空闲页放到11个链表中，每个链表分别管理大小为1，2，4，8，16，32，64，128，256，512，1024个页的内存块。当系统需要分配内存时，就可以从buddy系统中获取。当分配内存时，会优先从需要分配的内存块链表上查找空闲内存块，当发现对应大小的内存块都已经被使用后，那么会从更大一级的内存块上分配一块内存，并且分成一半给我们使用，剩余的一半释放到对应大小的内存块链表上。</p>
+<p>想要分配一个8KB大小的内存，但是发现对应大小的内存已经没有了，那么伙伴系统会从16KB的链表中查找一个空闲内存块，分成两个8KB大小，把其中的一个8KB大小返回给申请者使用，剩下的8KB放到8KB对应的内存块链表中进行管理。更坏的一种情况是，系统发现16KB大小的连续内存页已经没有了，那么以此会向更高的32KB链表中查找，如果找到了空闲内存块，那么就把32KB分成一个16KB和两个8KB，16KB的内存块放到16KB的链表进行管理，两个8KB的内存块一个返回给申请者，另一个放到8KB大小的链表进行管理。</p>
+<p>当释放内存时，会扫描对应大小的内存块链表，查看是否存在地址能够连续在一起的内存块，如果发现有，那么就合并两个内存块放置到更大一级的内存块链表上，以此类推。比如我们释放8KB大小的内存，那么会从对应的链表扫描是否有能够合并的内存块，如果有另一个8KB大小的内存和我们使用的内存地址连续，那么就合并它们组成一个16KB大小的内存块，然后接着扫描16KB大小的内存块链表，继续查找合并的可能，以此类推下去。</p>
+<p>操作系统的内存管理通常是基于<strong>页（page）</strong>的概念，即操作系统将物理内存分为固定大小的页。页是内存管理的基本单位，这样可以统一管理和访问内存。页的大小通常是2的幂次方，例如4KB、8KB或16KB等。</p>
+<ul>
+<li><strong>操作系统需要高效地管理内存</strong>，而将内存管理的单位限定为页大小可以简化这一过程。每一页都有一个对应的页表项，操作系统只需要管理页而不是单个字节或更小的单位。这减少了管理开销。</li>
+</ul>
+<h6 id="分离空闲列表（SLAB-segregated-free-lists）"><a href="#分离空闲列表（SLAB-segregated-free-lists）" class="headerlink" title="分离空闲列表（SLAB, segregated free lists）"></a>分离空闲列表（SLAB, segregated free lists）</h6><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/slab-org.png" alt="slab org" style="zoom:150%;" />
+
+
+
+<p>为了方便管理，Linux中的buddy allocator以物理页框为最小粒度，而现实的应用中，操作系统作为一个一直在运行的程序，多是以<strong>内核objects</strong>（比如描述文件的”struct inode”）的大小来申请和释放内存的，这些内核objects的大小通常从几十字节到几百字节不等，远远小于一个page的大小。如果程序固定分配一个或者几个大小的的内存，那就专门给他分配一块内存用于分配这些固定大小空间，减少了大小上的差异，碎片自然也就少了</p>
+<p>在内核启动时，为诸如锁、文件inode之类频繁请求的内核object分配 <strong>Object cache</strong>，他们的对象缓存分离了特定大小的空闲列表，获得了性能上的提升，当cache将要耗尽时从通用的内存分配程序申请slab（总量是page size和object size的最小公倍数）例如，2.5KB objectsize, 4KB pagesize 就去申请5个页, 专门用来放这种object,一个页能放5个</p>
+<p>当cache中内核object的引用计数变为0，通用的内存分配程序会从专用的分配器中回收这些资源。同时还使空闲对象保持在预初始化的状态，避免频繁销毁、初始化的开销。</p>
+<p>Linux实现</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/understand-html037.png" alt="img" style="zoom:150%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-90fe0938cf0c8ab8836257ed587654d1_1440w.jpg" alt="img" style="zoom:150%;" />
+
+<p>每个<code>kmem_cache</code>都是链接在一起形成一个全局的双向链表，系统可以从Cache_chain开始扫描每个<code>kmem_cache</code>（相当于上面说的内存池, fixed size）</p>
+<p><code>slab</code>是内存池从系统申请内存的最小单位，在实现上一个<code>slab</code>有一个或多个连续的物理页组成（通常只有一页）单个<code>slab</code>可以在<code>slab</code>链表之间移动，例如如果一个<code>slabs_partial</code>中的slab被分配了对象后变满了，就要从<code>slabs_partial</code>中被删除，同时插入到<code>slabs_full</code>中去。</p>
+<h4 id="页表结构"><a href="#页表结构" class="headerlink" title="页表结构"></a>页表结构</h4><p>虚拟地址：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241214003409861.png" alt="image-20241214003409861"></p>
+<p>4KB的页大小对应12位offset，共四级页表，每级索引为9位，一个表条目占用4B空间，一张表正好占满一页</p>
+<h4 id="更大的页大小（huge-pages）"><a href="#更大的页大小（huge-pages）" class="headerlink" title="更大的页大小（huge pages）"></a>更大的页大小（huge pages）</h4><blockquote>
+<p>Specifically, recent designs support 2-MB and even 1-GB pages in hardware. Thus, over time, Linux has evolved to allow applications to utilize these <strong>huge pages</strong> (as they are called in the world of Linux).</p>
+</blockquote>
+<h5 id="提升-TLB-命中率"><a href="#提升-TLB-命中率" class="headerlink" title="提升 TLB 命中率"></a>提升 TLB 命中率</h5><p>一方面是减少了页表项数，更重要的是<strong>提升了TLB的命中率（hit rate）</strong>：</p>
+<ul>
+<li><strong>TLB的条目数(slots)是固定的，因为空间局部性，同一页放更多数据，将更多的物理内存空间纳入到TLB中</strong></li>
+<li>换个角度，如果发生TLBmiss，因为页表项数的减少，遍历速度就会加快</li>
+<li>与此同时，某些情况下也可以加快分配内存</li>
+</ul>
+<h5 id="如何申请"><a href="#如何申请" class="headerlink" title="如何申请"></a>如何申请</h5><p>一些对性能要求严格的应用如大型数据库应该使用更大的页大小，用来提高性能，必须通过<code>mmap</code>或者<code>shmget</code>进行显式申请，因此其他正常使用4KB页大小的程序不受影响。</p>
+<p>**透明大页(transparent huge pages)**：不需要应用程序修改源代码，OS 会自动根据情况决定是否分配大页。</p>
+<h5 id="缺陷-1"><a href="#缺陷-1" class="headerlink" title="缺陷"></a>缺陷</h5><blockquote>
+<p>Huge pages are not without their costs. The biggest potential cost is <strong>internal fragmentation</strong>, i.e., a page that is large but sparsely used. This form of waste can fill memory with large but little used pages. <strong>Swapping</strong>, if enabled, also does not work well with huge pages, sometimes greatly amplifying the amount of I/O a system does.</p>
+</blockquote>
+<ol>
+<li><strong>内部碎片</strong>：由于各种内存操作基本都要求按照page对齐，比如一个可执行文件映射到进程地址空间，根据文件大小的不同，平均算下来会浪费掉半个page size的物理内存，使用large page的话这个消耗就显得比较大了。</li>
+<li><strong>需要连续大块的物理内存</strong>：系统运行一段时间后，会很难再也大块的连续物理内存，这时分配large page将会变的很困难，所以通常需要在系统初始化的时候就划分出一段物理内存给large page用（类似于DMA的内存分配），这样就减少了一些灵活性。</li>
+<li><strong>swap开销大</strong>：动态large page（THP）在换出到外部的flash/disk和从flash/disk换入物理内存的过程会比normal size的page带来更大的开销（可参考<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/117239320">这篇文章</a>）。</li>
+</ol>
+<h4 id="Page-Cache-Disk-Cache"><a href="#Page-Cache-Disk-Cache" class="headerlink" title="Page Cache/Disk Cache"></a>Page Cache/Disk Cache</h4><p><a target="_blank" rel="noopener" href="https://www.mazhen.tech/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-page-cache/">深入理解 Page Cache</a></p>
+<p><strong>Page Cache</strong> 是由内核管理的内存，位于 <a target="_blank" rel="noopener" href="https://www.kernel.org/doc/html/latest/filesystems/vfs.html">VFS(Virtual File System)</a> 层和具体文件系统层（例如ext4，ext3）之间。应用进程使用 <code>read</code>/<code>write</code> 等文件操作，通过系统调用进入到 <strong>VFS</strong> 层，根据 <strong>O_DIRECT</strong> 标志，可以使用 <strong>Page Cache</strong> 作为文件内容的缓存，也可以跳过 <strong>Page Cache</strong> 不使用内核提供的缓存功能</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/vzb3z8uo.png" alt="vzb3z8uo"></p>
+<blockquote>
+<p>aggressive caching subsystem to <strong>keep popular data items from persistent storage</strong> in memory</p>
+</blockquote>
+<ul>
+<li><p><strong>Buffered I/O</strong>: IO缓存 (<code>read()</code>, <code>write()</code>) [<code>dentry, inode cache</code>]</p>
+</li>
+<li><p><strong>Memory-mapped I/O</strong>: 内存映射 mmap()</p>
+<ul>
+<li><strong>File-backed 文件映射</strong>: 其可以将文件内容映射到用户空间，虚拟内存和磁盘文件中间通过 Page Cache 进行数据中转，因此可以像普通虚拟内存一样访问文件，这些虚拟内存<strong>在磁盘中有对应的文件</strong>，读取这部分内容就像是文件I/O一样</li>
+<li><strong>Anonymous Mapping 匿名映射</strong>: mmap以<code>MAP_ANONYMOUS</code>方式申请内存，这些虚拟内存在磁盘中<strong>没有确切的文件，持久化到swap space</strong>，全部初始化为0，</li>
+</ul>
+</li>
+<li><p>通过<code>page_cache_hashtable</code>搜索，加快访问速度。</p>
+</li>
+</ul>
+<h5 id="Memory-mapped-I-O"><a href="#Memory-mapped-I-O" class="headerlink" title="Memory-mapped I/O"></a>Memory-mapped I/O</h5><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/longerzone/article/details/12948925#">Linux 下的两个特殊的文件 – /dev/null 和 /dev/zero 简介及对比_linux空洞文件null-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yangle4695/article/details/52139585">Linux 内存映射函数 mmap（）函数详解_mmap fb-CSDN博客</a>  </p>
+<ul>
+<li><code>void* mmap(void* start, size_t length, int prot, int flags, int fd, off_t offset);</code> </li>
+<li><code>int munmap(void* start, size_t length);</code> <ul>
+<li><code>prot:</code> 保护位 <code>PROT_EXEC</code>, <code>PROT_READ</code> , <code>PROT_WRITE</code> , <code>PROT_NONE</code></li>
+<li><code>flags:</code> <code>MAP_SHARED</code>共享模式 <code>MAP_PRIVATE</code>写时复制，不共享 <code>MAP_ANONYMOUS</code>匿名模式fd无效</li>
+<li><code>fd:</code> 文件描述符，如果是匿名模式可以置为<code>-1</code>，或者打开<code>/dev/zero</code>获取其fd</li>
+<li><code>offset:</code>文件映射的偏移量，通常设置为0，代表从文件最前方开始对应，offset必须是分页大小的整数倍。</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li><code>fopen()</code> 系统调用打开文件，并返回描述符 <code>fd</code>。</li>
+<li><code>mmap(start,...)</code>建立内存映射并返回映射首地址指针 <code>start</code>参数start可以是空指针，系统自动分配地址</li>
+<li>通过对<code>start</code> 对文件进行各种操作，首次访问start指向的内容会触发页错误(demand paging)</li>
+<li><code>munmap (start,...)</code> 关闭内存映射</li>
+<li><code>fclose(fd)</code> 系统调用关闭文件 <code>fd</code> </li>
+</ol>
+<img src="https://miro.medium.com/v2/resize:fit:1313/0*DgRx8tGpS1T0St_b.png" alt="img" style="zoom:150%;" />
+
+<p>通过对一个打开的FD调用<code>mmap()</code>，进程能够获得一个指向内存映射区的指针，内存映射区是一个独立区域，因此可以独立释放。通过这个指针就能够对文件进行操作。这里采用了demand paging——<strong>懒加载</strong>的策略，直到第一次访问触发页错误，才会真正把文件内容分配到物理页中。</p>
+<p>数据一致性：</p>
+<ul>
+<li><strong>files</strong>：程序通过 <code>mmap</code> 映射文件时，如果页面未修改（脏位为 <code>0</code>），无需将内存中的数据写回磁盘</li>
+<li><strong>Swap space</strong>：当内存不足时，未被修改的页面无需写回磁盘的 Swap space，节省时间和空间</li>
+</ul>
+<p>即使不显式调用<code>mmap</code>也会使用这个共享的文件映射区域，比如从可执行文件中加载的代码、进程之间共享的库代码</p>
+<p>使用<code>pmap</code>分析<code>tcsh</code>进程的虚拟内存映射情况如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Virtual Address  	Size  	Protection  Source</span><br><span class="line">0000000000400000 	372K  	r-x--       tcsh</span><br><span class="line">00000000019d5000 	1780K 	rw---       [anon ]</span><br><span class="line">00007f4e7cf06000 	1792K 	r-x--       libc-2.23.so</span><br><span class="line">00007f4e7d2d0000	36K   	r-x--       libcrypt-2.23.so</span><br><span class="line">00007f4e7d508000	148K  	r-x--       libtinfo.so.5.9</span><br><span class="line">00007f4e7d731000 	152K  	r-x--       ld-2.23.so</span><br><span class="line">00007f4e7d932000 	16K   	rw---       [stack ]</span><br></pre></td></tr></table></figure>
+
+<p>除了<code>tcsh</code>自己的代码，<code>libc, libcrypt, libtinfo</code> 这些共享库代码也被加载到tcsh的虚拟地址空间中，连接器<code>ld</code>的可执行代码也在其中。[anon]表示自己的heap堆空间，[stack]表示自己的stack栈空间</p>
+<p>和 <strong>shmem</strong> 的区别：</p>
+<p>System V 共享内存是持久的：除非被进程显式删除，否则它会保留在内存中并保持可用，直到系统关闭。 mmap 内存在应用程序的执行之间不是持久的（除非它由文件支持，<code>MAP_SHARED</code>）</p>
+<h5 id="Buffered-I-O"><a href="#Buffered-I-O" class="headerlink" title="Buffered I/O"></a>Buffered I/O</h5><p><strong>Buffered I/O</strong> 与 <strong>内存映射文件</strong> 的区别：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/202209241611674.png" alt="d"></p>
+<h6 id="读取机制"><a href="#读取机制" class="headerlink" title="读取机制"></a>读取机制</h6><ol>
+<li><p><code>int fd = open(file_path)</code></p>
+<ul>
+<li>fd是内核对打开的文件的编号，通过fd就可以操作文件</li>
+</ul>
+</li>
+<li><p><code>int c = read(fd, buf, 512)</code>  </p>
+<ul>
+<li>由内核负责将 fd 翻译成 inode+offset</li>
+<li>读取inode，如果page cache没有就从磁盘读，然后写入inode到Page cache中</li>
+<li>读取对应偏移的block，如果page cache没有就从磁盘读，然后写入block到Page cache中</li>
+<li>从内存中的 cached block 复制 512 B 到 buf 中</li>
+</ul>
+</li>
+</ol>
+<h6 id="写入机制"><a href="#写入机制" class="headerlink" title="写入机制"></a>写入机制</h6><p><strong>Write-back (default)</strong> </p>
+<p>write back 写回 只对缓存进行操作 read-allocate 先把数据读取到Cache中，再从Cache中读数据</p>
+<blockquote>
+<p>By default, kernel marks written pages dirty and flushes after a delay:</p>
+</blockquote>
+<ol>
+<li><p><code>int fd = open(&quot;myfile&quot;);</code> </p>
+</li>
+<li><p><code>write(fd, &quot;hello world&quot;, 11)</code></p>
+<ul>
+<li>内核将hello world字符串写入到 cached block 对应的 page cache 页中</li>
+<li>内核将被修改的页加入脏页列表中</li>
+<li>按照一定的策略进行刷盘</li>
+</ul>
+</li>
+</ol>
+<p>在系统发生宕机的情况下无法确保数据已经落盘，因此存在数据丢失的问题。不过，在程序挂了，例如被 kill -9，Page Cache 中的数据操作系统还是会确保落盘；</p>
+<p><strong>Write-through</strong></p>
+<p>直写，在更改page cache的<strong>同时</strong>刷盘(synchoronized)</p>
+<blockquote>
+<p><strong>O_SYNC</strong> flag converts file descriptor to write-through</p>
+</blockquote>
+<ul>
+<li><code>int fd = open(&quot;myfile&quot;, O_SYNC |...); </code></li>
+<li><code>write(fd, &quot;hello world&quot;, 11);</code> <ul>
+<li>This affects all accesses to the same disk blocks</li>
+</ul>
+</li>
+</ul>
+<p>以牺牲系统 I/O 吞吐量作为代价，向上层应用确保一旦写入，数据就已经落盘，不会丢失</p>
+<h5 id="脏页刷盘"><a href="#脏页刷盘" class="headerlink" title="脏页刷盘"></a>脏页刷盘</h5><p>Page cache 追踪脏页，保存一个脏文件inode链表，脏页需要写入到磁盘的文件或者swap space中，确保内存数据的持久化，可以由叫做<code>pdflush</code>的后台线程，唤醒方式有如下</p>
+<ul>
+<li><p><strong>定期</strong>唤起<code>pdflush</code>，确保不会有脏页驻留时间过长</p>
+</li>
+<li><p>在脏页比例达到<strong>阈值</strong>时，按照一定速率刷盘（1024）</p>
+</li>
+<li><p>内存可用空间低到一定<strong>阈值</strong>，刷脏页释放内存</p>
+</li>
+<li><p>响应特定的系统调用</p>
+<ul>
+<li><p><code>fsync(int fd)</code> 将fd的脏数据和所有脏元数据刷盘</p>
+</li>
+<li><p><code>fdatasync(int fd)</code> 将fd的脏数据和必要的脏元数据刷盘</p>
+</li>
+<li><p><code>sync()</code> 将全部脏页刷盘</p>
+</li>
+<li><p><code>O_SYNC</code> 文件打开方式要求同步写操作</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>应用</strong></p>
+<ul>
+<li><strong>文件映射</strong>：程序通过 <code>mmap</code> 映射文件时，如果页面未修改（脏位为 <code>0</code>），无需将内存中的数据写回磁盘。</li>
+<li><strong>交换区</strong>：当内存不足时，未被修改的页面无需写回交换区，节省时间和空间。</li>
+</ul>
+<h5 id="Direct-I-O"><a href="#Direct-I-O" class="headerlink" title="Direct I/O"></a>Direct I/O</h5><p>Buffered I/O要在磁盘和VFS之间加一层Page cache，对于写入操作，需要在cache中开辟新页，然后将其标记为脏。</p>
+<p>OS cache提供的这些预读取、顺序读取等特性，这些特性并不适用于所有的场景，比如数据库，数据库通常都有自己的一套缓存机制，就像mysql的innodb存储引擎，它有自己的缓存页，有自己的落盘机制，如果不使用directIO，这明显就会存在双重的cache，一个是OS设计的，一个是DB设计的，而通常，DB需要更加符合自己使用的cache机制，而非OS提供的通用化的缓存机制。直接写入不会将要写入的数据先从磁盘读到cache，而是直接将要写的数据写入磁盘。</p>
+<p>O_DIRECT 下的 I/O 操作是直达磁盘的，用户空间通过 DMA 的方式与磁盘以及网卡进行数据拷贝。</p>
+<h4 id="页面置换：2Q"><a href="#页面置换：2Q" class="headerlink" title="页面置换：2Q"></a>页面置换：2Q</h4><p>关键词：<strong>预读失效 + 缓存污染</strong> </p>
+<ul>
+<li><strong>预读失效：提前加载到内存，但是并没有访问</strong></li>
+<li><strong>缓存污染：加载到内存，但是只访问一次</strong></li>
+</ul>
+<p><strong>LRU</strong>：如果打开一个非常大的文件，LRU会把其他在内存中的文件都淘汰掉，但是写入这个文件到内存中并没有什么用，就和循环访问一样，文件之前的数据在被淘汰掉之前再也被访问。</p>
+<p><strong>Linux的2Q(Two queue)策略</strong></p>
+<p>该算法类似于LRU-2，不同点在于2Q将LRU-2算法中的访问历史队列（注意这不是缓存数据的）改为一个FIFO缓存队列，即：2Q算法有两个缓存队列，一个是FIFO队列，一个是LRU队列。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/73bc553b295b04f7a2bc634b6bd10ab9.png" alt="img" style="zoom:200%;" />
+
+<p>Linux对于2Q的实现，只淘汰FIFO队列里面的数据：</p>
+<p>Page cache（Buffered I/O或mmap）维护两个队列:</p>
+<p><code>inactive list(FIFO), active list(LRU)</code> </p>
+<ul>
+<li>第一次被访问，将页面加入<code>inactive list</code></li>
+<li>之后的访问，将页面升至<code>active list</code> </li>
+<li>需要进行替换时，<code>inactive list</code>进行FIFO</li>
+<li><code>active list</code>对定期 LRU 到<code>inactive list</code>，使<code>active list</code>占 Page cache 的2/3左右。</li>
+<li>循环访问大文件时，大文件的页面不会跑到<code>active list</code>中，因此原来<code>active list</code>的页面就不会被迫换出</li>
+</ul>
+<h4 id="其他策略-1"><a href="#其他策略-1" class="headerlink" title="其他策略"></a>其他策略</h4><ul>
+<li><code>fork()</code> 采用COW写时复制的策略，减少无效的复制</li>
+<li><code>swapd</code> 可以监控内存状况，内存占用过高（watermark）换出页面，释放到安全水平（异步）</li>
+<li><strong>swappiness</strong>：修改换出页面的积极性，0为不主动换出</li>
+<li><strong>关闭swap</strong>：服务器内存本身足够大，不需要换出操作，因为会降低效率</li>
+<li><strong>内存颠簸（thrashing）</strong> 虚拟内存申请，但是物理内存几乎占满，导致同时出现大量缺页错误，此时linux oom killer会杀死内存密集型，一般这些都是低优先级的，也有一定的风险)</li>
+</ul>
+<h3 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h3><p>现代操作系统最大的一个特点就是对安全的注重，仅仅使用内核</p>
+<h4 id="针对用户程序：缓冲区溢出攻击"><a href="#针对用户程序：缓冲区溢出攻击" class="headerlink" title="针对用户程序：缓冲区溢出攻击"></a>针对用户程序：缓冲区溢出攻击</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">some_function</span><span class="params">(<span class="type">char</span> *input)</span> &#123;</span><br><span class="line">    <span class="type">char</span> dest_buffer[<span class="number">100</span>];</span><br><span class="line">    <span class="built_in">strcpy</span>(dest_buffer, input); <span class="comment">// oops, unbounded copy!</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果输入超过缓冲区，input就会开始覆盖其他数据，攻击者可以利用缓冲区溢出注入他们的恶意代码，在页表中引入<code>NX</code>bit能够在一定程度上解决问题，但是黑客可以更改函数的执行栈，将函数的返回值指向恶意代码的地址。</p>
+<p>return-to-libc attack:==ROP==</p>
+<blockquote>
+<p>Thus, an attacker can overwrite the stack such that the <strong>return address in the currently executing function</strong> points to <strong>a desired malicious instruction (or series of instructions)</strong>, followed by a return instruction.</p>
+<p>By stringing together a large number of gadgets (i.e., ensuring each return jumps to the next gadget), the attacker can execute arbitrary code. Amazing!</p>
+</blockquote>
+<p>address space layout randomization:==ASLR==</p>
+<blockquote>
+<p>Instead of placing code, stack, and the heap <strong>at fixed locations</strong> within the virtual address space, the OS <strong>randomizes their placement</strong>, thus making it quite challenging to craft the intricate code sequence required to implement this class of attacks.</p>
+</blockquote>
+<p>ASLR可以确保客户的程序只崩溃不执行恶意代码，ASLR将brk、mmap、stack的开始段加一些随机数，</p>
+<p>由此衍生出了KASLR，内核的地址空间也可以随机生成</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//random.c</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="built_in">stack</span> = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%p\n&quot;</span>, &amp;<span class="built_in">stack</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">    prompt&gt; ./random</span></span><br><span class="line"><span class="comment">    0x7ffd3e55d2b4</span></span><br><span class="line"><span class="comment">    prompt&gt; ./random</span></span><br><span class="line"><span class="comment">    0x7ffe1033b8f4</span></span><br><span class="line"><span class="comment">    prompt&gt; ./random</span></span><br><span class="line"><span class="comment">    0x7ffe45522e94</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="针对内核程序：Meltdown-amp-Spectre"><a href="#针对内核程序：Meltdown-amp-Spectre" class="headerlink" title="针对内核程序：Meltdown &amp; Spectre"></a>针对内核程序：Meltdown &amp; Spectre</h4><p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/23973128">CPU 的分支預測器是怎樣工作的？ - 知乎</a> </p>
+<p>利用了 CPU 预测执行的漏洞，分支预测将串行的程序变成了并行的，而前后数据依赖，不可避免地在硬件上留下了踪迹，造成了并发安全问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov rax byte[x]  ; 非法操作 将x的数据拷贝到rax</span><br><span class="line">shl rax 0xC  ; rax * 4096, 页对齐</span><br><span class="line">mov rbx qword [rbx + rax]  ; [rbx] 为用户空间的一个array，合法操作</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/32757727">解读 Meltdown &amp; Spectre CPU 漏洞 - 知乎</a> </p>
+<p>操作系统会事先标注好内核的内存地址范围，如果 x 在内核的这个地址范围内，并且 CPU 不是以内核模式运行的话，那么该指令会被 CPU 标注为非法，引起异常，异常处理程序会将 rax 清空为0，并且终结此程序，这样后续指令再来读 rax 的时候就只能读到0了。</p>
+<p>理论上讲，在执行第二条指令之前，rax应该已经被清零了。然而在实际的 CPU 运行中，为了达到更好的性能，第二条和第三条指令在异常处理生效之前都会被<strong>部分执行</strong>，直到异常处理时 rax 和 rbx 被清零。</p>
+<p>但问题的关键就在第三行指令：<strong>如果地址 rbx + rax 不在cache中的话，CPU 会自动将这一地址调入cache中，以便之后访问时获得更好的性能，然而异常处理并不会将这个cache flush掉。而这条 cache 的地址是和 rax 直接相关的，这样就相当于在 CPU 硬件中留下了和rax 相关的信息。</strong>  </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241214175132236.png" alt="image-20241214175132236"></p>
+<p>那么如何还原 rbx + rax 这个被cache的地址呢？这时候需要用到的原理就是利用cache的访问延时，即已经被cache的数据访问时间短，没有被cache的数据访问时间长。由于[rbx]这个array是在用户地址空间内的，可以自由操作，首先我们要确保整个 [rbx]这个array 都是没有被cache的，然后执行上述攻击代码，这时候 rbx + rax 这个地址就已经被cache了，接下来遍历整个[rbx] array，来测量访问时间，访问时间最短的那个 page 就可以确定为 rbx + rax。</p>
+<p>对于个人终端用户，利用Meltdown与Spectre漏洞，低权限用户可以访问内核的内容，泄露本地操作系统底层的信息、秘钥信息等，通过获取泄露的信息，可以绕过内核的隔离防护;如果配合其它漏洞，可以利用该漏洞泄露内核模块地址绕过KASLR等防护机制实现其他类型的攻击进行提权。另外，利用浏览器JIT特性预测执行特殊的JIT代码，从而读取整个浏览器内存中的数据，泄露用户帐号，密码，邮箱, cookie等隐私信息。</p>
+<p>因此，增强内核保护的一种途径是从每个用户进程中删除尽可能多的内核地址空间，并为大多数内核数据提供单独的内核页表（称为内核页表隔离，或 KPTI）[G+17]。因此，不是将内核的代码和数据结构映射到每个进程中，而是只保留最低限度的代码和数据结构；当切换到内核时，现在需要切换到内核页表。这样做可以提高安全性并避免一些攻击媒介，但代价是：性能。切换页表的成本很高。</p>
+<h2 id="内存虚拟化总结"><a href="#内存虚拟化总结" class="headerlink" title="内存虚拟化总结"></a>内存虚拟化总结</h2><ul>
+<li><p>虚拟地址的作用</p>
+</li>
+<li><p>虚拟地址的翻译（重定位）</p>
+<ul>
+<li>段式 base+bound, bound varies from each other</li>
+<li>页式 fixed bound</li>
+<li>段页式 </li>
+<li>多级页表 fill one page with one table, hi-level table points to low-level table</li>
+<li>TLB：翻译缓存</li>
+</ul>
+</li>
+<li><p>Swap：将物理内存看作虚拟内存的缓存</p>
+<ul>
+<li>机制：Page Fault &amp; Disk I/O </li>
+<li>策略：<ul>
+<li>是否需要SWAP？物理内存充足就没必要开启</li>
+<li>具体换<strong>出</strong>哪一页？LRU, FIFO, Random, Second Chance, LRU-K, 2Q, Clock</li>
+<li>何时换<strong>出</strong>？(被动watermark、主动swappiness&gt;0)</li>
+<li>一次 I/O 换<strong>出</strong>多少页？(clustering)</li>
+<li>何时换<strong>入</strong>？(lazy aka. demand paging)</li>
+<li>一次 I/O 只换<strong>入</strong>一页<strong>吗</strong>？(prefetching)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>内存分配:</p>
+<ul>
+<li>机制：空闲空间链表节点的分割与合并</li>
+<li>物理：Buddy, SLAB</li>
+<li>虚拟：mmap malloc brk</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%88%86%E6%AE%B5/" rel="tag"># 分段</a>
+              <a href="/tags/%E5%88%86%E9%A1%B5/" rel="tag"># 分页</a>
+              <a href="/tags/%E8%BF%9B%E7%A8%8B/" rel="tag"># 进程</a>
+              <a href="/tags/cpu%E8%B0%83%E5%BA%A6/" rel="tag"># cpu调度</a>
+              <a href="/tags/SWAP/" rel="tag"># SWAP</a>
+              <a href="/tags/mmap/" rel="tag"># mmap</a>
+              <a href="/tags/SLAB-%E4%BC%99%E4%BC%B4%E7%B3%BB%E7%BB%9F/" rel="tag"># SLAB/伙伴系统</a>
+              <a href="/tags/page-cache/" rel="tag"># page-cache</a>
+              <a href="/tags/copy-on-write/" rel="tag"># copy-on-write</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/14/408-%E8%AE%A1%E7%BD%91-%E5%BA%94%E7%94%A8%E5%B1%82/" rel="prev" title="应用层">
+                  <i class="fa fa-angle-left"></i> 应用层
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/20/408-OS-%E8%99%9A%E6%8B%9F%E6%9C%BA/" rel="next" title="虚拟机">
+                  虚拟机 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">碎梦</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/scatteredream" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

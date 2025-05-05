@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Arvo:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="22408转自：考研公共部分科目分支分布以及计算机408分值分布-CSDN博客  前言现在考研的竞争压力越来越大，这里，笔者也把考研中计算机的，408试卷分值分布做一个总结，方便以后考研的时候使用。 计算机4科分值分配比   科目 大概分值    数据结构 45分   计算机组成原理 45分   操作系统 35分   计算机网络 25分   408408考试中，分值总分150分，大致题型以及分值如">
+<meta property="og:type" content="article">
+<meta property="og:title" content="22408 分值">
+<meta property="og:url" content="http://scatteredream.github.io/2025/05/03/408-in-one/index.html">
+<meta property="og:site_name" content="scatteredream&#39;s blog">
+<meta property="og:description" content="22408转自：考研公共部分科目分支分布以及计算机408分值分布-CSDN博客  前言现在考研的竞争压力越来越大，这里，笔者也把考研中计算机的，408试卷分值分布做一个总结，方便以后考研的时候使用。 计算机4科分值分配比   科目 大概分值    数据结构 45分   计算机组成原理 45分   操作系统 35分   计算机网络 25分   408408考试中，分值总分150分，大致题型以及分值如">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/8c5d133eb5d9b1deaa794f4441f60b77.png">
+<meta property="article:published_time" content="2025-05-03T14:25:09.000Z">
+<meta property="article:modified_time" content="2025-05-05T04:50:11.913Z">
+<meta property="article:author" content="碎梦">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/8c5d133eb5d9b1deaa794f4441f60b77.png">
+
+
+<link rel="canonical" href="http://scatteredream.github.io/2025/05/03/408-in-one/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2025/05/03/408-in-one/","path":"2025/05/03/408-in-one/","title":"22408 分值"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>22408 分值 | scatteredream's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">scatteredream's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#22408"><span class="nav-number">1.</span> <span class="nav-text">22408</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA4%E7%A7%91%E5%88%86%E5%80%BC%E5%88%86%E9%85%8D%E6%AF%94"><span class="nav-number">1.2.</span> <span class="nav-text">计算机4科分值分配比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#408"><span class="nav-number">1.3.</span> <span class="nav-text">408</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E9%A2%98-%E5%85%B180%E5%88%86"><span class="nav-number">1.3.1.</span> <span class="nav-text">选择题 (共80分)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%BC%E5%90%88%E5%BA%94%E7%94%A8%E9%A2%98-%E5%85%B170%E5%88%86"><span class="nav-number">1.3.2.</span> <span class="nav-text">综合应用题 (共70分)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%85%AC%E5%85%B1%E7%A7%91%E7%9B%AE"><span class="nav-number">1.4.</span> <span class="nav-text">其他公共科目</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8B%B1%E4%BA%8C"><span class="nav-number">1.4.1.</span> <span class="nav-text">英二</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%EF%BC%88%E8%8B%B1%E8%AF%AD%E7%9F%A5%E8%AF%86%E8%BF%90%E7%94%A8%EF%BC%89"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">第一部分（英语知识运用）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86%EF%BC%88%E9%98%85%E8%AF%BB%E7%90%86%E8%A7%A3%EF%BC%89"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">第二部分（阅读理解）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86%EF%BC%88%E8%8B%B1%E8%AF%91%E6%B1%89%EF%BC%89"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">第三部分（英译汉）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86%EF%BC%88%E5%86%99%E4%BD%9C%EF%BC%89"><span class="nav-number">1.4.1.4.</span> <span class="nav-text">第四部分（写作）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%BF%E6%B2%BB%E5%88%86%E5%80%BC%E5%88%86%E5%B8%83"><span class="nav-number">1.4.2.</span> <span class="nav-text">政治分值分布</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E4%BA%8C"><span class="nav-number">1.4.3.</span> <span class="nav-text">数二</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#11408"><span class="nav-number">2.</span> <span class="nav-text">11408</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#408-1"><span class="nav-number">2.1.</span> <span class="nav-text">408</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E4%B8%80"><span class="nav-number">2.2.</span> <span class="nav-text">数一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8B%B1%E4%B8%80"><span class="nav-number">2.3.</span> <span class="nav-text">英一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%BF%E6%B2%BB"><span class="nav-number">2.4.</span> <span class="nav-text">政治</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="碎梦"
+      src="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+  <p class="site-author-name" itemprop="name">碎梦</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">115</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/03/408-in-one/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="22408 分值 | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          22408 分值
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-05-03 22:25:09" itemprop="dateCreated datePublished" datetime="2025-05-03T22:25:09+08:00">2025-05-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-05 12:50:11" itemprop="dateModified" datetime="2025-05-05T12:50:11+08:00">2025-05-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%80%83%E7%A0%94/" itemprop="url" rel="index"><span itemprop="name">考研</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="22408"><a href="#22408" class="headerlink" title="22408"></a>22408</h1><p>转自：<a target="_blank" rel="noopener" href="https://blog.csdn.net/smilehappiness/article/details/109964058">考研公共部分科目分支分布以及计算机408分值分布-CSDN博客</a> </p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>现在考研的竞争压力越来越大，这里，笔者也把考研中计算机的，408试卷分值分布做一个总结，方便以后考研的时候使用。</p>
+<h2 id="计算机4科分值分配比"><a href="#计算机4科分值分配比" class="headerlink" title="计算机4科分值分配比"></a>计算机4科分值分配比</h2><table>
+<thead>
+<tr>
+<th><strong>科目</strong></th>
+<th><strong>大概分值</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据结构</td>
+<td>45分</td>
+</tr>
+<tr>
+<td>计算机组成原理</td>
+<td>45分</td>
+</tr>
+<tr>
+<td>操作系统</td>
+<td>35分</td>
+</tr>
+<tr>
+<td>计算机网络</td>
+<td>25分</td>
+</tr>
+</tbody></table>
+<h2 id="408"><a href="#408" class="headerlink" title="408"></a>408</h2><p><strong>408考试中，分值总分150分，大致题型以及分值如下（仅供参考）：</strong></p>
+<h3 id="选择题-共80分"><a href="#选择题-共80分" class="headerlink" title="选择题 (共80分)"></a>选择题 (共80分)</h3><table>
+<thead>
+<tr>
+<th>选择题</th>
+<th>题目序号</th>
+<th>分值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据结构</td>
+<td>1~11</td>
+<td>11X2=22分</td>
+</tr>
+<tr>
+<td>计算机组成原理</td>
+<td>12~22</td>
+<td>11X2=22分</td>
+</tr>
+<tr>
+<td>操作系统</td>
+<td>23~32</td>
+<td>10X2=20分</td>
+</tr>
+<tr>
+<td>计算机网络</td>
+<td>33~40</td>
+<td>8X2=16分</td>
+</tr>
+</tbody></table>
+<h3 id="综合应用题-共70分"><a href="#综合应用题-共70分" class="headerlink" title="综合应用题 (共70分)"></a>综合应用题 (共70分)</h3><p>一共有41、42、43、44 、45、46 、47，共七个大题，<code>总分值70分</code><br><strong>21年考研大题41~47分值分布依次为：</strong>15、8、15、8、7、8、9</p>
+<p>正在备考的童鞋们，根据以上的分支分布，可以做一下复习侧重点呦</p>
+<h2 id="其他公共科目"><a href="#其他公共科目" class="headerlink" title="其他公共科目"></a>其他公共科目</h2><h3 id="英二"><a href="#英二" class="headerlink" title="英二"></a>英二</h3><p>英语二试题分四部分，共48题，总计<code>100分</code>，包括<code>英语知识运用</code>、<code>阅读理解</code>、<code>英译汉</code>和<code>写作</code>。</p>
+<p><strong>表格速览：</strong></p>
+<table>
+<thead>
+<tr>
+<th>题目类型</th>
+<th>题目序号</th>
+<th>分值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>英语知识运用</td>
+<td>1~20</td>
+<td>20X0.5=<code>10分</code></td>
+</tr>
+<tr>
+<td>阅读理解</td>
+<td>21~45</td>
+<td>25X2=<code>50分</code></td>
+</tr>
+<tr>
+<td>英译汉</td>
+<td>第三部分</td>
+<td><code>15分</code></td>
+</tr>
+<tr>
+<td>作文</td>
+<td>第四部分</td>
+<td><code>25分</code></td>
+</tr>
+</tbody></table>
+<h4 id="第一部分（英语知识运用）"><a href="#第一部分（英语知识运用）" class="headerlink" title="第一部分（英语知识运用）"></a>第一部分（英语知识运用）</h4><p>主要考查考生对英语知识的综合运用能力。共<code>20</code>小题，每小题<code>0.5</code>分，<code>共10分</code>。</p>
+<p>在一篇约350词的文章中留出20个空白，要求考生从每题给出的4个选项中选出最佳答案，使补全后的文章意思通顺、前后连贯、结构完整。</p>
+<h4 id="第二部分（阅读理解）"><a href="#第二部分（阅读理解）" class="headerlink" title="第二部分（阅读理解）"></a>第二部分（阅读理解）</h4><p>主要考查考生获取信息、理解文章、猜测重要生词词义并进行推断等方面的能力。该部分<code>由A、B两节组成</code>，共<code>25</code>小题，每小题<code>2</code>分，共<code>50</code>分。</p>
+<ul>
+<li><p><strong>A节(20小题)</strong><br>本部分为多项选择题。<code>共四篇文章</code>，总长度为1500词左右。<code>每篇文章设5题，共20题</code>。每小题2分，共40分。</p>
+</li>
+<li><p><strong>B节(5小题)</strong><br>本部分有两种备选题型。每次考试从这两种题型中选择其中的一种形式，或者两种形式的组合进行考查。本节文章设<code>5小题</code>，每小题2分，<code>共10分</code>。</p>
+<p>备选题型包括：<br><strong>1)多项对应</strong><br>本部分为一篇长度为450~550词的文章，试题内容分为左右两栏，左侧一栏为5道题目，右侧一栏为7个选项。要求考生在阅读后根据文章内容和左侧一栏中提供的信息从右侧一栏中的7个选项中选出对应的5项相关信息。</p>
+<p><strong>2)小标题对应</strong><br>在一篇长度为450~550词的文章前有7个概括句或小标题。这些文字或标题分别是对文章中某一部分的概括或阐述。要求考生根据文章内容和篇章结构从这7个选项中选出最恰当的5个概括句或小标题填入文章空白处。</p>
+</li>
+</ul>
+<h4 id="第三部分（英译汉）"><a href="#第三部分（英译汉）" class="headerlink" title="第三部分（英译汉）"></a>第三部分（英译汉）</h4><p>要求考生阅读、理解长度为150词左右的一个或几个英语段落，并将其全部译成汉语，<code>共15分</code>。</p>
+<h4 id="第四部分（写作）"><a href="#第四部分（写作）" class="headerlink" title="第四部分（写作）"></a>第四部分（写作）</h4><p>该部分由<code>A、B</code>两节组成，主要考查考生的书面表达能力。<code>共2题</code>，<code>25分</code>。</p>
+<ul>
+<li><strong>A节</strong><br>考生根据所给情景写出约100词(标点符号不计算在内)的应用性短文，包括私人和公务信函（常见的有：）、备忘录、报告等。共10分。</li>
+</ul>
+<p><strong>大致分类如下：</strong><br><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/8c5d133eb5d9b1deaa794f4441f60b77.png" alt="在这里插入图片描述"></p>
+<ul>
+<li><strong>B节</strong><br>要求考生根据所规定的情景或给出的提纲，写出一篇150词左右的英语说明文或议论文。提供情景的形式为图画、图表或文字。共15分。</li>
+</ul>
+<h3 id="政治分值分布"><a href="#政治分值分布" class="headerlink" title="政治分值分布"></a>政治分值分布</h3><p>政治部分分值，总共<code>100</code>分。</p>
+<table>
+<thead>
+<tr>
+<th>题目类型</th>
+<th>题目序号</th>
+<th>分值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>单项选择题</td>
+<td>1~16</td>
+<td>16X1=<code>16分</code></td>
+</tr>
+<tr>
+<td>多项选择题</td>
+<td>17~33</td>
+<td>17X2=<code>34分</code></td>
+</tr>
+<tr>
+<td>材料分析题</td>
+<td>共5个大题</td>
+<td>10X5=<code>50分</code></td>
+</tr>
+</tbody></table>
+<h3 id="数二"><a href="#数二" class="headerlink" title="数二"></a>数二</h3><p>数学部分分值，总共<code>150</code>分。</p>
+<table>
+<thead>
+<tr>
+<th>题目类型</th>
+<th>题目序号</th>
+<th>分值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>单项选择题</td>
+<td>1~10</td>
+<td>10X5=<code>50分</code></td>
+</tr>
+<tr>
+<td>填空题</td>
+<td>11~16</td>
+<td>16X5=<code>30分</code></td>
+</tr>
+<tr>
+<td>大题</td>
+<td>共6个大题</td>
+<td>1X10 + 5X12=<code>70分</code></td>
+</tr>
+</tbody></table>
+<p><strong>参考资料</strong>：<a target="_blank" rel="noopener" href="https://zhidao.baidu.com/question/12821750.html">https://zhidao.baidu.com/question/12821750.html</a></p>
+<p><code>注意：</code> <strong>以上总结仅供参考，实际还是以实际的考卷分值分布为准</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">希望笔者总结的分值分布，对小伙伴有所帮助~</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>写博客是为了记住自己容易忘记的东西，另外也是对自己工作的总结，希望尽自己的努力，做到更好，大家一起努力进步！</p>
+<p>如果有什么问题，欢迎大家评论，一起探讨</p>
+<p>给自己的梦想添加一双翅膀，让它可以在天空中自由自在的飞翔！</p>
+</blockquote>
+<h1 id="11408"><a href="#11408" class="headerlink" title="11408"></a>11408</h1><h2 id="408-1"><a href="#408-1" class="headerlink" title="408"></a>408</h2><table>
+<thead>
+<tr>
+<th>科目</th>
+<th>大致分值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据结构</td>
+<td>45</td>
+</tr>
+<tr>
+<td>计算机组成原理</td>
+<td>45</td>
+</tr>
+<tr>
+<td>操作系统</td>
+<td>35</td>
+</tr>
+<tr>
+<td>计算机网络</td>
+<td>25</td>
+</tr>
+</tbody></table>
+<p>其中包括</p>
+<table>
+<thead>
+<tr>
+<th>科目</th>
+<th>题号</th>
+<th>分值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据结构</td>
+<td>1~11</td>
+<td>22</td>
+</tr>
+<tr>
+<td>计算机组成原理</td>
+<td>12~22</td>
+<td>22</td>
+</tr>
+<tr>
+<td>操作系统</td>
+<td>23~32</td>
+<td>20</td>
+</tr>
+<tr>
+<td>计算机网络</td>
+<td>33~40</td>
+<td>16</td>
+</tr>
+</tbody></table>
+<p>以及七3道综合应用题共70分</p>
+<h2 id="数一"><a href="#数一" class="headerlink" title="数一"></a>数一</h2><table>
+<thead>
+<tr>
+<th>科目</th>
+<th>大致分值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>高等数学</td>
+<td>84</td>
+</tr>
+<tr>
+<td>线性代数</td>
+<td>33</td>
+</tr>
+<tr>
+<td>概率论与数理统计</td>
+<td>33</td>
+</tr>
+</tbody></table>
+<p>其中</p>
+<table>
+<thead>
+<tr>
+<th>题型</th>
+<th>高数</th>
+<th>线代</th>
+<th>概率</th>
+<th>题号</th>
+<th>分值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>选择题</td>
+<td>6</td>
+<td>2</td>
+<td>2</td>
+<td>1~10</td>
+<td>50</td>
+</tr>
+<tr>
+<td>填空题</td>
+<td>4</td>
+<td>1</td>
+<td>1</td>
+<td>11~16</td>
+<td>30</td>
+</tr>
+<tr>
+<td>计算题</td>
+<td>4</td>
+<td>1</td>
+<td>1</td>
+<td>17~22</td>
+<td>70</td>
+</tr>
+</tbody></table>
+<h2 id="英一"><a href="#英一" class="headerlink" title="英一"></a>英一</h2><table>
+<thead>
+<tr>
+<th>题型</th>
+<th>题号</th>
+<th>分值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>英语知识运用</td>
+<td>1~20</td>
+<td>10</td>
+</tr>
+<tr>
+<td>阅读理解</td>
+<td>21~50</td>
+<td>60</td>
+</tr>
+<tr>
+<td>写作</td>
+<td>51~52</td>
+<td>30</td>
+</tr>
+</tbody></table>
+<p>其中</p>
+<p>阅读理解<br>A、B、C三节组成，考查考生理解书面英语的能力。共30小题，每小题2分，共60分。</p>
+<p>A节(20小题)：主要考查考生理解主旨要义、具体信息、概念性含义，进行有关的判断、推理和引申，根据上下文推测生词的词义等能力。要求考生根据所提供的4篇(总长度约为1 600词)文章的内容，从每题所给出的4个选项中选出最佳答案。考生在答题卡1上作答。</p>
+<p>B节(5小题)：主要考查考生对诸如连贯性、一致性等语段特征以及文章结构的理解。本部分有3种备选题型。每次考试从这3种备选题型中选择一种进行考查。考生在答题卡1上作答。</p>
+<p>C节(5小题)：主要考查考生准确理解概念或结构较复杂的英语文字材料的能力。要求考生阅读一篇约400词的文章，并将其中5个画线部分(约150词)译成汉语，要求译文准确、完整、通顺。考生在答题卡2上作答。</p>
+<p>写作<br>该部分由A、B两节组成，主要考查考生的书面表达能力。共30分。</p>
+<p>A节：考生根据所给情景写出约100词(标点符号不计算在内)的应用性短文，包括私人和公务信函、备忘录、报告等。</p>
+<p>B节：考生根据提示信息写出一篇160~200词的短文(标点符号不计算在内)。提示信息的形式有主题句、写作提纲、规定情景、图、表等。考生在答题卡2上作答。共20分。 *硕士研究生入学考试将英译汉试题作为阅读理解的一部分，其目的是测试考生根据上下文准确理解概念或复杂结构并用汉语正确予以表达的能力。</p>
+<h2 id="政治"><a href="#政治" class="headerlink" title="政治"></a>政治</h2><table>
+<thead>
+<tr>
+<th>科目</th>
+<th>大致分值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>马原</td>
+<td>24</td>
+</tr>
+<tr>
+<td>毛中特</td>
+<td>30</td>
+</tr>
+<tr>
+<td>近代史</td>
+<td>14</td>
+</tr>
+<tr>
+<td>思修</td>
+<td>16</td>
+</tr>
+</tbody></table>
+<p>其中</p>
+<table>
+<thead>
+<tr>
+<th>题型</th>
+<th>题号</th>
+<th>分值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>单选</td>
+<td>1~16</td>
+<td>16</td>
+</tr>
+<tr>
+<td>多选</td>
+<td>17~33</td>
+<td>34</td>
+</tr>
+<tr>
+<td>材料分析</td>
+<td>34~38</td>
+<td>50</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/01/review-%E5%8D%8E%E4%B8%BA%E4%B8%80%E9%9D%A2/" rel="prev" title="4.30 华为一面+主管面">
+                  <i class="fa fa-angle-left"></i> 4.30 华为一面+主管面
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/05/05/math-distribute-math/" rel="next" title="离散数学复习">
+                  离散数学复习 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">碎梦</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/scatteredream" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

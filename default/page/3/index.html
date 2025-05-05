@@ -167,18 +167,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-count">66</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">170</span>
+        <span class="site-state-item-count">115</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -204,7 +204,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/24/80%E7%AB%AF%E5%8F%A3%E5%8D%A0%E7%94%A8%E9%97%AE%E9%A2%98/">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/28/jdk-%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
@@ -222,7 +222,260 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/24/80%E7%AB%AF%E5%8F%A3%E5%8D%A0%E7%94%A8%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">如何定位端口占用问题</a>
+          <a href="/2024/10/28/jdk-%E5%B9%B6%E5%8F%91%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/" class="post-title-link" itemprop="url">并发集合框架</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-10-28 00:00:00" itemprop="dateCreated datePublished" datetime="2024-10-28T00:00:00+08:00">2024-10-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-27 14:38:18" itemprop="dateModified" datetime="2025-04-27T14:38:18+08:00">2025-04-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/juc/" itemprop="url" rel="index"><span itemprop="name">juc</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="并发容器"><a href="#并发容器" class="headerlink" title="并发容器"></a>并发容器</h1><h2 id="并发安全-Map"><a href="#并发安全-Map" class="headerlink" title="并发安全 Map"></a>并发安全 Map</h2><p><code>ConcurrentSkipListMap</code>: 跳表的实现。这是一个 Map，使用跳表的数据结构进行快速查找。</p>
+<h3 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h3><h4 id="JDK-1-7-Segment-ReentrantLock"><a href="#JDK-1-7-Segment-ReentrantLock" class="headerlink" title="JDK 1.7: Segment(ReentrantLock)"></a>JDK 1.7: Segment(ReentrantLock)</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/java7_concurrenthashmap.png" alt="Java7 ConcurrentHashMap 存储结构"></p>
+<p>在 JDK1.7 的时候，<code>ConcurrentHashMap</code> 对整个桶数组进行了分割分段(<code>Segment</code>，分段锁)，</p>
+<p>JDK 1.7 采用 <code>Segment</code> 分段锁来保证安全， <code>Segment</code> 继承自 <code>ReentrantLock</code>。每一把锁只锁容器其中一部分数据，多线程访问容器里不同数据段的数据，就不会存在锁竞争，提高并发访问率。</p>
+<ul>
+<li><code>ConcurrentHashMap</code> 是由 <code>Segment</code> 数组结构和 <code>HashEntry</code> 数组结构组成。</li>
+<li><code>Segment</code> 数组中的每个元素包含一个 <code>HashEntry</code> 数组，每个 <code>HashEntry</code> 数组属于链表结构。</li>
+</ul>
+<p>首先将数据分为一段一段（这个“段”就是 <code>Segment</code>）的存储，然后给每一段数据配一把锁，当一个线程占用锁访问其中一个段数据时，其他段的数据也能被其他线程访问。</p>
+<p><code>ConcurrentHashMap</code> 是由 <code>Segment</code> 数组结构和 <code>HashEntry</code> 数组结构组成。</p>
+<p><code>Segment</code> 继承了 <code>ReentrantLock</code>,所以 <code>Segment</code> 是一种可重入锁，扮演锁的角色。<code>HashEntry</code> 用于存储键值对数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Segment</span>&lt;K,V&gt; <span class="keyword">extends</span> <span class="title class_">ReentrantLock</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一个 <code>ConcurrentHashMap</code> 里包含一个 <code>Segment</code> 数组，<code>Segment</code> 的个数一旦<strong>初始化就不能改变</strong>。 <code>Segment</code> 数组的大小默认是 16，也就是说默认可以同时支持 16 个线程并发写。</p>
+<p><code>Segment</code> 的结构和 <code>HashMap</code> 类似，是一种数组和链表结构，一个 <code>Segment</code> 包含一个 <code>HashEntry</code> 数组，每个 <code>HashEntry</code> 是一个链表结构的元素，每个 <code>Segment</code> 守护着一个 <code>HashEntry</code> 数组里的元素，当对 <code>HashEntry</code> 数组的数据进行修改时，必须首先获得对应的 <code>Segment</code> 的锁。也就是说，对同一 <code>Segment</code> 的并发写入会被阻塞，不同 <code>Segment</code> 的写入是可以并发执行的。</p>
+<p>JDK 1.7 最大并发度是 Segment 的个数，默认是 16</p>
+<h4 id="JDK-1-8-Node-CAS-synchronized"><a href="#JDK-1-8-Node-CAS-synchronized" class="headerlink" title="JDK 1.8: Node+CAS+synchronized"></a>JDK 1.8: Node+CAS+synchronized</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/java8_concurrenthashmap.png" alt="Java8 ConcurrentHashMap 存储结构"></p>
+<p>到了 JDK1.8 的时候，<code>ConcurrentHashMap</code> 已经摒弃了 <code>Segment</code> 的概念，而是<mark>直接用 <code>Node</code></mark> 数组+链表+红黑树的数据结构来实现，并发控制使用 <mark><code>synchronized</code> 和 CAS</mark> 来操作。（JDK1.6 以后 <code>synchronized</code> 锁做了很多优化） 整个看起来就像是优化过且线程安全的 <code>HashMap</code>，虽然在 JDK1.8 中还能看到 <code>Segment</code> 的数据结构，但是已经简化了属性，只是为了兼容旧版本；</p>
+<p>JDK1.8 放弃了 <code>Segment</code> 分段锁的设计，采用 <code>Node + CAS + synchronized</code> 保证线程安全，锁粒度更细，<code>synchronized</code> 只锁定当前链表或红黑二叉树的首节点。</p>
+<ul>
+<li><p>每个 <strong>桶（bucket）</strong> 对应一个链表或红黑树，用于解决<strong>哈希冲突</strong>。</p>
+</li>
+<li><p>如果链表长度超过一定阈值（默认为 8），链表会自动转换为<strong>红黑树</strong>，提高查询效率。</p>
+</li>
+<li><p>红黑树的情况需要使用 <code>TreeNode</code>。当冲突链表达到一定长度时，链表会转换成红黑树。<code>TreeNode</code>是存储红黑树节点，被<code>TreeBin</code>包装。<code>TreeBin</code>通过<code>root</code>属性维护红黑树的根结点，因为红黑树在旋转的时候，根结点可能会被它原来的子节点替换掉，在这个时间点，如果有其他线程要写这棵红黑树就会发生线程不安全问题，所以在 <code>ConcurrentHashMap</code> 中<code>TreeBin</code>通过<code>waiter</code>属性维护当前使用这棵红黑树的线程，来防止其他线程的进入。</p>
+</li>
+</ul>
+<p>JDK 1.8 最大并发度是 Node 数组的大小，并发度更大。</p>
+<p><strong>链表的线程安全性</strong> </p>
+<p>在 <strong>ConcurrentHashMap</strong> 中，链表本身不是直接加锁的，而是通过更细粒度的<strong>CAS（Compare-And-Swap）机制</strong>和<strong>自旋锁</strong>来保证线程安全：</p>
+<ol>
+<li><strong>插入节点</strong>时通过 CAS 更新表头或表尾。</li>
+<li><strong>查询节点</strong>时允许并发读操作，而不会阻塞其他线程。</li>
+<li><strong>扩容操作</strong>采用链表迁移的方式，通过分段迁移减少阻塞时间。</li>
+</ol>
+<h4 id="不保证复合操作原子性"><a href="#不保证复合操作原子性" class="headerlink" title="不保证复合操作原子性"></a>不保证复合操作原子性</h4><p><code>ConcurrentHashMap</code> 是线程安全的，意味着它可以保证多个线程同时对它进行读写操作时，不会出现数据不一致的情况，也不会导致 JDK1.7 及之前版本的 <code>HashMap</code> 多线程操作导致死循环问题。但是，这并不意味着它可以保证所有的复合操作都是原子性的，一定不要搞混了！</p>
+<p>复合操作是指由多个基本操作(如<code>put</code>、<code>get</code>、<code>remove</code>、<code>containsKey</code>等)组成的操作，例如先判断某个键是否存在<code>containsKey(key)</code>，然后根据结果进行插入或更新<code>put(key, value)</code>。这种操作在执行过程中可能会被其他线程打断，导致结果不符合预期。</p>
+<h3 id="HashTable"><a href="#HashTable" class="headerlink" title="HashTable"></a>HashTable</h3><p><code>Hashtable</code>(同一把锁) :使用 <code>synchronized</code> 来保证线程安全，效率非常低下。当一个线程访问同步方法时，其他线程也访问同步方法，可能会进入阻塞或轮询状态，如使用 put 添加元素，另一个线程不能使用 put 添加元素，也不能使用 get，竞争会越来越激烈效率越低</p>
+<h2 id="并发安全-List"><a href="#并发安全-List" class="headerlink" title="并发安全 List"></a>并发安全 List</h2><h3 id="线程不安全-ArrayList"><a href="#线程不安全-ArrayList" class="headerlink" title="线程不安全 ArrayList"></a>线程不安全 ArrayList</h3><p>我们通常使用的ArrayList就是线程不安全的，举个简单的例子</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * List集合</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestList</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] <span class="keyword">args</span></span>)</span> &#123;</span><br><span class="line">        List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">10</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">                list.<span class="keyword">add</span>(UUID.randomUUID().toString().substring(<span class="number">0</span>, <span class="number">5</span>));</span><br><span class="line">                System.<span class="keyword">out</span>.println(list);</span><br><span class="line">            &#125;, String.valueOf(i)).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//并发修改异常</span></span><br><span class="line">Exception <span class="keyword">in</span> thread <span class="string">&quot;4&quot;</span> java.util.ConcurrentModificationException</span><br><span class="line">   at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:<span class="number">909</span>)</span><br><span class="line">   at java.util.ArrayList$Itr.next(ArrayList.java:<span class="number">859</span>)</span><br><span class="line">   at java.util.AbstractCollection.toString(AbstractCollection.java:<span class="number">461</span>)</span><br><span class="line">   at java.lang.String.valueOf(String.java:<span class="number">2994</span>)</span><br><span class="line">   at java.io.PrintStream.println(PrintStream.java:<span class="number">821</span>)</span><br><span class="line">   at com.hnguigu.<span class="keyword">unsafe</span>.TestList.lambda$main$<span class="number">0</span>(TestList.java:<span class="number">20</span>)</span><br><span class="line">   at java.lang.Thread.run(Thread.java:<span class="number">748</span>)</span><br><span class="line"></span><br><span class="line">Process finished <span class="keyword">with</span> exit code <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>解决方案，有以下几种！</strong></p>
+<h3 id="CopyOnWriteArrayList"><a href="#CopyOnWriteArrayList" class="headerlink" title="CopyOnWriteArrayList"></a>CopyOnWriteArrayList</h3><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.<span class="property">util</span>.<span class="property">concurrent</span>.<span class="property">CopyOnWriteArrayList</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestList</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="built_in">void</span> <span class="title function_">main</span>(<span class="params"><span class="title class_">String</span>[] args</span>) &#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 解决方案</span></span><br><span class="line"><span class="comment">         * 1. List&lt;String&gt; list = new Vector&lt;&gt;();</span></span><br><span class="line"><span class="comment">         * 2. List&lt;String&gt; list = Collections.synchronizedList(new ArrayList&lt;&gt;());</span></span><br><span class="line"><span class="comment">         * 3. List&lt;String&gt; list = new CopyOnWriteArrayList&lt;&gt;();</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="title class_">List</span>&lt;<span class="title class_">String</span>&gt; list = <span class="keyword">new</span> <span class="title class_">CopyOnWriteArrayList</span>&lt;&gt;();</span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (int i = <span class="number">1</span>; i &lt;=<span class="number">10</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">                list.<span class="title function_">add</span>(<span class="variable constant_">UUID</span>.<span class="title function_">randomUUID</span>().<span class="title function_">toString</span>().<span class="title function_">substring</span>(<span class="number">0</span>,<span class="number">5</span>));</span><br><span class="line">                <span class="title class_">System</span>.<span class="property">out</span>.<span class="title function_">println</span>(list);</span><br><span class="line">            &#125;,<span class="title class_">String</span>.<span class="title function_">valueOf</span>(i)).<span class="title function_">start</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>写入时复制（CopyOnWrite，简称COW）思想是计算机程序设计领域中的一种通用优化策略。</p>
+<p>CopyOnWrite容器即写入时复制的容器。<strong>通俗的理解是当我们往一个容器添加元素的时候，不直接往当前容器添加，而是先将当前容器进行Copy，复制出一个新的容器，然后新的容器里添加元素，添加完元素之后，再将原容器的引用指向新的容器。</strong>这样做的好处是我们可以对CopyOnWrite容器进行并发的读，而不需要加锁，因为当前容器不会添加任何元素。所以CopyOnWrite容器也是一种读写分离的思想，读和写不同的容器。</p>
+<p>读的时候不需要加锁，如果读的时候有多个线程正在向CopyOnWriteArrayList添加数据，读还是会读到旧的数据。CopyOnWrite并发容器用于读多写少的并发场景。</p>
+<blockquote>
+<p>CopyOnWriteArrayList 比 Vector 厉害在哪里？</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/3039212-20221224114551267-580082797.png" alt="CopyOnWrite"></p>
+<p>CopyOnWriteArrayList底层采用了Lock锁，是JDK层面的，效率高！</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/3039212-20221223214340940-165732240.png" alt="VectorSource"></p>
+<h4 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h4><p>优点：</p>
+<ul>
+<li>CopyOnWriteArrayList 并发安全且性能比 Vector 好。Vector 是增删改查方法都加了synchronized 来保证同步，但是每个方法执行的时候都要去获得锁，性能就会大大下降，而 CopyOnWriteArrayList 只是在增删改上加锁，但是读不加锁，在读方面的性能就好于 Vector。</li>
+<li>线程安全的 <code>List</code>，在读多写少的场合性能非常好，远远好于 <code>Vector</code>。</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>数据一致性问题。这种实现只是保证数据的<strong>最终一致性</strong>，不能保证数据的<strong>实时一致性</strong>。在添加到拷贝数据而还没进行替换的时候，读到的仍然是旧数据。</li>
+<li>内存占用问题。如果对象比较大，内存写操作的时候，需要拷贝数组，会消耗内存，如果原数组的内容比较多的情况下，可能导致 young gc 或者 full gc。 这个时候，我们应该考虑其他的容器，例如 ConcurrentHashMap。</li>
+<li>由于实际使用中可能没法保证 CopyOnWriteArrayList 到底要放置多少数据，万一数据稍微有点 多，每次 add/set 都要重新复制数组，这个代价实在太高昂了。在高性能的互联网应用中，这种 操作分分钟引起故障。</li>
+</ul>
+<h4 id="Vector"><a href="#Vector" class="headerlink" title="Vector"></a>Vector</h4><p>Vector底层采用了Synchronized加锁的方式，保证了数据的安全性，但是效率低下！</p>
+<p>解释一下：Synchronized是Java内置的机制，是JVM层面的，效率低是因为底层操作依赖于操作系统，操作系统切换线程要从用户态切换到内核态，花费很多时间。</p>
+<h2 id="并发安全-Set"><a href="#并发安全-Set" class="headerlink" title="并发安全 Set"></a>并发安全 Set</h2><h3 id="线程不安全-HashSet"><a href="#线程不安全-HashSet" class="headerlink" title="线程不安全 HashSet"></a>线程不安全 HashSet</h3><p>Set和List同样是多线程下不安全的集合类，同样会报并发修改异常！</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Set集合</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestSet</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] <span class="keyword">args</span></span>)</span> &#123;</span><br><span class="line">        Set&lt;String&gt; <span class="keyword">set</span> = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">20</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">                <span class="keyword">set</span>.<span class="keyword">add</span>(UUID.randomUUID().toString().substring(<span class="number">0</span>, <span class="number">5</span>));</span><br><span class="line">                System.<span class="keyword">out</span>.println(<span class="keyword">set</span>);</span><br><span class="line">            &#125;, String.valueOf(i)).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>解决方案：</p>
+<h3 id="CopyOnWriteArraySet"><a href="#CopyOnWriteArraySet" class="headerlink" title="CopyOnWriteArraySet"></a>CopyOnWriteArraySet</h3><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">import java.util.concurrent.CopyOnWriteArraySet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TestSet</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span>(<span class="params">String[] <span class="keyword">args</span></span>)</span> &#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 解决方案</span></span><br><span class="line"><span class="comment">         * set集合没有可替换的集合</span></span><br><span class="line"><span class="comment">         * 1. Set&lt;String&gt; set = Collections.synchronizedSet(new HashSet&lt;&gt;());</span></span><br><span class="line"><span class="comment">         * 2. Set&lt;String&gt; set = new CopyOnWriteArraySet&lt;&gt;();</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        Set&lt;String&gt; <span class="keyword">set</span> = <span class="keyword">new</span> CopyOnWriteArraySet&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">20</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">                <span class="keyword">set</span>.<span class="keyword">add</span>(UUID.randomUUID().toString().substring(<span class="number">0</span>, <span class="number">5</span>));</span><br><span class="line">                System.<span class="keyword">out</span>.println(<span class="keyword">set</span>);</span><br><span class="line">            &#125;, String.valueOf(i)).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>和面试官谈到这里，一般都会问hashSet的底层实现原理。<br><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/3039212-20221224125000674-1551081400.png" alt="hashSetSource"></p>
+<p>底层其实就是用hashMap实现的</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/3039212-20221224125144809-649163275.png" alt="hashSetAdd"></p>
+<p>HashSet底层使用了哈希表来支持的，特点：存储快 往HashSet添加元素的时候，HashSet会先调用元素的HashCode方法得到元素的哈希值，然后通过元素的哈希值经过异或移位等运算，就可以算出该元素在哈希表中的存储位置。如果算出的元素存储的位置目前没有任何元素存储，那么该元素可以直接存储在该位置上；如果算出的元素的存储位置上目前已经有了其他的元素，那么还会调用该元素的equals方法 ，与该位置的元素进行比较一次，如果过equals方法返回的是true，那么该位置上的元素就会被视为重复元素，不允许被添加，如果false，则允许添加。</p>
+<h2 id="BlockingQueue"><a href="#BlockingQueue" class="headerlink" title="BlockingQueue"></a>BlockingQueue</h2><p><code>BlockingQueue</code> 是 Java 并发包（<code>java.util.concurrent</code>）中的一个接口，专门用于<strong>线程安全的生产者-消费者模型</strong>。它支持线程在队列为空或已满时自动阻塞，从而简化了多线程编程中的同步问题。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/arrayblockingqueue-class-diagram.png" alt="ArrayBlockingQueue 类图"></p>
+<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ol>
+<li>线程安全：<ul>
+<li>内部使用锁和条件变量（Condition）实现线程安全操作。</li>
+</ul>
+</li>
+<li>阻塞机制：<ul>
+<li>当队列为空时，获取元素的线程会被阻塞，直到队列中有可用元素。</li>
+<li>当队列已满时，添加元素的线程会被阻塞，直到队列有空间。</li>
+</ul>
+</li>
+<li>常用场景：<ul>
+<li><strong>生产者-消费者模型</strong>，生产者向队列中添加数据，消费者从队列中取数据。</li>
+<li>控制线程执行顺序或流量，避免资源争抢。</li>
+</ul>
+</li>
+</ol>
+<p><code>BlockingQueue</code>: 这是一个接口，JDK 内部通过链表、数组等方式实现了这个接口。表示阻塞队列，非常适合用于作为数据共享的通道。</p>
+<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p><code>ArrayBlockingQueue</code> </p>
+<ul>
+<li><strong>best performance</strong> </li>
+<li>单lock 双condition 算法，必须显式设置容量</li>
+<li>底层是数组，有界队列，如果我们要使用生产者-消费者模式，这是非常好的选择。</li>
+</ul>
+<p><code>LinkedBlockingQueue</code> / <code>LinkedBlockingDeque</code></p>
+<ul>
+<li>2 locks 2 conditions，默认Integer.MAX_VALUE</li>
+<li>底层是链表，可以当做无界和有界队列来使用，所以大家不要以为它就是无界队列。</li>
+</ul>
+<p><code>SynchronousQueue</code></p>
+<ul>
+<li>每次插入操作必须等待一个取出操作，否则就会阻塞，适合高并发传递数据。</li>
+<li>不允许null</li>
+<li>本身不带有空间来存储任何元素，使用上可以选择公平模式和非公平模式。</li>
+</ul>
+<p><code>DelayQueue</code></p>
+<ul>
+<li>延时队列，只有到期的元素才能被取出，适合定时任务或延迟执行场景。</li>
+<li>elements must implement <code>java.util.concurrent.Delayed</code> </li>
+</ul>
+<p><code>LinkedTransferQueue</code></p>
+<ul>
+<li>waits for consumer to consume the element (message passing need to be guaranteed)</li>
+</ul>
+<p><code>ConcurrentLinkedQueue</code>:</p>
+<ul>
+<li>高效的并发队列，使用链表实现。一个线程安全的 <code>LinkedList</code>，这是一个非阻塞队列。</li>
+</ul>
+<p><code>PriorityBlockingQueue</code></p>
+<ul>
+<li>concurrent version of <code>PriorityQueue</code></li>
+<li>无界队列，基于数组，数据结构为二叉堆，数组第一个也是树的根节点总是最小值。</li>
+<li>基于优先级堆实现的无界阻塞队列，元素按优先级排序，不保证 FIFO。</li>
+</ul>
+<h3 id="主要方法-put-take-offer-poll"><a href="#主要方法-put-take-offer-poll" class="headerlink" title="主要方法: put-take offer-poll"></a>主要方法: put-take offer-poll</h3><p>add、remove实际上是对offer的封装</p>
+<ul>
+<li><strong>插入元素：</strong><ul>
+<li><code>put(E e)</code>：如果队列已满，阻塞等待空间。</li>
+<li><code>offer(E e)</code>: 非阻塞插入<ul>
+<li><code>offer(E e, long timeout, TimeUnit unit)</code>：带自旋的非阻塞插入</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>取出元素：</strong> <ul>
+<li><code>take()</code>：如果队列为空，阻塞等待数据。</li>
+<li><code>poll()</code>: 非阻塞获取<ul>
+<li><code>poll(long timeout, TimeUnit unit)</code>：带自旋的非阻塞获取</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>检查队列状态：</strong><ul>
+<li><code>size()</code>：返回当前元素数量。</li>
+<li><code>remainingCapacity()</code>：返回剩余可用空间。</li>
+</ul>
+</li>
+<li>队列数据迁移<ul>
+<li><code>int elemCount = queue.drainTo(list);</code></li>
+<li> <code>drainTo</code> 会一次性将队列中所有元素存放到列表，如果队列中有元素，且成功存到 list 中则 <code>drainTo</code> 会返回本次转移到 list 中的元素数，若队列为空，<code>drainTo</code> 则直接返回 0</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BlockingQueueExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        </span><br><span class="line">        BlockingQueue&lt;Integer&gt; queue = <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 生产者线程</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">10</span>; i++) &#123;</span><br><span class="line">                    queue.put(i); <span class="comment">// 阻塞插入</span></span><br><span class="line">                    System.out.println(<span class="string">&quot;Produced: &quot;</span> + i);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 消费者线程</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                    <span class="type">Integer</span> <span class="variable">value</span> <span class="operator">=</span> queue.take(); <span class="comment">// 阻塞获取</span></span><br><span class="line">                    System.out.println(<span class="string">&quot;Consumed: &quot;</span> + value);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="ArrayBlockingQueue"><a href="#ArrayBlockingQueue" class="headerlink" title="ArrayBlockingQueue"></a>ArrayBlockingQueue</h3><p>实际上就是生产者——消费者模式的具体实现</p>
+<p>加锁访问共享区域，阻塞使用的是和锁相关的condition条件变量，细化了等待条件</p>
+<p>condition.await    condition.signal/signalAll   就是使用了这个细节</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">#define MAXSIZE <span class="number">8</span></span><br><span class="line"><span class="type">int</span> buffer[MAXSIZE];</span><br><span class="line"><span class="type">int</span> <span class="variable">fill_ptr</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">use_ptr</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"><span class="keyword">void</span> <span class="title function_">put</span><span class="params">(<span class="type">int</span> value)</span>&#123;</span><br><span class="line">    buffer[fill_ptr] = value;</span><br><span class="line">	fill_ptr = (fill_ptr + <span class="number">1</span>) % MAXSIZE;</span><br><span class="line">    count++;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> <span class="title function_">get</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">tmp</span> <span class="operator">=</span> buffer[use_ptr];</span><br><span class="line">    fill_ptr = (fill_ptr + <span class="number">1</span>) % MAXSIZE;</span><br><span class="line">    count--;</span><br><span class="line">    <span class="keyword">return</span> tmp;</span><br><span class="line">&#125;</span><br><span class="line">cond_t notEmpty,notFull;</span><br><span class="line">mutex_t mutex;</span><br><span class="line"><span class="keyword">void</span> <span class="title function_">producer</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;i &lt; loops;i++)&#123;</span><br><span class="line">        mutex_lock(&amp;mutex);</span><br><span class="line">        <span class="keyword">while</span>(count == MAXSIZE)</span><br><span class="line">            cond_wait(&amp;notEmpty, &amp;mutex);</span><br><span class="line">    	put(i);</span><br><span class="line">        printf(<span class="string">&quot;producer:%d puts value:%d&quot;</span>, gettid(), i);</span><br><span class="line">        cond_signal((&amp;notFull);</span><br><span class="line">    	mutex_unlock(&amp;mutex);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">void</span> <span class="title function_">consumer</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>;i &lt; loops;i++)&#123;</span><br><span class="line">        mutex_lock(&amp;mutex);</span><br><span class="line">        <span class="keyword">while</span>(count == <span class="number">0</span>)</span><br><span class="line">            cond_wait(&amp;isEmpty, &amp;mutex);</span><br><span class="line">        <span class="type">int</span> <span class="variable">value</span> <span class="operator">=</span> get();</span><br><span class="line">        printf(<span class="string">&quot;pid:%d gets value:%d&quot;</span>, gettid(), value);</span><br><span class="line">        cond_signal(&amp;isFull);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">                    </span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/24/digital-80%E7%AB%AF%E5%8F%A3%E5%8D%A0%E7%94%A8%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/24/digital-80%E7%AB%AF%E5%8F%A3%E5%8D%A0%E7%94%A8%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">如何定位端口占用问题</a>
         </h2>
 
         <div class="post-meta-container">
@@ -287,7 +540,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/20/%E9%BB%91%E9%A9%AC%E7%82%B9%E8%AF%84%E4%BC%98%E5%8C%96/">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/20/redis-revies-optimization/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
@@ -305,7 +558,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/20/%E9%BB%91%E9%A9%AC%E7%82%B9%E8%AF%84%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">点评项目优化</a>
+          <a href="/2024/10/20/redis-revies-optimization/" class="post-title-link" itemprop="url">点评项目优化</a>
         </h2>
 
         <div class="post-meta-container">
@@ -323,7 +576,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-03 20:47:13" itemprop="dateModified" datetime="2025-05-03T20:47:13+08:00">2025-05-03</time>
+      <time title="修改时间：2025-05-05 11:13:41" itemprop="dateModified" datetime="2025-05-05T11:13:41+08:00">2025-05-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -774,7 +1027,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/12/%E9%BB%91%E9%A9%AC%E7%82%B9%E8%AF%84/">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/12/redie-review/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
@@ -792,7 +1045,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/12/%E9%BB%91%E9%A9%AC%E7%82%B9%E8%AF%84/" class="post-title-link" itemprop="url">黑马点评项目</a>
+          <a href="/2024/10/12/redie-review/" class="post-title-link" itemprop="url">黑马点评项目</a>
         </h2>
 
         <div class="post-meta-container">
@@ -810,7 +1063,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-27 15:55:54" itemprop="dateModified" datetime="2025-04-27T15:55:54+08:00">2025-04-27</time>
+      <time title="修改时间：2025-05-05 11:13:13" itemprop="dateModified" datetime="2025-05-05T11:13:13+08:00">2025-05-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -2083,7 +2336,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-27 15:54:49" itemprop="dateModified" datetime="2025-04-27T15:54:49+08:00">2025-04-27</time>
+      <time title="修改时间：2025-05-05 11:28:34" itemprop="dateModified" datetime="2025-05-05T11:28:34+08:00">2025-05-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -2247,7 +2500,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-27 15:07:59" itemprop="dateModified" datetime="2025-04-27T15:07:59+08:00">2025-04-27</time>
+      <time title="修改时间：2025-05-05 11:15:30" itemprop="dateModified" datetime="2025-05-05T11:15:30+08:00">2025-05-05</time>
     </span>
 
   
@@ -3204,7 +3457,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/03/%E5%BA%8F%E5%88%97%E5%8C%96/">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/03/java-webserialization/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
@@ -3222,7 +3475,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/03/%E5%BA%8F%E5%88%97%E5%8C%96/" class="post-title-link" itemprop="url">序列化</a>
+          <a href="/2024/10/03/java-webserialization/" class="post-title-link" itemprop="url">序列化</a>
         </h2>
 
         <div class="post-meta-container">
@@ -3488,7 +3741,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-27 15:54:52" itemprop="dateModified" datetime="2025-04-27T15:54:52+08:00">2025-04-27</time>
+      <time title="修改时间：2025-05-05 11:28:16" itemprop="dateModified" datetime="2025-05-05T11:28:16+08:00">2025-05-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -3871,7 +4124,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/01/Starter%E7%9A%84%E5%AE%9E%E7%8E%B0/">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/01/java-se/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
@@ -3889,7 +4142,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/01/Starter%E7%9A%84%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">自定义 starter</a>
+          <a href="/2024/10/01/java-se/" class="post-title-link" itemprop="url">Java SE</a>
         </h2>
 
         <div class="post-meta-container">
@@ -3907,99 +4160,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-27 13:06:00" itemprop="dateModified" datetime="2025-04-27T13:06:00+08:00">2025-04-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><mark>在 Spring Boot 生态中，“Starter” 本质上就是一组依赖的“捆绑包”，它的目标是让使用方 <strong>一行依赖</strong> 就把启动一个完整的 Spring Boot 应用所需的所有东西都拉过来。</mark> </p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/10/01/Starter%E7%9A%84%E5%AE%9E%E7%8E%B0/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/01/se-java/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/01/se-java/" class="post-title-link" itemprop="url">Java SE</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-10-01 00:00:00" itemprop="dateCreated datePublished" datetime="2024-10-01T00:00:00+08:00">2024-10-01</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-27 16:11:17" itemprop="dateModified" datetime="2025-04-27T16:11:17+08:00">2025-04-27</time>
+      <time title="修改时间：2025-05-05 11:49:32" itemprop="dateModified" datetime="2025-05-05T11:49:32+08:00">2025-05-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -4947,7 +5108,7 @@
 <p><code>dos.writeInt(int a)</code> 写出去a，包括数据类型</p>
 <p><code>dis.readUTF()</code> 读进来字符串并返回 UTF-8</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240917154727844.png" alt="image-20240917154727844"></p>
-<h3 id="序列化流"><a href="#序列化流" class="headerlink" title="序列化流"></a>序列化流</h3><p><a href="..%5CSerialization.md">序列化</a> </p>
+<h3 id="序列化流"><a href="#序列化流" class="headerlink" title="序列化流"></a>序列化流</h3><p>序列化 见 serialization.md</p>
 <p> 字节流实现类<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240917154853819.png" alt="image-20240917154853819"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240917154908066.png" alt="image-20240917154908066"></p>
 <p><strong>First Step</strong> 创建对象字节输出流 包装原始字节输出流:</p>
 <p><code>ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream)</code></p>
@@ -5203,7 +5364,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/09/30/MySQL%20%E5%9F%BA%E7%A1%80%E7%AF%87/">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/01/spring-boot-starter/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
@@ -5221,7 +5382,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/09/30/MySQL%20%E5%9F%BA%E7%A1%80%E7%AF%87/" class="post-title-link" itemprop="url">MySQL 基础</a>
+          <a href="/2024/10/01/spring-boot-starter/" class="post-title-link" itemprop="url">自定义 starter</a>
         </h2>
 
         <div class="post-meta-container">
@@ -5232,14 +5393,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2024-09-30 00:00:00" itemprop="dateCreated datePublished" datetime="2024-09-30T00:00:00+08:00">2024-09-30</time>
+      <time title="创建时间：2024-10-01 00:00:00" itemprop="dateCreated datePublished" datetime="2024-10-01T00:00:00+08:00">2024-10-01</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-27 15:54:42" itemprop="dateModified" datetime="2025-04-27T15:54:42+08:00">2025-04-27</time>
+      <time title="修改时间：2025-04-27 13:06:00" itemprop="dateModified" datetime="2025-04-27T13:06:00+08:00">2025-04-27</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -5247,7 +5408,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
+          <a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a>
         </span>
     </span>
 
@@ -5261,185 +5422,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p><strong>DB</strong>: organized data</p>
-<p><strong>DBMS</strong>: manage system</p>
-<p><strong>RDBMS</strong>: SQLite PostgreSQL MySQL Oracle Microsoft SQL Server (relational)</p>
-<p><strong>SQL</strong>: programming language</p>
-<p><strong>数据模型</strong>：管理系统：数据库：表：数据</p>
-<p><strong>RDBMS</strong>: 表结构格式统一</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920142153024.png" alt="image-20240920142153024"></p>
-<h2 id="约束"><a href="#约束" class="headerlink" title="约束"></a>约束</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923202742353.png" alt="image-20240923202742353"></p>
-<p>auto_increment 从零开始自动增长 (列是数字的类型，并且是UNIQUE约束)</p>
-<p> 这一列不指定id，或者id赋值null 不影响自增</p>
-<h3 id="非空，唯一，主键，默认，检查约束"><a href="#非空，唯一，主键，默认，检查约束" class="headerlink" title="非空，唯一，主键，默认，检查约束"></a>非空，唯一，主键，默认，检查约束</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923220639875.png" alt="image-20240923220639875"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923220734860.png" alt="image-20240923220734860"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923220750052.png" alt="image-20240923220750052"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923220711866.png" alt="image-20240923220711866"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005154832392.png" alt="image-20241005154832392"></p>
-<h3 id="外键约束"><a href="#外键约束" class="headerlink" title="外键约束"></a>外键约束</h3><p>数据一致性 完整性</p>
-<p>外键：连接两个表的数据</p>
-<ul>
-<li>（<strong>constraint</strong> foreKeyCons）<strong>foreign key</strong>(dept_id) <strong>references</strong> dept(id) 建表时</li>
-<li>给当前表中的dept_id列定义了一个 名为 foreKeyCons 的外键约束，外键引用dept表的id列，dept_id就是外键</li>
-<li>dept就是主表，必须存在，并且id是主键</li>
-<li>因为有外键约束，所以不能直接删除主表的内容，</li>
-</ul>
-<p>建表以后对外键的操作：添加和删除。外键属于表的属性</p>
-<ul>
-<li><strong>alter table</strong> emp <strong>drop foreign key</strong> foreKeyCons</li>
-<li><strong>alter table</strong> emp <strong>add constraint</strong> foreKeyCons <strong>foreign key</strong>(dept_id) <strong>references</strong> dept(id)</li>
-</ul>
-<h4 id="外键的删除、更新行为"><a href="#外键的删除、更新行为" class="headerlink" title="外键的删除、更新行为"></a>外键的删除、更新行为</h4><p>on update 更新   on delete 删除</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005155438576.png" alt="image-20241005155438576"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005155543394.png" alt="image-20241005155543394"></p>
-<p>NOACTION RESTRICT 默认</p>
-<p>CASCADE 主表变了，子表跟着变，主表删了，子表跟着没</p>
-<p><strong>ON DELETE</strong> SET NULL 主表删了，子表把对应的值设为null，只支持删除操作，并且要求外键可以为null</p>
-<h2 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923224354382.png" alt="image-20240923224354382"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923224409160.png" alt="image-20240923224409160"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923224759437.png" alt="image-20240923224759437"></p>
-<p>1-M 多的一方建立外键，少的一方作为主表，连接起来</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923225452261.png" alt="image-20240923225452261"></p>
-<p>M-N 一起连到一张中间表，中间表做从表，建立外键，连到两张表的主键上</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923225514320.png" alt="image-20240923225514320"></p>
-<p>一个商品可能属于不同订单，一个订单也可能有不同商品，所以用类似坐标的方式</p>
-<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><p>管理DML语句，InnoDB引擎才支持事务</p>
-<p>MySQL默认设置事务自动提交，也就是执行完自动COMMIT.</p>
-<p>如果要显式开启事务要SET AUTOCOMMIT = 0;（以后的事务都需要手动提交）</p>
-<p>或者 START Transaction /  BEGIN （临时开启一条事务）</p>
-<p>COMMIT 提交事务 如果没有问题就提交</p>
-<p>ROLLBACK 回滚事务 出现异常就要回滚事务到BEGIN处，即更改前</p>
-<h3 id="四大特征-acid"><a href="#四大特征-acid" class="headerlink" title="四大特征 acid"></a>四大特征 acid</h3><p>一致性依赖于应用层，开发者。</p>
-<p><strong>A</strong>tomic <strong>C</strong>onsistency <strong>I</strong>solation <strong>D</strong>urability</p>
-<p>最小操作单位，不可分割；</p>
-<p>完成时必须让所有数据都前后一致，由开发者指定，比如转账，金钱总额不能变化；</p>
-<p>多个事务是互相隔离的，排除其他事务对本事务的影响（解决并发问题）；</p>
-<p>事务对数据库的修改是持久的；</p>
-<p>一什么是隔离性？</p>
-<p>隔离性是数据库事务的四个基本属性之一，即 <strong>ACID</strong> 特性中的 “I”（Isolation）。隔离性保证了一个事务在未完成之前，它的操作对其他事务是不可见的，或者说部分可见（取决于隔离级别）。这样可以防止因并发执行而导致的数据问题。</p>
-<h3 id="高并发下可能遇到的问题："><a href="#高并发下可能遇到的问题：" class="headerlink" title="高并发下可能遇到的问题："></a>高并发下可能遇到的问题：</h3><ol>
-<li><p><strong>脏读</strong>（Dirty Read）：一个事务读取了另一个事务<strong>开始了但未提交</strong>的数据。如果另一个事务回滚或者提交，这些数据将无效，导致第一个事务读取了错误数据。</p>
-<ol>
-<li><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005213034469.png" alt="image-20241005213034469"></li>
-</ol>
-</li>
-<li><p><strong>不可重复读</strong>（Non-repeatable Read）：在同一个事务中，前后两次读取相同的数据时，数据值发生了变化，因为另一个事务在两次读取之间<strong>修改并提交了该数据</strong>。</p>
-<ol>
-<li><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005213018573.png" alt="image-20241005213018573"></li>
-</ol>
-</li>
-<li><p><strong>幻读</strong>（Phantom Read）：一个事务内，连续两次执行相同的查询（select）时，再次进行查询的时候真实的数据集已经发生了变化，但是A却查询不出来这种变化，因此产生了幻读。</p>
-<ol>
-<li>如果已经解决了12，将会发现：第一次查询没有结果，随后另一个事务插入数据并进行了提交，试图插入数据，会报错，提示不能有重复的主键，但是在第二次查询仍然没有结果，读不到别人已经提交的数据（repeatable read）但是别人提交的数据还在影响。</li>
-<li><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005214729161.png" alt="image-20241005214729161"></li>
-</ol>
-</li>
-</ol>
-<h3 id="通过隔离性解决高并发问题："><a href="#通过隔离性解决高并发问题：" class="headerlink" title="通过隔离性解决高并发问题："></a>通过隔离性解决高并发问题：</h3><p>数据库系统通常提供多种<strong>事务隔离级别</strong>，每个级别可以解决一部分或全部并发问题。这些隔离级别定义了事务之间可见性规则，数据库可以根据应用场景选择适当的隔离级别来权衡性能与数据一致性。</p>
-<p><code>select @@transaction_isolation</code> 查看当前的隔离级别</p>
-<p><code>set session transaction isolation level read uncommitted</code>设置当前会话的隔离级别，</p>
-<h3 id="SQL-标准定义的四种隔离级别"><a href="#SQL-标准定义的四种隔离级别" class="headerlink" title="SQL 标准定义的四种隔离级别"></a>SQL 标准定义的四种隔离级别</h3><ol>
-<li><strong>读未提交（Read Uncommitted）</strong>：<ul>
-<li><strong>脏读</strong>、<strong>不可重复读</strong> 和 <strong>幻读</strong> 都可能发生。</li>
-<li>最低的隔离级别，事务可以读取未提交的数据。</li>
-<li>使用场景：极高并发要求且对数据一致性要求不高的场景。</li>
-</ul>
-</li>
-<li><strong>读已提交（Read Committed）</strong>：Oracle 默认<ul>
-<li>解决脏读问题，但仍然可能出现不可重复读和幻读。</li>
-<li>一个事务只能读取已提交的数据，保证不会读取到未提交的修改。</li>
-<li>使用场景：大多数数据库系统的默认隔离级别，较好的性能和数据一致性的平衡。</li>
-</ul>
-</li>
-<li><strong>可重复读（Repeatable Read）</strong>：MySQL 默认<ul>
-<li>解决脏读和不可重复读问题，但幻读仍然可能发生。</li>
-<li>在同一事务中，事务两次读取相同的数据，保证两次读取的结果一定相同。不会读取其他事务已经提交的数据，但是仍然无法避免其他事务的影响（比如重复插入相同主键失败但是查不到这条主键的数据）</li>
-<li>使用场景：需要保证数据一致性、避免更新数据不一致的场景。</li>
-<li>普通的select快照读不会受到其他事务update、insert的影响，但是自己执行update时会进行当前读，会把其他事务update、insert的数据更新成自己的版本号，下一次读取就会读到了。</li>
-<li>幻读：尽管B事务在A事务还未结束的时候，增加了表中的数据，但是为了维护可重复读，A事务中不管怎么查询，是查询不到新增的数据的。但是对于真实的表而言，表中的数据是的的确确增加了，所以插入重复的主键会报错。</li>
-</ul>
-</li>
-<li><strong>串行化（Serializable）</strong>：<ul>
-<li>解决脏读、不可重复读和幻读问题。</li>
-<li>最高的隔离级别，所有事务串行执行，完全避免并发导致的数据问题。要等先开始的事务执行完提交或者回滚，后开始的事务才能开始执行，完全放弃并发性。</li>
-<li>使用场景：极端数据一致性要求的场景，但代价是性能较低，容易出现锁等待甚至死锁。</li>
-</ul>
-</li>
-</ol>
-<h3 id="隔离性和并发控制的关系"><a href="#隔离性和并发控制的关系" class="headerlink" title="隔离性和并发控制的关系"></a>隔离性和并发控制的关系</h3><ul>
-<li><strong>锁机制</strong>：隔离性通常通过锁机制（例如行锁、表锁）实现。在高隔离级别下（如可串行化），数据库会使用更严格的锁定策略，确保其他事务在未提交前不能读取或修改被锁定的数据。</li>
-<li>**多版本并发控制 (MVCC)**：有些数据库（如 PostgreSQL、MySQL 的 InnoDB 存储引擎）采用了多版本并发控制，允许在较高隔离级别下提高性能。MVCC 通过保存数据的多个版本，允许读取操作无需阻塞写入操作，从而在高并发下仍然能够提供一致的数据读取。</li>
-</ul>
-<h2 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h2><h3 id="通用语法"><a href="#通用语法" class="headerlink" title="通用语法"></a>通用语法</h3><ul>
-<li>可以多行书写，分号结尾</li>
-<li>可用空格和缩进增强可读性</li>
-<li>MySQL的SQL语句不区分大小写，关键字建议大写</li>
-</ul>
-<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>DDL definition 定义数据库对象(表、db，字段)</p>
-<p>DML manipulation 操作数据，增删改</p>
-<p>DQL query 查询</p>
-<p>DCL control 创建用户，控制访问权限</p>
-<h3 id="DCL"><a href="#DCL" class="headerlink" title="DCL"></a>DCL</h3><p>control 控制数据库访问权限和管理数据库用户</p>
-<h4 id="DCL-用户管理"><a href="#DCL-用户管理" class="headerlink" title="DCL-用户管理"></a>DCL-用户管理</h4><p>use mysql;</p>
-<p>select * from user;</p>
-<ul>
-<li><p>创建用户 <strong>create user</strong> ‘itcast‘<strong>@</strong>‘localhost’ <strong>identified by</strong> ‘123456’ 密码123456用户名itcast 主机localhost</p>
-</li>
-<li><p>创建用户 <strong>create user</strong> ‘heima‘<strong>@</strong>‘%’ <strong>identified by</strong> ‘123456’ 密码123456用户名heima  任意主机均可访问</p>
-</li>
-<li><p>改密码 alter user ‘heima‘<strong>@</strong>‘%’ <strong>identified with</strong> mysql_native_password by ‘1234’ 改成1234</p>
-</li>
-<li><p>drop user ‘heima‘<strong>@</strong>‘%’  删除用户</p>
-</li>
-</ul>
-<h4 id="DCL-控制权限"><a href="#DCL-控制权限" class="headerlink" title="DCL - 控制权限"></a>DCL - 控制权限</h4><ul>
-<li>查询有什么权限：SHOW GRANTS FOR 用户@主机</li>
-<li>授予用户权限：grant all on 数据库名.表名 to 用户@主机</li>
-<li>撤销用户权限：revoke all on 数据库名.表名 from 用户@主机</li>
-</ul>
-<h3 id="DDL"><a href="#DDL" class="headerlink" title="DDL"></a>DDL</h3><h4 id="数据库操作-database"><a href="#数据库操作-database" class="headerlink" title="数据库操作-database"></a>数据库操作-database</h4><ul>
-<li><code>SHOW DATABASES;</code> 查询所有数据库（展示）</li>
-<li><code>SELECT DATABASE();</code> 查询当前数据库（展示）</li>
-<li><code>CREATE DATABASE if not exists name;</code>如果不存在则创建一个名为 name 的数据库，后面可以加<code>default charset + 字符集</code> <code>COLLATE 排序规则</code></li>
-<li><code>DROP DATABASE IF EXISTS;</code> 如果存在则删除</li>
-<li><code>USE name;</code> 使用名为name的数据库</li>
-</ul>
-<h4 id="表操作-查询-table"><a href="#表操作-查询-table" class="headerlink" title="表操作-查询 table"></a>表操作-查询 table</h4><ul>
-<li><code>SHOW TABLES; </code> </li>
-<li><code>DESC 表名;</code> 查询表结构</li>
-<li><code>SHOW CREATE TABLE 表名;</code> 查询建表时候的信息</li>
-</ul>
-<h4 id="表操作-创建-table"><a href="#表操作-创建-table" class="headerlink" title="表操作-创建 table"></a>表操作-创建 table</h4><ul>
-<li><p>```sql<br>use itcast;<br>create table tb_user(</p>
-<pre><code>id int comment &#39;编号&#39;,
-name varchar(50) comment &#39;姓名&#39;,
-age int comment &#39;年龄&#39;,
-gender varchar(1) comment &#39;性别&#39;
-) comment &#39;用户表&#39;;
-</code></pre>
-<p>desc tb_user;</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 表操作- 数据类型</span><br><span class="line"></span><br><span class="line">##### 数值类型：</span><br><span class="line"></span><br><span class="line">TINYINT-byte   SMALLINT-short MEDIUMINT-3 bytes INT/INTEGER-int </span><br><span class="line"></span><br><span class="line">BIGINT-long  FLOAT DOUBLE DECIMAL </span><br><span class="line"></span><br><span class="line">TINYINT UNSIGNED(0-255) 无符号的tinyint</span><br><span class="line"></span><br><span class="line">DOUBLE(4,1)4代表总位数 1代表小数部分的位数 </span><br><span class="line"></span><br><span class="line">##### 字符串类型：</span><br><span class="line"></span><br><span class="line">![image-20240920183842122](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920183842122.png)</span><br><span class="line"></span><br><span class="line">|          | char(10)     | varchar(10) |</span><br><span class="line">| -------- | ------------ | ----------- |</span><br><span class="line">| 最小长度 | 10           | 0           |</span><br><span class="line">| 最大长度 | 10           | 10          |</span><br><span class="line">| eg       | 性别、手机号 | 用户名      |</span><br><span class="line"></span><br><span class="line">##### 日期类型</span><br><span class="line"></span><br><span class="line">![image-20240920184425055](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920184425055.png)</span><br><span class="line"></span><br><span class="line">![image-20240926153912988](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926153912988.png)</span><br><span class="line"></span><br><span class="line">![image-20240926153925471](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926153925471.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 表操作-修改表属性</span><br><span class="line"></span><br><span class="line">**alter table** employee **add** nickname varchar(20) [comment] [约束]; **添加属性**</span><br><span class="line"></span><br><span class="line">**alter table** employee **modify** nickname char(20); **修改数据类型**</span><br><span class="line"></span><br><span class="line">**alter table** employee **change** nickname idCard char(18) [comment] [约束]; **改名字+数据类型** </span><br><span class="line"></span><br><span class="line">**alter table** employee **drop** nickname; **删除** </span><br><span class="line"></span><br><span class="line">**alter table** employee **rename to** emp; **改表名**  </span><br><span class="line"></span><br><span class="line">#### 表操作-删除</span><br><span class="line"></span><br><span class="line">**drop table** [if exists] 表名;   **删除整个表**</span><br><span class="line"></span><br><span class="line">**truncate table** 表名; **删除数据不删表结构**</span><br><span class="line"></span><br><span class="line">#### MySQL GUI</span><br><span class="line"></span><br><span class="line">SQLyog Navicat DataGrip</span><br><span class="line"></span><br><span class="line">### DML</span><br><span class="line"></span><br><span class="line">INSERT UPDATE DELETE </span><br><span class="line"></span><br><span class="line">#### 添加数据</span><br><span class="line"></span><br><span class="line">**insert into** 表名(属性1，属性2....) **values**（v1,v2...）指定属性</span><br><span class="line"></span><br><span class="line">**insert into** 表名 **values**（v1,v2...）所有</span><br><span class="line"></span><br><span class="line">字段和值一一对应，字符串和日期在单引号中</span><br><span class="line"></span><br><span class="line">**多条数据**: **values**</span><br><span class="line"></span><br><span class="line">​		（v1,v2...）,</span><br><span class="line"></span><br><span class="line">​		(v1,v2....) 不同条数据用逗号隔开</span><br><span class="line"></span><br><span class="line">#### 修改数据</span><br><span class="line"></span><br><span class="line">**update** employee **set** name = &#x27;itheima&#x27; **where** id=1;</span><br><span class="line"></span><br><span class="line">#### 删除数据</span><br><span class="line"></span><br><span class="line">**delete from** 表名 [where 条件] 无条件会删除整张表格的数据</span><br><span class="line"></span><br><span class="line">### DQL</span><br><span class="line"></span><br><span class="line">SELECT </span><br><span class="line"></span><br><span class="line">#### 基本查询</span><br><span class="line"></span><br><span class="line">##### 查询多个字段 </span><br><span class="line"></span><br><span class="line">**select** 字段1，字段2........ **from** 表名</span><br><span class="line"></span><br><span class="line">**select * from** 表名       通配符</span><br><span class="line"></span><br><span class="line">##### 设置别名</span><br><span class="line"></span><br><span class="line">**select** 字段1[**as** 别名1]，字段2[**as** 别名2].... **from** 表名 as可省略</span><br><span class="line"></span><br><span class="line">##### 去重</span><br><span class="line"></span><br><span class="line"> **select distinct** ........</span><br><span class="line"></span><br><span class="line">#### 条件查询 WHERE</span><br><span class="line"></span><br><span class="line">![image-20240920211218098](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920211218098.png)</span><br><span class="line"></span><br><span class="line">**select * from** employ where age **in**(12,45,43);</span><br><span class="line"></span><br><span class="line">**select * from** employ where name **like &#x27;__&#x27;**; 名字是两个字符  模糊查询 模糊匹配</span><br><span class="line"></span><br><span class="line">##### sql 模糊查询</span><br><span class="line"></span><br><span class="line">通配符：</span><br><span class="line"></span><br><span class="line">- %: %网% 查询含有网字的数据</span><br><span class="line"></span><br><span class="line">  ​     %网    查询以网字结尾的数据</span><br><span class="line"></span><br><span class="line">  ​      %网%车    查询含有 网 和 车的数据 有先后顺序</span><br><span class="line"></span><br><span class="line">- _ :   网_ 网开头 长度为2个字</span><br><span class="line"></span><br><span class="line">  ​	_ _ 网 长度为3个字 最后一个字是网</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">between and </span><br><span class="line"></span><br><span class="line">in </span><br><span class="line"></span><br><span class="line">is null </span><br><span class="line"></span><br><span class="line">#### 聚合函数 </span><br><span class="line"></span><br><span class="line">![image-20240920212134476](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920212134476.png)</span><br><span class="line"></span><br><span class="line">count(*)所有行 count(age)age非空的行数</span><br><span class="line"></span><br><span class="line">作用在列数据，**null不参与运算~**</span><br><span class="line"></span><br><span class="line">select count(age) from emp where workAddress = &#x27;西安&#x27;; </span><br><span class="line"></span><br><span class="line">位于select关键字之后 可以加where条件</span><br><span class="line"></span><br><span class="line">#### 分组查询 GROUP BY &amp; HAVING</span><br><span class="line"></span><br><span class="line">group by xxx 将具有相同xxx值的行归为一组，每一组执行聚合count  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">**select** gender, count(*) **from** emp **&lt;u&gt;group by&lt;/u&gt;** gender;  计算行的数量，并按照gender分组</span><br><span class="line"></span><br><span class="line">- where 分组之前过滤 </span><br><span class="line">- **having** 对分组之后的结果进行过滤</span><br><span class="line">- where 不能对聚合函数判断， having可以，要判断聚合函数就要分完组</span><br><span class="line">- 执行顺序：where&gt;聚合函数&gt;having</span><br><span class="line">- 先用where筛选个体，然后分组，再对组内执行聚合函数，执行的结果可以再用having筛选</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 排序查询 ORDER BY</span><br><span class="line"></span><br><span class="line">ASC:ascending 默认</span><br><span class="line"></span><br><span class="line">DESC:descending</span><br><span class="line"></span><br><span class="line">- 语句的最后，添加 **order by** age **asc**;</span><br><span class="line">- **order by** age **desc** , entryDate; 先按照age降序，如果age相同在按照entryDate升序</span><br><span class="line"></span><br><span class="line">#### 分页查询 LIMIT</span><br><span class="line"></span><br><span class="line">查询xx页码</span><br><span class="line"></span><br><span class="line">LIMIT 起始索引，查询记录数</span><br><span class="line"></span><br><span class="line">每页是20条，第一页的起始数据是0，第二页的20</span><br><span class="line"></span><br><span class="line">limit 0,5 第一页，一页5条记录</span><br><span class="line"></span><br><span class="line">**limit** 5 **offset** 0 第一页 limit 5 offset 20 第五页</span><br><span class="line"></span><br><span class="line">#### 执行顺序</span><br><span class="line"></span><br><span class="line">先执行from 再用where过滤，然后用group by和having指定分组以及过滤，然后执行字段的select，接着是排序，最后分页</span><br><span class="line"></span><br><span class="line">在字段名，表名后加别名，看是否报错，验证上述顺序</span><br><span class="line"></span><br><span class="line">### [多表查询](C:\Users\Lenovo\OneDrive\本学期\数据库原理\多表查询练习.md)</span><br><span class="line"></span><br><span class="line">#### 表关系</span><br><span class="line"></span><br><span class="line">多对多：同一个学生可以选择多门课程，同一个课程也可以被多名学生选择，如果要描述他们之间的关系，添加一张中间表，里面的外键分别对应两张表的主键。</span><br><span class="line"></span><br><span class="line">一对多：多的一方建立外键，关联到少的主键。</span><br><span class="line"></span><br><span class="line">一对一：任意一方建立外键（UNIQUE），关联到另外的主键。</span><br><span class="line"></span><br><span class="line">![image-20241005161911780](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005161911780.png)</span><br><span class="line"></span><br><span class="line">#### 链接查询 JOIN</span><br><span class="line"></span><br><span class="line">##### 消除笛卡尔积</span><br><span class="line"></span><br><span class="line">![image-20241005162327168](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005162327168.png)</span><br><span class="line"></span><br><span class="line">##### 内连接</span><br><span class="line"></span><br><span class="line">只查询A和B相交的部分</span><br><span class="line"></span><br><span class="line">**select** *e*.name,*e*.gender,*d*.dname **from** *emp e*,*dept d* ... **where**    条件 (隐式) </span><br><span class="line"></span><br><span class="line">**select** * **from** *emp* **join** *dept* on     条件（显式）</span><br><span class="line"></span><br><span class="line">##### 外连接</span><br><span class="line"></span><br><span class="line">![image-20241005163112728](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005163112728.png)</span><br><span class="line"></span><br><span class="line">e.* emp的全部数据 </span><br><span class="line"></span><br><span class="line">from *A* left join B 查询*A* ∪ (A∩B)</span><br><span class="line"></span><br><span class="line">from *A* right join B 查询*B* ∪ (A∩B)</span><br><span class="line"></span><br><span class="line">##### 自链接</span><br><span class="line"></span><br><span class="line">一定要起别名</span><br><span class="line"></span><br><span class="line">![image-20241005163553452](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005163553452.png)</span><br><span class="line"></span><br><span class="line">没有必要专门搞一张领导表出来，如果要实现需求就要把一张表分成两张看，a的经理id等于b的id</span><br><span class="line"></span><br><span class="line">![image-20241005163805094](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005163805094.png)</span><br><span class="line"></span><br><span class="line">##### 外键？连接查询？</span><br><span class="line"></span><br><span class="line">在多表查询中，**连接查询**（JOIN）并不强制要求外键的存在。外键的作用是维护表之间的**参照完整性**，确保一张表中的某些值对应另一张表中的有效值。但在进行连接查询时，只要有可以用于关联两个表的字段（如主键和某个相应的列），就可以进行查询，而不需要一定设置外键。</span><br><span class="line"></span><br><span class="line">#### 联合查询</span><br><span class="line"></span><br><span class="line">把两条单表查询结果联合起来，字段数量必须一致</span><br><span class="line"></span><br><span class="line">UNION：自动根据主键去重</span><br><span class="line"></span><br><span class="line">UNION ALL: 不去重</span><br><span class="line"></span><br><span class="line">#### 子查询 按返回值分类</span><br><span class="line"></span><br><span class="line">##### **单行单列**：只返回一个**值** </span><br><span class="line"></span><br><span class="line">- ![image-20241005165024271](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005165024271.png)</span><br><span class="line"></span><br><span class="line">##### **单行多列**：返回的是一行数据</span><br><span class="line"></span><br><span class="line">- ![image-20241005S171121759](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005171121759.png)![image-20241005171132602](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005171132602.png)</span><br><span class="line"></span><br><span class="line">- 第一步返回的是**一行两列**的数据（salary，managerid），第二步的条件可以用where (salary, managerid) = 第一行的结果</span><br><span class="line"></span><br><span class="line">- &lt;a href=&quot;#extension&quot;&gt;多行多列扩展&lt;/a&gt;</span><br><span class="line"></span><br><span class="line">##### **多行单列**：子查询返回的是多行单列的数据</span><br><span class="line"></span><br><span class="line">也就是同一个字段的值的集合，用括号括起来，最后查询可以如下操作符（操作对象是同一字段的值的集合）</span><br><span class="line"></span><br><span class="line">- in **等于**集合内部的某一个值</span><br><span class="line"></span><br><span class="line">- any/some **大于** any 只需大于最小值 小于any只需小于最大值**相当于存在量词∃** </span><br><span class="line">- all **相当于全称量词∀**</span><br><span class="line"></span><br><span class="line">- ![image-20241005165513314](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005165513314.png)</span><br><span class="line">- ![image-20241005165204726](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005165204726.png)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">##### **多行多列**： 虚拟表</span><br><span class="line"></span><br><span class="line">子查询返回的是多行多列数据，也就是虚拟表，从这张虚拟表中再和其他表进行连接查询。</span><br><span class="line"></span><br><span class="line">- **虚拟表**: 查询入职日期 在2011-11-11之后的员工信息和部门信息：先查入职在2011-11-11之后的员工信息，根据这些信息（虚拟表,也叫临时表）和部门表 连接查询</span><br><span class="line"></span><br><span class="line">  - ```sql</span><br><span class="line">    SELECT * FROM (select * from emp where join_date&gt;&#x27;2011-11-11&#x27;)e JOIN dept on e.dep_id = dept.id</span><br></pre></td></tr></table></figure></li>
-<li><p><span id="extension"><strong>也可以作为单行多列的扩展</strong></span> in 关键字</p>
-<ul>
-<li>查询第一步返回的是<strong>多行多列</strong>的数据（salary，managerid），第二步的条件可以用where (salary, managerid) in 第一行的结果</li>
-</ul>
-</li>
-</ul>
-<h2 id="JDBC"><a href="#JDBC" class="headerlink" title="JDBC"></a>JDBC</h2><h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p>可以直接被另一段程序调用的程序或代码——-常见MySQL内置函数</p>
-<h3 id="字符串函数"><a href="#字符串函数" class="headerlink" title="字符串函数"></a>字符串函数</h3><p>concat substring TRIM upper </p>
-<p>LPAD(STR, 6, ‘0’) 左对齐，6位补0</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005154345722.png" alt="image-20241005154345722"></p>
-<h3 id="数值函数"><a href="#数值函数" class="headerlink" title="数值函数"></a>数值函数</h3><p>ceil floor round rand（0-1随机数）mod</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005154156390.png" alt="image-20241005154156390"></p>
-<h3 id="日期函数"><a href="#日期函数" class="headerlink" title="日期函数"></a>日期函数</h3><p>date_add now curdate curtime datediff</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005154146380.png" alt="image-20241005154146380"></p>
-<h3 id="流程控制"><a href="#流程控制" class="headerlink" title="流程控制"></a>流程控制</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005153559225.png" alt="image-20241005153559225"></p>
-<p><code>if(expr, caseTrue, caseFalse) expr = true</code> 返回caseTrue</p>
-<p><code>ifnull(v1,v2)</code> v1=null 返回v2 空字符串不是null，null必须是什么都没有，v1不为null，则返回v1</p>
-<p>case when</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005153230584.png" alt="image-20241005153230584"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005153515232.png" alt="image-20241005153515232"></p>
-
+          <p><mark>在 Spring Boot 生态中，“Starter” 本质上就是一组依赖的“捆绑包”，它的目标是让使用方 <strong>一行依赖</strong> 就把启动一个完整的 Spring Boot 应用所需的所有东西都拉过来。</mark> </p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/10/01/spring-boot-starter/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -5458,7 +5449,7 @@ gender varchar(1) comment &#39;性别&#39;
 
 
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/default/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/default/">1</a><a class="page-number" href="/default/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/default/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/default/page/6/">6</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/default/page/4/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/default/page/2/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/default/">1</a><a class="page-number" href="/default/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/default/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/default/page/7/">7</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/default/page/4/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

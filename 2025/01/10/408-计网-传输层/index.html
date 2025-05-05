@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Arvo:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="LAB：Student Resources | Kurose&#x2F;Ross, Computer Networking: a Top-Down Approach, 8&#x2F;e  端口port0-65536 TCP Header中为16位无符号整数 IP地址能够标识主机，但是通信是由主机中的应用进程发起和接收的，必须让应用进程拥有一个标识，而本地进程ID（PID）在各个OS之间并不统一（因为要写入TCP头部，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="传输层">
+<meta property="og:url" content="http://scatteredream.github.io/2025/01/10/408-%E8%AE%A1%E7%BD%91-%E4%BC%A0%E8%BE%93%E5%B1%82/index.html">
+<meta property="og:site_name" content="scatteredream&#39;s blog">
+<meta property="og:description" content="LAB：Student Resources | Kurose&#x2F;Ross, Computer Networking: a Top-Down Approach, 8&#x2F;e  端口port0-65536 TCP Header中为16位无符号整数 IP地址能够标识主机，但是通信是由主机中的应用进程发起和接收的，必须让应用进程拥有一个标识，而本地进程ID（PID）在各个OS之间并不统一（因为要写入TCP头部，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241203213134835.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241203204645293.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241127185012804.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241127215347024.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/31b78572f43299995ba9b1b2988928c5.jpg">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241204212832687.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/10d2447d4713399745cdb4937cf56a41.jpg">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/05f6445ba70b616b59a5c690c306d522.jpg">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205212918399.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205213030112.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205212615649.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205220630888.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205215843491-1733407571075-4.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205223629221.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205225111917.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205225702555.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205225712876.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241206202843219.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241206202921921.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241206203243736.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241206203312056.png">
+<meta property="article:published_time" content="2025-01-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-05T03:34:28.096Z">
+<meta property="article:author" content="碎梦">
+<meta property="article:tag" content="tcp">
+<meta property="article:tag" content="可靠传输">
+<meta property="article:tag" content="字节流">
+<meta property="article:tag" content="流量控制">
+<meta property="article:tag" content="拥塞控制">
+<meta property="article:tag" content="三次握手">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241203213134835.png">
+
+
+<link rel="canonical" href="http://scatteredream.github.io/2025/01/10/408-%E8%AE%A1%E7%BD%91-%E4%BC%A0%E8%BE%93%E5%B1%82/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2025/01/10/408-%E8%AE%A1%E7%BD%91-%E4%BC%A0%E8%BE%93%E5%B1%82/","path":"2025/01/10/408-计网-传输层/","title":"传输层"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>传输层 | scatteredream's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">scatteredream's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AB%AF%E5%8F%A3"><span class="nav-number">1.</span> <span class="nav-text">端口</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#port"><span class="nav-number">1.1.</span> <span class="nav-text">port</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E5%8F%A3%E5%8F%B7"><span class="nav-number">1.1.1.</span> <span class="nav-text">服务器端口号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%AB%AF%E5%8F%A3"><span class="nav-number">1.1.2.</span> <span class="nav-text">客户端端口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%8F%90%E9%AB%98%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%B9%B6%E5%8F%91%E8%83%BD%E5%8A%9B"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">如何提高服务器并发能力</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP-UDP%E7%BB%91%E5%AE%9A%E7%9B%B8%E5%90%8C%E7%AB%AF%E5%8F%A3"><span class="nav-number">1.2.</span> <span class="nav-text">TCP UDP绑定相同端口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E4%B8%AATCP-%E6%9C%8D%E5%8A%A1%E8%BF%9B%E7%A8%8B%E7%BB%91%E5%AE%9A%E7%9B%B8%E5%90%8C%E7%AB%AF%E5%8F%A3"><span class="nav-number">1.3.</span> <span class="nav-text">多个TCP 服务进程绑定相同端口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%AB%AF%E5%8F%A3%E7%9A%84%E5%A4%8D%E7%94%A8"><span class="nav-number">1.4.</span> <span class="nav-text">客户端端口的复用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UDP"><span class="nav-number">2.</span> <span class="nav-text">UDP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-number">2.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UDP-Datagram"><span class="nav-number">2.2.</span> <span class="nav-text">UDP Datagram</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP"><span class="nav-number">3.</span> <span class="nav-text">TCP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E7%82%B9-1"><span class="nav-number">3.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E9%9D%A0%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE%EF%BC%9AARQ"><span class="nav-number">3.2.</span> <span class="nav-text">可靠传输协议：ARQ</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%81%9C%E6%AD%A2-%E7%AD%89%E5%BE%85ARQ%E7%9A%84%E9%80%90%E6%AD%A5%E4%BC%98%E5%8C%96"><span class="nav-number">3.2.1.</span> <span class="nav-text">停止-等待ARQ的逐步优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#v2-x"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">v2.x</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#v2-0%EF%BC%9A%E7%BB%99%E6%95%B0%E6%8D%AE%E5%8C%85%E5%8A%A0%E4%B8%8A%E6%A0%A1%E9%AA%8C%E5%92%8C%EF%BC%8C%E9%98%B2%E6%AD%A2%E6%95%B0%E6%8D%AE%E5%8C%85%E5%87%BA%E7%8E%B0%E6%AF%94%E7%89%B9%E5%B7%AE%E9%94%99"><span class="nav-number">3.2.1.1.1.</span> <span class="nav-text">v2.0：给数据包加上校验和，防止数据包出现比特差错</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#v2-1%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3v2-0%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">3.2.1.1.2.</span> <span class="nav-text">v2.1如何解决v2.0问题？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#v2-2%EF%BC%9A%E6%94%B9%E5%96%84%E6%8E%A5%E6%94%B6%E6%96%B9%E7%9A%84%E5%93%8D%E5%BA%94%E7%BB%93%E6%9E%84"><span class="nav-number">3.2.1.1.3.</span> <span class="nav-text">v2.2：改善接收方的响应结构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#v2-x%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">3.2.1.1.4.</span> <span class="nav-text">v2.x的问题</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#v3-0%EF%BC%9A%E6%AF%94%E7%89%B9%E4%BA%A4%E6%8D%A2%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">v3.0：比特交换协议</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#v3-0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">3.2.1.2.1.</span> <span class="nav-text">v3.0的问题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Go-Back-N%EF%BC%88%E5%9B%9E%E9%80%80N%E6%AD%A5%EF%BC%89%EF%BC%9A%E6%B5%81%E6%B0%B4%E7%BA%BF%E5%BC%8F%E7%9A%84%E5%8F%91%E9%80%81%E4%B8%8E%E6%8E%A5%E6%94%B6"><span class="nav-number">3.2.2.</span> <span class="nav-text">Go Back N（回退N步）：流水线式的发送与接收</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Selective-Repeat%EF%BC%88%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0%EF%BC%89%EF%BC%9A%E6%97%A0%E9%9C%80%E6%8C%89%E5%BA%8FACK%EF%BC%8C%E4%B8%8D%E7%B4%AF%E8%AE%A1%E7%A1%AE%E8%AE%A4"><span class="nav-number">3.2.3.</span> <span class="nav-text">Selective Repeat（选择重传）：无需按序ACK，不累计确认</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AA%97%E5%8F%A3%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">3.2.3.1.</span> <span class="nav-text">窗口注意事项</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E9%9D%A0%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%85%B3%E9%94%AE"><span class="nav-number">3.2.4.</span> <span class="nav-text">可靠传输协议的关键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GBN-vs-SR"><span class="nav-number">3.2.5.</span> <span class="nav-text">GBN vs SR</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Go-Back-N-GBN"><span class="nav-number">3.2.5.1.</span> <span class="nav-text">Go-Back-N (GBN)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Selective-Repeat-SR"><span class="nav-number">3.2.5.2.</span> <span class="nav-text">Selective Repeat (SR)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%AD%97%E8%8A%82%E6%B5%81"><span class="nav-number">3.3.</span> <span class="nav-text">基于字节流</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%8C%85%E5%88%86%E7%89%87"><span class="nav-number">3.3.1.</span> <span class="nav-text">数据包分片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UDP%EF%BC%9A%E6%97%A0%E6%B3%95%E5%9C%A8%E4%BC%A0%E8%BE%93%E5%B1%82%E5%88%86%E7%89%87"><span class="nav-number">3.3.2.</span> <span class="nav-text">UDP：无法在传输层分片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP%EF%BC%9A%E5%8F%AF%E4%BB%A5%E5%9C%A8%E4%BC%A0%E8%BE%93%E5%B1%82%E5%8D%8F%E5%95%86%E8%87%AA%E8%A1%8C%E5%88%86%E7%89%87"><span class="nav-number">3.3.3.</span> <span class="nav-text">TCP：可以在传输层协商自行分片</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E5%88%86%E6%AE%B5%E5%A4%A7%E5%B0%8F%EF%BC%88Maxitum-Segment-Size-MSS%EF%BC%89"><span class="nav-number">3.3.3.1.</span> <span class="nav-text">最大分段大小（Maxitum Segment Size, MSS）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%AD%97%E8%8A%82%E6%B5%81%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">3.3.3.2.</span> <span class="nav-text">基于字节流的解决方案</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E8%BF%9E%E6%8E%A5%E7%9A%84-TCP-%E5%8D%8F%E8%AE%AE%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.4.</span> <span class="nav-text">面向连接的 TCP 协议实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-Segment"><span class="nav-number">3.4.1.</span> <span class="nav-text">TCP Segment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E9%9D%A0%E4%BC%A0%E8%BE%93%EF%BC%88reliable-transmission%EF%BC%89"><span class="nav-number">3.4.2.</span> <span class="nav-text">可靠传输（reliable transmission）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B4%AF%E7%A7%AF%E7%A1%AE%E8%AE%A4%EF%BC%88cumulative-acknowledgement%EF%BC%89"><span class="nav-number">3.4.2.1.</span> <span class="nav-text">累积确认（cumulative acknowledgement）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8C%89%E5%BA%8F%E6%8E%A5%E6%94%B6"><span class="nav-number">3.4.2.1.1.</span> <span class="nav-text">按序接收</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B6%85%E6%97%B6%E9%87%8D%E4%BC%A0%EF%BC%88timeout-retransmission%EF%BC%89"><span class="nav-number">3.4.2.2.</span> <span class="nav-text">超时重传（timeout retransmission）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E9%87%8D%E4%BC%A0%EF%BC%88fast-retransmit%EF%BC%89"><span class="nav-number">3.4.2.2.1.</span> <span class="nav-text">快速重传（fast retransmit）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E9%87%8D%E4%BC%A0-SACK"><span class="nav-number">3.4.2.2.2.</span> <span class="nav-text">选择重传 SACK</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GBN-or-SR"><span class="nav-number">3.4.2.3.</span> <span class="nav-text">GBN or SR?</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6%EF%BC%88flow-control%EF%BC%89"><span class="nav-number">3.4.3.</span> <span class="nav-text">流量控制（flow control）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6%E7%AA%97%E5%8F%A3%EF%BC%88rwnd%EF%BC%89"><span class="nav-number">3.4.3.1.</span> <span class="nav-text">接收窗口（rwnd）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#TCP-%E9%9B%B6%E7%AA%97%E5%8F%A3%E6%8E%A2%E6%B5%8B"><span class="nav-number">3.4.3.1.1.</span> <span class="nav-text">TCP 零窗口探测</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E6%95%88%E7%8E%87"><span class="nav-number">3.4.3.2.</span> <span class="nav-text">传输效率</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Nagle-%E7%AE%97%E6%B3%95"><span class="nav-number">3.4.3.2.1.</span> <span class="nav-text">Nagle 算法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%B3%8A%E6%B6%82%E7%AA%97%E5%8F%A3%E7%BB%BC%E5%90%88%E5%BE%81"><span class="nav-number">3.4.3.2.2.</span> <span class="nav-text">糊涂窗口综合征</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E7%AE%A1%E7%90%86%EF%BC%88connection-management%EF%BC%89"><span class="nav-number">3.4.4.</span> <span class="nav-text">连接管理（connection management）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%BB%BA%E7%AB%8B%EF%BC%9A%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%88three-way-handshake%EF%BC%89"><span class="nav-number">3.4.4.1.</span> <span class="nav-text">连接建立：三次握手（three-way handshake）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#SYN-%E6%B3%9B%E6%B4%AA-SYN-cookie"><span class="nav-number">3.4.4.1.1.</span> <span class="nav-text">SYN 泛洪: SYN cookie</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RST-%E8%BF%9E%E6%8E%A5%E9%87%8D%E7%BD%AE"><span class="nav-number">3.4.4.1.2.</span> <span class="nav-text">RST 连接重置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E6%96%AD%E5%BC%80%EF%BC%9A%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%EF%BC%88four-way-handshake%EF%BC%89"><span class="nav-number">3.4.4.2.</span> <span class="nav-text">连接断开：四次挥手（four-way handshake）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TCP-%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2"><span class="nav-number">3.4.4.3.</span> <span class="nav-text">TCP 状态转换</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Client"><span class="nav-number">3.4.4.3.1.</span> <span class="nav-text">Client</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Server"><span class="nav-number">3.4.4.3.2.</span> <span class="nav-text">Server</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6%EF%BC%88congestion-control%EF%BC%89"><span class="nav-number">3.4.5.</span> <span class="nav-text">拥塞控制（congestion control）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%A5%E5%A1%9E%E7%AA%97%E5%8F%A3%EF%BC%88cwnd%EF%BC%89"><span class="nav-number">3.4.5.1.</span> <span class="nav-text">拥塞窗口（cwnd）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E4%B8%A2%E5%8C%85%E7%9A%84%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6%EF%BC%88loss-based%EF%BC%89"><span class="nav-number">3.4.5.2.</span> <span class="nav-text">基于丢包的拥塞控制（loss-based）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%85%A2%E5%90%AF%E5%8A%A8%EF%BC%88slow-start%EF%BC%89"><span class="nav-number">3.4.5.2.1.</span> <span class="nav-text">慢启动（slow-start）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%8B%A5%E5%A1%9E%E9%81%BF%E5%85%8D%EF%BC%88congestion-avoidance%EF%BC%89"><span class="nav-number">3.4.5.2.2.</span> <span class="nav-text">拥塞避免（congestion avoidance）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E6%81%A2%E5%A4%8D%EF%BC%88fast-recovery%EF%BC%89"><span class="nav-number">3.4.5.2.3.</span> <span class="nav-text">快速恢复（fast recovery）</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#TCP-Reno-vs-TCP-Tahoe"><span class="nav-number">3.4.5.2.3.1.</span> <span class="nav-text">TCP Reno vs TCP Tahoe</span></a></li><li class="nav-item nav-level-6"><a class="nav-link"><span class="nav-number">3.4.5.2.3.2.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AIMD%EF%BC%9A%E5%8A%A0%E6%80%A7%E5%A2%9E%E4%B9%98%E6%80%A7%E5%87%8F"><span class="nav-number">3.4.5.2.4.</span> <span class="nav-text">AIMD：加性增乘性减</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TCP-CUBIC%EF%BC%9A%E6%9B%B4%E5%8A%A0%E6%BF%80%E8%BF%9B%E4%BD%86%E6%9C%89%E6%95%88%E5%9C%B0%E6%8E%A2%E6%B5%8B%E5%B8%A6%E5%AE%BD"><span class="nav-number">3.4.5.2.5.</span> <span class="nav-text">TCP CUBIC：更加激进但有效地探测带宽</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6%E6%96%B9%E6%B3%95"><span class="nav-number">3.4.5.3.</span> <span class="nav-text">其他拥塞控制方法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%97%B6%E5%BB%B6%E7%9A%84%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6%EF%BC%88delay%EF%BC%89"><span class="nav-number">3.4.5.3.1.</span> <span class="nav-text">基于时延的拥塞控制（delay）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%BD%91%E7%BB%9C%E5%8D%8F%E4%BD%9C%E7%9A%84%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6%EF%BC%88network-assisted%EF%BC%89"><span class="nav-number">3.4.5.3.2.</span> <span class="nav-text">基于网络协作的拥塞控制（network-assisted）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TCP-%E5%85%AC%E5%B9%B3%E6%80%A7"><span class="nav-number">3.4.5.3.3.</span> <span class="nav-text">TCP 公平性</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%82%E9%A1%B9"><span class="nav-number">3.5.</span> <span class="nav-text">杂项</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="碎梦"
+      src="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+  <p class="site-author-name" itemprop="name">碎梦</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">115</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/01/10/408-%E8%AE%A1%E7%BD%91-%E4%BC%A0%E8%BE%93%E5%B1%82/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="传输层 | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          传输层
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-10 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-10T00:00:00+08:00">2025-01-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-05 11:34:28" itemprop="dateModified" datetime="2025-05-05T11:34:28+08:00">2025-05-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%BD%91/" itemprop="url" rel="index"><span itemprop="name">计网</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>LAB：<a target="_blank" rel="noopener" href="https://media.pearsoncmg.com/ph/esm/ecs_kurose_compnetwork_8/cw/">Student Resources | Kurose/Ross, Computer Networking: a Top-Down Approach, 8/e</a> </p>
+<h1 id="端口"><a href="#端口" class="headerlink" title="端口"></a>端口</h1><h2 id="port"><a href="#port" class="headerlink" title="port"></a>port</h2><p>0-65536 TCP Header中为16位无符号整数</p>
+<p>IP地址能够标识主机，但是通信是由主机中的应用进程发起和接收的，必须让应用进程拥有一个标识，而本地进程ID（PID）在各个OS之间并不统一（因为要写入TCP头部，而各个OS发送的TCPHeader必须统一），如果是给特定的应用进程分配一个特定的ID，显然也不行，因为通信双方并不必须知道对方的真正身份，因此，最后的结果就是在传输层和应用层的界面上开一些特定的“门”，进程需要的时候就分配给他，这就是软件端口（port）的由来。</p>
+<h3 id="服务器端口号"><a href="#服务器端口号" class="headerlink" title="服务器端口号"></a>服务器端口号</h3><ul>
+<li>1-1023: 标准规定的应用强制占用。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>HTTP</th>
+<th>HTTPS</th>
+<th>DNS</th>
+<th>RIP</th>
+<th>BGP</th>
+<th>Telnet</th>
+<th>FTP</th>
+<th>SMTP</th>
+<th>SSH</th>
+<th>RMI</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>80</td>
+<td>443</td>
+<td>53</td>
+<td>520</td>
+<td>179</td>
+<td>23</td>
+<td>21</td>
+<td>25</td>
+<td>22</td>
+<td>111</td>
+</tr>
+</tbody></table>
+<ul>
+<li>1024-49151: 登记端口。</li>
+</ul>
+<h3 id="客户端端口"><a href="#客户端端口" class="headerlink" title="客户端端口"></a>客户端端口</h3><ul>
+<li><p>49152-65535(16384个): 客户端发起connect动态分配，属于临时端口号，断开连接或者通信结束就会收回。</p>
+</li>
+<li><p>一些系统中可能会出现超过65536的情况，但是由于TCP Header的限制，必须要对端口号 % 65536</p>
+</li>
+</ul>
+<h4 id="如何提高服务器并发能力"><a href="#如何提高服务器并发能力" class="headerlink" title="如何提高服务器并发能力"></a>如何提高服务器并发能力</h4><p>一般来讲，通过增加服务器内存、修改最大FD个数等，可以做到单台服务器支持10万+的TCP并发。当然，在真实的商用场景下，单台服务器都会编入<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=231771466&content_type=Article&match_order=1&q=%E5%88%86%E5%B8%83%E5%BC%8F%E9%9B%86%E7%BE%A4&zhida_source=entity">分布式集群</a>，通过负载均衡算法动态的调度不同用户的请求给最空闲的服务器，如果服务器平均内存使用超过80%的警戒线，那么就会及时采用限流或者扩展集群的方式来保证服务，绝对不会出现服务器的内存被耗尽的情况，那样就算事故了。</p>
+<h2 id="TCP-UDP绑定相同端口"><a href="#TCP-UDP绑定相同端口" class="headerlink" title="TCP UDP绑定相同端口"></a>TCP UDP绑定相同端口</h2><p>IP数据报中的协议字段可以区分TCP还是UDP，因此靠这个字段就能将IP数据报准确交给对应的协议软件实现，然后软件根据抽象的端口找到应用进程，两个协议的端口并不是一个域。</p>
+<h2 id="多个TCP-服务进程绑定相同端口"><a href="#多个TCP-服务进程绑定相同端口" class="headerlink" title="多个TCP 服务进程绑定相同端口"></a>多个TCP 服务进程绑定相同端口</h2><p>IP不同，端口相同，也是可以的。</p>
+<p>0.0.0.0:8888 表示监听所有IP地址的8888端口</p>
+<h2 id="客户端端口的复用"><a href="#客户端端口的复用" class="headerlink" title="客户端端口的复用"></a>客户端端口的复用</h2><p>可以，因为TCP连接有4个元素才能唯一确定，只要有一个不一样就是不同的TCP连接</p>
+<h1 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h1><p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/quic.html">4.17 如何基于 UDP 协议实现可靠传输？ | 小林coding</a> </p>
+<p>User Datagram Protocol 用户数据报协议</p>
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ul>
+<li><strong>无连接</strong>：传输数据之前不需要建立起连接，直接发送即可，可以是一对一，多对一，一对多，多对多。</li>
+<li><strong>不可靠</strong>：可能出现差错，丢失，重复，不能保证按序到达，也就是<strong>尽最大努力交付</strong>，这也使得首部开销比较小。</li>
+<li><strong>面向数据报</strong>：无论应用层交给 UDP 多长的报文，UDP 都照样发送，即一次发送一个报文。对应用层交下来的报文，既不合并，也不拆分，而是保留这些报文的边界。而接收方在接收数据报的时候，也不会像面对 TCP 无穷无尽的二进制流那样不清楚啥时候能结束。</li>
+<li>没有拥塞控制</li>
+</ul>
+<p>优点还有可扩展性强：TCP实现固化在操作系统中，有时性能可能不能满足部分需求，开发者可以利用UDP的特性，在应用层实现可靠传输，比如QUIC协议</p>
+<h2 id="UDP-Datagram"><a href="#UDP-Datagram" class="headerlink" title="UDP Datagram"></a>UDP Datagram</h2><p>总长度8B，源端口和目的端口各占2B，然后是UDP的PDU长度（2B），最后是检验和（2B）。</p>
+<ul>
+<li><strong>udp长度</strong>：max: 65535B min: 8B 整个UDP数据报的长度</li>
+<li><strong>检验和</strong>：添加伪首部[<strong>源IP</strong>(4B), <strong>目的IP</strong>(4B), <strong>全0</strong>(1B), <strong>17</strong>[1B,表示UDP协议类型], <strong>UDP长度</strong>(2B)]，计算检验和先将检验和位置0，然后将添加了伪首部的<strong>整个UDP数据报</strong>划分成若干个16位字，不够补零，最后将这些字按位相加，高位进位溢出进到低位，最后取反码放到检验和。IP packet只检验首部，而UDP datagram全部都检验。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>源端口</th>
+<th>目的端口</th>
+<th>UDP数据报长度</th>
+<th>检验和</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2B</td>
+<td>2B</td>
+<td>2B</td>
+<td>2B</td>
+</tr>
+</tbody></table>
+<p>如果UDP发现检验和不正确，就直接丢弃数据报</p>
+<p>如果UDP发现目的端口不准确，就丢弃数据报，随后由ICMP发送一条“终点不可达”的差错报告报文（traceroute）</p>
+<h1 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h1><p>Transmission Control Protocol，传输控制协议</p>
+<h2 id="特点-1"><a href="#特点-1" class="headerlink" title="特点"></a>特点</h2><ul>
+<li><strong>面向连接</strong>：传输数据之前必须建立起双方的连接，传输完双方应该断开连接，只能是点对点通信。</li>
+<li><strong>可靠</strong>：通过TCP传送的数据，无差错，不丢失，不重复，按序到达，这也使得首部开销比较大。</li>
+<li><strong>全双工</strong>：双方可以同时收发信息，设有接收和发送缓冲区</li>
+<li><strong>面向字节流</strong>：将应用层交下来的数据不是以<strong>消息报为单位</strong>向目的主机发送，而是看作无结构的字节流，TCP不懂字节流的含义是什么，这些数据可能被<strong>切割和组装</strong>成各种数据包，但是发送者发出的字节流和接受者收到的字节流必须一样，并且应用能够正确识别这些无意义字节流的含义，将其还原为有意义的应用层数据。接收端收到这些数据包后没有正确还原原来的消息，就会有“粘包”的现象。</li>
+</ul>
+<h2 id="可靠传输协议：ARQ"><a href="#可靠传输协议：ARQ" class="headerlink" title="可靠传输协议：ARQ"></a>可靠传输协议：ARQ</h2><p>ARQ（Automatic Repeat reQuest，自动重传请求）是计算机网络中用于确保数据可靠传输的一种关键技术。它主要通过确认（ACK）和超时重传两种机制，在不可靠的网络服务上实现可靠的数据传输。当发送方在一定时间内未收到确认帧时，它会自动重发数据包，直到收到确认为止。ARQ协议分为<strong>停止等待ARQ</strong>和<strong>连续ARQ</strong>两种类型，每种都有其特定的应用场景和优缺点。</p>
+<ol>
+<li>ARQ是一种可以在不可靠的数据通道上可靠地传输数据的方案，所以其实链路层和传输层都用了ARQ，并不专属某一层。</li>
+<li>并不是一条连接只要有一层用了ARQ，它的上层的通信就是可靠的。因为ARQ只保证使用它的点到点是可靠的，比如数据链路层只保证你和你的路由器通信可靠，你的路由器到小区的路由器通信也可靠， 但是路由器本身会故障，会拥塞丢包，也就是点本身会产生问题。</li>
+<li>所以需要在传输层或者应用层再加一层ARQ保障整条数据通道的可靠性。比如你自己写程序要在应用层通信，但传输层不用tcp想用udp，也可以在你程序里用ARQ协来实现可靠性。</li>
+<li><strong>注意：</strong> 在发送完一个分组后，必须暂时保留已发送的分组的副本，以备重发。<ul>
+<li>分组和确认分组都必须进行编号。</li>
+<li>超时计时器的重传时间应当比数据在分组传输的平均往返时间更长一些。</li>
+</ul>
+</li>
+</ol>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241203213134835.png" alt="image-20241203213134835"></p>
+<h3 id="停止-等待ARQ的逐步优化"><a href="#停止-等待ARQ的逐步优化" class="headerlink" title="停止-等待ARQ的逐步优化"></a>停止-等待ARQ的逐步优化</h3><h4 id="v2-x"><a href="#v2-x" class="headerlink" title="v2.x"></a>v2.x</h4><h5 id="v2-0：给数据包加上校验和，防止数据包出现比特差错"><a href="#v2-0：给数据包加上校验和，防止数据包出现比特差错" class="headerlink" title="v2.0：给数据包加上校验和，防止数据包出现比特差错"></a>v2.0：给数据包加上校验和，防止数据包出现比特差错</h5><ul>
+<li>2.0的第一个问题：<strong>接收方的ACK可能有比特差错</strong></li>
+<li>2.0的第二个问题：<strong>发送方未正确接收ACK直接重发，接收方不会区分是不是重传的包，导致交给上层重复的数据。</strong></li>
+</ul>
+<h5 id="v2-1如何解决v2-0问题？"><a href="#v2-1如何解决v2-0问题？" class="headerlink" title="v2.1如何解决v2.0问题？"></a>v2.1如何解决v2.0问题？</h5><ol>
+<li><strong>给ACK加一个校验和。</strong></li>
+</ol>
+<ul>
+<li>发送方收到ACK，说明是接收方正确收到了，发送下一个数据包。</li>
+<li>发送方收到NAK或者校验和出错的包，选择重发这个数据包。</li>
+</ul>
+<p>此时还没有解决第二个问题，接收方正常接收发出ACK，如果发送方收到一个校验和错误的响应（本来应该是ACK）然后重传，但是接收方会把重传的包当成全新的，这样就导致了重复的问题。</p>
+<ol start="2">
+<li><strong>在不丢包的情况下，给数据包附上一bit标识符，让接收方区分是否为重发的数据包。</strong></li>
+</ol>
+<ul>
+<li>发送方发的时候就注明是0号数据包，接收方鉴别无误就可以转换到准备接收下一个数据包的状态并发送ACK，如果发送方收到了ACK，皆大欢喜继续发下一个数据包</li>
+<li>如果发送方并未正确收到ACK，则需要重发此包，而接收方早就转换到准备接收新数据包的状态了，再次接收到旧数据包直接选择丢弃，但也要记得再发一下ACK，提醒发送者可以发送新数据包了。</li>
+</ul>
+<h5 id="v2-2：改善接收方的响应结构"><a href="#v2-2：改善接收方的响应结构" class="headerlink" title="v2.2：改善接收方的响应结构"></a>v2.2：改善接收方的响应结构</h5><p><strong>去除NAK，在ACK内部用一个比特位表示ACK或者NAK</strong></p>
+<ul>
+<li>接收方准备接收0号，如果出错，则发送ACK<del>1</del>，发送方仍处于等待ACK<del>0</del>的状态，收到的只要不是ACK<del>0</del>，就会重发。</li>
+<li>接收方准备接收0号，如果正确，则发送ACK<del>0</del>，准备接收新数据包，而发送方如果没有正确收到这个ACK<del>0</del>，会再次重发，这时候接收方会再次发送ACK<del>0</del>让发送方知晓 上个数据包已经被正确接收，提醒发送者可以开始新数据包，然后把这个重复的丢弃。</li>
+</ul>
+<h5 id="v2-x的问题"><a href="#v2-x的问题" class="headerlink" title="v2.x的问题"></a>v2.x的问题</h5><p>如果<strong>数据包丢了</strong>，接收方收不到自然也谈不上响应，再如果，<strong>响应丢了</strong>，<strong>响应迟到了</strong>，发送者就会陷入空等状态</p>
+<h4 id="v3-0：比特交换协议"><a href="#v3-0：比特交换协议" class="headerlink" title="v3.0：比特交换协议"></a>v3.0：比特交换协议</h4><p>可靠的传输协议，也叫比特交换协议，在在v2可以解决丢包和迟到的问题。</p>
+<ol>
+<li>从<strong>发送方角度</strong>考虑，<strong>把超时作为重传的唯一根据</strong>。</li>
+</ol>
+<ul>
+<li><p>如果在准备接收ACK<del>1</del>的情况下收到<strong>错误响应</strong>（ACK<del>0</del>或者校验和错误），则什么也不做，等待超时重发</p>
+</li>
+<li><p>发出分组即启动timer，一定时间内没有收到<strong>正确的响应</strong>到了timeout，则重发并重启timer；</p>
+</li>
+<li><p><strong>收到正确的响应</strong>就停止timer，转换到准备发下一个分组的状态，如果有这个如果这时有响应发来，肯定是迟到的响应，不予理会。</p>
+</li>
+</ul>
+<ol start="2">
+<li>因为有传播时延和排队处理时延，所以可能会出现过早超时然后重发的情况</li>
+</ol>
+<ul>
+<li><p>接受者的角度肯定是收到1，ACK<del>1</del>然后准备接收0，这时候再次接到1，此时回答一个ACK<del>1</del>，然后丢弃重复的1。</p>
+</li>
+<li><p>发送者如果在等待上方传下来数据的情况下收到了响应，说明这肯定是一个迟到的响应，不予理会。</p>
+</li>
+</ul>
+<p>v3总结：</p>
+<p>发一个数据包，等对应的ACK，超时了就重发，必须且只能收到一次对应的ACK，收到就转变状态不等了，来再多也没用。</p>
+<h5 id="v3-0的问题"><a href="#v3-0的问题" class="headerlink" title="v3.0的问题"></a>v3.0的问题</h5><ul>
+<li>时间利用上不如v2，但是基于时间的重传和基于ACK比特位的重传是冲突的，因此问题不算大。</li>
+<li>最根本的还是停止等待对时间资源的浪费。</li>
+</ul>
+<h3 id="Go-Back-N（回退N步）：流水线式的发送与接收"><a href="#Go-Back-N（回退N步）：流水线式的发送与接收" class="headerlink" title="Go Back N（回退N步）：流水线式的发送与接收"></a>Go Back N（回退N步）：流水线式的发送与接收</h3><p>Go Back N：发送窗口，累计确认，超时重传。</p>
+<p><strong>发送方</strong>：</p>
+<ol>
+<li>维护一个发送窗口(N)，用来限制一次最多发送的包数目，基于超时重传</li>
+</ol>
+<ul>
+<li>在窗口以前的默认已经成功发送了(0-base)，窗口内部有的已经发送处于等待响应的状态(base-nextseqnum)，有的还没有发送过(nextseqnum+1 - base+N-1)。</li>
+<li>应用层传下来的data，如果分配到的序号超过窗口，拒绝（或者缓存一下），在窗口内，填到nextseqnum++处。</li>
+<li>在发送窗口中的包，发送base时start timer，一直把从base到nextseqnum的包都发出去，如果timeout就把这些包全部重发一遍。</li>
+</ul>
+<ol start="2">
+<li>接收ACK</li>
+</ol>
+<ul>
+<li>根据ACK中的编号滑动窗口边缘(base=getacknum+1) 这里的ACK包含的序号是接收方封装的，接收方的逻辑可以保证此序号之前的全部正确传输。</li>
+<li>如果滑动窗口之后，base = nextseqnum 说明窗口内已经没有要发送的分组，stop timer，如果还有，那就restart timer，继续等待。</li>
+</ul>
+<p><strong>接收方</strong>：</p>
+<ol>
+<li><strong>累计确认</strong>：只需要维护一个序号expectedseqnum，顾名思义，接收方必须按序ACK，按序递交给上层。</li>
+</ol>
+<ul>
+<li>收到的包确实是自己想要的，于是就发一个ACK<del>expectedseqnum</del>，随后递交给应用层，然后ex…num自增，表明自己要接收下一个包<ul>
+<li>假定ACK响应中的序号N，对于接收方来说序号&lt;=N的全部正确递交给上层了。</li>
+</ul>
+</li>
+<li>没有收到自己想要的包，就丢弃，并把上次制作好的ACK重新发送，提醒发送方该滑动窗口了。（<strong>可能是因为发送方没有正确识别ACK造成的冗余分组</strong>）</li>
+</ul>
+<p>意味着即使之前已经接受过正确的分组也要丢弃，expectedseqnum之后的情况是未知的，因此只能回退重传。</p>
+<p>单个分组的错传，会引起之后的大量分组重传。</p>
+<h3 id="Selective-Repeat（选择重传）：无需按序ACK，不累计确认"><a href="#Selective-Repeat（选择重传）：无需按序ACK，不累计确认" class="headerlink" title="Selective Repeat（选择重传）：无需按序ACK，不累计确认"></a>Selective Repeat（选择重传）：无需按序ACK，不累计确认</h3><p>Selective Repeat 特点：接收窗口，乱序ACK，按序交付上层</p>
+<p>接收方不丢弃正确的乱序分组，而是先进行ACK然后缓存，并不直接交给上层。</p>
+<ul>
+<li>对于发送方来说，对方对base序号的ACK是发送窗口滑动的唯一标准。</li>
+<li>对于接收方来说，成功按序递交给上层是接收窗口滑动的唯一标准。</li>
+</ul>
+<p><strong>发送方</strong>：</p>
+<ol>
+<li>维护发送窗口：</li>
+</ol>
+<ul>
+<li>对于应用层传下来的数据，仍然不变。</li>
+<li>在发送窗口的包，为每一个包都设置一个timer，单独计时。</li>
+</ul>
+<ol start="2">
+<li>接收ACK：</li>
+</ol>
+<ul>
+<li>ACK对应编号标记为已ACK，</li>
+<li>如果ACKnum = send_base，则说明可以移动了，移动到第一个未ACK的序号处<ul>
+<li>例子：窗口变成OOOOXXXXOXX，则滑动后的窗口为XXXXOXXXXXX</li>
+</ul>
+</li>
+</ul>
+<p><strong>接收方</strong>：可以不按序ACK，但是递交给上层需要按序，维护一个接收窗口</p>
+<ul>
+<li>序号在窗口里面的，没问题的就发个ACK<ul>
+<li>失序的（在窗口中间的）先缓存好，等于rcv_base则准备交付给应用层，将从rcv_base开始所有缓存好的包 连续、按序交给应用层</li>
+</ul>
+</li>
+</ul>
+<p><strong>冗余分组</strong>：</p>
+<p>对于接收者来说，ACKnum=rcv_base就可以开始滑动了，表明rcv_base之前的数据肯定已经正确交付给应用层了，但是并不能保证这个ACK就一定能被正确解析，因此发送窗口可能会迟迟不滑动导致一直重传（冗余分组）</p>
+<ul>
+<li>如果序号是[base-N 到 base-1]的，即使之前ACK过了，也还是会回复ACK，不断尝试提醒发送方滑动发送窗口。</li>
+</ul>
+<h4 id="窗口注意事项"><a href="#窗口注意事项" class="headerlink" title="窗口注意事项"></a>窗口注意事项</h4><ul>
+<li><strong>接收窗口与发送窗口并不总是完全的同步，可能会错开一部分，不过接收窗口的base也不会完全超过发送窗口，毕竟如果还没发送，也就谈不上接收过了。</strong></li>
+</ul>
+<ul>
+<li><p><strong>序号范围与窗口大小</strong>序号是循环利用的，如果窗口太大，序号范围太小，就有可能发生重传的分组被当成是新分组的情况</p>
+<ul>
+<li><p>序号是0~3 窗口大小为3，0 1 2 ACK过了传给上层，接收窗口滑动变成 3 0 1</p>
+</li>
+<li><p>ACK没有被正确接收，因此0,1,2重传，此时0和1就被当成是<strong>全新</strong>的数据了。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>窗口大小与序号的关系计算</strong></p>
+<p>假设序号0-N-1，窗口大小为M，M &lt;= N 发送窗口为序号0到M-1</p>
+<ul>
+<li>对于SR来说，最坏的情况，接收窗口为序号M到M+M-1(一共M个)，而2M-1不能超过序号N-1，否则就会有上面的问题，因此$M\le \frac{N}{2}$ </li>
+<li>对于GBN来说，窗口只有一个宽度，因此$M\le N-1$ </li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241203204645293.png" alt="image-20241203204645293"></p>
+<h3 id="可靠传输协议的关键"><a href="#可靠传输协议的关键" class="headerlink" title="可靠传输协议的关键"></a>可靠传输协议的关键</h3><ul>
+<li><p>确认机制：没差错要ACK</p>
+<ul>
+<li>保证没有比特差错：分组和ACK都要有校验位。</li>
+</ul>
+</li>
+<li><p>对于超时（未得到正确的ACK）重传</p>
+<ul>
+<li>发送时使用timer进行计时，超时则重传，</li>
+<li>可能带来的冗余分组问题，要让接收方能分辨出冗余分组<ul>
+<li>接收方如何对待冗余分组：发送者给分组添加序号，接收方根据序号分辨这是一个重传的还是新的分组。<ul>
+<li>并且发出的ACK也要携带序号，提醒哪个分组被正确收到了</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>窗口、流水线发送：提高信道利用率</p>
+<ul>
+<li>窗口大小：窗口之间不同步（无法避免）但是窗口太大，导致重传分组被当做新的分组。</li>
+</ul>
+</li>
+</ul>
+<p>一个默认的假设：除了丢包，包并不会被重新排序。</p>
+<p>而现实是传输层下方是不可靠信道，并不保证数据准确无误并且一定按序到达，因此应当将互联网看成是一个不定时发送的缓存，由于序号复用，这样可能会有相同序列号的分组出现在信道中，产生冲突。假定一个分组在网络中有TTL，超过TTL，序号就一定能够被再次使用。</p>
+<h3 id="GBN-vs-SR"><a href="#GBN-vs-SR" class="headerlink" title="GBN vs SR"></a>GBN vs SR</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>GBN</th>
+<th>SR</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>重传策略</td>
+<td>从丢失的分组开始，重新发送整个窗口</td>
+<td>仅重传出错或超时的分组</td>
+</tr>
+<tr>
+<td>接收端处理</td>
+<td>按顺序接收分组，否则丢弃</td>
+<td>接收乱序分组并缓存</td>
+</tr>
+<tr>
+<td>计时器数量</td>
+<td>1 个计时器</td>
+<td>N 个计时器（每个分组一个计时器）</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>高丢包率但传输顺序严格的环境</td>
+<td>低丢包率，允许乱序接收的环境</td>
+</tr>
+<tr>
+<td>发送窗口</td>
+<td>N</td>
+<td>N</td>
+</tr>
+<tr>
+<td>接收窗口</td>
+<td>1</td>
+<td>N</td>
+</tr>
+</tbody></table>
+<h4 id="Go-Back-N-GBN"><a href="#Go-Back-N-GBN" class="headerlink" title="Go-Back-N (GBN)"></a>Go-Back-N (GBN)</h4><ul>
+<li><strong>特点</strong>：<ol>
+<li>发送端最多可以连续发送 <strong>N 个未确认的分组</strong>。</li>
+<li>如果在超时时间内没有收到某个分组的确认，应从该分组开始 <strong>重新发送其后所有分组</strong>。</li>
+</ol>
+</li>
+<li><strong>计时器需求</strong>：<br>GBN 协议只需要一个 **==全局计时器==**，用于跟踪 <strong>最早发送但尚未确认的分组（窗口起点）</strong>。<ul>
+<li>一旦计时器超时，直接 <strong>回退到该分组并重传整个窗口</strong>，不需要为每个分组单独计时。</li>
+<li>原因是 GBN 要求分组必须 <strong>按顺序到达</strong>，只要有一个分组超时，所有后续分组都需要重发。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4 id="Selective-Repeat-SR"><a href="#Selective-Repeat-SR" class="headerlink" title="Selective Repeat (SR)"></a>Selective Repeat (SR)</h4><ul>
+<li><strong>特点</strong>：<ol>
+<li>支持接收端 <strong>乱序接收</strong>，允许正确接收的分组先缓存。</li>
+<li>发送端只重传超时或出错的分组，而不是整个窗口。</li>
+</ol>
+</li>
+<li><strong>计时器需求</strong>：<br>由于 SR 可以 <strong>选择性重传特定分组</strong>，每个分组都需要一个 **==独立的计时器==**。<ul>
+<li>如果某个分组超时，只重传该分组，而不影响其他分组。</li>
+<li>因此，发送端必须为 <strong>窗口内的每个分组维护单独的计时器</strong>，以便精确控制每个分组的超时和重传行为。</li>
+</ul>
+</li>
+</ul>
+<h2 id="基于字节流"><a href="#基于字节流" class="headerlink" title="基于字节流"></a>基于字节流</h2><h3 id="数据包分片"><a href="#数据包分片" class="headerlink" title="数据包分片"></a>数据包分片</h3><ul>
+<li>以太网帧总长度至少64B，数据负载不能超过MTU，首部+FCS 18 因此要求 IP数据报长度在 <code>46~1500</code>Byte</li>
+</ul>
+<ul>
+<li><p>IP首部至少20B，因此传输层数据包为<code>26~1480</code> Byte</p>
+</li>
+<li><p>TCP首部20B TCP报文段的数据部分为<code>6~1460</code>Byte</p>
+</li>
+<li><p>UDP首部8B UDP数据报的数据部分为<code>18~1472</code>Byte</p>
+</li>
+<li><p>这些都是为了迎合以太网帧的帧大小限制。当超过了这个限制，就要对IP数据包进行分片。</p>
+</li>
+</ul>
+<h3 id="UDP：无法在传输层分片"><a href="#UDP：无法在传输层分片" class="headerlink" title="UDP：无法在传输层分片"></a>UDP：无法在传输层分片</h3><p>超过了数据部分的大小只能通过IP进行分片，分多个IP数据报发送。</p>
+<p>它并没有协商的能力，所以它只能直接把用户发送的数据，传给网络层（<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=105481550&content_type=Article&match_order=1&q=IP%E5%B1%82&zhida_source=entity">IP层</a>），由网络层来进行分片。</p>
+<p>对 网络层（IP层）来说：它并不知道上层传过来的数据，到底是 TCP 还是 UDP，它并不关心也没有能力区分。</p>
+<p>如果发现数据过大，那么 IP 层会自动对数据进行切割，分片。用 UDP 协议发送，那么如果网络发生了波动，丢失了某个 IP 包分片， 对于 UDP 而言， 它没有反馈丢失了哪个分片给发送方的能力，这就意味着：50k 的数据全都丢失了，如果需要重传，就得再次完整的传递这 50k 的数据。</p>
+<blockquote>
+<p>UDP 协议头有 2 byte 表示长度的字段。所以实际 UDP 数据包的长度不能超过65507字节（65,535 − 8字节UDP报头 − 20字节IP头部）</p>
+<p>TCP 是<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=105481550&content_type=Article&match_order=1&q=%E6%B5%81%E6%95%B0%E6%8D%AE&zhida_source=entity">流数据</a>，没有该限制。</p>
+</blockquote>
+<p>而 TCP 只会重传这一个丢失的分片包。</p>
+<p>所以如果一个应用采用 UDP 来通讯，一般都会特意控制下单个包体的大小，从而提高传输效率。</p>
+<h3 id="TCP：可以在传输层协商自行分片"><a href="#TCP：可以在传输层协商自行分片" class="headerlink" title="TCP：可以在传输层协商自行分片"></a>TCP：可以在传输层协商自行分片</h3><h4 id="最大分段大小（Maxitum-Segment-Size-MSS）"><a href="#最大分段大小（Maxitum-Segment-Size-MSS）" class="headerlink" title="最大分段大小（Maxitum Segment Size, MSS）"></a>最大分段大小（Maxitum Segment Size, MSS）</h4><p>这里首先要说下：MSS（Maxitum Segment Size）最大分段大小，它是 TCP 协议里面的一个概念。</p>
+<p>MSS 要保证一个TCP报文段，加上TCPIP首部长度以后，适合单个链路层帧。</p>
+<p>TCP 在建立连接的时候，会协商双方的MSS值，通常这个 MSS 会控制在 MTU 以内：最大 IP 包大小减去 IP 和 TCP 协议头的大小。（其最终目的：<strong>就是尽量避免 IP 分片</strong>）1500-20-20 = 1460 </p>
+<p>这样 TCP 就可以在自己这一层，把用户发送的数据，预先分成多个大小限制在 MTU 里的 TCP 包。每个 TCP 的分片包，都完整了包含了 TCP 头信息，方便在接收方重组。</p>
+<blockquote>
+<p>如果某些情况导致：已经分好的 TCP 分片，还是大于了 MTU，那就在 IP 层中，再执行一次分片。<br>这个时候如果数据丢了，那也只需要重传这一个 TCP 的分片，而不是整个原始的 50k 数据。</p>
+</blockquote>
+<p>而 IP（<a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc791#section-3.1">RFC 791</a>）中规定所有主机或路由器必须能够接受576字节以内的数据报，576字节以上不保证能接受，有一定可能会分片。<a target="_blank" rel="noopener" href="https://blog.csdn.net/BuquTianya/article/details/88136381">RFC791（IP协议）——协议格式_rfc 791-CSDN博客</a> </p>
+<p>严格讲，这并非是协商出来一个统一的MSS值，TCP允许连接两端使用各自不同的MSS值。例如，这会发生在参与TCP连接的一台设备使用非常少的内存处理到来的TCP分组。</p>
+<h4 id="基于字节流的解决方案"><a href="#基于字节流的解决方案" class="headerlink" title="基于字节流的解决方案"></a>基于字节流的解决方案</h4><p>应用层传到 TCP 协议的数据，不是以<strong>数据报为单位</strong>向目的主机发送，而是以<strong>字节流</strong>的方式发送到下游，这些数据可能被<strong>切割和组装</strong>成各种数据包，接收端（应用层）收到这些数据包后没有正确还原原来的消息，因此出现粘包现象。</p>
+<p>正因为<strong>基于数据报</strong>和<strong>基于字节流</strong>的差异，<strong>TCP 发送端发 10 次字节流数据，而这时候接收端可以分 100 次去取数据，每次取数据的长度可以根据处理能力作调整；但 UDP 发送端发了 10 次数据报，那接收端就要在 10 次收完，且发了多少，就取多少，确保每次都是一个完整的数据报。</strong></p>
+<p>根本原因是应用层不知道消息的边界在哪里，不知道字节流的开始和结束位置，错误地划分了数据包序列中间的边界</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241127185012804.png" alt="image-20241127185012804"></p>
+<ul>
+<li>定长：FTP</li>
+</ul>
+<ul>
+<li><p>分隔符：SMTP HTTP</p>
+<p>可以通过特殊的标志作为头尾，比如当收到了<code>0xfffffe</code>或者回车符，则认为收到了新消息的头，此时继续取数据，直到收到下一个头标志<code>0xfffffe</code>或者尾部标记，才认为是一个完整消息。类似的像 HTTP 协议里当使用 <strong>chunked 编码</strong> 传输时，使用若干个 chunk 组成消息，最后由一个标明长度为 0 的 chunk 结束。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241127215347024.png" alt="image-20241127215347024"></p>
+</li>
+<li><p>TLV：HTTP Content-Length  WebSocket Protobuf Thrift</p>
+<p>这个一般配合上面的特殊标志一起使用，在收到头标志时，里面还可以带上消息长度，以此表明在这之后多少 byte 都是属于这个消息的。如果在这之后正好有符合长度的 byte，则取走，作为一个完整消息给应用层使用。在实际场景中，HTTP 中的<code>Content-Length</code>就起了类似的作用，当接收端收到的消息长度小于 Content-Length 时，说明还有些消息没收到。那接收端会一直等，直到拿够了消息或超时，关于这一点<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzAwMDAxNjU4Mg==&mid=2247484204&idx=1&sn=0e83aabb2a48570b5bec563a777f4d26&scene=21#wechat_redirect">上一篇文章</a>里有更详细的说明</p>
+<p>基于<a target="_blank" rel="noopener" href="https://search.bilibili.com/all?from_source=webcommentline_search&keyword=TLV&seid=7175035739223351950">TLV</a>的协议，接收段不断的检查Tag，如果收到tag就会去取length，这里面有一个点就是tag和length是定长的，比如tag是四个字符，length占4个字节。取到length以后就读取length个字节的<a target="_blank" rel="noopener" href="https://search.bilibili.com/all?from_source=webcommentline_search&keyword=value&seid=7175035739223351950">value</a>。理论上value后面接着的就是下一个tag</p>
+</li>
+</ul>
+<p>Netty <strong>解决方案</strong></p>
+<ul>
+<li><p>定长解码器 <code>FixedLengthFrameDecoder</code> </p>
+</li>
+<li><p>分割字符解码器 <code>DelimeterBasedFrameDecoder</code></p>
+</li>
+<li><p>长度字段解码器 <code>LengthFieldBasedFrameDecoder</code></p>
+</li>
+</ul>
+<h2 id="面向连接的-TCP-协议实现"><a href="#面向连接的-TCP-协议实现" class="headerlink" title="面向连接的 TCP 协议实现"></a>面向连接的 TCP 协议实现</h2><p>TCP连接可以由一个四元组（源IP, 源PORT, 目的IP, 目的PORT）唯一确定服务器的目的IP, 目的PORT一般是不会变化的，因此理论上TCP最大支持的连接数是 $2^{32} \times 2^{16} = 2^{48}$个，而TCP在linux系统中的实现用的是一个叫socket的编程接口实现的，socket本身就是一个文件，一个TCP连接就创建一个SOCKET FD因此还应该考虑服务器最大的内存大小。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/31b78572f43299995ba9b1b2988928c5.jpg" alt="31b78572f43299995ba9b1b2988928c5"></p>
+<h3 id="TCP-Segment"><a href="#TCP-Segment" class="headerlink" title="TCP Segment"></a>TCP Segment</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241204212832687.png" alt="image-20241204212832687"></p>
+<p>PSH = 1，数据不会缓存，立即交给上层（PUSH）</p>
+<p>URG = 1，紧急数据指针指定了</p>
+<h3 id="可靠传输（reliable-transmission）"><a href="#可靠传输（reliable-transmission）" class="headerlink" title="可靠传输（reliable transmission）"></a>可靠传输（reliable transmission）</h3><p>一个TCP报文段中的数据部分长度不能超过MSS，可以包含若干字节。</p>
+<h4 id="累积确认（cumulative-acknowledgement）"><a href="#累积确认（cumulative-acknowledgement）" class="headerlink" title="累积确认（cumulative acknowledgement）"></a>累积确认（cumulative acknowledgement）</h4><p>在TCP中并无数据长度的说法，在接收端和发送端眼中数据是没有边界、没有长度、但<strong>有序</strong>的字节流，用序号来标识字节。</p>
+<ul>
+<li>TCP Segment中的<strong>序号</strong>（Seq）<strong>代表第一个字节在<u>发送端</u>的序号</strong>。<ul>
+<li>初始序号可以是随机的</li>
+</ul>
+</li>
+<li><u>发送者</u>用<strong>确认号</strong>（ACK）来提醒对方，<strong>自己下一个想要接收对方的Seq = ACK的字节</strong>。</li>
+</ul>
+<h5 id="按序接收"><a href="#按序接收" class="headerlink" title="按序接收"></a>按序接收</h5><p>TCP只记录第一个字节流是有序的，因此TCP也应按序接收，ACK = n，代表着序号n以前的数据都被正确接收。只确认到第一个丢失字节为止的位置。</p>
+<p><strong>失序</strong>：回顾可靠传输协议GBN与SR，一个重要的区别就是SR对于失序的报文会选择先缓存再发送ACK，而GBN会直接丢弃，TCP的实现就是先保留，然后等待缺少的字节填补间隔</p>
+<p><strong>捎带确认</strong>：发送数据方同时也可以是接收数据方，这样可以在携带数据的报文中捎带进行确认。比如 Telnet <code>echo</code> 功能中，服务端会把确认号装在回复给客户端的报文中，与此同时还运输了数据</p>
+<p><strong>无数据的ACK报文</strong>：有的报文只是有一个确认的功能，没有带任何数据，但是Seq字段也不能空，所以还是会填Seq字段，只是一个逻辑上的标号</p>
+<h4 id="超时重传（timeout-retransmission）"><a href="#超时重传（timeout-retransmission）" class="headerlink" title="超时重传（timeout retransmission）"></a>超时重传（timeout retransmission）</h4><ul>
+<li><p>RTO（Retransmission Time Out）：重传超时时间，即从数据发送时刻算起，超过这个时间便执行重传。</p>
+</li>
+<li><p>RTO 的确定是一个关键问题，因为它直接影响到 TCP 的性能和效率。如果 RTO 设置得太小，会导致不必要的重传，增加网络负担；如果 RTO 设置得太大，会导致数据传输的延迟，降低吞吐量。因此，RTO 应该根据网络的实际状况，动态地进行调整。</p>
+</li>
+<li><p>RTT 的值会随着网络的波动而变化，所以 TCP 不能直接使用 RTT 作为 RTO。为了动态地调整 RTO，TCP 协议采用了一些算法，如加权移动平均（EWMA）算法，Karn 算法，Jacobson 算法等，这些算法都是根据往返时延（RTT）的测量和变化来估计 RTO 的值。</p>
+</li>
+<li><p>超时间隔是通过统计学加上适当的估计算出来的，但是必须大于 1 RTT+路由器处理时延。</p>
+</li>
+<li><p>不采用重传后的样本（Karn 算法）因为不知道这个ACK是对重传的ACK还是迟到的ACK，因此不统计重传的RTT</p>
+</li>
+<li><p>如果突然变得拥塞，导致大量超时重传，无法统计样本的RTT，造成RTT无法及时更新，因此每次重传都把RTO翻倍，也是一种拥塞控制的机制，防止过度阻塞</p>
+</li>
+</ul>
+<h5 id="快速重传（fast-retransmit）"><a href="#快速重传（fast-retransmit）" class="headerlink" title="快速重传（fast retransmit）"></a>快速重传（fast retransmit）</h5><p>防止间隔加倍导致网络时延过大，<strong>乱序到达则发送冗余ACK</strong>，收到3次冗余ACK，就重传一次对应ACK序号的数据。</p>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>TCP 接收方操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>收到按顺序的分段，其序列号是接收方期望的。所有数据的序列号都小于或等于期望的序列号并已被确认。</td>
+<td>延迟发送ACK。等待最多500毫秒以接收下一个按顺序到达的分段。如果在此时间间隔内未接收到下一个分段，则发送一个ACK。</td>
+</tr>
+<tr>
+<td>收到按顺序的分段，其序列号是接收方期望的，并且有另一个按顺序的分段正在等待ACK发送。</td>
+<td>立即发送单个累计ACK，确认两个按顺序的分段。</td>
+</tr>
+<tr>
+<td>收到乱序的分段，其序列号大于期望的序列号。检测到数据的缺口（gap）。</td>
+<td>立即发送冗余ACK，表明<strong>下一期望接收的字节的序列号</strong>（即<strong>缺口的起始序列号</strong>）。</td>
+</tr>
+<tr>
+<td>收到的分段能够部分或完全填补接收数据中的缺口。</td>
+<td>立即发送ACK，前提是该分段的起始序列号正好是<strong>缺口的起始序列号</strong>。</td>
+</tr>
+</tbody></table>
+<p>GBN协议中，用变量expectedseqnum表示expectedseqnum以前的数据都已经正确接收， 接收方将不停发送具有expectedseqnum<del>1</del>的ACK（之前已经发过了，因此是冗余ACK），直到正确收到具有expectedseqnum<del>1</del>的数据。==GBN== </p>
+<h5 id="选择重传-SACK"><a href="#选择重传-SACK" class="headerlink" title="选择重传 SACK"></a>选择重传 SACK</h5><p>改进的方法就是 SACK（Selective Acknowledgment），简单来讲就是在快速重传的基础上，<strong>返回最近收到的报文段的序列号范围</strong>，这样客户端就知道，哪些数据包已经到达服务器了。</p>
+<p>**冗余SACK ** </p>
+<p>DSACK，即重复 SACK，这个机制是在 SACK 的基础上，额外携带信息，<strong>告知发送方有哪些数据包自己重复接收了</strong>。DSACK 的目的是帮助发送方判断，是否发生了包失序、ACK 丢失、包重复或伪重传。让 TCP 可以更好的做网络流控。</p>
+<h4 id="GBN-or-SR"><a href="#GBN-or-SR" class="headerlink" title="GBN or SR?"></a>GBN or SR?</h4><p><strong>累计确认</strong></p>
+<p>TCP实现中包含了累计确认这个GBN的要素，但是TCP对于失序的部分不会直接丢弃，也不回复ACK，而是暂存形成一个数据缺口。</p>
+<p>对于超时重传，TCP只会让流水线发送中第一个未确认的字节重传，并且如果接受到了序号更大的ACK，连重传也不需要；而GBN规定只要没有收到第一个的ACK，后面不管是否收到必须全部重传。</p>
+<p>一些TCP实现中也可以采用SR，不必使用累计确认。</p>
+<p><strong>接收窗口</strong></p>
+<p>TCP有接收窗口，GBN的接收窗口宽度只有1，SR也有接收窗口，但是SR并不是累计确认。</p>
+<h3 id="流量控制（flow-control）"><a href="#流量控制（flow-control）" class="headerlink" title="流量控制（flow control）"></a>流量控制（flow control）</h3><p>不同于网络中的拥塞控制机制，流量控制是用来使发送方与接收方速率相匹配的机制，提醒发送方能发多少避免接收方缓冲区溢出。</p>
+<h4 id="接收窗口（rwnd）"><a href="#接收窗口（rwnd）" class="headerlink" title="接收窗口（rwnd）"></a>接收窗口（rwnd）</h4><ul>
+<li><p>TCP接收方维护 <code>lastByteRcvd</code>（最后一个递交给应用进程的）与 <code>lastByteRead</code>（最后一个确认的，rcv_base或expectedseqnum）二者差值即为接收缓冲区中的现有字节数，由此可以计算出缓冲区的可用字节数字rwnd。<code>rwnd = RcvBufferSize - (lastByteRcvd - lastByteRead)</code> </p>
+</li>
+<li><p>TCP发送方维护<code>lastByteSent</code>（最后一个发送的nextSeqnum，）与<code>lastByteAck</code>（最后一个确认的，send_base）二者差值即为所有已发送但未收到确认的字节数，<code>lastByteSent - lastByteAck &lt;= rwnd</code> 否则就阻塞发送方，也就是说发送窗口和接收窗口是一个概念。</p>
+</li>
+</ul>
+<h5 id="TCP-零窗口探测"><a href="#TCP-零窗口探测" class="headerlink" title="TCP 零窗口探测"></a>TCP 零窗口探测</h5><ul>
+<li>如果rwnd = 0，发送方仍会发送一个特殊的1字节的段（就是下一字节的数据，没新的数据段发送的时候发一个ack），强制接收端重新宣布下一个期望的字节和窗口大小（rwnd），与此同时启动一个探测定时器（persistence timer）</li>
+<li>如果接收方回复的窗口rwnd仍然为0，则发送方的探测定时器加倍。</li>
+<li>没有收到ACK，在发送探测包的最大次数之后连接超时（Reset或者关闭TCP连接）</li>
+</ul>
+<h4 id="传输效率"><a href="#传输效率" class="headerlink" title="传输效率"></a>传输效率</h4><h5 id="Nagle-算法"><a href="#Nagle-算法" class="headerlink" title="Nagle 算法"></a>Nagle 算法</h5><p>如果数据段只有1个字符，21字节的报文段只有1B的数据，带宽利用率就很低</p>
+<p>Nagle算法：如果连续发字节，先发一个，收到确认之后把缓存的一连串一起发出去；一旦到达发送窗口或者MSS就立即发出。</p>
+<h5 id="糊涂窗口综合征"><a href="#糊涂窗口综合征" class="headerlink" title="糊涂窗口综合征"></a>糊涂窗口综合征</h5><ul>
+<li>接收窗口空出1字节就急忙通知对方，对方发过来1字节又占满缓冲区</li>
+<li>接收方有足够的接收缓存再去通知，rwnd = Rcvbuffer/2 或 MSS即可通知</li>
+<li>尽可能地在MSS范围内提升报文段内数据的比例，提升利用率</li>
+</ul>
+<h3 id="连接管理（connection-management）"><a href="#连接管理（connection-management）" class="headerlink" title="连接管理（connection management）"></a>连接管理（connection management）</h3><h4 id="连接建立：三次握手（three-way-handshake）"><a href="#连接建立：三次握手（three-way-handshake）" class="headerlink" title="连接建立：三次握手（three-way handshake）"></a>连接建立：三次握手（three-way handshake）</h4><p>ACK比特用于表示ACK确认号字段有效</p>
+<ol>
+<li>客户端发送<strong>SYN</strong>报文：Seq = x，SYN = 1 (ACK比特 = 0) </li>
+<li>服务器<strong>SYNACK</strong>报文：Seq = y，SYN = 1，ACK确认号 = x + 1 (ACK比特 = 1)</li>
+<li>客户端<strong>ACK</strong>报文 ：Seq = x + 1，SYN = 0，ACK确认号 = y + 1 (ACK比特 = 1)</li>
+</ol>
+<h5 id="SYN-泛洪-SYN-cookie"><a href="#SYN-泛洪-SYN-cookie" class="headerlink" title="SYN 泛洪: SYN cookie"></a>SYN 泛洪: SYN cookie</h5><p>服务器收到SYN报文将会缓存y，用于核对下一个ACK的值是否为y+1，存到内存中，SYN攻击的原理就是不发送ACK，因此服务器会不断缓存y，建立许多半连接，最终不堪重负。解决方法就是服务器不去储存y，而是用特别的方法生成，y = H(IP1, IP2, key) 关键在于只有服务器知道的key，而合法的客户端会回复ACK报文，服务端接收以后只需要用相同的哈希函数再次计算y，看看是不是和ACK报文中的y相同，如果相同，则建立连接。</p>
+<h5 id="RST-连接重置"><a href="#RST-连接重置" class="headerlink" title="RST 连接重置"></a>RST 连接重置</h5><p>用于强制中断当前的连接，如果SYN报文的目的端口并未有套接字在监听，说明这个请求非法，于是响应报文RST置1</p>
+<p>在 <strong>TCP</strong> 重置攻击中，攻击者通过向通信的一方或双方发送伪造的消息，告诉它们立即断开连接，从而使通信双方连接中断。正常情况下，如果客户端收发现到达的报文段对于相关连接而言是不正确的，<strong>TCP</strong> 就会发送一个重置报文段，从而导致 <strong>TCP</strong> 连接的快速拆卸。</p>
+<p><strong>TCP</strong> 重置攻击利用这一机制，通过向通信方发送伪造的重置报文段，欺骗通信双方提前关闭 TCP 连接。如果伪造的重置报文段完全逼真，接收者就会认为它有效，并关闭 <strong>TCP</strong> 连接，防止连接被用来进一步交换信息。服务端可以创建一个新的 <strong>TCP</strong> 连接来恢复通信，但仍然可能会被攻击者重置连接。万幸的是，攻击者需要一定的时间来组装和发送伪造的报文，所以一般情况下这种攻击只对长连接有杀伤力，对于短连接而言，你还没攻击呢，人家已经完成了信息交换。</p>
+<p>从某种意义上来说，伪造 <strong>TCP</strong> 报文段是很容易的，因为 <strong>TCP/IP</strong> 都没有任何内置的方法来验证服务端的身份。有些特殊的 IP 扩展协议（例如 <code>IPSec</code>）确实可以验证身份，但并没有被广泛使用。客户端只能接收报文段，并在可能的情况下使用更高级别的协议（如 <code>TLS</code>）来验证服务端的身份。但这个方法对 <strong>TCP</strong> 重置包并不适用，因为 <strong>TCP</strong> 重置包是 <strong>TCP</strong> 协议本身的一部分，无法使用更高级别的协议进行验证</p>
+<h4 id="连接断开：四次挥手（four-way-handshake）"><a href="#连接断开：四次挥手（four-way-handshake）" class="headerlink" title="连接断开：四次挥手（four-way handshake）"></a>连接断开：四次挥手（four-way handshake）</h4><p>FIN比特 置1</p>
+<ol>
+<li>客户端发送FIN，提醒服务器要断开连接，</li>
+<li>服务器随即回复ACK，表示已经收到消息准备断开，发送完剩余数据之后，在发送FIN并关闭连接，告知客户端，服务器这边已经关闭了，服务器等待最后一个ACK</li>
+<li>客户端收到FIN以后开始定时并回复ACK，超时即CLOSED。服务端收到客户端ACK之后正式CLOSED</li>
+</ol>
+<p>TIME-WAIT timer：如果客户端发的ack丢失，服务器还得重传Fin，如果客户端这边早早CLOSED，就收不到服务器Fin，也就发不出ack，服务器的套接字状态无法正式CLOSED</p>
+<h4 id="TCP-状态转换"><a href="#TCP-状态转换" class="headerlink" title="TCP 状态转换"></a>TCP 状态转换</h4><h5 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/10d2447d4713399745cdb4937cf56a41.jpg" alt="10d2447d4713399745cdb4937cf56a41"></p>
+<h5 id="Server"><a href="#Server" class="headerlink" title="Server"></a>Server</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/05f6445ba70b616b59a5c690c306d522.jpg" alt="05f6445ba70b616b59a5c690c306d522"></p>
+<h3 id="拥塞控制（congestion-control）"><a href="#拥塞控制（congestion-control）" class="headerlink" title="拥塞控制（congestion control）"></a>拥塞控制（congestion control）</h3><h4 id="拥塞窗口（cwnd）"><a href="#拥塞窗口（cwnd）" class="headerlink" title="拥塞窗口（cwnd）"></a>拥塞窗口（cwnd）</h4><ul>
+<li><strong>拥塞窗口</strong>（congestion window, cwnd）：取决于中间的网络条件，由发送方控制，cwnd/RTT就是发送速率。</li>
+<li><strong>接收窗口</strong>（receive window, rwnd）：由接收方可用缓存控制的，限制发送速率。</li>
+<li><strong>对于发送方</strong>：<code>lastByteSent - lastByteAck &lt;= min(cwnd,rwnd)</code>  </li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205212918399.png" alt="image-20241205212918399"></p>
+<p>下面为了方便研究，将cwnd作为TCP发送的主要瓶颈。</p>
+<h4 id="基于丢包的拥塞控制（loss-based）"><a href="#基于丢包的拥塞控制（loss-based）" class="headerlink" title="基于丢包的拥塞控制（loss-based）"></a>基于丢包的拥塞控制（loss-based）</h4><p>TCP 对于拥塞控制给出如下三个<strong>指导性原则</strong>：</p>
+<ul>
+<li><p>如果出现丢包（冗余ACK或超时重传），那说明网络可能出现了拥塞状况，将缩短拥塞窗口，限制发送量</p>
+</li>
+<li><p>如果出现正常ACK，说明对方正确接收了，网络状况良好，将扩大拥塞窗口，增加发送量</p>
+</li>
+<li><p>带宽探测：探测拥塞开始的速率，增加发送速率以与ACK匹配，出现丢包则从该速率回退，然后继续探测。</p>
+</li>
+</ul>
+<p>拥塞控制算法有慢启动-拥塞避免-快速恢复三个状态，下图为FSM:</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205213030112.png" alt="image-20241205213030112"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205212615649.png"></p>
+<h5 id="慢启动（slow-start）"><a href="#慢启动（slow-start）" class="headerlink" title="慢启动（slow-start）"></a>慢启动（slow-start）</h5><p>初始cwnd = 1 MSS，发送1个字节，得到1 ACK, cwnd增大1 MSS，第二次发送2个字节，1个ACK增大1 MSS，呈<strong>指数增长</strong>。（2^n^ MSS per RTT）</p>
+<p>cwnd是动态变化的，只要接收到ACK就会让cwnd增大，即使上一个RTT的ACK还没接收完，也对下一个RTT的能发送的字节数影响不大，因为接收完上一个RTT的所有ACK，意味着cwnd已经在上一RTT的基础上翻倍了，而此时肯定CWND还没被占满。</p>
+<p>慢启动阈值ssthresh：阈值内部慢启动，超出阈值则拥塞避免</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205220630888.png" alt="image-20241205220630888"></p>
+<p><strong>三种结束慢启动的方式</strong>：</p>
+<ul>
+<li><p><strong>超时重传</strong>：<strong>timeout</strong>，则将 <strong>ssthresh</strong>(slow-start threshold)设置为cwnd/2，重置 cwnd = 1 MSS，重新开始<strong>慢启动过程</strong>，然后执行重传。</p>
+</li>
+<li><p><strong>可能再次发生拥塞</strong>： <strong>cwnd &gt;= ssthresh</strong>，说明再增大可能就要再次拥塞了，应该更加谨慎地增加cwnd，进入<strong>拥塞避免</strong>模式。</p>
+</li>
+<li><p><strong>快速重传</strong>：<strong>冗余ACK = 3</strong>（连续收到4个相同的ACK）触发快速重传<u>之前</u>，ssthresh设置为cwnd/2，cwnd减半并加上3 MSS，进入<strong>快速恢复</strong>模式。</p>
+</li>
+</ul>
+<p>因此，cwnd &lt; ssthresh 仍然处于慢启动的状态。</p>
+<h5 id="拥塞避免（congestion-avoidance）"><a href="#拥塞避免（congestion-avoidance）" class="headerlink" title="拥塞避免（congestion avoidance）"></a>拥塞避免（congestion avoidance）</h5><p>ssthresh 是导致拥塞的cwnd / 2，因此到了第二次cwnd增大到ssthresh就应当减小增加的速度，呈<strong>线性增长</strong>（1 MSS per RTT）</p>
+<p>如果cwnd是10个MSS大小，则在一次 RTT中发10MSS字节，假如一个报文段是1MSS，每个ACK加十分之一MSS，这些报文段全部确认之后，cwnd总共加了1MSS </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205215843491-1733407571075-4.png" alt="image-20241205215843491"></p>
+<p><strong>两种结束拥塞避免的方式</strong>：</p>
+<ul>
+<li><strong>超时重传</strong>：<strong>timeout</strong>，则将ssthresh(slow-start threshold)设置为cwnd/2，重置 cwnd = 1 MSS，重新开始<strong>慢启动过程</strong>，然后执行重传。重新回到<strong>慢启动</strong>。</li>
+<li><strong>快速重传</strong>：<strong>冗余ACK = 3</strong>（连续收到4个相同的ACK）触发快速重传<u>之前</u>，ssthresh设置为cwnd/2，cwnd减半并加上3 MSS，进入<strong>快速恢复</strong>模式。</li>
+</ul>
+<h5 id="快速恢复（fast-recovery）"><a href="#快速恢复（fast-recovery）" class="headerlink" title="快速恢复（fast recovery）"></a>快速恢复（fast recovery）</h5><p>快速重传以后进入快速恢复状态，既然发的是冗余ACK，说明收到的是失序的正确报文段，加3MSS更加接近实际结果。</p>
+<h6 id="TCP-Reno-vs-TCP-Tahoe"><a href="#TCP-Reno-vs-TCP-Tahoe" class="headerlink" title="TCP Reno vs TCP Tahoe"></a>TCP Reno vs TCP Tahoe</h6><ul>
+<li>Tahoe: Cut to 1 MSS when loss detected (either t-d-ACK or timeout)</li>
+<li>Reno: Cut to roughly half on loss detected by triple duplicate ACK </li>
+</ul>
+<p>TCP Reno会在快速重传之后进入快速恢复状态，TCP Tahoe则没有快速恢复状态</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205223629221.png" alt="image-20241205223629221"></p>
+<h6 id=""><a href="#" class="headerlink" title=""></a></h6><h5 id="AIMD：加性增乘性减"><a href="#AIMD：加性增乘性减" class="headerlink" title="AIMD：加性增乘性减"></a>AIMD：加性增乘性减</h5><p>Additive-Increase, Multiplicative-Decrease 增加是一个一个加上去的，减少是立马减半的。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205225111917.png" alt="image-20241205225111917"></p>
+<h5 id="TCP-CUBIC：更加激进但有效地探测带宽"><a href="#TCP-CUBIC：更加激进但有效地探测带宽" class="headerlink" title="TCP CUBIC：更加激进但有效地探测带宽"></a>TCP CUBIC：更加激进但有效地探测带宽</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205225702555.png" alt="image-20241205225702555"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241205225712876.png" alt="image-20241205225712876"><br>$$<br>W = { \vert K - t \vert } ^3+W_{max}<br>$$<br>在Linux默认开启，在拥塞避免阶段，用一个立方函数来代替线性增长，能够在即将可能发生拥塞（到达上次开始丢包的cwnd）时放慢增长速率</p>
+<h4 id="其他拥塞控制方法"><a href="#其他拥塞控制方法" class="headerlink" title="其他拥塞控制方法"></a>其他拥塞控制方法</h4><h5 id="基于时延的拥塞控制（delay）"><a href="#基于时延的拥塞控制（delay）" class="headerlink" title="基于时延的拥塞控制（delay）"></a>基于时延的拥塞控制（delay）</h5><p>Loss-based: Increase sending rate until a loss (timeout) and then cut back</p>
+<p>Delay-based: Do the same until RTT reaches RTTcongested</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241206202843219.png" alt="image-20241206202843219"></p>
+<h5 id="基于网络协作的拥塞控制（network-assisted）"><a href="#基于网络协作的拥塞控制（network-assisted）" class="headerlink" title="基于网络协作的拥塞控制（network-assisted）"></a>基于网络协作的拥塞控制（network-assisted）</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241206202921921.png" alt="image-20241206202921921"></p>
+<h5 id="TCP-公平性"><a href="#TCP-公平性" class="headerlink" title="TCP 公平性"></a>TCP 公平性</h5><p>if $K$ TCP sessions share same bottleneck link  of bandwidth $R$, each should have average rate of $R/K$</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241206203243736.png" alt="image-20241206203243736"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241206203312056.png" alt="image-20241206203312056"></p>
+<h2 id="杂项"><a href="#杂项" class="headerlink" title="杂项"></a>杂项</h2><p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/tcp_optimize.html">如何优化 TCP? | 小林coding</a> </p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/tcp_problem.html">TCP 协议有什么缺陷？ | 小林coding</a> </p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/tcp_http_keepalive.html">TCP Keepalive 和 HTTP Keep-Alive 是一个东西吗？ | 小林coding</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/tcp_drop.html">用了 TCP 协议，数据一定不会丢吗？ | 小林coding</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/tcp_tls.html#tcp-fast-open">HTTPS 中 TLS 和 TCP 能同时握手吗？TCP FastOpen  | 小林coding</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/tcp_unplug_the_network_cable.html">拔掉网线后， 原本的 TCP 连接还存在吗？ | 小林coding</a> </p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/tcp_down_and_crash.html">TCP 连接，一端断电和进程崩溃有什么区别？ | 小林coding</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/tcp_queue.html">TCP 半连接队列和全连接队列 | 小林coding</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/tcp_interview.html">4.1 TCP 三次握手与四次挥手面试题 | 小林coding</a> </p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/tcp_three_fin.html">TCP 四次挥手，可以变成三次吗？ | 小林coding</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/out_of_order_fin.html">四次挥手中收到乱序的 FIN 包会如何处理？ | 小林coding</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/isn_deff.html">为什么 TCP 每次建立连接时，初始化序列号都要不一样呢？ | 小林coding</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/syn_drop.html">SYN 报文什么时候情况下会被丢弃？ | 小林coding</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/time_wait_recv_syn.html#%E5%85%88%E8%AF%B4%E7%BB%93%E8%AE%BA">在 TIME_WAIT 状态的 TCP 连接，收到 SYN 后会发生什么？ | 小林coding</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/tcp_tw_reuse_close.html">tcp_tw_reuse 为什么默认是关闭的？ | 小林coding</a></p>
+<p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/quic.html">如何基于 UDP 协议实现可靠传输？ | 小林coding</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tcp/" rel="tag"># tcp</a>
+              <a href="/tags/%E5%8F%AF%E9%9D%A0%E4%BC%A0%E8%BE%93/" rel="tag"># 可靠传输</a>
+              <a href="/tags/%E5%AD%97%E8%8A%82%E6%B5%81/" rel="tag"># 字节流</a>
+              <a href="/tags/%E6%B5%81%E9%87%8F%E6%8E%A7%E5%88%B6/" rel="tag"># 流量控制</a>
+              <a href="/tags/%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6/" rel="tag"># 拥塞控制</a>
+              <a href="/tags/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B/" rel="tag"># 三次握手</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/06/408-OS-Boot/" rel="prev" title="操作系统启动 CPU模式">
+                  <i class="fa fa-angle-left"></i> 操作系统启动 CPU模式
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/12/408-%E8%AE%A1%E7%BD%91-%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/" rel="next" title="计算机网络安全">
+                  计算机网络安全 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">碎梦</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/scatteredream" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

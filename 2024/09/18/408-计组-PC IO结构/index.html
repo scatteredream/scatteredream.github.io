@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Arvo:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Prototypical Architecture CPU通过专用的内存总线连接到内存，通过通用I&#x2F;O总线(如PCI)连接到显卡等高性能设备，通过外围总线连接到低速的设备(USB Flash, 磁盘驱动器 )，因为光速的限制以及各种物理因素，越快的总线越短，造价也贵，因此离CPU越远的设备性能越低。 Modern Architecture  在现代系统架构中，有更多的点对点连接到 CPU，PCIe">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PC IO 结构">
+<meta property="og:url" content="http://scatteredream.github.io/2024/09/18/408-%E8%AE%A1%E7%BB%84-PC%20IO%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:site_name" content="scatteredream&#39;s blog">
+<meta property="og:description" content="Prototypical Architecture CPU通过专用的内存总线连接到内存，通过通用I&#x2F;O总线(如PCI)连接到显卡等高性能设备，通过外围总线连接到低速的设备(USB Flash, 磁盘驱动器 )，因为光速的限制以及各种物理因素，越快的总线越短，造价也贵，因此离CPU越远的设备性能越低。 Modern Architecture  在现代系统架构中，有更多的点对点连接到 CPU，PCIe">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216183418923-1734346411610-1.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216185046235.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1024px-Motherboard_diagram.svg-1734348489593-5.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1920px-USB_3.0_Type-A_receptacle_blue.svg.png">
+<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/Everything%20about%20mainboard.assets/2560px-USB_3.0_Type-A_blue.svg.png">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/d/d5/USB_3.0_Type-B_blue.svg">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/8/8c/USB_3.0_Type-B_receptacle_blue.svg">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/1/1b/USB_Micro-B_receptacle.svg">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/1/15/USB_Micro-B.svg">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/e/e8/USB_Type-C_receptacle.svg">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/512px-USB_Type-C_icon.svg.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2560px-Nand_flash_structure.svg.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1024px-IO_stack_of_the_Linux_kernel.svg.png">
+<meta property="article:published_time" content="2024-09-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-05T04:44:01.155Z">
+<meta property="article:author" content="碎梦">
+<meta property="article:tag" content="磁盘">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216183418923-1734346411610-1.png">
+
+
+<link rel="canonical" href="http://scatteredream.github.io/2024/09/18/408-%E8%AE%A1%E7%BB%84-PC%20IO%E7%BB%93%E6%9E%84/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2024/09/18/408-%E8%AE%A1%E7%BB%84-PC%20IO%E7%BB%93%E6%9E%84/","path":"2024/09/18/408-计组-PC IO结构/","title":"PC IO 结构"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>PC IO 结构 | scatteredream's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">scatteredream's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Prototypical-Architecture"><span class="nav-number">1.</span> <span class="nav-text">Prototypical Architecture</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Modern-Architecture"><span class="nav-number">2.</span> <span class="nav-text">Modern Architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU-Socket"><span class="nav-number">2.1.</span> <span class="nav-text">CPU Socket</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Chipset"><span class="nav-number">2.2.</span> <span class="nav-text">Chipset</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Memory-Controller-Hub-Northbridge"><span class="nav-number">2.2.1.</span> <span class="nav-text">Memory Controller Hub (Northbridge)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Memory-Slots"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">Memory Slots</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Volatile-Memory-RAM"><span class="nav-number">2.2.1.1.1.</span> <span class="nav-text">Volatile Memory (RAM)</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PCIe"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">PCIe</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#I-O-Controller-Hub-Southbridge"><span class="nav-number">2.2.2.</span> <span class="nav-text">I&#x2F;O Controller Hub (Southbridge)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Storage-Interface-SATA-SAS"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">Storage Interface (SATA&#x2F;SAS)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#I-O-Ports-USB-DP-HDMI"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">I&#x2F;O Ports(USB, DP, HDMI)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Peripheral-Card-Slots"><span class="nav-number">2.2.2.3.</span> <span class="nav-text">Peripheral Card Slots</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#PCIe-slots"><span class="nav-number">2.2.2.3.1.</span> <span class="nav-text">PCIe slots</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#NVM-Flash-EEPROM"><span class="nav-number">2.2.2.3.1.1.</span> <span class="nav-text">NVM(Flash&#x2F;EEPROM)</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#M-2-slots"><span class="nav-number">2.2.2.3.2.</span> <span class="nav-text">M.2 slots</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Flash-ROM-BIOS"><span class="nav-number">2.2.2.4.</span> <span class="nav-text">Flash ROM (BIOS)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CMOS-Memory"><span class="nav-number">2.2.2.5.</span> <span class="nav-text">CMOS Memory</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Other-Modules"><span class="nav-number">2.3.</span> <span class="nav-text">Other Modules</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Power-Interface"><span class="nav-number">2.3.1.</span> <span class="nav-text">Power Interface</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cooling-Module"><span class="nav-number">2.3.2.</span> <span class="nav-text">Cooling Module</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="碎梦"
+      src="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+  <p class="site-author-name" itemprop="name">碎梦</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">115</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/09/18/408-%E8%AE%A1%E7%BB%84-PC%20IO%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="PC IO 结构 | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PC IO 结构
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-09-18 00:00:00" itemprop="dateCreated datePublished" datetime="2024-09-18T00:00:00+08:00">2024-09-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-05 12:44:01" itemprop="dateModified" datetime="2025-05-05T12:44:01+08:00">2025-05-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%BB%84/" itemprop="url" rel="index"><span itemprop="name">计组</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Prototypical-Architecture"><a href="#Prototypical-Architecture" class="headerlink" title="Prototypical Architecture"></a>Prototypical Architecture</h1><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216183418923-1734346411610-1.png" alt="image-20241216183418923"></p>
+<p>CPU通过专用的内存总线连接到内存，通过通用I/O总线(如PCI)连接到显卡等高性能设备，通过外围总线连接到低速的设备(USB Flash, 磁盘驱动器 )，因为光速的限制以及各种物理因素，越快的总线越短，造价也贵，因此离CPU越远的设备性能越低。</p>
+<h1 id="Modern-Architecture"><a href="#Modern-Architecture" class="headerlink" title="Modern Architecture"></a>Modern Architecture</h1><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216185046235.png" alt="image-20241216185046235"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1024px-Motherboard_diagram.svg-1734348489593-5.png" alt="undefined"></p>
+<p>在现代系统架构中，有更多的点对点连接到 CPU，PCIe 显卡总线和内存专用总线速度相近，以提供更高的显示性能，CPU通过 <strong>DMI</strong> 连接到一颗 I/O 芯片，所有其他外设通过各种总线连接到这颗I/O芯片。</p>
+<h2 id="CPU-Socket"><a href="#CPU-Socket" class="headerlink" title="CPU Socket"></a>CPU Socket</h2><ul>
+<li>用于安装中央处理器 (CPU)。</li>
+<li>支持不同接口类型（如 LGA、PGA 或 BGA）。</li>
+<li>插槽周围有供电模块（VRM）提供稳定电压。</li>
+</ul>
+<p>不同CPU系列使用不同插槽。后期CPU插槽，数字多数与针脚数量相同：</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/LGA_1155">LGA 1155</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/LGA_1366">LGA 1366</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/LGA_2066">LGA 2066</a>  <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/LGA_1700">LGA 1700</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Socket_AM4">Socket AM4</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Socket_TR4">Socket TR4</a> </p>
+<h2 id="Chipset"><a href="#Chipset" class="headerlink" title="Chipset"></a>Chipset</h2><p>管理数据传输和硬件通信，负责连接 CPU、内存、显卡、存储等设备</p>
+<p><strong>芯片组</strong>(Chipset)负责将电脑的处理器和和其它部分连接，以便能互传数据。芯片组在它所诞生的1980年代时是由多颗微芯片组成的，但是随着科技的进步，芯片组先是从2000年代开始简化为南桥和北桥两颗芯片，再于2010年代简化为单独一颗的南桥芯片，北桥芯片内置在CPU中，目前世界上的芯片组均以单南桥芯片为主流。  </p>
+<ul>
+<li><strong>南桥</strong>(Southbridge): 主要处理低速信号，后来演变成 ICH-&gt;PCH</li>
+<li><strong>北桥</strong>(Northbridge): 主要处理高速信号，同时也负责与南桥的通信，IOH-&gt;MCH，集成进CPU</li>
+<li><strong>DMI</strong>：连接南北桥的串行总线</li>
+<li><strong>FSB</strong>：前端总线，负责 CPU 和北桥的数据传递。现在的x86 CPU 内部整合了<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E8%A8%98%E6%86%B6%E9%AB%94%E6%8E%A7%E5%88%B6%E5%99%A8&action=edit&redlink=1">北桥</a>。FSB 已被Intel <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/QPI">QPI</a>和AMD <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/HyperTransport">HyperTransport</a>取代</li>
+</ul>
+<h3 id="Memory-Controller-Hub-Northbridge"><a href="#Memory-Controller-Hub-Northbridge" class="headerlink" title="Memory Controller Hub (Northbridge)"></a>Memory Controller Hub (Northbridge)</h3><p>随着技术发展，原来的北桥芯片已直接整合到 <strong>CPU 内部</strong>，减少延迟并提升效率：</p>
+<table>
+<thead>
+<tr>
+<th>控制器名称</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Memory Controller</strong></td>
+<td>控制内存访问和管理，负责与 RAM 通信。</td>
+</tr>
+<tr>
+<td><strong>Integrated Graphics Controller</strong></td>
+<td>提供基本图形渲染能力，支持视频输出，无需独立显卡。</td>
+</tr>
+<tr>
+<td><strong>PCIe Controller (部分 CPU)</strong></td>
+<td>高端 CPU 内部集成部分 PCIe 通道，用于高性能设备的直接通信。</td>
+</tr>
+<tr>
+<td><strong>Power Management Controller</strong></td>
+<td>管理电源状态和功耗调节，提高能效。</td>
+</tr>
+</tbody></table>
+<h4 id="Memory-Slots"><a href="#Memory-Slots" class="headerlink" title="Memory Slots"></a>Memory Slots</h4><ul>
+<li>用于安装内存模块（RAM）。</li>
+<li>常见类型：DDR3、DDR4、DDR5 等。</li>
+<li>多通道技术（如双通道、四通道）提高内存带宽。</li>
+</ul>
+<h5 id="Volatile-Memory-RAM"><a href="#Volatile-Memory-RAM" class="headerlink" title="Volatile Memory (RAM)"></a>Volatile Memory (RAM)</h5><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%8F%AE%E7%99%BC%E6%80%A7%E8%A8%98%E6%86%B6%E9%AB%94">易失性存储器</a>(Volatile Memory): 电流中断后，所存储的数据便会消失，一般为 <strong>RAM</strong></p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9D%9C%E6%85%8B%E9%9A%A8%E6%A9%9F%E5%AD%98%E5%8F%96%E8%A8%98%E6%86%B6%E9%AB%94">静态随机存储器</a>(<strong>SRAM</strong>, Static RAM): 把信息存储在锁存器中，只要保持通电，存储的数据就可以一直保持，存储密度较低，速度高，功耗低，内部结构也更为复杂。通常作为<strong>cache</strong>(L1, L2, L3)、<strong>寄存器</strong>或 FPGA ASIC 等专用设备的存储器。</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8A%A8%E6%80%81%E9%9A%8F%E6%9C%BA%E5%AD%98%E5%8F%96%E5%AD%98%E5%82%A8%E5%99%A8">动态随机存储器</a>(<strong>DRAM</strong>, Dynamic RAM): 根据电容中的电荷多寡来分辨0和1，电容会漏电，不仅要保持通电，还需周期性充电。由于这种需要定时刷新的特性，因此被称为“动态”存储器。存储密度高，速度较低，功耗高，但是成本比 SRAM 低，通常作为 主存 使用，用于存储运行中的程序和数据；也用于 显存。<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/SDRAM">同步 DRAM</a>(<strong>SDRAM</strong>, Synchronous DRAM): 在 DRAM 的架构基础上增加同步和双区域（Dual Bank）的功能，使得<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%BE%AE%E8%99%95%E7%90%86%E5%99%A8">微处理器</a>能与 SDRAM 的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%99%82%E8%84%88">时钟</a>同步，所以 SDRAM 执行命令和传输资料时相较于 DRAM 可以节省更多时间。</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/DDR_SDRAM">双倍数据率 SDRAM</a>(DDR SDRAM, Double Data Rate): DDR SDRAM 在系统时钟的上升沿和下降沿都可以进行数据传输，发展到 DDR5，数据传输率、总线频率逐渐提高<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%A7%BB%E5%8A%A8DDR">低功耗 DDR</a>(<strong>LPDDR</strong>, Low Power DDR): 专门用于移动设备，发展到 LPDDR5X</li>
+<li>图形 DDR(<strong>GDDR</strong>, Graphics DDR): 为高性能显卡提供显存支持，发展到 GDDR7</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%AB%98%E9%A0%BB%E5%AF%AC%E8%A8%98%E6%86%B6%E9%AB%94">高带宽内存</a>(HBM, High Bandwidth Memory): 基于3D堆栈工艺的高性能 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/DRAM">DRAM</a> 适用于高存储器带宽需求的应用场合，与高性能<strong>显卡</strong>、路由器、交换机、高性能数据中心的AI ASIC结合使用，在 CPU 和 FPGA 中用作包内 RAM 和 Cache</li>
+</ul>
+</li>
+</ol>
+<h4 id="PCIe"><a href="#PCIe" class="headerlink" title="PCIe"></a>PCIe</h4><p>北桥负责高速传输，因此显卡这种高速设备也需要通过PCIe和北桥(CPU)相连，详见下方PCIe x16</p>
+<h3 id="I-O-Controller-Hub-Southbridge"><a href="#I-O-Controller-Hub-Southbridge" class="headerlink" title="I/O Controller Hub (Southbridge)"></a>I/O Controller Hub (Southbridge)</h3><table>
+<thead>
+<tr>
+<th>控制器名称</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Disk Controller</strong></td>
+<td>控制 SATA、SAS 等存储设备的数据传输。</td>
+</tr>
+<tr>
+<td><strong>USB Controller</strong></td>
+<td>控制 USB 2.0、3.0、3.1、Type-C 等接口的数据传输。</td>
+</tr>
+<tr>
+<td><strong>PCIe Controller</strong></td>
+<td>管理 PCI Express 插槽的通信，用于扩展显卡、网卡等设备。</td>
+</tr>
+<tr>
+<td><strong>Ethernet Controller</strong></td>
+<td>控制有线网络通信，通常内置支持千兆或 2.5G 网卡。</td>
+</tr>
+<tr>
+<td><strong>Audio Controller</strong></td>
+<td>提供板载音频功能，支持麦克风、扬声器等外设连接。</td>
+</tr>
+<tr>
+<td><strong>SATA Controller</strong></td>
+<td>控制 SATA 硬盘和光驱设备的数据传输。</td>
+</tr>
+<tr>
+<td><strong>RAID Controller</strong></td>
+<td>支持磁盘阵列（RAID）的数据管理，提高存储性能和安全性。</td>
+</tr>
+<tr>
+<td><strong>Wireless Controller</strong></td>
+<td>控制 Wi-Fi 和蓝牙模块的无线通信功能（部分主板内置）。</td>
+</tr>
+<tr>
+<td><strong>Security Controller (TPM)</strong></td>
+<td>提供可信平台模块 (TPM) 功能，保障数据安全性和加密管理。</td>
+</tr>
+</tbody></table>
+<h4 id="Storage-Interface-SATA-SAS"><a href="#Storage-Interface-SATA-SAS" class="headerlink" title="Storage Interface (SATA/SAS)"></a>Storage Interface (SATA/SAS)</h4><ul>
+<li><strong>IDE</strong>(Integrated Device Electronics): IDE 是一项企图把控制器与盘体集成在一起为主要意图的硬盘接口技术。</li>
+<li><strong>ATA</strong>(Advanced Technology Attachment): ATA 技术是一个关于 IDE 的技术规范族，全球标准化协议将 IDE 接口技术自诞生以来使用的技术规范归纳成为全球硬盘标准。<ul>
+<li><strong>并行接口 ATA</strong>(Parallel ATA)的电缆属性、连接器和信号协议都表现出了很大的技术瓶颈，而在技术上突破这些瓶颈存在相当大的难度</li>
+</ul>
+</li>
+<li>==<strong>SATA</strong>==(Serial ATA): 并行的 PATA 存在固有的瓶颈——并行信号串扰与同步问题，因此改成了<strong>串行</strong>总线。SATA 既是一种<strong>物理接口</strong>（硬件层连接方式），也是一种<strong>逻辑接口</strong>协议（定义数据通信规则）最初是为传统机械硬盘（HDD）设计的，后来也应用于部分 SSD<ul>
+<li><strong>eSATA</strong>(External SATA): 外置 SATA 接口，方便外设的连接，eSATA 不像 USB 那样能同时传输数据和供电，因此需要额外的电源线为外部设备供电，属于物理接口协议。</li>
+<li><strong>mSATA</strong>(mini-SATA): 迷你版本SATA接口，外型和电子接口与mini PCI-E完全相同，但电子信号不同，两者互不兼容。多用于固态硬盘，适用于需要尺寸较小的存储器的场合</li>
+<li><strong>AHCI</strong>(Advanced Host Controller Interface): 允许软件与 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/SATA">SATA</a> 存储设备沟通的硬件机制，激活 SATA 的高级功能，属于逻辑接口协议。AHCI 系统的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%B8%BB%E6%9C%BA%E9%80%82%E9%85%8D%E5%99%A8">主机适配器</a>将CPU/存储器子系统与相对慢得多的、基于旋转<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%A3%81%E5%84%B2%E5%AD%98">磁性介质</a>的存储子系统，AHCI 是针对这种悬殊的速度差来进行优化设计的。AHCI 是针对硬盘优化的，不适合固态盘。</li>
+</ul>
+</li>
+<li><strong>SCSI</strong>(Small Computer System Interface): 一种连接主机和外围设备的接口，支持包括硬盘、光驱及扫描仪在内的多种设备。SCSI 总线是一种<strong>并行</strong>总线，其优点是适应面广，性能高；缺点是价格昂贵，安装复杂。</li>
+<li>==<strong>SAS</strong>==(Serial Attached SCSI): <strong>串行</strong> SCSI ，跟 SATA 总线类似，都是采用串行技术以获得更高的传输速度。就接口标准而言，SATA 是 SAS 的一个子标准，因此 SAS 控制器可以直接操控SATA 硬盘，但是 SATA 控制器并不能对 SAS 硬盘进行控制。</li>
+</ul>
+<p>SCSI/SAS 需要专用的控制卡，或者主板另外集成控制芯片，性能更好。PATA/SATA 一般由主板南桥/ICH 芯片直接集成控制器，但接口性能一般比同时期的 SCSI/SAS 要低。目前，服务器流行的硬盘接口类型是 SATA 以及 SAS，两者都是采用串行技术，传输速率都更高。</p>
+<h4 id="I-O-Ports-USB-DP-HDMI"><a href="#I-O-Ports-USB-DP-HDMI" class="headerlink" title="I/O Ports(USB, DP, HDMI)"></a>I/O Ports(USB, DP, HDMI)</h4><p><strong>通用外设接口</strong> </p>
+<ul>
+<li><p><strong>==USB==</strong>(Universal Serial Bus): 串口总线标准，也是一种输入输出接口的技术规范，被广泛地应用于个人电脑和移动设备等信息通讯产品，并扩展至摄影器材、数字电视(机顶盒)、游戏机等其它相关领域。逐渐取代 PS/2 连接键盘与鼠标，取代 COM(串口)与 LPT(并口)</p>
+<ul>
+<li><p>技术标准</p>
+<ul>
+<li>USB 2.0: 480 Mbps，半双工</li>
+<li>USB 3.0: 5 Gbps，全双工，向下兼容</li>
+<li>USB 3.1: 10 Gbps，向下兼容</li>
+<li>USB 3.2: 20 Gbps，在<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/USB_Type-C">USB Type-C</a>接口上实现双通道，向下兼容，推荐 Type-C 接口</li>
+<li>USB 4: 40 Gbps，只支持 Type-C</li>
+<li>USB PD: USB 充电标准</li>
+</ul>
+</li>
+<li><p>接口</p>
+<ul>
+<li>Mini-USB：弃用</li>
+<li>Type-A： <img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1920px-USB_3.0_Type-A_receptacle_blue.svg.png" alt="undefined" style="zoom:3%;" />  <img src="C:/Users/Lenovo/Pictures/markdownfile/Everything%20about%20mainboard.assets/2560px-USB_3.0_Type-A_blue.svg.png" alt="undefined" style="zoom:3%;" /></li>
+<li>Type-B：<img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/USB_3.0_Type-B_blue.svg" style="zoom:17%;" /> <img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/USB_3.0_Type-B_receptacle_blue.svg" style="zoom:17%;" /></li>
+<li>Micro-USB：<img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/USB_Micro-B_receptacle.svg" style="zoom:15%;" /> <img src="https://upload.wikimedia.org/wikipedia/commons/1/15/USB_Micro-B.svg" style="zoom:16%;" /></li>
+<li>Type-C：<img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/USB_Type-C_receptacle.svg" style="zoom:15%;" /> <img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/512px-USB_Type-C_icon.svg.png" alt="img" style="zoom:13%;" /></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>雷电</strong>(Thunderbolt): 目的在于当作电脑与其他设备之间的通用<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8C%AF%E6%B5%81%E6%8E%92_(%E6%95%B8%E6%93%9A)">总线</a>，第一代与第二代的连接口与<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Mini_DisplayPort">Mini DisplayPort</a>集成，第三代至第五代的连接口与<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/USB_Type-C">USB Type-C</a>结合，并且能用于充电。由于采用了PCI Express和DisplayPort架构，雷电可以<strong>高速连接诸如硬盘、RAID阵列、视频采集设备和网络接口等外设</strong> </p>
+</li>
+</ul>
+<p><strong>音视频接口</strong>(HDMI, DP, 雷电)：</p>
+<ul>
+<li><p><strong>VGA</strong>(视频图形阵列, <strong>V</strong>ideo <strong>G</strong>raphics <strong>A</strong>rray): 使用<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A1%9E%E6%AF%94%E8%A8%8A%E8%99%9F">模拟信号</a>的电脑显示标准，在1987年随IBM PS/2系列计算机推出。VGA是大多数PC制造商所遵循的最后一个IBM图形标准，几乎1990年后的所有PC图形硬件都最低支持VGA。当用VGA来表示分辨率时，通常是指640×480。</p>
+</li>
+<li><p><strong>DVI</strong>(<strong>数字</strong>视频接口, <strong>D</strong>igital <strong>V</strong>isual <strong>I</strong>nterface)：一种<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%A6%96%E8%A8%8A">视频</a>接口标准，设计的目的是用来传输未经压缩的数字化影像。目前广泛应用于<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/LCD">LCD</a>、数字<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%8A%95%E5%BD%B1%E6%A9%9F">投影机</a>等显示设备上。</p>
+</li>
+<li><p><strong>HDMI</strong>(高清媒体接口, <strong>H</strong>igh <strong>D</strong>efinition <strong>M</strong>ultimedia <strong>I</strong>nterface): 是一种全<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B8%E4%BD%8D">数字</a>化<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%BD%B1%E5%83%8F">影像</a>和<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%81%B2%E9%9F%B3">声音</a>发送接口，可以发送未<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B8%E4%BD%8D%E5%A3%93%E7%B8%AE">压缩</a>的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9F%B3%E9%A2%91">音频</a>及<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%A6%96%E9%A0%BB">视频</a>信号。HDMI 可以同时发送音频和视频信号。音频和视频信号采用同一条线材的设计大大简化系统线路的安装难度。</p>
+</li>
+<li><p><strong>DP</strong>(显示端口, <strong>D</strong>isplay <strong>P</strong>ort): 数字式音频/视频接头，此接口的设计是为了取代传统的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/VGA">VGA</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/DVI">DVI</a>接口。透过主动或被动转接器，该接口可与传统接口（如<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/HDMI">HDMI</a>和<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/DVI">DVI</a>）<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%90%91%E4%B8%8B%E7%9B%B8%E5%AE%B9">向下兼容</a>。</p>
+</li>
+<li><p><strong>雷电</strong>(Thunderbolt): 有接口也有总线，目的在于当作电脑与其他设备之间的通用 <strong>总线</strong>，第一代与第二代的连接口与<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Mini_DisplayPort">Mini DisplayPort</a>集成，第三代至第五代的连接口与<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/USB_Type-C">USB Type-C</a>结合，并且能用于充电。由于采用了PCI Express和DisplayPort架构，雷电可以<strong>高速连接诸如硬盘、RAID阵列、视频采集设备和网络接口等外设</strong>。</p>
+</li>
+</ul>
+<h4 id="Peripheral-Card-Slots"><a href="#Peripheral-Card-Slots" class="headerlink" title="Peripheral Card Slots"></a>Peripheral Card Slots</h4><p>外围扩展设备插槽：</p>
+<ul>
+<li>用于连接显卡、声卡、网卡、固态硬盘 (NVMe SSD) 等扩展设备。</li>
+<li>常见标准：PCI Express (PCIe) 3.0、4.0、5.0  M.2 2280</li>
+</ul>
+<h5 id="PCIe-slots"><a href="#PCIe-slots" class="headerlink" title="PCIe slots"></a>PCIe slots</h5><p>PCIe 可以连到南桥或北桥</p>
+<ul>
+<li><strong>PCI</strong>(Peripheral Component Interconnect): 常见于现代的个人电脑中，并已取代了 ISA 和 VESA 局部总线，成为了标准扩展总线，是并行的总线。</li>
+<li><strong>==PCIe==</strong>(PCI Express): 沿用既有的 PCI 编程概念及信号标准，并且构建了更加高速的串行通信系统标准。只需修改<strong>物理层</strong>而无须修改软件就可将现有 PCI 系统转换为 PCIe，几乎取代了以往所有的内部总线(包括 PCI)。现在英特尔和 AMD 已采用单芯片组(IO Chip)技术，取代原有的南桥和北桥方案。PCIe仅应用于内部互连，没有对外开放的接口。可以连接<strong>显卡</strong>、<strong>网卡</strong>，高性能的持久化存储设备如 NVMe 设备。根据传输通道数量分为 PCIe ×1, PCIe ×4, PCIe ×8, PCIe ×16<ul>
+<li><strong>SATA Express</strong>: 物理、逻辑接口标准，使用 PCIe 总线，向下兼容 SATA，支持 PCIe(AHCI 和 NVMe) 设备。后来物理接口被 M.2 和 U.2 取代。</li>
+<li><strong>NVMe</strong>(NVM Express, NVMHCIS): 非易失性存储器的接口标准，它是基于设备<strong>逻辑接口</strong>的总线传输协议规范，用于访问通过 PCIe 总线附加的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9D%9E%E6%8F%AE%E7%99%BC%E6%80%A7%E8%A8%98%E6%86%B6%E9%AB%94">非易失性存储器</a>介质（比如 SSD）降低了I/O操作等待时间、提升同一时间内的操作数、更大容量的操作队列等，取代 AHCI 作为新的逻辑接口协议。</li>
+</ul>
+</li>
+</ul>
+<h6 id="NVM-Flash-EEPROM"><a href="#NVM-Flash-EEPROM" class="headerlink" title="NVM(Flash/EEPROM)"></a>NVM(Flash/EEPROM)</h6><p><strong><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9D%9E%E6%8F%AE%E7%99%BC%E6%80%A7%E8%A8%98%E6%86%B6%E9%AB%94">非易失性存储器</a></strong>(<strong>NVM</strong>, Non-Volatile Memory): 电流关掉后，所存储的信息不会消失的存储设备。依存储器内的资料是否能在使用系统时随时改写为标准，可分为三大类产品：</p>
+<ol>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/ROM">只读存储器</a>(ROM, Read-only Memory)</p>
+<ul>
+<li>MROM(Masked ROM): 使用掩模工艺，出厂后不可改变，永久固化</li>
+<li>PROM(Programmable ROM): 用户可编程的 ROM，烧断熔丝来改变比特，不可逆</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8F%AF%E6%93%A6%E9%99%A4%E5%8F%AF%E8%A6%8F%E5%8A%83%E5%BC%8F%E5%94%AF%E8%AE%80%E8%A8%98%E6%86%B6%E9%AB%94">EPROM</a>(Erasable PROM): FGMOS 代替熔丝，专用编程器编程，用紫外线擦除，可逆</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E6%8A%B9%E9%99%A4%E5%BC%8F%E5%8F%AF%E8%A4%87%E5%AF%AB%E5%94%AF%E8%AE%80%E8%A8%98%E6%86%B6%E9%AB%94">EEPROM</a>(Electrically EPROM): 只需要特定电压就可以擦除</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Flash_memory">闪存</a>(Flash Memory): 与传统的硬盘相比，闪存有更佳的动态抗震性，不会因为剧烈晃动而造成资料丢失。与 SRAM 相比不需要供电，造价相对 EEPROM 较低，使用块抹除。闪存在分类上属于 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/EEPROM">EEPROM</a> 的一种，但普通的 EEPROM 使用的是字节抹除。 </p>
+<ul>
+<li><p>按照 FGMOS 的门电路结构分为：</p>
+<ul>
+<li>NOR Flash: 抹写时间长，提供完整的寻址总线，可按字节<strong>随机存取</strong>，类似 RAM</li>
+<li>NAND Flash: 抹写时间短，次数高，存储密度高，只能按页访问，类似硬盘，应用有 SSD 固态硬盘、SD 卡、U盘等。</li>
+</ul>
+</li>
+<li><p>按照 每存储单元存储 bit 数分为：</p>
+<ul>
+<li><p>SLC(1) MLC(2) TLC(3) QLC(4) 成本、寿命、写入性能依次降低</p>
+</li>
+<li><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2560px-Nand_flash_structure.svg.png" alt="undefined"></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E9%9D%9E%E6%8F%AE%E7%99%BC%E6%80%A7%E9%9A%A8%E6%A9%9F%E5%AD%98%E5%8F%96%E8%A8%98%E6%86%B6%E9%AB%94&action=edit&redlink=1">非易失性随机存储器</a>(NVRAM, Non-volatile RAM)</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/FRAM">FeRAM</a>: 替换介电质为铁电材料</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%A3%81%E9%98%BB%E5%BC%8F%E9%9A%A8%E6%A9%9F%E5%AD%98%E5%8F%96%E8%A8%98%E6%86%B6%E9%AB%94">MRAM</a>: 使用磁存储器件存储数据，应用巨磁阻效应</li>
+</ul>
+</li>
+</ol>
+<h5 id="M-2-slots"><a href="#M-2-slots" class="headerlink" title="M.2 slots"></a>M.2 slots</h5><ul>
+<li><strong>==M.2==</strong>(NGFF): 采用全新物理布局与接口，取代 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/PCI_Express">PCIe</a> 及 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/SATA#mSATA">mSATA</a> 的物理插槽<ul>
+<li>U.2: 2015 年SATA Express发布了一种兼容SAS、PCI Express x4、SATA总线的的U.2连接器界面，U.2更多用于<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BC%BA%E6%9C%8D%E5%99%A8">服务器</a>等企业应用场合。U.2支持<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%86%B1%E6%8F%92%E6%8B%94">热插拔</a>而M.2不支持；U.2可使用3.3V电源和12V电源，M.2只能使用3.3V电源；M.2可应用于<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98">固态硬盘</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%97%A0%E7%BA%BF%E7%BD%91%E5%8D%A1">无线网卡</a>等设备，而U.2仅用于2.5英寸固态盘。</li>
+<li>支持 SATA、AHCI+PCIe、NVMe+PCIe，同时可以连接网卡等</li>
+</ul>
+</li>
+</ul>
+<h4 id="Flash-ROM-BIOS"><a href="#Flash-ROM-BIOS" class="headerlink" title="Flash ROM (BIOS)"></a>Flash ROM (BIOS)</h4><p>大部分的主板的BIOS存储在Flash ROM芯片内，用于对主板作启动的初始化；在启动的过程中包含存储器、周边设备都会被测试以及做初始设置，这个过程称为 加电自检 POST，若是在 POST 的过程中出现错误，则主机会发出”哔”声或是出现错误消息在屏幕上。从2011年起，大部分的零售主板已采用UEFI BIOS，一些厂商（尤其是微星科技、华硕）还率先导入图形界面的UEFI BIOS等技术。</p>
+<h4 id="CMOS-Memory"><a href="#CMOS-Memory" class="headerlink" title="CMOS Memory"></a>CMOS Memory</h4><p>CMOS 纽扣电池供电给 CMOS 芯片(RAM)，CMOS 芯片保存系统时间和 BIOS 设置。</p>
+<h2 id="Other-Modules"><a href="#Other-Modules" class="headerlink" title="Other Modules"></a>Other Modules</h2><h3 id="Power-Interface"><a href="#Power-Interface" class="headerlink" title="Power Interface"></a>Power Interface</h3><ul>
+<li>24 针主电源接口：为主板供电。</li>
+<li>8 针或 4+4 针 CPU 辅助电源接口：为 CPU 供电。</li>
+</ul>
+<h3 id="Cooling-Module"><a href="#Cooling-Module" class="headerlink" title="Cooling Module"></a>Cooling Module</h3><ul>
+<li>CPU 散热器接口：供电及控制风扇速度。</li>
+<li>芯片组和供电模块上的散热片和风扇，降低温度。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1024px-IO_stack_of_the_Linux_kernel.svg.png" alt="undefined"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A3%81%E7%9B%98/" rel="tag"># 磁盘</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/09/17/408-%E8%AE%A1%E7%BB%84-ROM%20RAM%20Cache%20Bus%20IO/" rel="prev" title="ROM RAM Cache IO">
+                  <i class="fa fa-angle-left"></i> ROM RAM Cache IO
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/09/20/designing-pattern-singleton/" rel="next" title="单例模式">
+                  单例模式 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">碎梦</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/scatteredream" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
