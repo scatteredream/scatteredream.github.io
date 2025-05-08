@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Arvo:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="G1之前根据 Sun 的内存管理白皮书介绍了在 HotSpot JVM 分代算法中的几个垃圾收集器，本文将介绍 G1 垃圾收集器。 G1 的主要关注点在于达到可控的停顿时间，在这个基础上尽可能提高吞吐量，这一点非常重要。 G1 被设计用来长期取代 CMS 收集器，和 CMS 相同的地方在于，它们都属于并发收集器，在大部分的收集阶段都不需要挂起应用程序。区别在于，G1 没有 CMS 的碎片化问题（或">
+<meta property="og:type" content="article">
+<meta property="og:title" content="G1 垃圾收集器介绍(转自Javadoop)">
+<meta property="og:url" content="http://scatteredream.github.io/2018/09/12/jvm-gc-g1/index.html">
+<meta property="og:site_name" content="scatteredream&#39;s blog">
+<meta property="og:description" content="G1之前根据 Sun 的内存管理白皮书介绍了在 HotSpot JVM 分代算法中的几个垃圾收集器，本文将介绍 G1 垃圾收集器。 G1 的主要关注点在于达到可控的停顿时间，在这个基础上尽可能提高吞吐量，这一点非常重要。 G1 被设计用来长期取代 CMS 收集器，和 CMS 相同的地方在于，它们都属于并发收集器，在大部分的收集阶段都不需要挂起应用程序。区别在于，G1 没有 CMS 的碎片化问题（或">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/3-1742964906329-3.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/3-1742964906329-3.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/8ca16868.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2.png">
+<meta property="article:published_time" content="2018-09-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-08T05:31:10.111Z">
+<meta property="article:author" content="碎梦">
+<meta property="article:tag" content="gc">
+<meta property="article:tag" content="g1">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/3-1742964906329-3.png">
+
+
+<link rel="canonical" href="http://scatteredream.github.io/2018/09/12/jvm-gc-g1/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2018/09/12/jvm-gc-g1/","path":"2018/09/12/jvm-gc-g1/","title":"G1 垃圾收集器介绍(转自Javadoop)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>G1 垃圾收集器介绍(转自Javadoop) | scatteredream's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">scatteredream's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#G1"><span class="nav-number">1.</span> <span class="nav-text">G1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#G1-%E6%80%BB%E8%A7%88"><span class="nav-number">1.1.</span> <span class="nav-text">G1 总览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#G1-%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">G1 工作流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B4%E8%BD%BB%E4%BB%A3%E6%94%B6%E9%9B%86"><span class="nav-number">1.2.1.</span> <span class="nav-text">年轻代收集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Old-GC-%E5%B9%B6%E5%8F%91%E6%A0%87%E8%AE%B0%E5%91%A8%E6%9C%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text">Old GC &#x2F; 并发标记周期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%91%A8%E6%9C%9F"><span class="nav-number">1.2.3.</span> <span class="nav-text">混合垃圾回收周期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Full-GC"><span class="nav-number">1.2.4.</span> <span class="nav-text">Full GC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E5%B0%8F%E7%BB%93"><span class="nav-number">1.2.5.</span> <span class="nav-text">简单小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#G1-%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE%E5%92%8C%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.3.</span> <span class="nav-text">G1 参数配置和最佳实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.4.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="碎梦"
+      src="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+  <p class="site-author-name" itemprop="name">碎梦</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">73</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">120</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2018/09/12/jvm-gc-g1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="G1 垃圾收集器介绍(转自Javadoop) | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          G1 垃圾收集器介绍(转自Javadoop)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-12 00:00:00" itemprop="dateCreated datePublished" datetime="2018-09-12T00:00:00+08:00">2018-09-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-08 13:31:10" itemprop="dateModified" datetime="2025-05-08T13:31:10+08:00">2025-05-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/jvm/" itemprop="url" rel="index"><span itemprop="name">jvm</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="G1"><a href="#G1" class="headerlink" title="G1"></a>G1</h1><p>之前根据 Sun 的内存管理白皮书介绍了在 HotSpot JVM 分代算法中的几个垃圾收集器，本文将介绍 G1 垃圾收集器。</p>
+<p>G1 的主要关注点在于达到<strong>可控的停顿时间</strong>，在这个基础上尽可能提高吞吐量，这一点非常重要。</p>
+<p>G1 被设计用来长期取代 CMS 收集器，和 CMS 相同的地方在于，它们都属于并发收集器，在大部分的收集阶段都不需要挂起应用程序。区别在于，G1 没有 CMS 的碎片化问题（或者说不那么严重），同时提供了更加可控的停顿时间。</p>
+<p>如果你的应用使用了较大的堆（如 6GB 及以上）而且还要求有较低的垃圾收集停顿时间（如 0.5 秒），那么 G1 是你绝佳的选择，是时候放弃 CMS 了。</p>
+<p><strong>阅读建议</strong>：本文力求用简单的话介绍清楚 G1 收集器，但是并不会重复介绍每一个细节，所以希望读者了解其他几个收集器的工作过程，尤其是 CMS 收集器。</p>
+<span id="more"></span>
+
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/3-1742964906329-3.png" alt="G1 收集器"></p>
+<h2 id="G1-总览"><a href="#G1-总览" class="headerlink" title="G1 总览"></a>G1 总览</h2><p>首先是内存划分上，之前介绍的分代收集器将整个堆分为年轻代、老年代和永久代，每个代的空间是确定的。</p>
+<p>而 G1 将整个堆划分为一个个大小相等的小块（每一块称为一个 region），每一块的内存是连续的。和分代算法一样，G1 中每个块也会充当 Eden、Survivor、Old 三种角色，但是它们不是固定的，这使得内存使用更加地灵活。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/3-1742964906329-3.png" alt="内存划分"></p>
+<p>执行垃圾收集时，和 CMS 一样，G1 收集线程在标记阶段和应用程序线程<strong>并发</strong>执行，标记结束后，G1 也就知道哪些区块基本上是垃圾，存活对象极少，G1 会先从这些区块下手，因为从这些区块能很快释放得到很大的可用空间，<strong>这也是为什么 G1 被取名为 Garbage-First 的原因</strong>。</p>
+<blockquote>
+<p>这里只不过是先介绍些概念，没看懂没关系，往下看</p>
+</blockquote>
+<p>在 G1 中，目标停顿时间非常非常重要，用 -XX:MaxGCPauseMillis=200 指定期望的停顿时间。</p>
+<p>G1 使用了<strong>停顿预测模型</strong>来满足用户指定的停顿时间目标，并基于目标来选择进行垃圾回收的区块数量。G1 采用增量回收的方式，每次回收一些区块，而不是整堆回收。</p>
+<p>我们要知道 G1 不是一个实时收集器，它会尽力满足我们的停顿时间要求，但也不是绝对的，它基于之前垃圾收集的数据统计，估计出在用户指定的停顿时间内能收集多少个区块。</p>
+<p><strong>注意：</strong>G1 有和应用程序一起运行的并发阶段，也有 stop-the-world 的并行阶段。但是，<strong>Full GC 的时候还是单线程运行的</strong>，所以我们应该尽量避免发生 Full GC，后面我们也会介绍什么时候会触发 Full GC。</p>
+<p><strong>G1 内存占用</strong></p>
+<p>G1 比 ParallelOld 和 CMS 会需要更多的内存消耗，那是因为有部分内存消耗于簿记（accounting）上，如以下两个数据结构：</p>
+<ul>
+<li><strong>Remembered Sets</strong>：每个区块都有一个 RSet，用于记录进入该区块的对象引用（如区块 A 中的对象引用了区块 B，区块 B 的 Rset 需要记录这个信息），它用于实现收集过程的并行化以及使得区块能进行独立收集。总体上 Remembered Sets 消耗的内存小于 5%。</li>
+<li><strong>Collection Sets</strong>：将要被回收的区块集合。GC 时，在这些区块中的对象会被复制到其他区块中，总体上 Collection Sets 消耗的内存小于 1%。</li>
+</ul>
+<h2 id="G1-工作流程"><a href="#G1-工作流程" class="headerlink" title="G1 工作流程"></a>G1 工作流程</h2><p>前面啰里啰嗦说了挺多的，唯一要记住的就是，G1 的设计目标就是尽力满足我们的目标停顿时间上的要求。</p>
+<p>本节介绍 G1 的收集过程，G1 收集器主要包括了以下 4 种操作：</p>
+<ul>
+<li>1、年轻代收集</li>
+<li>2、并发收集，和应用线程同时执行</li>
+<li>3、混合式垃圾收集</li>
+<li>*、必要时的 Full GC</li>
+</ul>
+<p>接下来，我们进行一一介绍。</p>
+<h3 id="年轻代收集"><a href="#年轻代收集" class="headerlink" title="年轻代收集"></a>年轻代收集</h3><p>首先，我们来看下 G1 的堆结构：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/8ca16868.png" alt="G1 GC 内存布局"></p>
+<p>年轻代中的垃圾收集流程（Young GC）：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2.png" alt="Young GC"></p>
+<p>我们可以看到，年轻代收集概念上和之前介绍的其他分代收集器大差不差的，但是它的年轻代会动态调整。</p>
+<h3 id="Old-GC-并发标记周期"><a href="#Old-GC-并发标记周期" class="headerlink" title="Old GC / 并发标记周期"></a>Old GC / 并发标记周期</h3><p>接下来是 Old GC 的流程（含 Young GC 阶段），其实把 Old GC  理解为<strong>并发周期</strong>是比较合理的，不要单纯地认为是清理老年代的区块，因为这一步和年轻代收集也是相关的。下面我们介绍主要流程：</p>
+<ol>
+<li><p>初始标记：stop-the-world，它伴随着一次普通的 Young GC 发生，然后对 Survivor 区（root region）进行标记，因为该区可能存在对老年代的引用。</p>
+<blockquote>
+<p>因为 Young GC 是需要 stop-the-world 的，所以并发周期直接重用这个阶段，虽然会增加 CPU 开销，但是停顿时间只是增加了一小部分。</p>
+</blockquote>
+</li>
+<li><p>扫描根引用区：因为先进行了一次 YGC，所以当前年轻代只有 Survivor 区有存活对象，它被称为根引用区。扫描 Survivor 到老年代的引用，该阶段必须在下一次 Young GC 发生前结束。</p>
+<blockquote>
+<p>这个阶段不能发生年轻代收集，如果中途 Eden 区真的满了，也要等待这个阶段结束才能进行 Young GC。</p>
+</blockquote>
+</li>
+<li><p>并发标记：寻找整个堆的存活对象，该阶段可以被 Young GC 中断。</p>
+<blockquote>
+<p>这个阶段是并发执行的，中间可以发生多次 Young GC，Young GC 会中断标记过程</p>
+</blockquote>
+</li>
+<li><p>重新标记：stop-the-world，完成最后的存活对象标记。使用了比 CMS 收集器更加高效的 snapshot-at-the-beginning (SATB) 算法。</p>
+<blockquote>
+<p>Oracle 的资料显示，这个阶段会回收完全空闲的区块</p>
+</blockquote>
+</li>
+<li><p>清理：清理阶段真正回收的内存很少。</p>
+</li>
+</ol>
+<p>到这里，G1 的一个并发周期就算结束了，其实就是主要完成了垃圾定位的工作，定位出了哪些分区是垃圾最多的。因为整堆一般比较大，所以这个周期应该会比较长，中间可能会被多次 stop-the-world 的 Young GC 打断。</p>
+<h3 id="混合垃圾回收周期"><a href="#混合垃圾回收周期" class="headerlink" title="混合垃圾回收周期"></a>混合垃圾回收周期</h3><p>并发周期结束后是混合垃圾回收周期，不仅进行年轻代垃圾收集，而且回收之前标记出来的老年代的垃圾最多的部分区块。</p>
+<p>混合垃圾回收周期会持续进行，直到几乎所有的被标记出来的分区（垃圾占比大的分区）都得到回收，然后恢复到常规的年轻代垃圾收集，最终再次启动并发周期。</p>
+<h3 id="Full-GC"><a href="#Full-GC" class="headerlink" title="Full GC"></a>Full GC</h3><p>到这里我们已经说了年轻代收集、并发周期、混合回收周期了，大家要熟悉这几个阶段的工作。</p>
+<p>下面我们来介绍特殊情况，那就是会导致 <strong>Full GC</strong> 的情况，也是我们需要极力避免的：</p>
+<ol>
+<li><p>concurrent mode failure：并发模式失败，CMS 收集器也有同样的概念。G1 并发标记期间，如果在标记结束前，老年代被填满，G1 会放弃标记。</p>
+<blockquote>
+<p>这个时候说明</p>
+<ul>
+<li>堆需要增加了，</li>
+<li>或者需要调整并发周期，如增加并发标记的线程数量，让并发标记尽快结束</li>
+<li>或者就是更早地进行并发周期，默认是整堆内存的 45% 被占用就开始进行并发周期。</li>
+</ul>
+</blockquote>
+</li>
+<li><p>晋升失败：并发周期结束后，是混合垃圾回收周期，伴随着年轻代垃圾收集，进行清理老年代空间，如果这个时候清理的速度小于消耗的速度，导致老年代不够用，那么会发生晋升失败。</p>
+<blockquote>
+<p>说明混合垃圾回收需要更迅速完成垃圾收集，也就是说在混合回收阶段，每次年轻代的收集应该处理更多的老年代已标记区块。</p>
+</blockquote>
+</li>
+<li><p>疏散失败：年轻代垃圾收集的时候，如果 Survivor 和 Old 区没有足够的空间容纳所有的存活对象。这种情况肯定是非常致命的，因为基本上已经没有多少空间可以用了，这个时候会触发 Full GC 也是很合理的。</p>
+<blockquote>
+<p>最简单的就是增加堆大小</p>
+</blockquote>
+</li>
+<li><p>大对象分配失败，我们应该尽可能地不创建大对象，尤其是大于一个区块大小的那种对象。</p>
+</li>
+</ol>
+<h3 id="简单小结"><a href="#简单小结" class="headerlink" title="简单小结"></a>简单小结</h3><p>看完上面的 Young GC 和 Old GC 等，很多读者可能还是很懵的，这里说几句不严谨的白话文帮助读者进行理解：</p>
+<p>首先，最好不要把上面的 Old GC 当做是一次 GC 来看，而应该当做<strong>并发标记周期</strong>来理解，虽然它确实会释放出一些内存。</p>
+<p>并发标记结束后，G1 也就知道了哪些区块是最适合被回收的，那些完全空闲的区块会在这这个阶段被回收。如果这个阶段释放了足够的内存出来，其实也就可以认为结束了一次 GC。</p>
+<p>我们假设并发标记结束了，那么下次 GC 的时候，还是会先回收年轻代，如果从年轻代中得到了足够的内存，那么结束；过了几次后，年轻代垃圾收集不能满足需要了，那么就需要利用之前并发标记的结果，选择一些活跃度最低的老年代区块进行回收。直到最后，老年代会进入下一个并发周期。</p>
+<p>那么什么时候会启动并发标记周期呢？这个是通过参数控制的，下面马上要介绍这个参数了，此参数默认值是 45，也就是说当堆空间使用了 45% 后，G1 就会进入并发标记周期。</p>
+<h2 id="G1-参数配置和最佳实践"><a href="#G1-参数配置和最佳实践" class="headerlink" title="G1 参数配置和最佳实践"></a>G1 参数配置和最佳实践</h2><p>G1 调优的目标是尽量避免出现 Full GC，其实就是给老年代足够的空间，或相对更多的空间。</p>
+<p>有以下几点我们可以进行调整的方向：</p>
+<ul>
+<li>增加堆大小，或调整老年代和年轻代的比例，这个很好理解</li>
+<li>增加并发周期的线程数量，其实就是为了加快并发周期快点结束</li>
+<li>让并发周期尽早开始，这个是通过设置堆使用占比来调整的（默认 45%）</li>
+<li>在混合垃圾回收周期中回收更多的老年代区块</li>
+</ul>
+<p>G1 的很重要的目标是达到可控的停顿时间，所以很多的行为都以这个目标为出发点开展的。</p>
+<p>我们通过设置 -XX:MaxGCPauseMillis=N 来指定停顿时间（单位 ms，默认 200ms），如果没有达到这个目标，G1 会通过各种方式来补救：调整年轻代和老年代的比例，调整堆大小，调整晋升的年龄阈值，调整混合垃圾回收周期中处理的老年代的区块数量等等。</p>
+<p>当然了，调整每个参数满足了一个条件的同时往往也会引入另一个问题，比如为了降低停顿时间，我们可以减小年轻代的大小，可是这样的话就会增加年轻代垃圾收集的频率。如果我们减少混合垃圾回收周期处理的老年代区块数量，虽然可以更容易满足停顿时间要求，可是这样就会增加 Full GC 的风险等等。</p>
+<p>下面介绍最常用也是最基础的一些参数的设置，涉及到更高级的调优参数设置，请读者自行参阅其他资料。</p>
+<p><strong>参数介绍</strong>：</p>
+<ul>
+<li><p><strong>-XX:+UseG1GC</strong></p>
+<p>使用 G1 收集器</p>
+</li>
+<li><p><strong>-XX:MaxGCPauseMillis=200</strong></p>
+<p>指定目标停顿时间，默认值 200 毫秒。</p>
+<blockquote>
+<p>在设置 -XX:MaxGCPauseMillis 值的时候，不要指定为平均时间，而应该指定为满足 90% 的停顿在这个时间之内。记住，停顿时间目标是我们的目标，不是每次都一定能满足的。</p>
+</blockquote>
+</li>
+<li><p><strong>-XX:InitiatingHeapOccupancyPercent=45</strong></p>
+<p>整堆使用达到这个比例后，触发并发 GC 周期，默认 45%。</p>
+<blockquote>
+<p>如果要降低晋升失败的话，通常可以调整这个数值，使得并发周期提前进行</p>
+</blockquote>
+</li>
+<li><p><strong>-XX:NewRatio=n</strong></p>
+<p>老年代/年轻代，默认值 2，即 1/3 的年轻代，2/3 的老年代</p>
+<blockquote>
+<p>不要设置年轻代为固定大小，否则：</p>
+<ul>
+<li>G1 不再需要满足我们的停顿时间目标</li>
+<li>不能再按需扩容或缩容年轻代大小</li>
+</ul>
+</blockquote>
+</li>
+<li><p><strong>-XX:SurvivorRatio=n</strong></p>
+<p>Eden/Survivor，默认值 8，这个和其他分代收集器是一样的</p>
+</li>
+<li><p><strong>-XX:MaxTenuringThreshold =n</strong></p>
+<p>从年轻代晋升到老年代的年龄阈值，也是和其他分代收集器一样的</p>
+</li>
+<li><p><strong>-XX:ParallelGCThreads=n</strong></p>
+<p>并行收集时候的垃圾收集线程数</p>
+</li>
+<li><p><strong>-XX:ConcGCThreads=n</strong></p>
+<p>并发标记阶段的垃圾收集线程数</p>
+<blockquote>
+<p>增加这个值可以让并发标记更快完成，如果没有指定这个值，JVM 会通过以下公式计算得到：</p>
+<p>ConcGCThreads=(ParallelGCThreads + 2) / 4^3</p>
+</blockquote>
+</li>
+<li><p><strong>-XX:G1ReservePercent=n</strong></p>
+<p>堆内存的预留空间百分比，默认 10，用于降低晋升失败的风险，即默认地会将 10% 的堆内存预留下来。</p>
+</li>
+<li><p><strong>-XX:G1HeapRegionSize=n</strong></p>
+<p>每一个 region 的大小，默认值为根据堆大小计算出来，取值 1MB~32MB，这个我们通常指定整堆大小就好了。</p>
+</li>
+</ul>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>我自己仔细检查了几遍，主要内容都囊括了，我也不知道读者看完本文会不会是一脸懵逼。</p>
+<p>如果有什么问题，可以在留言板上给我留言，<strong>我是 GC 的门外汉</strong>，如果有些问题我觉得自己能解答，我会尽力帮助大家。</p>
+<p>最后，在这里推荐一些资料给感兴趣的读者：</p>
+<p>Oracle 官方出品，本文的很多内容是翻译并解读这篇文章的：</p>
+<p><a target="_blank" rel="noopener" href="http://www.oracle.com/technetwork/tutorials/tutorials-1876574.html">Getting Started with the G1 Garbage Collector</a></p>
+<p>帮助大家理解 G1 的日志：</p>
+<p><a target="_blank" rel="noopener" href="https://blogs.oracle.com/poonam/understanding-g1-gc-logs">Understanding G1 GC Logs</a></p>
+<p>这里介绍 GC 的内容非常好：</p>
+<p><a target="_blank" rel="noopener" href="https://plumbr.io/handbook/garbage-collection-algorithms-implementations#g1">https://plumbr.io/handbook/garbage-collection-algorithms-implementations#g1</a></p>
+<p>《Java 性能权威指南》：非常好的一本书，建议读者有时间可以看看这本书中关于 GC 的介绍。</p>
+<p>（全文完）</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/gc/" rel="tag"># gc</a>
+              <a href="/tags/g1/" rel="tag"># g1</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/09/07/spring-ioc/" rel="prev" title="Spring IOC 容器源码分析(转自JavaDoop)">
+                  <i class="fa fa-angle-left"></i> Spring IOC 容器源码分析(转自JavaDoop)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/11/03/netty-source-code-2/" rel="next" title="认真的 Netty 源码解析（二）(转自JavaDoop)">
+                  认真的 Netty 源码解析（二）(转自JavaDoop) <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">碎梦</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/scatteredream" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

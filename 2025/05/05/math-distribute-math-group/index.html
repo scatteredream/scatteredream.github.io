@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Arvo:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="06-代数系统的一般概念 - Dreamsrj - 博客园  群、环、域特殊元幂等元：$a^2&#x3D;e$  单位元：$ax&#x3D;x$ 零元：$ax&#x3D;a$ 逆元：$ab&#x3D;e$ 群的概念递进广群：封闭 半群：封闭+可结合 独异点：封闭+可结合+有单位元 群：封闭+可结合+有单位元+所有元素有逆元 阿贝尔群：群+可交换 环、域的概念递进环：$(R,+,*)$ +是阿贝尔群，*是半群，并且*对+满足分配律 域：$">
+<meta property="og:type" content="article">
+<meta property="og:title" content="离散数学：群环域">
+<meta property="og:url" content="http://scatteredream.github.io/2025/05/05/math-distribute-math-group/index.html">
+<meta property="og:site_name" content="scatteredream&#39;s blog">
+<meta property="og:description" content="06-代数系统的一般概念 - Dreamsrj - 博客园  群、环、域特殊元幂等元：$a^2&#x3D;e$  单位元：$ax&#x3D;x$ 零元：$ax&#x3D;a$ 逆元：$ab&#x3D;e$ 群的概念递进广群：封闭 半群：封闭+可结合 独异点：封闭+可结合+有单位元 群：封闭+可结合+有单位元+所有元素有逆元 阿贝尔群：群+可交换 环、域的概念递进环：$(R,+,*)$ +是阿贝尔群，*是半群，并且*对+满足分配律 域：$">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507013240349.png">
+<meta property="article:published_time" content="2025-05-04T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-08T05:21:10.373Z">
+<meta property="article:author" content="碎梦">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507013240349.png">
+
+
+<link rel="canonical" href="http://scatteredream.github.io/2025/05/05/math-distribute-math-group/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2025/05/05/math-distribute-math-group/","path":"2025/05/05/math-distribute-math-group/","title":"离散数学：群环域"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>离散数学：群环域 | scatteredream's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">scatteredream's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BE%A4%E3%80%81%E7%8E%AF%E3%80%81%E5%9F%9F"><span class="nav-number">1.</span> <span class="nav-text">群、环、域</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E5%85%83"><span class="nav-number">1.1.</span> <span class="nav-text">特殊元</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BE%A4%E7%9A%84%E6%A6%82%E5%BF%B5%E9%80%92%E8%BF%9B"><span class="nav-number">1.2.</span> <span class="nav-text">群的概念递进</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E3%80%81%E5%9F%9F%E7%9A%84%E6%A6%82%E5%BF%B5%E9%80%92%E8%BF%9B"><span class="nav-number">1.2.1.</span> <span class="nav-text">环、域的概念递进</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BE%A4%E7%9A%84%E9%98%B6%E3%80%81%E5%85%83%E7%B4%A0%E7%9A%84%E9%98%B6"><span class="nav-number">1.3.</span> <span class="nav-text">群的阶、元素的阶</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%90%E7%BE%A4%E3%80%81%E6%8B%89%E6%A0%BC%E6%9C%97%E6%97%A5%E5%AE%9A%E7%90%86"><span class="nav-number">1.4.</span> <span class="nav-text">子群、拉格朗日定理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%AA%E7%8E%AF%E7%BE%A4"><span class="nav-number">1.5.</span> <span class="nav-text">循环群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BE%A4%E7%9A%84%E6%80%A7%E8%B4%A8%E6%80%BB%E7%BB%93"><span class="nav-number">1.6.</span> <span class="nav-text">群的性质总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BE%A4%E7%9A%84%E5%90%8C%E6%80%81"><span class="nav-number">1.7.</span> <span class="nav-text">群的同态</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="碎梦"
+      src="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+  <p class="site-author-name" itemprop="name">碎梦</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">73</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">120</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/05/math-distribute-math-group/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="离散数学：群环域 | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          离散数学：群环域
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-05T00:00:00+08:00">2025-05-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-08 13:21:10" itemprop="dateModified" datetime="2025-05-08T13:21:10+08:00">2025-05-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/math/" itemprop="url" rel="index"><span itemprop="name">math</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dreamsrj/articles/17610183.html">06-代数系统的一般概念 - Dreamsrj - 博客园</a> </p>
+<h1 id="群、环、域"><a href="#群、环、域" class="headerlink" title="群、环、域"></a>群、环、域</h1><h2 id="特殊元"><a href="#特殊元" class="headerlink" title="特殊元"></a>特殊元</h2><p>幂等元：$a^2=e$ </p>
+<p>单位元：$ax=x$</p>
+<p>零元：$ax=a$</p>
+<p>逆元：$ab=e$</p>
+<h2 id="群的概念递进"><a href="#群的概念递进" class="headerlink" title="群的概念递进"></a>群的概念递进</h2><p><strong>广群</strong>：封闭</p>
+<p><strong>半群</strong>：封闭+可结合</p>
+<p><strong>独异点</strong>：封闭+可结合+有单位元</p>
+<p><strong>群</strong>：封闭+可结合+有单位元+所有元素有逆元</p>
+<p><strong>阿贝尔群</strong>：群+可交换</p>
+<h3 id="环、域的概念递进"><a href="#环、域的概念递进" class="headerlink" title="环、域的概念递进"></a>环、域的概念递进</h3><p>环：$(R,+,*)$ +是阿贝尔群，*是半群，并且*对+满足分配律</p>
+<p>域：$(F,+,*)$ 是一个乘法含有单位元的环，并且F扣去零之后就是乘法的阿贝尔群（整环 + 非零元都可逆。）</p>
+<p>整环：单位交换环，和域的区别是少了逆元（环 + <strong>无零因子</strong> + 交换 + 单位元。）</p>
+<h2 id="群的阶、元素的阶"><a href="#群的阶、元素的阶" class="headerlink" title="群的阶、元素的阶"></a>群的阶、元素的阶</h2><p>群的阶：里面有n个元素即为n阶群</p>
+<p>元素的阶：存在最小正整数k使得 $a^k=e$，那么a就为k阶元。</p>
+<ul>
+<li>一阶元：$a=e$，只有一个一阶元</li>
+<li><strong>二阶元：$a^2=e$，因此 $a=a^{-1}$，a和其逆元实际上是一个元素。</strong></li>
+<li><strong>二阶元以上：$a≠a^{-1}$，所以a和其逆元成对出现。</strong></li>
+<li><strong>推论：偶数阶的群，一定含有二阶元：二阶以上成对出现，一阶元只有一个，那么必定存在二阶元。</strong></li>
+</ul>
+<h2 id="子群、拉格朗日定理"><a href="#子群、拉格朗日定理" class="headerlink" title="子群、拉格朗日定理"></a>子群、拉格朗日定理</h2><p>平凡群：只有一个元素（单位元）是所有群的子群，同时也是循环群、阿贝尔群。</p>
+<p><strong>子群证明</strong>：</p>
+<ol>
+<li><strong>H是G非空子集</strong>。H通常是加了条件限定的，代入单位元证明其非空</li>
+<li><strong>H对于运算是封闭的</strong>。H的元素同样也是G的元素，同样具备G的特性，利用G的特性，证明H的元素符合之前的条件限定。逆元可以使用 $xy^{-1}$进行变换。</li>
+<li>H的非零元素都存在逆元</li>
+</ol>
+<p><strong>求所有子群</strong>：</p>
+<ul>
+<li>阶为1的子群：单位元</li>
+<li>阶为2的子群：单位元、平方等于单位元的元素。。。。</li>
+<li>阶为4的子群：单位元、四次放等于单位元的元素。。。。。</li>
+</ul>
+<p><strong>拉格朗日定理</strong>：对于有限群 G 和其子群 H，H 阶 必然是 G阶 的因子。陪集数量乘H阶=G阶</p>
+<ul>
+<li><strong>G的元素a，a 阶k 必然是 G阶n 的因子，并且 $a^n=e$（并不代表a是n阶元，因为n是k的倍数）</strong></li>
+<li><strong>若 ∣G∣= n，则 G 的子群的阶只能是 n 的约数。</strong><ul>
+<li>6-&gt; 子群阶只能是1,2,3,6</li>
+<li>8-&gt; 1,2,4,8</li>
+</ul>
+</li>
+<li>左右陪集阶为 H阶，左右陪集要么相同，要么不相交</li>
+<li>H，K为子群，H交K就是H,K的子集，所以H交K是 H 和 K 的因子，其能够整除HK的最大公因数。因为HK互质，所以 H交K只能是一阶</li>
+</ul>
+<h2 id="循环群"><a href="#循环群" class="headerlink" title="循环群"></a>循环群</h2><p>循环群：G中存在一个元素a，使得所有的元素都可以表达为 a 的幂次方的形式，那么a是群的生成元，G是循环群</p>
+<p>循环群的性质：</p>
+<ul>
+<li><strong>n 阶循环群，生成元也是 n阶元</strong>，即 $g^n=e$</li>
+<li>一定是阿贝尔群</li>
+<li>n 阶循环群，同构于$(N_n, +_n)$</li>
+<li>无限循环群，同构于$(I_n,+_n)$</li>
+</ul>
+<h2 id="群的性质总结"><a href="#群的性质总结" class="headerlink" title="群的性质总结"></a>群的性质总结</h2><p>群的性质：</p>
+<ul>
+<li>逆元和单位元唯一，没有零元</li>
+<li>$(a\times b)^{-1}=b^{-1}\times a^{-1}$ <strong>重要，证明题里面逆元出现</strong></li>
+<li><strong>支持左右消去</strong> ，方程一定可解</li>
+<li>每个元素在运算表的行/列必然出现且只会出现一次</li>
+<li>阶的性质<ul>
+<li><strong>素数阶群必是循环群，没有非平凡子群，并且除了单位元，剩下的全都是生成元。</strong></li>
+<li><strong>逆元和自己有着相同的阶数</strong></li>
+</ul>
+</li>
+</ul>
+<h2 id="群的同态"><a href="#群的同态" class="headerlink" title="群的同态"></a>群的同态</h2><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507013240349.png" alt="image-20250507013240349" style="zoom:50%;" />
+
+<p>群的同态和同构：</p>
+<p>同态： $f(a*b) = f(a)+f(b)$ 如果是$f(ab)=f(a)f(b)$，那就是自同态。</p>
+<p>同构：f是双射的同态</p>
+<p>同态核K：S中那些经过映射之后变成 S’单位元的元素，如果只有S的单位元，说明是单射</p>
+<ul>
+<li><p>f(e) = e</p>
+</li>
+<li><p>证明题：对于 x∈K，f(x)=e，</p>
+</li>
+</ul>
+<p>证明自同构：</p>
+<ol>
+<li>f是双射<ol>
+<li>先证明是入射: 任取不相等的两个元素x1x2，f(x1) f(x2)肯定不相等</li>
+<li>再证明满射: 对于任意一个y，肯定有一个x∈G对应</li>
+</ol>
+</li>
+<li>f(xy)=f(x)f(y)</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/03/408-in-one/" rel="prev" title="22408 分值">
+                  <i class="fa fa-angle-left"></i> 22408 分值
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/05/06/math-distribute-math-lattice/" rel="next" title="离散数学：格">
+                  离散数学：格 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">碎梦</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/scatteredream" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
