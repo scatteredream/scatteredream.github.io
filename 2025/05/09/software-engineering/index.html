@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Arvo:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="软件危机的原因：一方面是与软件本身的特点有关，另一方面是由软件开发和维护的方法不正确有关。 软件危机包含两方面问题：  如何开发软件，以满足不断增长，日趋复杂的需求； 如何维护数量不断膨胀的软件产品。  过程与活动过程：问题定义、可行性研究、需求分析、设计、实施、测试、部署 可行性研究：成本&#x2F;效益 过程模型过程模型：线性、瀑布、V、环形。。。（不推荐） 过程模型推荐XP: 小型团队、需求变化频繁、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="软件工程期末复习">
+<meta property="og:url" content="http://scatteredream.github.io/2025/05/09/software-engineering/index.html">
+<meta property="og:site_name" content="scatteredream&#39;s blog">
+<meta property="og:description" content="软件危机的原因：一方面是与软件本身的特点有关，另一方面是由软件开发和维护的方法不正确有关。 软件危机包含两方面问题：  如何开发软件，以满足不断增长，日趋复杂的需求； 如何维护数量不断膨胀的软件产品。  过程与活动过程：问题定义、可行性研究、需求分析、设计、实施、测试、部署 可行性研究：成本&#x2F;效益 过程模型过程模型：线性、瀑布、V、环形。。。（不推荐） 过程模型推荐XP: 小型团队、需求变化频繁、">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/2518308/202305/2518308-20230508183405083-694565082.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508190511869-1015084285.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508183323424-1524786895.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509220108193.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508190542460-1232279932.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-2219e76c264b835778365af494a2c887_1440w.jpg">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508183431532-1286422022.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221307387.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221813185.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221826463.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221844900.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221853890.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/2518308/202305/2518308-20230508183505415-100945804.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509222254965.png">
+<meta property="article:published_time" content="2025-05-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-09T14:24:07.381Z">
+<meta property="article:author" content="碎梦">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/2518308/202305/2518308-20230508183405083-694565082.png">
+
+
+<link rel="canonical" href="http://scatteredream.github.io/2025/05/09/software-engineering/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2025/05/09/software-engineering/","path":"2025/05/09/software-engineering/","title":"软件工程期末复习"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>软件工程期末复习 | scatteredream's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">scatteredream's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B%E4%B8%8E%E6%B4%BB%E5%8A%A8"><span class="nav-number">1.</span> <span class="nav-text">过程与活动</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">过程模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B%E6%A8%A1%E5%9E%8B%E6%8E%A8%E8%8D%90"><span class="nav-number">1.2.</span> <span class="nav-text">过程模型推荐</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RUP-%E7%BB%9F%E4%B8%80%E8%BF%87%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">RUP 统一过程模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E9%87%8F%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">增量模型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">需求分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E5%88%86%E6%9E%90"><span class="nav-number">2.1.</span> <span class="nav-text">传统分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E5%88%86%E6%9E%90"><span class="nav-number">2.2.</span> <span class="nav-text">面向对象分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E4%BE%8B%E5%9B%BE%EF%BC%88%E7%94%A8%E4%BE%8B%E5%BB%BA%E6%A8%A1%EF%BC%89"><span class="nav-number">2.2.1.</span> <span class="nav-text">用例图（用例建模）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9B%BE%EF%BC%88%E5%AF%B9%E8%B1%A1-%E5%85%B3%E7%B3%BB%E5%BB%BA%E6%A8%A1%EF%BC%89"><span class="nav-number">2.2.2.</span> <span class="nav-text">类图（对象-关系建模）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B4%BB%E5%8A%A8%E5%9B%BE%EF%BC%88%E5%AF%B9%E8%B1%A1-%E8%A1%8C%E4%B8%BA%E5%BB%BA%E6%A8%A1%EF%BC%89"><span class="nav-number">2.2.3.</span> <span class="nav-text">活动图（对象-行为建模）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E5%BA%8F%E5%9B%BE"><span class="nav-number">2.2.3.1.</span> <span class="nav-text">时序图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B4%BB%E5%8A%A8%E5%9B%BE"><span class="nav-number">2.2.3.2.</span> <span class="nav-text">活动图</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%96%B9%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">设计方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E4%BD%93%E8%AE%BE%E8%AE%A1%EF%BC%88%E6%A6%82%E8%A6%81%E3%80%81%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">总体设计（概要、架构设计）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%A6%E7%BB%86%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.2.</span> <span class="nav-text">详细设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%B2%BB"><span class="nav-number">3.2.1.</span> <span class="nav-text">分治</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E6%88%90%E6%9C%AC%E9%82%BB%E5%9F%9F"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">最小成本邻域</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B8%83%E5%A4%A7%E5%8E%9F%E5%88%99"><span class="nav-number">3.3.</span> <span class="nav-text">设计模式七大原则</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E5%AE%9E%E6%96%BD%E3%80%81%E6%B5%8B%E8%AF%95"><span class="nav-number">4.</span> <span class="nav-text">软件实施、测试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">4.1.</span> <span class="nav-text">测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%99%BD%E7%9B%92%E6%B5%8B%E8%AF%95"><span class="nav-number">4.1.1.</span> <span class="nav-text">白盒测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%91%E7%9B%92%E6%B5%8B%E8%AF%95"><span class="nav-number">4.1.2.</span> <span class="nav-text">黑盒测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AD%89%E4%BB%B7%E7%B1%BB%E5%88%92%E5%88%86"><span class="nav-number">4.1.2.1.</span> <span class="nav-text">等价类划分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%B9%E7%95%8C%E5%80%BC%E5%88%86%E6%9E%90"><span class="nav-number">4.1.2.2.</span> <span class="nav-text">边界值分析</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="碎梦"
+      src="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+  <p class="site-author-name" itemprop="name">碎梦</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">74</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">120</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/09/software-engineering/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="软件工程期末复习 | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          软件工程期末复习
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-09 00:00:00 / 修改时间：22:24:07" itemprop="dateCreated datePublished" datetime="2025-05-09T00:00:00+08:00">2025-05-09</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><strong>软件危机的原因</strong>：一方面是与软件本身的特点有关，另一方面是由软件开发和维护的方法不正确有关。</p>
+<p><strong>软件危机包含两方面问题</strong>：</p>
+<ul>
+<li>如何开发软件，以满足不断增长，日趋复杂的需求；</li>
+<li>如何维护数量不断膨胀的软件产品。</li>
+</ul>
+<h1 id="过程与活动"><a href="#过程与活动" class="headerlink" title="过程与活动"></a>过程与活动</h1><p><strong>过程</strong>：<mark>问题定义、可行性研究、需求分析、设计、实施、测试、部署</mark></p>
+<p>可行性研究：成本/效益</p>
+<h2 id="过程模型"><a href="#过程模型" class="headerlink" title="过程模型"></a>过程模型</h2><p><strong>过程模型</strong>：线性、瀑布、V、环形。。。（不推荐）</p>
+<h2 id="过程模型推荐"><a href="#过程模型推荐" class="headerlink" title="过程模型推荐"></a>过程模型推荐</h2><p>XP: 小型团队、需求变化频繁、开发周期短的项目（尤其适合互联网软件）</p>
+<p>螺旋： 大型、复杂、风险高、需求不明确的项目</p>
+<h3 id="RUP-统一过程模型"><a href="#RUP-统一过程模型" class="headerlink" title="RUP 统一过程模型"></a>RUP 统一过程模型</h3><ul>
+<li><strong>面向对象、用例驱动</strong>：以用例为中心，符合面向对象开发思想</li>
+<li><strong>可迭代、可增量</strong>：每个迭代都能交付可运行的软件</li>
+<li><strong>风险驱动</strong>：在早期识别并降低风险</li>
+<li><strong>文档规范、过程标准化</strong>：有明确的阶段、里程碑和文档产物</li>
+<li><strong>可视化建模</strong>：强调UML建模，方便沟通与分析</li>
+</ul>
+<p> <strong>适合：</strong> 大中型、复杂项目，需求复杂、风险高的项目</p>
+<h3 id="增量模型"><a href="#增量模型" class="headerlink" title="增量模型"></a>增量模型</h3><ul>
+<li><strong>可分阶段交付</strong>：每个增量都是一个子系统，能早交付部分功能</li>
+<li><strong>降低风险</strong>：问题可在后续增量中修复</li>
+<li><strong>用户反馈快</strong>：用户能早体验到产品并反馈</li>
+<li><strong>适应需求变化</strong>：后续增量可以增加新需求</li>
+</ul>
+<p><strong>适合：</strong> 需求较清楚，但无法一次开发完成的项目；资金、时间有限，想逐步发布的项目</p>
+<h1 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h1><p>需求分析：做什么、不做什么、做到什么程度。</p>
+<p>分为功能性、非功能性需求两类。</p>
+<h2 id="传统分析"><a href="#传统分析" class="headerlink" title="传统分析"></a>传统分析</h2><ul>
+<li><p>数据流程图：分为总体（系统与环境的关系）、零级（描述主要功能）、细节三个层次。</p>
+</li>
+<li><p>行为建模：状态转换图 Petri 网</p>
+</li>
+</ul>
+<h2 id="面向对象分析"><a href="#面向对象分析" class="headerlink" title="面向对象分析"></a>面向对象分析</h2><h3 id="用例图（用例建模）"><a href="#用例图（用例建模）" class="headerlink" title="用例图（用例建模）"></a>用例图（用例建模）</h3><img src="https://img2023.cnblogs.com/blog/2518308/202305/2518308-20230508183405083-694565082.png" alt="img" style="zoom:50%;" />
+
+<ul>
+<li>参与者之间只有泛化（继承）关系</li>
+<li>用例之间有泛化、包含include、扩展extend关系</li>
+</ul>
+<h3 id="类图（对象-关系建模）"><a href="#类图（对象-关系建模）" class="headerlink" title="类图（对象-关系建模）"></a>类图（对象-关系建模）</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508190511869-1015084285.png" alt="img" style="zoom:50%;" />
+
+<ul>
+<li>实体类类图：类间有泛化（继承）、关联（聚合组合）、依赖。类和接口之间有实现。</li>
+</ul>
+<hr>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508183323424-1524786895.png" alt="img" style="zoom:50%;" />
+
+<ul>
+<li>参与类（分析类）类图：<ul>
+<li>边界类：系统及其参与者边界，xx界面类</li>
+<li>控制类：系统控制逻辑，xxHandler</li>
+<li>实体类：系统使用信息。</li>
+</ul>
+</li>
+</ul>
+<h3 id="活动图（对象-行为建模）"><a href="#活动图（对象-行为建模）" class="headerlink" title="活动图（对象-行为建模）"></a>活动图（对象-行为建模）</h3><h4 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509220108193.png" alt="image-20250509220108193" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508190542460-1232279932.png" alt="img" style="zoom:50%;" />
+
+<h4 id="活动图"><a href="#活动图" class="headerlink" title="活动图"></a>活动图</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-2219e76c264b835778365af494a2c887_1440w.jpg" alt="img" style="zoom: 80%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508183431532-1286422022.png" alt="img" style="zoom:50%;" />
+
+
+
+<h1 id="设计方法"><a href="#设计方法" class="headerlink" title="设计方法"></a>设计方法</h1><h2 id="总体设计（概要、架构设计）"><a href="#总体设计（概要、架构设计）" class="headerlink" title="总体设计（概要、架构设计）"></a>总体设计（概要、架构设计）</h2><p>不应该陷入片面性，追踪分析模型，选择合适技术，可集成，可复用，有韧性，交互人性化。</p>
+<p>软件架构应该反应整体组织结构和基本特征，体现层次结构、模块相互作用、全局重要的数据变量和数据结构、接口</p>
+<h2 id="详细设计"><a href="#详细设计" class="headerlink" title="详细设计"></a>详细设计</h2><p>在软件构架的基础上进一步确定如何实现目 标系统，具体包括系统的模块（如类及其方 法）逻辑的详细设计、系统数据结构的设计、 系统数据库结构的设计、系统人-机接口的 设计等</p>
+<h3 id="分治"><a href="#分治" class="headerlink" title="分治"></a>分治</h3><ul>
+<li>分治概念：将一个大的系统分解为一系列小 模块的过程和方法，是软件工程最重要的思 想之一</li>
+<li>架构设计将系统分解为一组子系统或模 块，以及子系统或模块之间的接口。</li>
+<li>详细设计子系统或模块被再次细分为子 模块 • 传统软件工程中的过程、函数 • 面向对象软件工程中的包、类、接口和方法等</li>
+</ul>
+<h4 id="最小成本邻域"><a href="#最小成本邻域" class="headerlink" title="最小成本邻域"></a>最小成本邻域</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221307387.png" alt="image-20250509221307387" style="zoom:50%;" />
+
+<p>软件开发成本随模块数量增加变小，但将模块组装起来的集成成本将随模块数量增加变大， 软件总成本为两个成本之和。模块成本和集成成本两个曲线的交汇点M代表了最低软件总成本，应尽量使系统划分的模块数量在M点所在的邻域内，即最小成本邻域</p>
+<h2 id="设计模式七大原则"><a href="#设计模式七大原则" class="headerlink" title="设计模式七大原则"></a>设计模式七大原则</h2><p><strong>设计模式原则</strong>：指导我们如何写出“低耦合、高内聚、可扩展、易维护”的代码。</p>
+<ul>
+<li>SRP 单一职责：一个类只有一个职责。</li>
+<li>ISP 接口隔离：接口应该专精一类功能。</li>
+<li>OCP 开闭：对扩展开放，对修改关闭。SPI</li>
+<li>LSP 里氏替换：子类应该可以替换父类对象，完全可以将其看做一个父类</li>
+<li>DIP 依赖倒转：依赖接口/抽象，而不是实现类。JDBC</li>
+<li>迪米特法则：一个对象应该尽可能少了解别的对象，减少耦合。</li>
+<li>CRP 组合复用：组合优于继承，Car中用组合的形式引入Engine，避免继承地狱导致功能冗余。不过组合冗余代码较多，难以利用多态，也是需要注意的。</li>
+</ul>
+<h1 id="软件实施、测试"><a href="#软件实施、测试" class="headerlink" title="软件实施、测试"></a>软件实施、测试</h1><h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>测试：是选择适当的测试用例执行被测 程序的过程，其目的在于发现程序错误。有单元测试、集成测试、系统测试、alpha、beta、验收测试。掌握单元测试、集成测试、回 归测试基本概念，能根据实际情况设计集成测试的模块测试 顺序，并分析各种测试的优劣 以及分析模块测试次数。</p>
+<p><strong>测试用例</strong>：为特定目标开发的测试输入、 执行条件和预期结果的集合</p>
+<h3 id="白盒测试"><a href="#白盒测试" class="headerlink" title="白盒测试"></a>白盒测试</h3><p>导出测试用例是依据模块的编码，即<u>模块的内部逻辑对测试者是可见的</u>。掌握白盒测试方法，能根据实际项目情况采用<mark>基本途径测试、条件测试、循环测试</mark>等技术设计合适的测试用例。</p>
+<h3 id="黑盒测试"><a href="#黑盒测试" class="headerlink" title="黑盒测试"></a>黑盒测试</h3><p>在接口级别进行的测试，<u>不考虑程序内部逻辑</u>。掌握黑盒测试方法，能根据实际项目情况采用<mark>等价类划分、边界值分析</mark>等技术设计合适的测试用例。</p>
+<h4 id="等价类划分"><a href="#等价类划分" class="headerlink" title="等价类划分"></a>等价类划分</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221813185.png" alt="image-20250509221813185" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221826463.png" alt="image-20250509221826463" style="zoom:50%;" />
+
+<h4 id="边界值分析"><a href="#边界值分析" class="headerlink" title="边界值分析"></a>边界值分析</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221844900.png" alt="image-20250509221844900" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221853890.png" alt="image-20250509221853890" style="zoom:50%;" />
+
+<img src="https://img2023.cnblogs.com/blog/2518308/202305/2518308-20230508183505415-100945804.png" alt="img" style="zoom:50%;" />
+
+<p>测试用例：</p>
+<ul>
+<li>等价类划分：员工每年请假次数为[0, 10]，因此可以形成3个等价类：&lt;0、1~10、&gt;10</li>
+<li>边界值分析：基于上述等价类划分结果，采用边界值分析法生成的测试用例共有7个：-1、0、1、5、9、10、11</li>
+</ul>
+<p>可验证的验收标准：</p>
+<ul>
+<li><p>系统需界面友好</p>
+<ul>
+<li>员工无需培训即可使用</li>
+<li>经理经过2小时培训即可使用</li>
+<li>部长经过2小时培训即可使用</li>
+</ul>
+</li>
+<li><p>较高可靠性</p>
+<ul>
+<li>在使用系统的前三个月内，系统从未发生过崩溃（数据不可恢复）或死机现象</li>
+<li>在随机的3个工作日内，系统可靠性指标都大于0.95%</li>
+</ul>
+</li>
+</ul>
+<p>独立途径集合：</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509222254965.png" alt="image-20250509222254965" style="zoom: 25%;" />
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/07/math-distribute-math-graph/" rel="prev" title="离散数学：图、树">
+                  <i class="fa fa-angle-left"></i> 离散数学：图、树
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">碎梦</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/scatteredream" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

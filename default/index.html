@@ -204,7 +204,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/08/software-engineering/">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/09/software-engineering/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
@@ -222,7 +222,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/08/software-engineering/" class="post-title-link" itemprop="url">软件工程</a>
+          <a href="/2025/05/09/software-engineering/" class="post-title-link" itemprop="url">软件工程期末复习</a>
         </h2>
 
         <div class="post-meta-container">
@@ -234,7 +234,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2025-05-08 00:00:00 / 修改时间：14:07:58" itemprop="dateCreated datePublished" datetime="2025-05-08T00:00:00+08:00">2025-05-08</time>
+      <time title="创建时间：2025-05-09 00:00:00 / 修改时间：22:24:07" itemprop="dateCreated datePublished" datetime="2025-05-09T00:00:00+08:00">2025-05-09</time>
     </span>
 
   
@@ -247,7 +247,131 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          
+          <p><strong>软件危机的原因</strong>：一方面是与软件本身的特点有关，另一方面是由软件开发和维护的方法不正确有关。</p>
+<p><strong>软件危机包含两方面问题</strong>：</p>
+<ul>
+<li>如何开发软件，以满足不断增长，日趋复杂的需求；</li>
+<li>如何维护数量不断膨胀的软件产品。</li>
+</ul>
+<h1 id="过程与活动"><a href="#过程与活动" class="headerlink" title="过程与活动"></a>过程与活动</h1><p><strong>过程</strong>：<mark>问题定义、可行性研究、需求分析、设计、实施、测试、部署</mark></p>
+<p>可行性研究：成本/效益</p>
+<h2 id="过程模型"><a href="#过程模型" class="headerlink" title="过程模型"></a>过程模型</h2><p><strong>过程模型</strong>：线性、瀑布、V、环形。。。（不推荐）</p>
+<h2 id="过程模型推荐"><a href="#过程模型推荐" class="headerlink" title="过程模型推荐"></a>过程模型推荐</h2><p>XP: 小型团队、需求变化频繁、开发周期短的项目（尤其适合互联网软件）</p>
+<p>螺旋： 大型、复杂、风险高、需求不明确的项目</p>
+<h3 id="RUP-统一过程模型"><a href="#RUP-统一过程模型" class="headerlink" title="RUP 统一过程模型"></a>RUP 统一过程模型</h3><ul>
+<li><strong>面向对象、用例驱动</strong>：以用例为中心，符合面向对象开发思想</li>
+<li><strong>可迭代、可增量</strong>：每个迭代都能交付可运行的软件</li>
+<li><strong>风险驱动</strong>：在早期识别并降低风险</li>
+<li><strong>文档规范、过程标准化</strong>：有明确的阶段、里程碑和文档产物</li>
+<li><strong>可视化建模</strong>：强调UML建模，方便沟通与分析</li>
+</ul>
+<p> <strong>适合：</strong> 大中型、复杂项目，需求复杂、风险高的项目</p>
+<h3 id="增量模型"><a href="#增量模型" class="headerlink" title="增量模型"></a>增量模型</h3><ul>
+<li><strong>可分阶段交付</strong>：每个增量都是一个子系统，能早交付部分功能</li>
+<li><strong>降低风险</strong>：问题可在后续增量中修复</li>
+<li><strong>用户反馈快</strong>：用户能早体验到产品并反馈</li>
+<li><strong>适应需求变化</strong>：后续增量可以增加新需求</li>
+</ul>
+<p><strong>适合：</strong> 需求较清楚，但无法一次开发完成的项目；资金、时间有限，想逐步发布的项目</p>
+<h1 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h1><p>需求分析：做什么、不做什么、做到什么程度。</p>
+<p>分为功能性、非功能性需求两类。</p>
+<h2 id="传统分析"><a href="#传统分析" class="headerlink" title="传统分析"></a>传统分析</h2><ul>
+<li><p>数据流程图：分为总体（系统与环境的关系）、零级（描述主要功能）、细节三个层次。</p>
+</li>
+<li><p>行为建模：状态转换图 Petri 网</p>
+</li>
+</ul>
+<h2 id="面向对象分析"><a href="#面向对象分析" class="headerlink" title="面向对象分析"></a>面向对象分析</h2><h3 id="用例图（用例建模）"><a href="#用例图（用例建模）" class="headerlink" title="用例图（用例建模）"></a>用例图（用例建模）</h3><img src="https://img2023.cnblogs.com/blog/2518308/202305/2518308-20230508183405083-694565082.png" alt="img" style="zoom:50%;" />
+
+<ul>
+<li>参与者之间只有泛化（继承）关系</li>
+<li>用例之间有泛化、包含include、扩展extend关系</li>
+</ul>
+<h3 id="类图（对象-关系建模）"><a href="#类图（对象-关系建模）" class="headerlink" title="类图（对象-关系建模）"></a>类图（对象-关系建模）</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508190511869-1015084285.png" alt="img" style="zoom:50%;" />
+
+<ul>
+<li>实体类类图：类间有泛化（继承）、关联（聚合组合）、依赖。类和接口之间有实现。</li>
+</ul>
+<hr>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508183323424-1524786895.png" alt="img" style="zoom:50%;" />
+
+<ul>
+<li>参与类（分析类）类图：<ul>
+<li>边界类：系统及其参与者边界，xx界面类</li>
+<li>控制类：系统控制逻辑，xxHandler</li>
+<li>实体类：系统使用信息。</li>
+</ul>
+</li>
+</ul>
+<h3 id="活动图（对象-行为建模）"><a href="#活动图（对象-行为建模）" class="headerlink" title="活动图（对象-行为建模）"></a>活动图（对象-行为建模）</h3><h4 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509220108193.png" alt="image-20250509220108193" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508190542460-1232279932.png" alt="img" style="zoom:50%;" />
+
+<h4 id="活动图"><a href="#活动图" class="headerlink" title="活动图"></a>活动图</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-2219e76c264b835778365af494a2c887_1440w.jpg" alt="img" style="zoom: 80%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508183431532-1286422022.png" alt="img" style="zoom:50%;" />
+
+
+
+<h1 id="设计方法"><a href="#设计方法" class="headerlink" title="设计方法"></a>设计方法</h1><h2 id="总体设计（概要、架构设计）"><a href="#总体设计（概要、架构设计）" class="headerlink" title="总体设计（概要、架构设计）"></a>总体设计（概要、架构设计）</h2><p>不应该陷入片面性，追踪分析模型，选择合适技术，可集成，可复用，有韧性，交互人性化。</p>
+<p>软件架构应该反应整体组织结构和基本特征，体现层次结构、模块相互作用、全局重要的数据变量和数据结构、接口</p>
+<h2 id="详细设计"><a href="#详细设计" class="headerlink" title="详细设计"></a>详细设计</h2><p>在软件构架的基础上进一步确定如何实现目 标系统，具体包括系统的模块（如类及其方 法）逻辑的详细设计、系统数据结构的设计、 系统数据库结构的设计、系统人-机接口的 设计等</p>
+<h3 id="分治"><a href="#分治" class="headerlink" title="分治"></a>分治</h3><ul>
+<li>分治概念：将一个大的系统分解为一系列小 模块的过程和方法，是软件工程最重要的思 想之一</li>
+<li>架构设计将系统分解为一组子系统或模 块，以及子系统或模块之间的接口。</li>
+<li>详细设计子系统或模块被再次细分为子 模块 • 传统软件工程中的过程、函数 • 面向对象软件工程中的包、类、接口和方法等</li>
+</ul>
+<h4 id="最小成本邻域"><a href="#最小成本邻域" class="headerlink" title="最小成本邻域"></a>最小成本邻域</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221307387.png" alt="image-20250509221307387" style="zoom:50%;" />
+
+<p>软件开发成本随模块数量增加变小，但将模块组装起来的集成成本将随模块数量增加变大， 软件总成本为两个成本之和。模块成本和集成成本两个曲线的交汇点M代表了最低软件总成本，应尽量使系统划分的模块数量在M点所在的邻域内，即最小成本邻域</p>
+<h2 id="设计模式七大原则"><a href="#设计模式七大原则" class="headerlink" title="设计模式七大原则"></a>设计模式七大原则</h2><p><strong>设计模式原则</strong>：指导我们如何写出“低耦合、高内聚、可扩展、易维护”的代码。</p>
+<ul>
+<li>SRP 单一职责：一个类只有一个职责。</li>
+<li>ISP 接口隔离：接口应该专精一类功能。</li>
+<li>OCP 开闭：对扩展开放，对修改关闭。SPI</li>
+<li>LSP 里氏替换：子类应该可以替换父类对象，完全可以将其看做一个父类</li>
+<li>DIP 依赖倒转：依赖接口/抽象，而不是实现类。JDBC</li>
+<li>迪米特法则：一个对象应该尽可能少了解别的对象，减少耦合。</li>
+<li>CRP 组合复用：组合优于继承，Car中用组合的形式引入Engine，避免继承地狱导致功能冗余。不过组合冗余代码较多，难以利用多态，也是需要注意的。</li>
+</ul>
+<h1 id="软件实施、测试"><a href="#软件实施、测试" class="headerlink" title="软件实施、测试"></a>软件实施、测试</h1><h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>测试：是选择适当的测试用例执行被测 程序的过程，其目的在于发现程序错误。有单元测试、集成测试、系统测试、alpha、beta、验收测试。掌握单元测试、集成测试、回 归测试基本概念，能根据实际情况设计集成测试的模块测试 顺序，并分析各种测试的优劣 以及分析模块测试次数。</p>
+<p><strong>测试用例</strong>：为特定目标开发的测试输入、 执行条件和预期结果的集合</p>
+<h3 id="白盒测试"><a href="#白盒测试" class="headerlink" title="白盒测试"></a>白盒测试</h3><p>导出测试用例是依据模块的编码，即<u>模块的内部逻辑对测试者是可见的</u>。掌握白盒测试方法，能根据实际项目情况采用<mark>基本途径测试、条件测试、循环测试</mark>等技术设计合适的测试用例。</p>
+<h3 id="黑盒测试"><a href="#黑盒测试" class="headerlink" title="黑盒测试"></a>黑盒测试</h3><p>在接口级别进行的测试，<u>不考虑程序内部逻辑</u>。掌握黑盒测试方法，能根据实际项目情况采用<mark>等价类划分、边界值分析</mark>等技术设计合适的测试用例。</p>
+<h4 id="等价类划分"><a href="#等价类划分" class="headerlink" title="等价类划分"></a>等价类划分</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221813185.png" alt="image-20250509221813185" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221826463.png" alt="image-20250509221826463" style="zoom:50%;" />
+
+<h4 id="边界值分析"><a href="#边界值分析" class="headerlink" title="边界值分析"></a>边界值分析</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221844900.png" alt="image-20250509221844900" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221853890.png" alt="image-20250509221853890" style="zoom:50%;" />
+
+<img src="https://img2023.cnblogs.com/blog/2518308/202305/2518308-20230508183505415-100945804.png" alt="img" style="zoom:50%;" />
+
+<p>测试用例：</p>
+<ul>
+<li>等价类划分：员工每年请假次数为[0, 10]，因此可以形成3个等价类：&lt;0、1~10、&gt;10</li>
+<li>边界值分析：基于上述等价类划分结果，采用边界值分析法生成的测试用例共有7个：-1、0、1、5、9、10、11</li>
+</ul>
+<p>可验证的验收标准：</p>
+<ul>
+<li><p>系统需界面友好</p>
+<ul>
+<li>员工无需培训即可使用</li>
+<li>经理经过2小时培训即可使用</li>
+<li>部长经过2小时培训即可使用</li>
+</ul>
+</li>
+<li><p>较高可靠性</p>
+<ul>
+<li>在使用系统的前三个月内，系统从未发生过崩溃（数据不可恢复）或死机现象</li>
+<li>在随机的3个工作日内，系统可靠性指标都大于0.95%</li>
+</ul>
+</li>
+</ul>
+<p>独立途径集合：</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509222254965.png" alt="image-20250509222254965" style="zoom: 25%;" />
+
       
     </div>
 
