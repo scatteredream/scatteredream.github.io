@@ -27,24 +27,24 @@
 <meta property="og:site_name" content="scatteredream&#39;s blog">
 <meta property="og:description" content="JVM Memory Management关于 JVM 内存管理或者说垃圾收集，大家可能看过很多的文章了，笔者准备给大家总结下。这算是系列的第一篇，接下来一段时间会持续更新。 本文主要是翻译《Memory Management in the Java HotSpot Virtual Machine》白皮书的前四章内容，这是 2006 的老文章了，当年发布这篇文章的还是 Sun Microsyste">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/JVM%20%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86.assets/serial-garbage-collector.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/serial-garbage-collector.png">
 <meta property="og:image" content="https://assets.javadoop.com/imgs/20510079/jvm-memory-management/3.png">
 <meta property="og:image" content="https://assets.javadoop.com/imgs/20510079/jvm-memory-management/4.png">
 <meta property="og:image" content="https://assets.javadoop.com/imgs/20510079/jvm-memory-management/5.png">
-<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/JVM%20%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86.assets/parnew-garbage-collector.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/parnew-garbage-collector.png">
 <meta property="og:image" content="https://assets.javadoop.com/imgs/20510079/jvm-memory-management/6.png">
-<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/JVM%20%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86.assets/parallel-scavenge-garbage-collector-1736075580594-3.png">
-<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/JVM%20%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86.assets/cms-garbage-collector.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/parallel-scavenge-garbage-collector-1736075580594-3.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/cms-garbage-collector.png">
 <meta property="og:image" content="https://assets.javadoop.com/imgs/20510079/jvm-memory-management/7.png">
-<meta property="og:image" content="c:/Users/Lenovo/Pictures/markdownfile/JVM%20%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86.assets/image-20250105193733063.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250105193733063.png">
 <meta property="article:published_time" content="2018-03-26T16:00:00.000Z">
-<meta property="article:modified_time" content="2025-05-08T05:31:40.639Z">
+<meta property="article:modified_time" content="2025-05-11T02:47:12.468Z">
 <meta property="article:author" content="碎梦">
 <meta property="article:tag" content="gc">
 <meta property="article:tag" content="cms">
 <meta property="article:tag" content="serial&#x2F;para">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="c:/Users/Lenovo/Pictures/markdownfile/JVM%20%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86.assets/serial-garbage-collector.png">
+<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/serial-garbage-collector.png">
 
 
 <link rel="canonical" href="http://scatteredream.github.io/2018/03/27/jvm-gc-serial-parellel-cms/">
@@ -260,7 +260,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-08 13:31:40" itemprop="dateModified" datetime="2025-05-08T13:31:40+08:00">2025-05-08</time>
+      <time title="修改时间：2025-05-11 10:47:12" itemprop="dateModified" datetime="2025-05-11T10:47:12+08:00">2025-05-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -380,7 +380,7 @@
 <p>对于多线程应用，对象分配必须要保证线程安全性，如果使用全局锁，那么分配空间将成为瓶颈并降低程序性能。HotSpot 使用了称之为 <strong>Thread-Local Allocation Buffers (TLABs)</strong> 的技术，该技术能改善多线程空间分配的吞吐量。首先，给予每个线程一部分内存作为缓存区，每个线程都在自己的缓存区中进行指针碰撞，这样就不用获取全局锁了。只有当一个线程使用完了它的 TLAB，它才需要使用同步来获取一个新的缓冲区。HotSpot 使用了多项技术来降低 TLAB 对于内存的浪费。比如，TLAB 的平均大小被限制在 Eden 区大小的 1% 之内。TLABs 和使用指针碰撞的线性分配结合，使得内存分配非常简单高效，只需要大概 10 条机器指令就可以完成。</p>
 <h3 id="串行收集器-Serial-Collector"><a href="#串行收集器-Serial-Collector" class="headerlink" title="串行收集器(==Serial== Collector)"></a>串行收集器(==Serial== Collector)</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+UseSerialGC -jar Application.java</span><br></pre></td></tr></table></figure>
 
-<p><img src="C:/Users/Lenovo/Pictures/markdownfile/JVM%20%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86.assets/serial-garbage-collector.png" alt="Serial 收集器"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/serial-garbage-collector.png" alt="Serial 收集器"></p>
 <p>使用串行收集器，年轻代和老年代都使用单线程进行收集（使用一个 CPU），收集过程中会 stop-the-world。所以当在垃圾收集的时候，应用程序是完全停止的。</p>
 <h4 id="年轻代——复制算法"><a href="#年轻代——复制算法" class="headerlink" title="年轻代——复制算法"></a><strong>年轻代</strong>——<strong>复制算法</strong></h4><p>复制算法比较适合年轻代这种对象数量少，体积也小的区域</p>
 <p>下图展示了年轻代中使用串行收集器的流程。</p>
@@ -400,7 +400,7 @@
 <h5 id="使用串行收集器"><a href="#使用串行收集器" class="headerlink" title="使用串行收集器"></a><strong>使用串行收集器</strong></h5><p>它是 J2SE 5.0 版本 HotSpot 虚拟机在非服务器级别硬件的默认选择。你也可以使用 <code>-XX:+UseSerialGC</code> 来强制使用串行收集器。</p>
 <h3 id="并行收集器-Parallel-Collector"><a href="#并行收集器-Parallel-Collector" class="headerlink" title="并行收集器(Parallel Collector)"></a>并行收集器(Parallel Collector)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+UseParallelGC -jar Application.java</span><br></pre></td></tr></table></figure>
 
-<p><img src="C:/Users/Lenovo/Pictures/markdownfile/JVM%20%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86.assets/parnew-garbage-collector.png" alt="ParNew 收集器 "></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/parnew-garbage-collector.png" alt="ParNew 收集器 "></p>
 <p>现在大多数 Java 应用都运行在大内存、多核环境中，<strong>并行收集器</strong>，也就是大家熟知的<strong>吞吐量收集器</strong>，利用多核的优势来进行垃圾收集，而不是像串行收集器一样将程序挂起后只使用单线程来收集垃圾。并行 GC 适合大内存和多核环境，通过多线程降低 STW 时间，但仍然需要STW暂停应用程序。</p>
 <h4 id="年轻代—复制算法（多线程）"><a href="#年轻代—复制算法（多线程）" class="headerlink" title="年轻代—复制算法（多线程）"></a><strong>年轻代—复制算法（多线程）</strong></h4><p>并行收集器在年轻代中其实就是串行收集器收集算法的并行版本。它仍然使用 stop-the-world 和复制算法，只不过使用了多核的优势并行执行，降低垃圾收集的时间，从而提高吞吐量。下图示意了在年轻代中，串行收集器和并行收集器的区别：</p>
 <p><img src="https://assets.javadoop.com/imgs/20510079/jvm-memory-management/6.png" alt="6"></p>
@@ -413,7 +413,7 @@
 <h5 id="使用并行收集器"><a href="#使用并行收集器" class="headerlink" title="使用并行收集器"></a><strong>使用并行收集器</strong></h5><p>前面我们说了，J2SE 5.0 中 client 模式自动选择使用串行收集器，如果是 server 模式，那么将自动使用并行收集器。在其他版本中，显示使用 -XX:+UseParallelGC 可以指定并行收集器。</p>
 <h3 id="并行压缩收集器-Parallel-Compacting-Collector"><a href="#并行压缩收集器-Parallel-Compacting-Collector" class="headerlink" title="并行压缩收集器(==Parallel== Compacting Collector)"></a>并行压缩收集器(==Parallel== Compacting Collector)</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX:+UseParallelOldGC</span><br></pre></td></tr></table></figure>
 
-<p><img src="C:/Users/Lenovo/Pictures/markdownfile/JVM%20%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86.assets/parallel-scavenge-garbage-collector-1736075580594-3.png" alt="Parallel Old收集器运行示意图"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/parallel-scavenge-garbage-collector-1736075580594-3.png" alt="Parallel Old收集器运行示意图"></p>
 <p>并行压缩收集器于 J2SE 5.0 update 6 引入，和并行收集器的区别在于它在老年代也使用并行收集算法。注意：并行压缩收集器终将会取代并行收集器。</p>
 <h4 id="年轻代—复制算法（多线程）-1"><a href="#年轻代—复制算法（多线程）-1" class="headerlink" title="年轻代—复制算法（多线程）"></a><strong>年轻代—复制算法（多线程）</strong></h4><p>并行压缩收集器在年轻代中使用了和并行收集器一样的算法。即使用 <strong>并行、stop-the-world、复制</strong> 算法。</p>
 <h4 id="老年代—标记-滑动压缩算法（多线程）"><a href="#老年代—标记-滑动压缩算法（多线程）" class="headerlink" title="老年代—标记-滑动压缩算法（多线程）"></a><strong>老年代—标记-滑动压缩算法（多线程）</strong></h4><p>在老年代和永久代中，其使用 <strong>并行、stop-the-world、滑动压缩</strong> 算法。</p>
@@ -430,7 +430,7 @@
 <h4 id="何时使用并行压缩收集器"><a href="#何时使用并行压缩收集器" class="headerlink" title="何时使用并行压缩收集器"></a><strong>何时使用并行压缩收集器</strong></h4><p>首先是多核上的并行优势，这个就不重复了。其次，前面的并行收集器对于老年代和永久代使用串行，而并行压缩收集器在这些区域使用并行，能降低停顿时间。</p>
 <p>并行压缩收集器不适合运行在大型共享主机上（如 SunRays），因为它在收集的时候会独占几个 CPU，在这种机器上，可以考虑减少垃圾收集的线程数（通过 –XX:ParallelGCThreads=n），或者就选择其他收集器。</p>
 <h5 id="使用并行压缩收集器"><a href="#使用并行压缩收集器" class="headerlink" title="使用并行压缩收集器"></a><strong>使用并行压缩收集器</strong></h5><p>显示指定：<code>-XX:+UseParallelOldGC</code></p>
-<h3 id="Concurrent-Mark-Sweep（CMS）"><a href="#Concurrent-Mark-Sweep（CMS）" class="headerlink" title="==Concurrent== Mark-Sweep（CMS）"></a>==Concurrent== Mark-Sweep（CMS）</h3><p><img src="C:/Users/Lenovo/Pictures/markdownfile/JVM%20%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86.assets/cms-garbage-collector.png" alt="CMS 收集器"></p>
+<h3 id="Concurrent-Mark-Sweep（CMS）"><a href="#Concurrent-Mark-Sweep（CMS）" class="headerlink" title="==Concurrent== Mark-Sweep（CMS）"></a>==Concurrent== Mark-Sweep（CMS）</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/cms-garbage-collector.png" alt="CMS 收集器"></p>
 <blockquote>
 <p>重头戏 CMS 登场了，至少对于我这个 web 开发者来说，<strong>目前</strong> CMS 最常用（使用 JDK8 的应用一般都切换到 G1 收集器了）。前面介绍的都是并行收集，这里要介绍并发收集了，也就是垃圾回收线程和应用程序线程同时运行。</p>
 </blockquote>
@@ -442,7 +442,7 @@
 <p><img src="https://assets.javadoop.com/imgs/20510079/jvm-memory-management/7.png" alt="7"></p>
 <p>由于部分任务增加了收集器的工作，如遍历并发阶段应用程序修改的对象，所以增加了 CMS 收集器的负载。对于大部分试图降低停顿时间的收集器来说，这是一种权衡方案。</p>
 <h4 id="CMS-的劣势"><a href="#CMS-的劣势" class="headerlink" title="CMS 的劣势"></a>CMS 的劣势</h4><h5 id="空闲列表带来的碎片化"><a href="#空闲列表带来的碎片化" class="headerlink" title="空闲列表带来的碎片化"></a>空闲列表带来的碎片化</h5><p>CMS 收集器是**==唯一==不进行压缩的收集器**，在它释放了垃圾对象占用的空间后，它不会移动存活对象到一边去。</p>
-<p><img src="C:/Users/Lenovo/Pictures/markdownfile/JVM%20%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86.assets/image-20250105193733063.png" alt="image-20250105193733063"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250105193733063.png" alt="image-20250105193733063"></p>
 <p>这将节省垃圾回收的时间，但是由于之后空闲空间不是连续的，所以也就不能使用简单的 <strong>指针碰撞（bump-the-pointer）</strong> 进行对象空间分配了。它需要维护一个 <strong>空闲列表</strong>，将所有的空闲区域连接起来，当分配空间时，需要寻找到一个可以容纳该对象的区域。显然，它比使用简单的指针碰撞成本要高。同时它也会加大年轻代垃圾收集的负载，因为年轻代中的对象如果要晋升到老年代中，需要老年代进行空间分配。最后，由于缺少压缩环节，堆将会出现碎片化问题。为了解决这个问题，CMS 收集器需要追踪统计最常用的对象大小，评估将来的分配需求，可能还需要分割或合并空闲区域。</p>
 <h5 id="more-Heap"><a href="#more-Heap" class="headerlink" title="more Heap"></a>more Heap</h5><p>另外一个缺点就是，CMS 收集器相比其他收集器需要使用更大的堆内存。因为在并发标记阶段，程序还需要执行，所以需要留足够的空间给应用程序。另外，虽然收集器能保证在标记阶段识别出所有的存活对象，但是由于应用程序并发运行，所以刚刚标记的存活对象很可能立马成为垃圾，而且这部分由于已经被标记为<strong>存活对象</strong>，所以只能到下次老年代收集才会被清理，这部分垃圾称为 <strong>浮动垃圾</strong>。</p>
 <p>不像其他垃圾收集器，CMS 收集器不能等到老年代满了才开始收集。否则的话，CMS 收集器将退化到使用更加耗时的 <strong>stop-the-world、标记-清除-压缩</strong> 算法。为了避免这个，CMS 收集器需要统计之前每次垃圾收集的时间和老年代空间被消耗的速度。另外，如果老年代空间被消耗了 <strong>预设占用率（initiating occupancy）</strong>，也将会触发一次垃圾收集，这个占用率通过 <strong>–XX:CMSInitiatingOccupancyFraction=n</strong> 进行设置，n 为老年代空间的占用百分比，默认值是 <strong>68</strong>。</p>
