@@ -167,7 +167,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">74</span>
+          <span class="site-state-item-count">75</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -195,6 +195,254 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/03/java-web-serialization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/10/03/java-web-serialization/" class="post-title-link" itemprop="url">序列化</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-10-03 00:00:00" itemprop="dateCreated datePublished" datetime="2024-10-03T00:00:00+08:00">2024-10-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-27 15:16:20" itemprop="dateModified" datetime="2025-04-27T15:16:20+08:00">2025-04-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/jdk/" itemprop="url" rel="index"><span itemprop="name">jdk</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h1><p><a target="_blank" rel="noopener" href="https://tech.meituan.com/2015/02/26/serialization-vs-deserialization.html">序列化和反序列化 - 美团技术团队</a> </p>
+<p>序列化乍眼一看似乎是多此一举，比如你在内存中创建了一个Person对象，你把内存中那块表示Person二进制数据原封不动地抠出来放到磁盘中，下次再原封不动地读入内存重构出Person对象不就行了吗，何必要进行序列化呢？</p>
+<p>但事实并非那么简单，因为内存中的数据可能是<strong>非连续</strong>的。你所创建的Person对象可能有一个Name成员变量，它可能仅仅是一个指向另一片内存某块连续字符数组的<strong>指针</strong>。现实往往会更复杂，一个成员变量指针往往又指向其他的指针，使得一个简单的对象可能分布在你内存多个零散区域。而序列化，就是把这个对象的数据一层层连根拔起，将其打平成一块<strong>连续</strong>的数据。</p>
+<p>我们知道一个对象往往包含很多信息，其成员可能有flaot, string, integer, 也可能是指向另一个对象的指针。比如JSON通过把以上的数据全部<strong>压平</strong>成字符串来进行传输，通过<strong>嵌套的字符串来替换原对象中的内存指针</strong>，来将不连续的数据重建为连续的数据。如果你说，我的对象不包含任何的引用变量或者指针，在内存中就是连续存储的。比如</p>
+<p>Class Simple { int a=1; int b= 2} 或者 struct Simple {double a = 1.0;double b = 2.0;}</p>
+<p>我还需要进行序列化吗？当然不必要，你可以把它这一块内存直接原封不动地丢进磁盘或网络，然后原封不动地取出来。这种情况极大降低<strong>时间</strong>消耗（几乎不花时间）也降低<strong>空间</strong>消耗（字符串存储效率往往低于二进制）。但是<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=318442694&content_type=Answer&match_order=8&q=%E5%BA%8F%E5%88%97%E5%8C%96&zhida_source=entity">序列化</a>依然有很多好处：</p>
+<ul>
+<li>如果序列化成字符串，可以手动对传输的数据进行<strong>修改</strong>或者<strong>校验</strong></li>
+<li>如果序列化成字符串，机器用自己的方式解析字符串，避免**<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=318442694&content_type=Answer&match_order=1&q=%E5%A4%A7%E5%B0%8F%E7%AB%AF&zhida_source=entity">大小端</a>**不一致带来的冲突</li>
+<li>即使是不序列化成字符串，其他一些独特的二进制序列化方式极大地缩小空间，比如一个长度为8的boolean的数组（原本需要8个byte)，可以压缩成一个<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=318442694&content_type=Answer&match_order=2&q=byte&zhida_source=entity">byte</a>再传输（每一个bit为一个boolean).</li>
+</ul>
+<h2 id="序列化组件"><a href="#序列化组件" class="headerlink" title="序列化组件"></a>序列化组件</h2><p>单方面的只把对象转成字节数组还不行，因为没有规则的字节数组我们是没办法把对象的本来面目还原回来的，所以我们必须在把对象转成字节数组的时候就制定一种规则（序列化），那么我们从IO流里面读出数据的时候再以这种规则把对象还原回来（反序列化）。</p>
+<p>OSI七层协议模型中表示层（Presentation Layer）的主要功能是把应用层的对象转换成一段连续的二进制串，或者反过来，把二进制串转换成应用层的对象–这两个功能就是序列化和反序列化。</p>
+<ul>
+<li><strong>IDL</strong>（Interface description language）文件：参与通讯的各方需要对通讯的内容需要做相关的约定（Specifications）。为了建立一个与语言和平台无关的约定，这个约定需要采用与具体开发语言、平台无关的语言来进行描述。这种语言被称为接口描述语言（IDL），采用IDL撰写的协议约定称之为IDL文件。</li>
+<li><strong>IDL Compiler</strong>：IDL文件中约定的内容为了在各语言和平台可见，需要有一个编译器，将IDL文件转换成各语言对应的动态库。</li>
+<li><strong>Stub/Skeleton Lib</strong>：负责序列化和反序列化的工作代码。Stub是一段部署在分布式系统客户端的代码，一方面接收应用层的参数，并对其序列化后通过底层协议栈发送到服务端，另一方面接收服务端序列化后的结果数据，反序列化后交给客户端应用层；Skeleton部署在服务端，其功能与Stub相反，从传输层接收序列化参数，反序列化后交给服务端应用层，并将应用层的执行结果序列化后最终传送给客户端Stub。</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%BC%89%E5%85%A5%E5%99%A8">加载器 - 维基百科，自由的百科全书</a> </p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%87%BD%E5%BC%8F%E5%BA%AB">函数库 - 维基百科，自由的百科全书</a></p>
+<p><strong>动态库</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//main.c</span></span><br><span class="line"><span class="keyword">extern</span> <span class="type">void</span> <span class="title function_">func</span><span class="params">(<span class="type">int</span> i)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span>&#123;</span><br><span class="line">        func(<span class="number">5</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//func.c</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">func</span><span class="params">(<span class="type">int</span> i)</span>&#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;input i = %d\n&quot;</span>,i);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">gcc -o hello main.c func.c <span class="comment"># 静态链接</span></span><br><span class="line">./hello <span class="comment"># 运行可执行文件</span></span><br><span class="line">gcc -shared -o libfunc.so func.o  <span class="comment"># 生成动态库</span></span><br><span class="line">gcc -o my_program main.o -L. -lfunc  <span class="comment"># 动态链接</span></span><br><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=.:<span class="variable">$LD_LIBRARY_PATH</span>  <span class="comment"># 设置共享库路径</span></span><br><span class="line">./hello <span class="comment"># 运行可执行文件</span></span><br></pre></td></tr></table></figure>
+
+<p>编译器在预处理阶段将include的头文件插入到源文件，然后编译成目标代码，后缀名.o 就是object, 也就相当于windows下编译的obj文件，该文件能被cpu直接执行的二进制代码。由编译器生成，具体的生成方法取决于不同的开发环境。</p>
+<p><em><strong>链接</strong></em>：当我们的程序模块调用a另一个模块中b的函数（foo()）或变量时，在编译的阶段编译器并不知道函数foo的地址，所以暂时把调用foo的指令的目标地址搁置，等待最后链接的时候由连接器去将这些指令的目标地址修正。把目标文件和库一起链接成可执行文件。将.o文件与其他库文件进行静态链接就生成可执行文件，也就是把多个.o文件连接成一个可执行<a target="_blank" rel="noopener" href="https://blog.csdn.net/vividonly/article/details/6399530">ELF文件</a>了</p>
+<p>由于业务越来越复杂，导致程序的体积也越来越大，在多进程的操作系统中，可能同时存在成百上千各应用同时运行。每个应用中都会使用到<code>printf</code>、<code>scanf</code>、<code>strlen</code>等基础函数，链接的时候就需要把printf.o这个编译器内置的目标代码链接到hello.o中</p>
+<p>那么不同的程序中一定会包含它们的指令部分。这就导致这些程序在磁盘保存时，都有这些基础函数的副本。运行时，也会将这些副本加载到对应进程的虚拟空间内存中去。这就导致了<strong>浪费磁盘和内存</strong>。</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/29687bbe2bd05e8a45b046612cb765bf.png" alt="img"></p>
+<table>
+<thead>
+<tr>
+<th align="left">序列化组件</th>
+<th align="left">数据库组件</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">IDL</td>
+<td align="left">DDL</td>
+<td align="left">用于建表或者模型的语言</td>
+</tr>
+<tr>
+<td align="left">DL file</td>
+<td align="left">DB Schema</td>
+<td align="left">表创建文件或模型文件</td>
+</tr>
+<tr>
+<td align="left">Stub/Skeleton lib</td>
+<td align="left">O/R mapping</td>
+<td align="left">将class和Table或者数据模型进行映射</td>
+</tr>
+</tbody></table>
+<p>IDL用于描述对象的结构，IDL编译器用于将IDL描述语言转化成</p>
+<ul>
+<li><strong>Client/Server</strong>：指的是应用层程序代码，他们面对的是IDL所生存的特定语言的class或struct。</li>
+<li><strong>底层协议栈和互联网</strong>：序列化之后的数据通过底层的传输层、网络层、链路层以及物理层协议转换成数字信号在互联网中传递。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/a9bee91c.jpg"></p>
+<p>序列化只是一种拆装组装对象的规则，那么这种规则肯定也可能有多种多样，比如现在常见的序列化方式有：</p>
+<p><strong>JDK</strong>（非跨语言）、<strong>JSON</strong>、<strong>XML</strong>、<strong>Hessian</strong>、<strong>Kryo</strong>（不支持跨语言）、<strong>Thrift</strong>、<strong>Protobuf</strong>、<strong>FST</strong>（非跨语言）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Address</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String city;</span><br><span class="line">    <span class="keyword">private</span> String postcode;</span><br><span class="line">    <span class="keyword">private</span> String street;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserInfo</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Integer userid;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Address&gt; address;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Java-Serializable"><a href="#Java-Serializable" class="headerlink" title="Java Serializable"></a>Java Serializable</h2><p>当创建了⼀个对象后，只要你需要它，它就可以⼀直存在；但是如果程序 退出，这个对象就不存在了。</p>
+<p>虽然这乍看起来说得通，但在某些情况下， 如果程序不再运⾏，⽽对象仍然能够存在并且保留相关信息，会对我们⾮ 常有⽤。也就是说，在下次启动程序时，<strong>包含上次程序运⾏时信息</strong>的对象 还会在那⾥。我们可以通过将信息写⼊⽂件或数据库来实现此效果，但本着⼀切皆对象的宗旨，如果能将对象声明为持久性的，然后让编程语⾔⾃ 动为你处理所有的细节，会⽅便很多。</p>
+<p>Java的对象序列化（object serialization）机制会接受实现了 <code>Serializable</code> 接⼝的任意对象，并将其转换成⼀个字节序列，便于以后 重新⽣成原始对象。它甚⾄可以通过⽹络⼯作，这意味着序列化机制会⾃ 动消除操作系统之间的差异。也就是说，你可以在Windows机器上创建⼀个对象、将其序列化，然后通过⽹络发送到UNIX机器上，它会在那⾥被正 确重建。你不需要担⼼不同机器上的数据表⽰、字节顺序或任何其他细节。 </p>
+<p>对象序列化可以实现轻量级持久化（lightweight persistence）。持久化意味着对象存活于程序调⽤之间，其⽣命周期不是由程序是否在执⾏决 定的。通过获取⼀个可序列化的对象并将其写⼊磁盘，然后在重新调⽤程 序时恢复该对象，这样就产⽣了持久化的效果。之所以称其为“轻量级”， 是因为你不能使⽤某个“持久化”关键字定义⼀个对象，并让编程语⾔替你 处理⼀切细节。相反，你必须在程序中显式地序列化和反序列化对象。如 果需要更严格的持久化机制，请考虑使⽤像Hibernate这样的⼯具。 在语⾔中添加对象序列化，主要是为了⽀持两个功能。</p>
+<ul>
+<li>⾸先，Java的远程⽅法调⽤（remote method invocation, RMI）可以让存在于远程机器 上的对象表现得像存在本地机器上⼀样。当把消息发送给远程对象时，需 要对象序列化来传输参数和返回值。 </li>
+<li>其次，JavaBeans也需要对象序列化（在撰写本书时，JavaBeans被认为 是⼀项失败的技术）。当使⽤Bean时，⼀般会在设计时配置其状态信息。 这个状态信息必须存储起来，然后在程序启动时恢复，对象序列化就被⽤ 来执⾏此任务。</li>
+</ul>
+<p>对象序列化⾥⼀个特别出彩的地⽅是，它不仅保存了对象的镜像，⽽且会 <strong>跟踪该对象包含的所有引⽤并保存</strong>这些引⽤对象的镜像，然后跟踪每个对象所包含的全部引⽤，以此类推。这有时称为单个对象可以连接到的“对象 ⽹络”，包括成员对象以及存储了对象引⽤的数组。如果你必须维护⾃⼰的 对象序列化⽅案，那么遍历所有这些链接的维护代码可能会极为复杂。不过，Java的对象序列化似乎完美地实现了这个⽬标。毫⽆疑问，它使⽤了 ⼀种遍历对象⽹络的优化算法。</p>
+<p><strong>Serializable</strong>：</p>
+<ul>
+<li>实现<code>Serializable</code>接口的目的是为类可持久化，比如在网络传输或本地存储，为系统的分布和异构部署提供先决条件。若没有序列化，现在我们所熟悉的远程调用，对象数据库都不可能存在。</li>
+<li>序列化⼀个对象很简单，只要对象实现了<code>Serializable</code>接⼝就可以。 <code>Serializable</code>是⼀个标签接⼝，没有⽅法。当序列化被添加到语⾔中 时，标准库⾥的许多类被更改以便可序列化，包括所有基本类型的包装 类、所有容器类，等等。甚⾄Class对象也是可以序列化的。</li>
+<li>序列化对象的持久化需要一个<code>ObjectOutputStream</code>的字节流<code>writeObject()</code>，反序列化需要<code>ObjectInputStream</code>的<code>readObject()</code>，返回的是一个<code>Object</code>，因此需要强转类型。</li>
+<li>反序列化后得到的对象确实包含了原始对象中的所有链接。 注意，在反序列化<code>Serializable</code>对象的过程中，我们没有调⽤任何构造 器，连⽆参构造器也没有调⽤。整个对象的数据都是从<code>InputStream</code>⾥恢复的。</li>
+</ul>
+<p><strong>Externalizable</strong>：</p>
+<ul>
+<li><p>所有正常的默认构造⾏为都会发⽣（包括在字段定义处的初始化），之后<code>readExternal()</code>被调⽤。请注意这⼀点，特别是所有默认的构造总是会发⽣，这样才能在<code>Externalizable</code>对象中产⽣正确的⾏为</p>
+</li>
+<li><p>一言以蔽之，不会存储具体的值，只会存储对象的骨架。在⽆参数构造器中没有初始化。这意味着，如果你没有在<code>readExternal()</code>中初始化s和i，那么s就 是null且i是零（对象的存储在其创建的第⼀步被擦除为零）。</p>
+</li>
+<li><p>因此，为了使序列化正常，不仅需要在<code>writeExternal()</code>⽅法⾥写⼊对象的重要数据（序列化机制不会默认为<code>Externalizable</code>对象写⼊任何成 员对象），⽽且需要在<code>readExternal()</code>⽅法中恢复该数据。起初这可能有点令⼈困惑，因为<code>Externalizable</code>对象的默认构造⾏为有可能使它看起来像存在某种⾃动存储和恢复⾏为，⽽这实际上是没有的。</p>
+</li>
+</ul>
+<p><strong>static</strong>：</p>
+<p>凡是被static修饰的字段是不会被序列化的因为序列化保存的是对象的状态而非类的状态，所以会忽略static静态域。</p>
+<p><strong>transient</strong>: </p>
+<ul>
+<li>防⽌对象的敏感部分被序列化的⼀种⽅法是将你的类实现为 <code>Externalizable</code>，如前所⽰。这样就不会⾃动序列化任何内容了，你可以仅显式地序列化<code>writeExternal()</code>中的必要部分。 但是，如果你正在使⽤<code>Serializable</code>对象，则所有序列化都会⾃动发⽣。</li>
+<li>为了控制这⼀点，可以使⽤<code>transient</code>关键字逐个字段地关闭序列化，它表⽰“不要费⼼保存或恢复这个字段——我会处理它的”。date和username是普通字段（不是<code>transient</code>的），因此会⾃动序列化。然⽽password是<code>transient</code>的，所以不会被存储到磁盘，序列化机制也不会尝试恢复它。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Logon</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">Date</span> <span class="variable">date</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Date</span>();</span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="keyword">private</span> `<span class="keyword">transient</span>` String password;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Logon</span><span class="params">(String name, String pwd)</span> &#123;</span><br><span class="line">        username = name;</span><br><span class="line">        password = pwd;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>当对象被恢复时，password字段为null。注意， toString()使⽤重载的+运算符组装了⼀个字符串对象，⽽其中的null 引⽤被⾃动转换成了字符串”null”。 你还可以看到date字段被存储到磁盘并从磁盘恢复，⽽不是重新⽣成。 Externalizable对象默认不存储⾃⾝的任何字段，因此<code>transient</code>关键字仅适⽤于Serializable对象。</li>
+</ul>
+<p><strong>serialVersionUID</strong>: </p>
+<ul>
+<li><p>在进行反序列化时，JVM会把传来的字节流中的<code>serialVersionUID</code>于本地相应实体类的<code>serialVersionUID</code>进行比较。如果相同说明可以反序列化，否则会出现反序列化版本不一致的异常<code>InvalidCastException</code></p>
+</li>
+<li><p>具体过程是这样的：序列化操作时会把系统当前类的<code>serialVersionUID</code>写入到序列化文件中，当反序列化时系统会自动检测文件中的<code>serialVersionUID</code>，判断它是否与当前类中的<code>serialVersionUID</code>一致。</p>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u014750606/article/details/80040130">java类中serialVersionUID的作用_seriaversionid 1l-CSDN博客</a> </p>
+<ul>
+<li><p>当实现<code>java.io.Serializable</code>接口中没有显示的定义<code>serialVersionUID</code>变量的时候，Java序列化机制会根据Class自动生成一个<code>serialVersionUID</code>作序列化版本比较用，这种情况下，如果class文件(类名,方法等)没有发生变化(增加空格，换行，增加注释等等)，就算再编译多次，<code>serialVersionUID</code>也不会变化的。</p>
+</li>
+<li><p>如果我们不希望通过编译来强制划分软件版本，即实现序列化接口的实体能够兼容先前版本，就需要显示的定义一个<code>serialVersionUID</code>，类型为<code>long</code>的变量。不修改这个变量值的序列化实体，都可以相互进行序列化和反序列化。</p>
+</li>
+<li><p>还强烈建议使用 <code>private</code> 修饰符显示声明<code> serialVersionUID</code>（如果可能），原因是这种声明仅应用于直接声明类 – <code>serialVersionUID</code> 字段作为继承成员没有用处。数组类不能声明一个明确的 <code>serialVersionUID</code>，因此它们总是具有默认的计算值，但是数组类没有匹配 <code>serialVersionUID</code> 值的要求。</p>
+</li>
+</ul>
+<p><strong>序列化与继承</strong>：</p>
+<p>序列化是以正向递归的形式进行的，如果父类实现了序列化那么其子类都将被序列化；子类实现了序列化而父类没实现序列化，那么只有子类的属性会进行序列化，而父类的属性是不会进行序列化的。</p>
+<h2 id="XML"><a href="#XML" class="headerlink" title="XML"></a>XML</h2><p>对象序列化的⼀个重要限制是，它仅适⽤于Java平台：只有Java程序可以 反序列化此类对象。⼀个更具互操作性的解决⽅案是将数据转换为XML格式，这使得它可以被各种平台和语⾔使⽤。 由于XML的流⾏，使⽤它编程有很多令⼈困惑的选项，包括与JDK⼀起分 发的javax.xml.*库。我选择使⽤Elliotte Rusty Harold的开源XOM库 （可从XOM⽹站下载并查看其⽂档），因为在使⽤Java⽣成并修改XML的 各种⽅式中，它似乎是最简单、最直接的。此外，XOM还强调了XML的正 确性。 例如，假设有⼀个包含名字和姓⽒的APerson对象，你希望将其序列化为 XML。下⾯的APerson类有⼀个getXML()⽅法，它使⽤XOM将APerson 的数据抽取并转换为XML的Element对象，还有⼀个接受Element对象的 构造器，可以提取相应的APerson数据（注意XML⽰例在它⾃⼰的⼦⽬录 中）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;xsd:complexType name=&#x27;Address&#x27;&gt;</span><br><span class="line">     &lt;xsd:attribute name=&#x27;city&#x27; type=&#x27;xsd:string&#x27; /&gt;</span><br><span class="line">     &lt;xsd:attribute name=&#x27;postcode&#x27; type=&#x27;xsd:string&#x27; /&gt;</span><br><span class="line">     &lt;xsd:attribute name=&#x27;street&#x27; type=&#x27;xsd:string&#x27; /&gt;</span><br><span class="line">&lt;/xsd:complexType&gt;</span><br><span class="line">&lt;xsd:complexType name=&#x27;UserInfo&#x27;&gt;</span><br><span class="line">     &lt;xsd:sequence&gt;</span><br><span class="line">     &lt;xsd:element name=&#x27;address&#x27; type=&#x27;tns:Address&#x27;/&gt;</span><br><span class="line">     &lt;xsd:element name=&#x27;address1&#x27; type=&#x27;tns:Address&#x27;/&gt; </span><br><span class="line">     &lt;/xsd:sequence&gt;</span><br><span class="line">     &lt;xsd:attribute name=&#x27;userid&#x27; type=&#x27;xsd:int&#x27; /&gt;</span><br><span class="line">     &lt;xsd:attribute name=&#x27;name&#x27; type=&#x27;xsd:string&#x27; /&gt; </span><br><span class="line">&lt;/xsd:complexType&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="JSON"><a href="#JSON" class="headerlink" title="JSON"></a>JSON</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"> <span class="string">&quot;userid&quot;</span>:<span class="number">1</span>,</span><br><span class="line"> <span class="string">&quot;name&quot;</span>:<span class="string">&quot;messi&quot;</span>,</span><br><span class="line"> <span class="string">&quot;address&quot;</span>:</span><br><span class="line"> [</span><br><span class="line">     &#123;<span class="string">&quot;city&quot;</span>:<span class="string">&quot;北京&quot;</span>,<span class="string">&quot;postcode&quot;</span>:<span class="string">&quot;1000000&quot;</span>,<span class="string">&quot;street&quot;</span>:<span class="string">&quot;wangjingdonglu&quot;</span>&#125;</span><br><span class="line"> ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Kryo"><a href="#Kryo" class="headerlink" title="Kryo"></a>Kryo</h2><p>Kryo是一个高性能的序列化/反序列化工具，由于其变长存储特性并使用了字节码生成机制，拥有较高的运行速度和较小的字节码体积。</p>
+<p>另外，Kryo 已经是一种非常成熟的序列化实现了，已经在Twitter、Groupon、Yahoo以及多个著名开源项目（如Hive、Storm）中广泛的使用。</p>
+<p><a href="https://link.zhihu.com/?target=https://github.com/Snailclimb/guide-rpc-framework">guide-rpc-framework</a> 就是使用的 kyro 进行序列化，序列化和反序列化相关的代码如下：</p>
+<p><img src="https://picx.zhimg.com/80/v2-c2d640eded6b96090704a79eaf2298ad_1440w.webp?source=1def8aca" alt="img"></p>
+<p>Github 地址：<a href="https://link.zhihu.com/?target=https://github.com/EsotericSoftware/kryo">https://github.com/EsotericSoftware/kryo</a> 。</p>
+<h2 id="Protobuf"><a href="#Protobuf" class="headerlink" title="Protobuf"></a>Protobuf</h2><p>Protobuf出自于Google，性能还比较优秀，也支持多种语言，同时还是跨平台的。就是在使用中过于繁琐，因为你需要自己定义 IDL 文件和生成对应的<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=471921064&content_type=Answer&match_order=1&q=%E5%BA%8F%E5%88%97%E5%8C%96%E4%BB%A3%E7%A0%81&zhida_source=entity">序列化代码</a>。这样虽然不然灵活，但是，另一方面导致protobuf没有序列化漏洞的风险。</p>
+<blockquote>
+<p>Protobuf包含序列化格式的定义、各种语言的库以及一个IDL编译器。正常情况下你需要定义proto文件，然后使用IDL编译器编译成你需要的语言</p>
+</blockquote>
+<p>一个简单的 proto 文件如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">message Address</span><br><span class="line">&#123;</span><br><span class="line">	required string city=1;</span><br><span class="line">    	optional string postcode=2;</span><br><span class="line">    	optional string street=3;</span><br><span class="line">&#125;</span><br><span class="line">message UserInfo</span><br><span class="line">&#123;</span><br><span class="line">	required string userid=1;</span><br><span class="line">	required string name=2;</span><br><span class="line">	repeated Address address=3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pica.zhimg.com/80/v2-35121b76c4b3f29797ade34ad321ddd8_1440w.webp?source=1def8aca" alt="img"></p>
+<p>Github地址：<a href="https://link.zhihu.com/?target=https://github.com/protocolbuffers/protobuf">https://github.com/protocolbuffers/protobuf</a>。</p>
+<h2 id="ProtoStuff"><a href="#ProtoStuff" class="headerlink" title="ProtoStuff"></a>ProtoStuff</h2><p>由于Protobuf的易用性，它的哥哥 Protostuff 诞生了。</p>
+<p>protostuff 基于Google protobuf，但是提供了更多的功能和更简易的用法。虽然更加易用，但是不代表 ProtoStuff 性能更差。</p>
+<p>Gihub地址：<a href="https://link.zhihu.com/?target=https://github.com/protostuff/protostuff">https://github.com/protostuff/protostuff</a>。</p>
+<h2 id="Hessian"><a href="#Hessian" class="headerlink" title="Hessian"></a>Hessian</h2><p>hessian 是一个轻量级的,自定义描述的二进制RPC协议。hessian是一个比较老的序列化实现了，并且同样也是跨语言的。</p>
+<p><img src="https://pic1.zhimg.com/80/v2-2d1938219e4ee344b331583866a6dc82_1440w.webp?source=1def8aca" alt="img"></p>
+<p>以上描述的五种序列化和反序列化协议都各自具有相应的特点，适用于不同的场景：</p>
+<p>1、对于公司间的系统调用，如果性能要求在100ms以上的服务，基于XML的SOAP协议是一个值得考虑的方案。</p>
+<p>2、基于Web browser的Ajax，以及Mobile app与服务端之间的通讯，JSON协议是首选。对于性能要求不太高，或者以动态类型语言为主，或者传输数据载荷很小的的运用场景，JSON也是非常不错的选择。</p>
+<p>3、对于调试环境比较恶劣的场景，采用JSON或XML能够极大的提高调试效率，降低系统开发成本。</p>
+<p>4、当对性能和简洁性有极高要求的场景，Protobuf，Thrift，Avro之间具有一定的竞争关系。</p>
+<p>5、对于T级别的数据的持久化应用场景，Protobuf和Avro是首要选择。如果持久化后的数据存储在Hadoop子项目里，Avro会是更好的选择。</p>
+<p>6、由于Avro的设计理念偏向于动态类型语言，对于动态语言为主的应用场景，Avro是更好的选择。</p>
+<p>7、对于持久层非Hadoop项目，以静态类型语言为主的应用场景，Protobuf会更符合静态类型语言工程师的开发习惯。</p>
+<p>8、如果需要提供一个完整的RPC解决方案，Thrift是一个好的选择。</p>
+<p>9、如果序列化之后需要支持不同的传输层协议，或者需要跨防火墙访问的高性能场景，Protobuf可以优先考虑。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li><strong>Web开发</strong>（特别是前后端通信）：JSON占主导地位。</li>
+<li><strong>高性能需求</strong>：Protobuf和Thrift是更优的选择。</li>
+<li><strong>大数据处理</strong>：Avro和MessagePack可能是合适的选择。</li>
+<li><strong>复杂文档结构</strong>：XML仍然是标准选择。</li>
+</ul>
+<p>不同场景下的需求，决定了选择哪种序列化方法。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -4100,265 +4348,6 @@ gender varchar(1) comment &#39;性别&#39;
 <p>74182: 输入Cmin，4D*T*，  输出Cmax、 D**T**（4个大组） 64bit</p>
 <p>(4*74181+1*74182)*4 + 1*74182 = 64位 三重分组跳跃进位ALU </p>
 <h2 id=""><a href="#" class="headerlink" title=""></a></h2>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/09/13/408-%E8%AE%A1%E7%BB%84-Link/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/09/13/408-%E8%AE%A1%E7%BB%84-Link/" class="post-title-link" itemprop="url">符号链接</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-09-13 00:00:00" itemprop="dateCreated datePublished" datetime="2024-09-13T00:00:00+08:00">2024-09-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-05 12:43:29" itemprop="dateModified" datetime="2025-05-05T12:43:29+08:00">2025-05-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%BB%84/" itemprop="url" rel="index"><span itemprop="name">计组</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>文本：源代码 <code>hello.c</code></p>
-<p>预处理：修改文本 <code>hello.i file</code></p>
-<p>编译器：assembly <code>hello.s file</code></p>
-<p>汇编器：binary code <code>hello.o file</code></p>
-<p>连接器：hello.o + printf.o -&gt; <code>hello</code> </p>
-<p><strong>线程级并行</strong>：指令执行基本单位</p>
-<ul>
-<li><p>多核心：多个核共享L3缓存，一个核有一个统一的L2缓存，L1缓存分为数据缓存和指令缓存，数据缓存直连CPU寄存器</p>
-</li>
-<li><p>超线程：可以在单个周期内决定要切换到哪个线程，在一个线程等待数据运过来的过程中，CPU可以去转而执行另一个线程，8核心 16线程，线程并行</p>
-</li>
-</ul>
-<p><strong>指令级并行</strong>：指令间并行</p>
-<ul>
-<li>流水线</li>
-<li>超标量</li>
-</ul>
-<p>单指令，多数据并行：数据流并行 SIMD 一条指令可以产生多个并行执行的操作</p>
-<p>抽象：Disk 代表I/O设备，Memory代表主存</p>
-<ul>
-<li>Virtual Machine：OS+CPU+Memory+Disk</li>
-<li>Process： CPU+Memory+Disk</li>
-<li>Virtual Memory：Memory+Disk</li>
-<li>File：Disk</li>
-<li>CPU：Instruction Set architecture</li>
-</ul>
-<h1 id="Linker"><a href="#Linker" class="headerlink" title="Linker"></a>Linker</h1><h2 id="可重定位目标文件"><a href="#可重定位目标文件" class="headerlink" title="可重定位目标文件"></a>可重定位目标文件</h2><p>“目标文件是字节块的集合”这句话通常用来描述目标文件（object file）的本质结构。目标文件是编译器生成的中间文件，包含程序代码和数据，用于后续的链接操作。以下是对这一概念的详细解析：</p>
-<h3 id="目标文件的本质：字节块"><a href="#目标文件的本质：字节块" class="headerlink" title="目标文件的本质：字节块"></a>目标文件的本质：字节块</h3><p>目标文件是由一系列字节组成的文件，这些字节可以看作是数据块。这些数据块并不是随意排列的，而是按照一定的格式组织起来，通常包括：</p>
-<ul>
-<li><strong>代码段</strong>：存储编译后的机器指令。</li>
-<li><strong>数据段</strong>：存储已初始化的全局或静态变量。</li>
-<li><strong>未初始化数据段（BSS）</strong>：存储未初始化的全局或静态变量，实际大小记录在文件中，但不占用物理空间。</li>
-<li><strong>符号表</strong>：记录函数和变量的名字及其在文件中的位置。</li>
-<li><strong>重定位信息</strong>：指示链接器如何修改目标文件以适应最终的内存布局。</li>
-</ul>
-<p>这些内容本质上都是字节序列，每一部分由多个字节块组成。</p>
-<hr>
-<h3 id="字节块的特点"><a href="#字节块的特点" class="headerlink" title="字节块的特点"></a>字节块的特点</h3><ul>
-<li><strong>固定大小或可变大小</strong>：字节块可以是固定长度的单位，例如4字节对齐的机器指令，也可能是不定长的数据块。</li>
-<li><strong>有意义的分组</strong>：每个块都有明确的意义，比如某个函数的机器代码、某个变量的初始值等。</li>
-<li><strong>易于解析</strong>：链接器、调试器等工具需要能够根据文件的格式解析这些块，因此这些字节块被有序地组织在文件头定义的布局中。</li>
-</ul>
-<hr>
-<h3 id="目标文件格式"><a href="#目标文件格式" class="headerlink" title="目标文件格式"></a>目标文件格式</h3><p>目标文件的格式是如何定义这些字节块的重要规则。例如：</p>
-<ul>
-<li><strong>ELF（Executable and Linkable Format）</strong> 是一种常见的目标文件格式，广泛用于Linux系统。它将字节块分为不同的段（Section），并用段表和符号表记录每个块的起始地址和大小。</li>
-<li><strong>COFF（Common Object File Format）</strong> 是Windows等系统常用的格式。</li>
-</ul>
-<p>这些格式提供了语法规则，使得目标文件的字节块能够被链接器或加载器正确地解读。</p>
-<hr>
-<h3 id="为什么强调“字节块的集合”？"><a href="#为什么强调“字节块的集合”？" class="headerlink" title="为什么强调“字节块的集合”？"></a>为什么强调“字节块的集合”？</h3><ul>
-<li><strong>通用性</strong>：这一描述抽象了目标文件的存储本质。无论是代码段还是数据段，本质上都是按字节存储的数据。</li>
-<li><strong>便于理解文件结构</strong>：将目标文件看作字节块集合，可以帮助程序员理解文件的解析方式，特别是分析目标文件格式时。</li>
-<li><strong>与内存映射相关</strong>：最终，这些字节块会被加载到内存中，按照相同的结构组织成进程的内存布局。</li>
-</ul>
-<hr>
-<h3 id="深入理解的关键"><a href="#深入理解的关键" class="headerlink" title="深入理解的关键"></a>深入理解的关键</h3><p>为了深入理解，可以通过以下方式进一步探索：</p>
-<ul>
-<li><strong>查看目标文件结构</strong>：使用工具（如 <code>objdump</code> 或 <code>readelf</code>）解析目标文件，观察各部分的字节分布。</li>
-<li><strong>编写简单的C程序并编译</strong>：用编译器生成目标文件，并对比源代码和目标文件中的符号表、代码段。</li>
-<li><strong>了解链接过程</strong>：理解这些字节块如何在链接过程中被组合成最终的可执行文件。</li>
-</ul>
-<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>编写简单的程序：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>编译生成目标文件后，使用 <code>readelf -a</code> 或 <code>objdump -h</code> 查看其字节块分布。你会发现，虽然程序非常简单，但目标文件已经按照格式组织了各种段和数据块。</p>
-<h2 id="符号解析"><a href="#符号解析" class="headerlink" title="符号解析"></a>符号解析</h2><p><strong>符号解析</strong>是链接过程中一个重要的步骤，用于将目标文件中的符号（如变量名、函数名）解析为具体的内存地址或其他符号的引用地址。它的目的是将代码中使用的符号与其定义进行匹配，以实现正确的程序连接。</p>
-<p>以下是详细的解释：</p>
-<hr>
-<h3 id="什么是符号？"><a href="#什么是符号？" class="headerlink" title="什么是符号？"></a><strong>什么是符号？</strong></h3><p>符号是程序中用来表示变量、函数、常量或其他标识符的名字。它可以包括：</p>
-<ul>
-<li>全局变量</li>
-<li>函数名</li>
-<li>静态变量（如果需要）</li>
-<li>外部引用的符号（来自其他目标文件或库）</li>
-</ul>
-<p>在目标文件中，这些符号并不直接对应内存地址，而是保存在<strong>符号表</strong>中，等待链接器解析。</p>
-<hr>
-<h3 id="符号解析的作用"><a href="#符号解析的作用" class="headerlink" title="符号解析的作用"></a><strong>符号解析的作用</strong></h3><p>符号解析的主要目的是：</p>
-<ul>
-<li>将<strong>使用符号的地方</strong>（例如函数调用或变量访问）和<strong>定义符号的地方</strong>联系起来。</li>
-<li>为符号分配实际的内存地址或引用其他文件中符号的位置。</li>
-</ul>
-<p>如果符号在当前目标文件中找不到定义，链接器会尝试在其他目标文件或库中找到它。</p>
-<hr>
-<h3 id="符号解析的过程"><a href="#符号解析的过程" class="headerlink" title="符号解析的过程"></a><strong>符号解析的过程</strong></h3><ol>
-<li><p><strong>构建符号表</strong>：链接器首先扫描所有目标文件和库文件，读取它们的符号表，记录所有已定义和未定义的符号。</p>
-</li>
-<li><p>查找符号定义</p>
-<p>：对于每个未定义的符号，链接器会在符号表中搜索其定义。</p>
-<ul>
-<li>如果找到，链接器会将引用符号的位置更新为定义的位置。</li>
-<li>如果找不到，链接器会报错（如“未定义符号”错误）。</li>
-</ul>
-</li>
-<li><p><strong>处理重定位信息</strong>：对于解析后的符号，链接器会根据其地址调整目标文件中的指令或数据。</p>
-</li>
-</ol>
-<hr>
-<h3 id="常见场景"><a href="#常见场景" class="headerlink" title="常见场景"></a><strong>常见场景</strong></h3><ul>
-<li><strong>内部符号解析</strong>：在同一个目标文件中，一个函数调用另一个函数，链接器只需在这个目标文件内找到符号的定义。</li>
-<li><strong>外部符号解析</strong>：一个目标文件调用另一个目标文件或库中的符号，链接器需要跨文件查找。</li>
-<li><strong>动态库中的符号解析</strong>：如果链接的是动态库（如 <code>.so</code> 或 <code>.dll</code> 文件），符号解析可能延迟到程序运行时进行。</li>
-</ul>
-<hr>
-<h3 id="符号解析失败的原因"><a href="#符号解析失败的原因" class="headerlink" title="符号解析失败的原因"></a><strong>符号解析失败的原因</strong></h3><p>符号解析失败通常会导致编译或链接错误，比如：</p>
-<ul>
-<li>未定义符号错误：<ul>
-<li>函数或变量的定义缺失。</li>
-<li>链接时遗漏了需要的库。</li>
-</ul>
-</li>
-<li>重复定义错误：<ul>
-<li>同一个符号在多个目标文件中重复定义。</li>
-</ul>
-</li>
-<li>符号不可见：<ul>
-<li>符号被声明为 <code>static</code> 或其他方式限制了可见性，导致无法被外部文件引用。</li>
-</ul>
-</li>
-</ul>
-<hr>
-<h3 id="符号解析工具"><a href="#符号解析工具" class="headerlink" title="符号解析工具"></a><strong>符号解析工具</strong></h3><p>在实际开发中，可以使用一些工具检查符号：</p>
-<ul>
-<li><code>nm</code>：列出目标文件或库中的符号表。</li>
-<li><code>objdump</code>：查看符号和段信息。</li>
-<li><code>readelf</code>：分析目标文件的 ELF 格式符号。</li>
-</ul>
-<p>例如：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nm myfile.o</span><br></pre></td></tr></table></figure>
-
-<p>会输出目标文件 <code>myfile.o</code> 中的所有符号及其状态（已定义或未定义）。</p>
-<hr>
-<h3 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a><strong>示例</strong></h3><p>假设有以下代码：</p>
-<p>**文件 <code>a.c</code>**：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> foo = <span class="number">42</span>;</span><br></pre></td></tr></table></figure>
-
-<p>**文件 <code>b.c</code>**：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="type">int</span> foo;</span><br><span class="line"><span class="type">int</span> <span class="title function_">bar</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> foo;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ol>
-<li><p><strong>编译</strong>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -c a.c -o a.o</span><br><span class="line">gcc -c b.c -o b.o</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>a.o</code> 中定义了符号 <code>foo</code>。</li>
-<li><code>b.o</code> 中引用了符号 <code>foo</code>（标记为未定义）。</li>
-</ul>
-</li>
-<li><p><strong>链接</strong>：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc a.o b.o -o program</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>链接器会解析 <code>b.o</code> 中的符号 <code>foo</code>，在 <code>a.o</code> 中找到它的定义，并完成解析。</li>
-</ul>
-</li>
-</ol>
-<hr>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h3><p>符号解析是链接器将程序中的符号引用与定义匹配起来的关键步骤。它确保程序在执行时能够正确访问函数、变量等资源。符号解析的成功与否直接影响程序的正确性，开发中需要注意符号的定义与使用是否一致，以及是否正确链接所需的目标文件或库。</p>
-<ul>
-<li><code>switch</code>性能是否总是比<code>if-else</code>好？</li>
-<li>一个函数调用的开销有多大？</li>
-<li><code>while</code>性能是否总是比<code>for</code>好？</li>
-<li>指针引用比数组索引更加有效吗？</li>
-<li>为什么将循环求和的结果放到本地变量中，比放到一个通过引用传递过来的参数中更加有效？</li>
-<li>为什么只是简单将算数表达式中的括号进行重排就能加快运行速度？</li>
-</ul>
-<p>链接的错误：</p>
-<ul>
-<li>静态变量与全局变量的区别</li>
-<li>不同C文件中定义相同的全局变量</li>
-<li>静态库和动态库的区别</li>
-<li>命令行上排列库的顺序有什么影响</li>
-<li>为什么有些链接错误直到运行时才会出现？</li>
-</ul>
-
       
     </div>
 
