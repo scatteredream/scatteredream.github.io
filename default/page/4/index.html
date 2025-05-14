@@ -1900,7 +1900,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-14 21:28:36" itemprop="dateModified" datetime="2025-05-14T21:28:36+08:00">2025-05-14</time>
+      <time title="修改时间：2025-05-14 23:01:30" itemprop="dateModified" datetime="2025-05-14T23:01:30+08:00">2025-05-14</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -3031,8 +3031,8 @@
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240919214219300.png" alt="image-20240919214219300"></p>
 <h2 id="解析注解"><a href="#解析注解" class="headerlink" title="解析注解"></a>解析注解</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240919214508991.png" alt="image-20240919214508991"></p>
 <h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>模拟框架 解析注解，然后执行 模拟<a href="jetbrains://idea/navigate/reference?project=MyFirstProject&fqn=org.JavaSE.AdvancedTest.Annotation.JUnitSimulator">JUnitSimulator(Toolbox 引用)</a>识别并执行有特定注解的方法</p>
-<h1 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h1><p>加载类，允许用编程的方式，解剖类中的各种成分（万物皆对象）</p>
-<p>比如ide中创建一个对象，对象引用后加一个点就能显示可以调用的方法，说明这个类实现的方法已经提前加载好了</p>
+<h1 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h1><p>加载类，允许用编程的方式，解剖类中的各种成分（万物皆对象）比如ide中创建一个对象，对象引用后加一个点就能显示可以调用的方法，说明这个类实现的方法已经提前加载好了。</p>
+<p>反射（Reflection）是计算机编程中的一种机制，允许程序在运行时动态地检查、修改或调用其自身的结构或行为。它打破了传统静态代码的编译时绑定限制，使程序能够获取类、方法、属性等元信息，并动态操作它们。</p>
 <h2 id="加载方法"><a href="#加载方法" class="headerlink" title="加载方法"></a>加载方法</h2><ol>
 <li><p>加载类，获取 <code>Class</code> 对象</p>
 <ul>
@@ -3079,11 +3079,19 @@
 </ol>
 <h2 id="作用、应用场景"><a href="#作用、应用场景" class="headerlink" title="作用、应用场景"></a>作用、应用场景</h2><ul>
 <li>得到类的全部成分</li>
-<li>破坏封装性</li>
-<li>做框架</li>
+<li>做框架、解耦代码、提高通用性</li>
+<li>支持注解处理、AOP</li>
+<li>IDE代码分析、断点调试依赖反射</li>
 </ul>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920001226903.png" alt="image-20240920001226903"></p>
 <p>接收任意对象，接到对象，用反射获取class对象，获取全部成员变量，遍历他们，把他们的属性写出到文件中</p>
+<p>劣势：</p>
+<ul>
+<li>破坏封装性+反射代码需更高权限，可能引发安全漏洞（如通过反射调用<code>System.exit</code>）</li>
+<li>性能开销大，反射调用涉及动态解析类型和方法，比直接调用慢数倍</li>
+<li>代码可读性差，逻辑通常冗长且难以静态分析，增加维护成本。</li>
+<li>编译时检查失效：错误（如方法名拼写错误）在运行时才暴露，增加调试难度。</li>
+</ul>
 <h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>框架的核心技术，一个类有很多方法，需要加载资源，而代理可以代替类执行这些操作。</p>
 <p>Spring AOP技术使用了JDK动态代理和CGLIB动态代理两种方式，在不改变原始方法的前提下对功能进行增强。</p>
 <h2 id="JDK-动态代理——反射"><a href="#JDK-动态代理——反射" class="headerlink" title="JDK 动态代理——反射"></a>JDK 动态代理——反射</h2><ul>
