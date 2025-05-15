@@ -1214,9 +1214,6 @@ pre code {
   padding: 1px 4px;
   text-shadow: none;
 }
-.use-motion .menu-item {
-  visibility: hidden;
-}
 .github-corner :hover .octo-arm {
   animation: octocat-wave 560ms ease-in-out;
 }
@@ -1288,7 +1285,7 @@ pre code {
   vertical-align: middle;
 }
 .links-of-author a::before {
-  background: #1bffcf;
+  background: #ffc483;
   display: inline-block;
   margin-right: 3px;
   transform: translateY(-2px);
@@ -1766,9 +1763,6 @@ pre code {
 .post-button {
   margin-top: 40px;
   text-align: center;
-}
-.use-motion .collection-header {
-  visibility: hidden;
 }
 .posts-collapse .post-content {
   margin-bottom: 35px;
