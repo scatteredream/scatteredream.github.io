@@ -167,13 +167,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">77</span>
+          <span class="site-state-item-count">78</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -195,6 +195,323 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/09/18/408-%E8%AE%A1%E7%BB%84-PC%20IO%E7%BB%93%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/09/18/408-%E8%AE%A1%E7%BB%84-PC%20IO%E7%BB%93%E6%9E%84/" class="post-title-link" itemprop="url">PC IO 结构</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-09-18 00:00:00" itemprop="dateCreated datePublished" datetime="2024-09-18T00:00:00+08:00">2024-09-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-11 10:46:52" itemprop="dateModified" datetime="2025-05-11T10:46:52+08:00">2025-05-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%BB%84/" itemprop="url" rel="index"><span itemprop="name">计组</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Prototypical-Architecture"><a href="#Prototypical-Architecture" class="headerlink" title="Prototypical Architecture"></a>Prototypical Architecture</h1><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216183418923-1734346411610-1.png" alt="image-20241216183418923"></p>
+<p>CPU通过专用的内存总线连接到内存，通过通用I/O总线(如PCI)连接到显卡等高性能设备，通过外围总线连接到低速的设备(USB Flash, 磁盘驱动器 )，因为光速的限制以及各种物理因素，越快的总线越短，造价也贵，因此离CPU越远的设备性能越低。</p>
+<h1 id="Modern-Architecture"><a href="#Modern-Architecture" class="headerlink" title="Modern Architecture"></a>Modern Architecture</h1><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216185046235.png" alt="image-20241216185046235"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1024px-Motherboard_diagram.svg-1734348489593-5.png" alt="undefined"></p>
+<p>在现代系统架构中，有更多的点对点连接到 CPU，PCIe 显卡总线和内存专用总线速度相近，以提供更高的显示性能，CPU通过 <strong>DMI</strong> 连接到一颗 I/O 芯片，所有其他外设通过各种总线连接到这颗I/O芯片。</p>
+<h2 id="CPU-Socket"><a href="#CPU-Socket" class="headerlink" title="CPU Socket"></a>CPU Socket</h2><ul>
+<li>用于安装中央处理器 (CPU)。</li>
+<li>支持不同接口类型（如 LGA、PGA 或 BGA）。</li>
+<li>插槽周围有供电模块（VRM）提供稳定电压。</li>
+</ul>
+<p>不同CPU系列使用不同插槽。后期CPU插槽，数字多数与针脚数量相同：</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/LGA_1155">LGA 1155</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/LGA_1366">LGA 1366</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/LGA_2066">LGA 2066</a>  <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/LGA_1700">LGA 1700</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Socket_AM4">Socket AM4</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Socket_TR4">Socket TR4</a> </p>
+<h2 id="Chipset"><a href="#Chipset" class="headerlink" title="Chipset"></a>Chipset</h2><p>管理数据传输和硬件通信，负责连接 CPU、内存、显卡、存储等设备</p>
+<p><strong>芯片组</strong>(Chipset)负责将电脑的处理器和和其它部分连接，以便能互传数据。芯片组在它所诞生的1980年代时是由多颗微芯片组成的，但是随着科技的进步，芯片组先是从2000年代开始简化为南桥和北桥两颗芯片，再于2010年代简化为单独一颗的南桥芯片，北桥芯片内置在CPU中，目前世界上的芯片组均以单南桥芯片为主流。  </p>
+<ul>
+<li><strong>南桥</strong>(Southbridge): 主要处理低速信号，后来演变成 ICH-&gt;PCH</li>
+<li><strong>北桥</strong>(Northbridge): 主要处理高速信号，同时也负责与南桥的通信，IOH-&gt;MCH，集成进CPU</li>
+<li><strong>DMI</strong>：连接南北桥的串行总线</li>
+<li><strong>FSB</strong>：前端总线，负责 CPU 和北桥的数据传递。现在的x86 CPU 内部整合了<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E8%A8%98%E6%86%B6%E9%AB%94%E6%8E%A7%E5%88%B6%E5%99%A8&action=edit&redlink=1">北桥</a>。FSB 已被Intel <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/QPI">QPI</a>和AMD <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/HyperTransport">HyperTransport</a>取代</li>
+</ul>
+<h3 id="Memory-Controller-Hub-Northbridge"><a href="#Memory-Controller-Hub-Northbridge" class="headerlink" title="Memory Controller Hub (Northbridge)"></a>Memory Controller Hub (Northbridge)</h3><p>随着技术发展，原来的北桥芯片已直接整合到 <strong>CPU 内部</strong>，减少延迟并提升效率：</p>
+<table>
+<thead>
+<tr>
+<th>控制器名称</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Memory Controller</strong></td>
+<td>控制内存访问和管理，负责与 RAM 通信。</td>
+</tr>
+<tr>
+<td><strong>Integrated Graphics Controller</strong></td>
+<td>提供基本图形渲染能力，支持视频输出，无需独立显卡。</td>
+</tr>
+<tr>
+<td><strong>PCIe Controller (部分 CPU)</strong></td>
+<td>高端 CPU 内部集成部分 PCIe 通道，用于高性能设备的直接通信。</td>
+</tr>
+<tr>
+<td><strong>Power Management Controller</strong></td>
+<td>管理电源状态和功耗调节，提高能效。</td>
+</tr>
+</tbody></table>
+<h4 id="Memory-Slots"><a href="#Memory-Slots" class="headerlink" title="Memory Slots"></a>Memory Slots</h4><ul>
+<li>用于安装内存模块（RAM）。</li>
+<li>常见类型：DDR3、DDR4、DDR5 等。</li>
+<li>多通道技术（如双通道、四通道）提高内存带宽。</li>
+</ul>
+<h5 id="Volatile-Memory-RAM"><a href="#Volatile-Memory-RAM" class="headerlink" title="Volatile Memory (RAM)"></a>Volatile Memory (RAM)</h5><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%8F%AE%E7%99%BC%E6%80%A7%E8%A8%98%E6%86%B6%E9%AB%94">易失性存储器</a>(Volatile Memory): 电流中断后，所存储的数据便会消失，一般为 <strong>RAM</strong></p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9D%9C%E6%85%8B%E9%9A%A8%E6%A9%9F%E5%AD%98%E5%8F%96%E8%A8%98%E6%86%B6%E9%AB%94">静态随机存储器</a>(<strong>SRAM</strong>, Static RAM): 把信息存储在锁存器中，只要保持通电，存储的数据就可以一直保持，存储密度较低，速度高，功耗低，内部结构也更为复杂。通常作为<strong>cache</strong>(L1, L2, L3)、<strong>寄存器</strong>或 FPGA ASIC 等专用设备的存储器。</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8A%A8%E6%80%81%E9%9A%8F%E6%9C%BA%E5%AD%98%E5%8F%96%E5%AD%98%E5%82%A8%E5%99%A8">动态随机存储器</a>(<strong>DRAM</strong>, Dynamic RAM): 根据电容中的电荷多寡来分辨0和1，电容会漏电，不仅要保持通电，还需周期性充电。由于这种需要定时刷新的特性，因此被称为“动态”存储器。存储密度高，速度较低，功耗高，但是成本比 SRAM 低，通常作为 主存 使用，用于存储运行中的程序和数据；也用于 显存。<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/SDRAM">同步 DRAM</a>(<strong>SDRAM</strong>, Synchronous DRAM): 在 DRAM 的架构基础上增加同步和双区域（Dual Bank）的功能，使得<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%BE%AE%E8%99%95%E7%90%86%E5%99%A8">微处理器</a>能与 SDRAM 的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%99%82%E8%84%88">时钟</a>同步，所以 SDRAM 执行命令和传输资料时相较于 DRAM 可以节省更多时间。</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/DDR_SDRAM">双倍数据率 SDRAM</a>(DDR SDRAM, Double Data Rate): DDR SDRAM 在系统时钟的上升沿和下降沿都可以进行数据传输，发展到 DDR5，数据传输率、总线频率逐渐提高<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%A7%BB%E5%8A%A8DDR">低功耗 DDR</a>(<strong>LPDDR</strong>, Low Power DDR): 专门用于移动设备，发展到 LPDDR5X</li>
+<li>图形 DDR(<strong>GDDR</strong>, Graphics DDR): 为高性能显卡提供显存支持，发展到 GDDR7</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%AB%98%E9%A0%BB%E5%AF%AC%E8%A8%98%E6%86%B6%E9%AB%94">高带宽内存</a>(HBM, High Bandwidth Memory): 基于3D堆栈工艺的高性能 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/DRAM">DRAM</a> 适用于高存储器带宽需求的应用场合，与高性能<strong>显卡</strong>、路由器、交换机、高性能数据中心的AI ASIC结合使用，在 CPU 和 FPGA 中用作包内 RAM 和 Cache</li>
+</ul>
+</li>
+</ol>
+<h4 id="PCIe"><a href="#PCIe" class="headerlink" title="PCIe"></a>PCIe</h4><p>北桥负责高速传输，因此显卡这种高速设备也需要通过PCIe和北桥(CPU)相连，详见下方PCIe x16</p>
+<h3 id="I-O-Controller-Hub-Southbridge"><a href="#I-O-Controller-Hub-Southbridge" class="headerlink" title="I/O Controller Hub (Southbridge)"></a>I/O Controller Hub (Southbridge)</h3><table>
+<thead>
+<tr>
+<th>控制器名称</th>
+<th>功能描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Disk Controller</strong></td>
+<td>控制 SATA、SAS 等存储设备的数据传输。</td>
+</tr>
+<tr>
+<td><strong>USB Controller</strong></td>
+<td>控制 USB 2.0、3.0、3.1、Type-C 等接口的数据传输。</td>
+</tr>
+<tr>
+<td><strong>PCIe Controller</strong></td>
+<td>管理 PCI Express 插槽的通信，用于扩展显卡、网卡等设备。</td>
+</tr>
+<tr>
+<td><strong>Ethernet Controller</strong></td>
+<td>控制有线网络通信，通常内置支持千兆或 2.5G 网卡。</td>
+</tr>
+<tr>
+<td><strong>Audio Controller</strong></td>
+<td>提供板载音频功能，支持麦克风、扬声器等外设连接。</td>
+</tr>
+<tr>
+<td><strong>SATA Controller</strong></td>
+<td>控制 SATA 硬盘和光驱设备的数据传输。</td>
+</tr>
+<tr>
+<td><strong>RAID Controller</strong></td>
+<td>支持磁盘阵列（RAID）的数据管理，提高存储性能和安全性。</td>
+</tr>
+<tr>
+<td><strong>Wireless Controller</strong></td>
+<td>控制 Wi-Fi 和蓝牙模块的无线通信功能（部分主板内置）。</td>
+</tr>
+<tr>
+<td><strong>Security Controller (TPM)</strong></td>
+<td>提供可信平台模块 (TPM) 功能，保障数据安全性和加密管理。</td>
+</tr>
+</tbody></table>
+<h4 id="Storage-Interface-SATA-SAS"><a href="#Storage-Interface-SATA-SAS" class="headerlink" title="Storage Interface (SATA/SAS)"></a>Storage Interface (SATA/SAS)</h4><ul>
+<li><strong>IDE</strong>(Integrated Device Electronics): IDE 是一项企图把控制器与盘体集成在一起为主要意图的硬盘接口技术。</li>
+<li><strong>ATA</strong>(Advanced Technology Attachment): ATA 技术是一个关于 IDE 的技术规范族，全球标准化协议将 IDE 接口技术自诞生以来使用的技术规范归纳成为全球硬盘标准。<ul>
+<li><strong>并行接口 ATA</strong>(Parallel ATA)的电缆属性、连接器和信号协议都表现出了很大的技术瓶颈，而在技术上突破这些瓶颈存在相当大的难度</li>
+</ul>
+</li>
+<li>==<strong>SATA</strong>==(Serial ATA): 并行的 PATA 存在固有的瓶颈——并行信号串扰与同步问题，因此改成了<strong>串行</strong>总线。SATA 既是一种<strong>物理接口</strong>（硬件层连接方式），也是一种<strong>逻辑接口</strong>协议（定义数据通信规则）最初是为传统机械硬盘（HDD）设计的，后来也应用于部分 SSD<ul>
+<li><strong>eSATA</strong>(External SATA): 外置 SATA 接口，方便外设的连接，eSATA 不像 USB 那样能同时传输数据和供电，因此需要额外的电源线为外部设备供电，属于物理接口协议。</li>
+<li><strong>mSATA</strong>(mini-SATA): 迷你版本SATA接口，外型和电子接口与mini PCI-E完全相同，但电子信号不同，两者互不兼容。多用于固态硬盘，适用于需要尺寸较小的存储器的场合</li>
+<li><strong>AHCI</strong>(Advanced Host Controller Interface): 允许软件与 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/SATA">SATA</a> 存储设备沟通的硬件机制，激活 SATA 的高级功能，属于逻辑接口协议。AHCI 系统的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%B8%BB%E6%9C%BA%E9%80%82%E9%85%8D%E5%99%A8">主机适配器</a>将CPU/存储器子系统与相对慢得多的、基于旋转<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%A3%81%E5%84%B2%E5%AD%98">磁性介质</a>的存储子系统，AHCI 是针对这种悬殊的速度差来进行优化设计的。AHCI 是针对硬盘优化的，不适合固态盘。</li>
+</ul>
+</li>
+<li><strong>SCSI</strong>(Small Computer System Interface): 一种连接主机和外围设备的接口，支持包括硬盘、光驱及扫描仪在内的多种设备。SCSI 总线是一种<strong>并行</strong>总线，其优点是适应面广，性能高；缺点是价格昂贵，安装复杂。</li>
+<li>==<strong>SAS</strong>==(Serial Attached SCSI): <strong>串行</strong> SCSI ，跟 SATA 总线类似，都是采用串行技术以获得更高的传输速度。就接口标准而言，SATA 是 SAS 的一个子标准，因此 SAS 控制器可以直接操控SATA 硬盘，但是 SATA 控制器并不能对 SAS 硬盘进行控制。</li>
+</ul>
+<p>SCSI/SAS 需要专用的控制卡，或者主板另外集成控制芯片，性能更好。PATA/SATA 一般由主板南桥/ICH 芯片直接集成控制器，但接口性能一般比同时期的 SCSI/SAS 要低。目前，服务器流行的硬盘接口类型是 SATA 以及 SAS，两者都是采用串行技术，传输速率都更高。</p>
+<h4 id="I-O-Ports-USB-DP-HDMI"><a href="#I-O-Ports-USB-DP-HDMI" class="headerlink" title="I/O Ports(USB, DP, HDMI)"></a>I/O Ports(USB, DP, HDMI)</h4><p><strong>通用外设接口</strong> </p>
+<ul>
+<li><p><strong>==USB==</strong>(Universal Serial Bus): 串口总线标准，也是一种输入输出接口的技术规范，被广泛地应用于个人电脑和移动设备等信息通讯产品，并扩展至摄影器材、数字电视(机顶盒)、游戏机等其它相关领域。逐渐取代 PS/2 连接键盘与鼠标，取代 COM(串口)与 LPT(并口)</p>
+<ul>
+<li><p>技术标准</p>
+<ul>
+<li>USB 2.0: 480 Mbps，半双工</li>
+<li>USB 3.0: 5 Gbps，全双工，向下兼容</li>
+<li>USB 3.1: 10 Gbps，向下兼容</li>
+<li>USB 3.2: 20 Gbps，在<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/USB_Type-C">USB Type-C</a>接口上实现双通道，向下兼容，推荐 Type-C 接口</li>
+<li>USB 4: 40 Gbps，只支持 Type-C</li>
+<li>USB PD: USB 充电标准</li>
+</ul>
+</li>
+<li><p>接口</p>
+<ul>
+<li>Mini-USB：弃用</li>
+<li>Type-A： <img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1920px-USB_3.0_Type-A_receptacle_blue.svg.png" alt="undefined" style="zoom:3%;" />  <img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2560px-USB_3.0_Type-A_blue.svg.png" alt="undefined" style="zoom:3%;" /></li>
+<li>Type-B：<img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/USB_3.0_Type-B_blue.svg" style="zoom:17%;" /> <img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/USB_3.0_Type-B_receptacle_blue.svg" style="zoom:17%;" /></li>
+<li>Micro-USB：<img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/USB_Micro-B_receptacle.svg" style="zoom:15%;" /> <img src="https://upload.wikimedia.org/wikipedia/commons/1/15/USB_Micro-B.svg" style="zoom:16%;" /></li>
+<li>Type-C：<img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/USB_Type-C_receptacle.svg" style="zoom:15%;" /> <img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/512px-USB_Type-C_icon.svg.png" alt="img" style="zoom:13%;" /></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>雷电</strong>(Thunderbolt): 目的在于当作电脑与其他设备之间的通用<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8C%AF%E6%B5%81%E6%8E%92_(%E6%95%B8%E6%93%9A)">总线</a>，第一代与第二代的连接口与<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Mini_DisplayPort">Mini DisplayPort</a>集成，第三代至第五代的连接口与<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/USB_Type-C">USB Type-C</a>结合，并且能用于充电。由于采用了PCI Express和DisplayPort架构，雷电可以<strong>高速连接诸如硬盘、RAID阵列、视频采集设备和网络接口等外设</strong> </p>
+</li>
+</ul>
+<p><strong>音视频接口</strong>(HDMI, DP, 雷电)：</p>
+<ul>
+<li><p><strong>VGA</strong>(视频图形阵列, <strong>V</strong>ideo <strong>G</strong>raphics <strong>A</strong>rray): 使用<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A1%9E%E6%AF%94%E8%A8%8A%E8%99%9F">模拟信号</a>的电脑显示标准，在1987年随IBM PS/2系列计算机推出。VGA是大多数PC制造商所遵循的最后一个IBM图形标准，几乎1990年后的所有PC图形硬件都最低支持VGA。当用VGA来表示分辨率时，通常是指640×480。</p>
+</li>
+<li><p><strong>DVI</strong>(<strong>数字</strong>视频接口, <strong>D</strong>igital <strong>V</strong>isual <strong>I</strong>nterface)：一种<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%A6%96%E8%A8%8A">视频</a>接口标准，设计的目的是用来传输未经压缩的数字化影像。目前广泛应用于<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/LCD">LCD</a>、数字<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%8A%95%E5%BD%B1%E6%A9%9F">投影机</a>等显示设备上。</p>
+</li>
+<li><p><strong>HDMI</strong>(高清媒体接口, <strong>H</strong>igh <strong>D</strong>efinition <strong>M</strong>ultimedia <strong>I</strong>nterface): 是一种全<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B8%E4%BD%8D">数字</a>化<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%BD%B1%E5%83%8F">影像</a>和<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%81%B2%E9%9F%B3">声音</a>发送接口，可以发送未<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B8%E4%BD%8D%E5%A3%93%E7%B8%AE">压缩</a>的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9F%B3%E9%A2%91">音频</a>及<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%A6%96%E9%A0%BB">视频</a>信号。HDMI 可以同时发送音频和视频信号。音频和视频信号采用同一条线材的设计大大简化系统线路的安装难度。</p>
+</li>
+<li><p><strong>DP</strong>(显示端口, <strong>D</strong>isplay <strong>P</strong>ort): 数字式音频/视频接头，此接口的设计是为了取代传统的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/VGA">VGA</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/DVI">DVI</a>接口。透过主动或被动转接器，该接口可与传统接口（如<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/HDMI">HDMI</a>和<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/DVI">DVI</a>）<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%90%91%E4%B8%8B%E7%9B%B8%E5%AE%B9">向下兼容</a>。</p>
+</li>
+<li><p><strong>雷电</strong>(Thunderbolt): 有接口也有总线，目的在于当作电脑与其他设备之间的通用 <strong>总线</strong>，第一代与第二代的连接口与<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Mini_DisplayPort">Mini DisplayPort</a>集成，第三代至第五代的连接口与<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/USB_Type-C">USB Type-C</a>结合，并且能用于充电。由于采用了PCI Express和DisplayPort架构，雷电可以<strong>高速连接诸如硬盘、RAID阵列、视频采集设备和网络接口等外设</strong>。</p>
+</li>
+</ul>
+<h4 id="Peripheral-Card-Slots"><a href="#Peripheral-Card-Slots" class="headerlink" title="Peripheral Card Slots"></a>Peripheral Card Slots</h4><p>外围扩展设备插槽：</p>
+<ul>
+<li>用于连接显卡、声卡、网卡、固态硬盘 (NVMe SSD) 等扩展设备。</li>
+<li>常见标准：PCI Express (PCIe) 3.0、4.0、5.0  M.2 2280</li>
+</ul>
+<h5 id="PCIe-slots"><a href="#PCIe-slots" class="headerlink" title="PCIe slots"></a>PCIe slots</h5><p>PCIe 可以连到南桥或北桥</p>
+<ul>
+<li><strong>PCI</strong>(Peripheral Component Interconnect): 常见于现代的个人电脑中，并已取代了 ISA 和 VESA 局部总线，成为了标准扩展总线，是并行的总线。</li>
+<li><strong>==PCIe==</strong>(PCI Express): 沿用既有的 PCI 编程概念及信号标准，并且构建了更加高速的串行通信系统标准。只需修改<strong>物理层</strong>而无须修改软件就可将现有 PCI 系统转换为 PCIe，几乎取代了以往所有的内部总线(包括 PCI)。现在英特尔和 AMD 已采用单芯片组(IO Chip)技术，取代原有的南桥和北桥方案。PCIe仅应用于内部互连，没有对外开放的接口。可以连接<strong>显卡</strong>、<strong>网卡</strong>，高性能的持久化存储设备如 NVMe 设备。根据传输通道数量分为 PCIe ×1, PCIe ×4, PCIe ×8, PCIe ×16<ul>
+<li><strong>SATA Express</strong>: 物理、逻辑接口标准，使用 PCIe 总线，向下兼容 SATA，支持 PCIe(AHCI 和 NVMe) 设备。后来物理接口被 M.2 和 U.2 取代。</li>
+<li><strong>NVMe</strong>(NVM Express, NVMHCIS): 非易失性存储器的接口标准，它是基于设备<strong>逻辑接口</strong>的总线传输协议规范，用于访问通过 PCIe 总线附加的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9D%9E%E6%8F%AE%E7%99%BC%E6%80%A7%E8%A8%98%E6%86%B6%E9%AB%94">非易失性存储器</a>介质（比如 SSD）降低了I/O操作等待时间、提升同一时间内的操作数、更大容量的操作队列等，取代 AHCI 作为新的逻辑接口协议。</li>
+</ul>
+</li>
+</ul>
+<h6 id="NVM-Flash-EEPROM"><a href="#NVM-Flash-EEPROM" class="headerlink" title="NVM(Flash/EEPROM)"></a>NVM(Flash/EEPROM)</h6><p><strong><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9D%9E%E6%8F%AE%E7%99%BC%E6%80%A7%E8%A8%98%E6%86%B6%E9%AB%94">非易失性存储器</a></strong>(<strong>NVM</strong>, Non-Volatile Memory): 电流关掉后，所存储的信息不会消失的存储设备。依存储器内的资料是否能在使用系统时随时改写为标准，可分为三大类产品：</p>
+<ol>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/ROM">只读存储器</a>(ROM, Read-only Memory)</p>
+<ul>
+<li>MROM(Masked ROM): 使用掩模工艺，出厂后不可改变，永久固化</li>
+<li>PROM(Programmable ROM): 用户可编程的 ROM，烧断熔丝来改变比特，不可逆</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8F%AF%E6%93%A6%E9%99%A4%E5%8F%AF%E8%A6%8F%E5%8A%83%E5%BC%8F%E5%94%AF%E8%AE%80%E8%A8%98%E6%86%B6%E9%AB%94">EPROM</a>(Erasable PROM): FGMOS 代替熔丝，专用编程器编程，用紫外线擦除，可逆</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E6%8A%B9%E9%99%A4%E5%BC%8F%E5%8F%AF%E8%A4%87%E5%AF%AB%E5%94%AF%E8%AE%80%E8%A8%98%E6%86%B6%E9%AB%94">EEPROM</a>(Electrically EPROM): 只需要特定电压就可以擦除</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Flash_memory">闪存</a>(Flash Memory): 与传统的硬盘相比，闪存有更佳的动态抗震性，不会因为剧烈晃动而造成资料丢失。与 SRAM 相比不需要供电，造价相对 EEPROM 较低，使用块抹除。闪存在分类上属于 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/EEPROM">EEPROM</a> 的一种，但普通的 EEPROM 使用的是字节抹除。 </p>
+<ul>
+<li><p>按照 FGMOS 的门电路结构分为：</p>
+<ul>
+<li>NOR Flash: 抹写时间长，提供完整的寻址总线，可按字节<strong>随机存取</strong>，类似 RAM</li>
+<li>NAND Flash: 抹写时间短，次数高，存储密度高，只能按页访问，类似硬盘，应用有 SSD 固态硬盘、SD 卡、U盘等。</li>
+</ul>
+</li>
+<li><p>按照 每存储单元存储 bit 数分为：</p>
+<ul>
+<li><p>SLC(1) MLC(2) TLC(3) QLC(4) 成本、寿命、写入性能依次降低</p>
+</li>
+<li><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2560px-Nand_flash_structure.svg.png" alt="undefined"></p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E9%9D%9E%E6%8F%AE%E7%99%BC%E6%80%A7%E9%9A%A8%E6%A9%9F%E5%AD%98%E5%8F%96%E8%A8%98%E6%86%B6%E9%AB%94&action=edit&redlink=1">非易失性随机存储器</a>(NVRAM, Non-volatile RAM)</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/FRAM">FeRAM</a>: 替换介电质为铁电材料</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%A3%81%E9%98%BB%E5%BC%8F%E9%9A%A8%E6%A9%9F%E5%AD%98%E5%8F%96%E8%A8%98%E6%86%B6%E9%AB%94">MRAM</a>: 使用磁存储器件存储数据，应用巨磁阻效应</li>
+</ul>
+</li>
+</ol>
+<h5 id="M-2-slots"><a href="#M-2-slots" class="headerlink" title="M.2 slots"></a>M.2 slots</h5><ul>
+<li><strong>==M.2==</strong>(NGFF): 采用全新物理布局与接口，取代 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/PCI_Express">PCIe</a> 及 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/SATA#mSATA">mSATA</a> 的物理插槽<ul>
+<li>U.2: 2015 年SATA Express发布了一种兼容SAS、PCI Express x4、SATA总线的的U.2连接器界面，U.2更多用于<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BC%BA%E6%9C%8D%E5%99%A8">服务器</a>等企业应用场合。U.2支持<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%86%B1%E6%8F%92%E6%8B%94">热插拔</a>而M.2不支持；U.2可使用3.3V电源和12V电源，M.2只能使用3.3V电源；M.2可应用于<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%9B%BA%E6%80%81%E7%A1%AC%E7%9B%98">固态硬盘</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%97%A0%E7%BA%BF%E7%BD%91%E5%8D%A1">无线网卡</a>等设备，而U.2仅用于2.5英寸固态盘。</li>
+<li>支持 SATA、AHCI+PCIe、NVMe+PCIe，同时可以连接网卡等</li>
+</ul>
+</li>
+</ul>
+<h4 id="Flash-ROM-BIOS"><a href="#Flash-ROM-BIOS" class="headerlink" title="Flash ROM (BIOS)"></a>Flash ROM (BIOS)</h4><p>大部分的主板的BIOS存储在Flash ROM芯片内，用于对主板作启动的初始化；在启动的过程中包含存储器、周边设备都会被测试以及做初始设置，这个过程称为 加电自检 POST，若是在 POST 的过程中出现错误，则主机会发出”哔”声或是出现错误消息在屏幕上。从2011年起，大部分的零售主板已采用UEFI BIOS，一些厂商（尤其是微星科技、华硕）还率先导入图形界面的UEFI BIOS等技术。</p>
+<h4 id="CMOS-Memory"><a href="#CMOS-Memory" class="headerlink" title="CMOS Memory"></a>CMOS Memory</h4><p>CMOS 纽扣电池供电给 CMOS 芯片(RAM)，CMOS 芯片保存系统时间和 BIOS 设置。</p>
+<h2 id="Other-Modules"><a href="#Other-Modules" class="headerlink" title="Other Modules"></a>Other Modules</h2><h3 id="Power-Interface"><a href="#Power-Interface" class="headerlink" title="Power Interface"></a>Power Interface</h3><ul>
+<li>24 针主电源接口：为主板供电。</li>
+<li>8 针或 4+4 针 CPU 辅助电源接口：为 CPU 供电。</li>
+</ul>
+<h3 id="Cooling-Module"><a href="#Cooling-Module" class="headerlink" title="Cooling Module"></a>Cooling Module</h3><ul>
+<li>CPU 散热器接口：供电及控制风扇速度。</li>
+<li>芯片组和供电模块上的散热片和风扇，降低温度。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1024px-IO_stack_of_the_Linux_kernel.svg.png" alt="undefined"></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2576,1031 +2893,6 @@
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/08/15/spring-in-one/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/08/15/spring-in-one/" class="post-title-link" itemprop="url">Spring</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-08-15 00:00:00" itemprop="dateCreated datePublished" datetime="2024-08-15T00:00:00+08:00">2024-08-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-05 11:49:58" itemprop="dateModified" datetime="2025-05-05T11:49:58+08:00">2025-05-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Spring-IoC"><a href="#Spring-IoC" class="headerlink" title="Spring IoC"></a>Spring IoC</h1><p>IoC: Inverse of Control 原先调用服务或者DAO的需要自行new出来对象，硬编码，耦合程度高，Spring的Container能够接管对象的创建工作（实际上就是管理Bean） 并且能够根据对象Bean之间的关系进行依赖注入，创建A对象的同时会把B对象创建起来，也就是DI(Dependency Injection)</p>
-<p>管理方式：配置文件xml            IoC容器的获取：Spring提供接口</p>
-<p>把业务接口的实现类交给Spring管理，遇到接口类，Spring就会自动去找Bean中是否有接口的实现类。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020194848409.png" alt="image-20241020194848409"></p>
-<p>BookDao是接口，实现类为BookDaoImpl，Impl交给Spring管理</p>
-<p>DI：依赖注入，依赖用方法传参的方式传入</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019114405108.png" alt="image-20241019114405108"></p>
-<p>property name 是成员变量的名字</p>
-<p>ref 是要引用的bean id/name</p>
-<h2 id="IoC-配置"><a href="#IoC-配置" class="headerlink" title="IoC 配置"></a>IoC 配置</h2><h3 id="bean-管理"><a href="#bean-管理" class="headerlink" title="bean 管理"></a>bean 管理</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019222443537.png" alt="image-20241019222443537"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019115106810.png" alt="image-20241019115106810"></p>
-<h4 id="name-别名"><a href="#name-别名" class="headerlink" title="name 别名"></a>name 别名</h4><p><u>ATTRIBUTE</u></p>
-<p>bean <strong>name</strong> = “s1 s2 s3”  alias</p>
-<p><strong>ref</strong>可以使用name也可以使用id</p>
-<p>getBean </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019144037398.png" alt="image-20241019144037398"></p>
-<h4 id="scope-作用范围"><a href="#scope-作用范围" class="headerlink" title="scope 作用范围"></a>scope 作用范围</h4><p><u>ATTRIBUTE</u></p>
-<p>Spring默认创建<strong>单例</strong>bean，scope=”singleton” prototype为多例。</p>
-<ul>
-<li>适合复用的才作为bean交给IoC容器管理<ul>
-<li>表现层，业务层，DAO层，工具层</li>
-</ul>
-</li>
-<li>不适合复用的对象<ul>
-<li>封装的实体域对象</li>
-</ul>
-</li>
-</ul>
-<h4 id="bean-创建方式"><a href="#bean-创建方式" class="headerlink" title="bean 创建方式"></a>bean 创建方式</h4><h5 id="使用构造方法"><a href="#使用构造方法" class="headerlink" title="使用构造方法"></a><mark>使用构造方法<mark></h5><p>无参构造器，如果使用构造器进行依赖注入，则走的是有参构造</p>
-<h5 id="使用静态工厂实例化Bean"><a href="#使用静态工厂实例化Bean" class="headerlink" title="使用静态工厂实例化Bean"></a>使用静态工厂实例化Bean</h5><ul>
-<li>工厂的静态方法factoryMethod(return new Bean)，不造工厂，调用工厂的<strong>静态</strong>方法造Bean <u>ATTRIBUTE</u>: factory-method</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019160109618.png" alt="image-20241019160109618"></p>
-<h5 id="使用实例工厂实例化Bean"><a href="#使用实例工厂实例化Bean" class="headerlink" title="使用实例工厂实例化Bean"></a>使用实例工厂实例化Bean</h5><ul>
-<li>先造工厂bean再调用工厂的<strong>实例</strong>方法(return newBean) 造bean</li>
-</ul>
-<h5 id="FactoryBean-实例工厂bean"><a href="#FactoryBean-实例工厂bean" class="headerlink" title="FactoryBean 实例工厂bean"></a><mark>FactoryBean 实例工厂bean<mark></h5><ul>
-<li><p>第三方自定义工厂Bean类实现FactoryBean接口，重写方法<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019160946566.png" alt="image-20241019160946566"></p>
-<ul>
-<li>getObject 工厂类的returnNewBean方法</li>
-<li>getObjectType return Bean.class bean的 字节码</li>
-<li>isSingleton 单例</li>
-</ul>
-</li>
-<li><p>xml 配置<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019161457148.png" alt="image-20241019161457148">    </p>
-</li>
-<li><p>主要用于第三方框架和Spring框架对接，他们创建的对象要配置一些参数，这时就需要一个FactoryBean，工厂bean会提供set对象参数的方法，返回的就是配好参的对象，可以省去手动配参的麻烦</p>
-</li>
-</ul>
-<h4 id="bean-生命周期"><a href="#bean-生命周期" class="headerlink" title="bean 生命周期"></a>bean 生命周期</h4><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/reference/core/beans/factory-nature.html#beans-factory-lifecycle-initializingbean">Customizing the Nature of a Bean :: Spring Framework</a> </p>
-<h5 id="init-method-初始化"><a href="#init-method-初始化" class="headerlink" title="init-method 初始化"></a>init-method 初始化</h5><p><u>ATTRIBUTE</u> 方法名</p>
-<h5 id="destroy-method-销毁"><a href="#destroy-method-销毁" class="headerlink" title="destroy-method 销毁"></a>destroy-method 销毁</h5><p><u>ATTRIBUTE</u> 方法名</p>
-<p>销毁方式1: 容器关闭 <code>ctx.close()</code> appctx这个类没有关闭功能，换一个annotationConfigAppctx才有</p>
-<p>销毁方式2: 注册关闭钩子<code>ctx.registerShutdownHook()</code></p>
-<h5 id="自定义实体类实现接口"><a href="#自定义实体类实现接口" class="headerlink" title="自定义实体类实现接口"></a>自定义实体类实现接口</h5><p><code>DisposableBean</code> <code>InitializingBean</code> </p>
-<p>分别重写destory() afterPropertiesSet()</p>
-<p>属性设置就是在属性注入(调用setter)之后调用的方法</p>
-<h5 id="生命周期示意图"><a href="#生命周期示意图" class="headerlink" title="生命周期示意图"></a>生命周期示意图</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019163321664.png" alt="image-20241019163321664"></p>
-<h3 id="DI-依赖注入"><a href="#DI-依赖注入" class="headerlink" title="DI 依赖注入"></a>DI 依赖注入</h3><p><strong>注入</strong> ⇔ <strong>给bean的属性赋值</strong></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019222530413.png" alt="image-20241019222530413"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019163720566.png" alt="image-20241019163720566"></p>
-<p>注入多个bean，填写多个property</p>
-<h4 id="方式"><a href="#方式" class="headerlink" title="方式"></a>方式</h4><h5 id="setter注入"><a href="#setter注入" class="headerlink" title="setter注入"></a><mark>setter注入<mark></h5><ol>
-<li>setter 引用其他的bean property ref = 其他bean的名称 <u>ATTRIBUTE</u></li>
-<li>setter 注入基本数据类型和简单值 property value = 值  <u>ATTRIBUTE</u></li>
-<li>property name实际上是根据setter方法 setUserDao 去掉set首字母小写 userDao得到的</li>
-<li>先无参构造创建bean，再用setter注入依赖</li>
-</ol>
-<h5 id="构造器注入"><a href="#构造器注入" class="headerlink" title="构造器注入"></a>构造器注入</h5><p>针对有参构造器，必须显式声明有参构造器</p>
-<p> <u>ATTRIBUTE</u> <code>&lt;constructor-arg name&gt;</code></p>
-<ol>
-<li><p> 引用其他bean name是构造器形参名，<strong>耦合度高</strong>，参数先后顺序固定不能变<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019173838816.png" alt="image-20241019173838816"></p>
-</li>
-<li><p> 基本数据类型和简单值<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019174107702.png" alt="image-20241019174107702"></p>
-</li>
-<li><p>耦合度高解决方案：<strong>参数适配</strong></p>
-<ul>
-<li><p><code>&lt;constructor-arg name&gt;</code>改成type，解决参数名的高耦合，但是type相同的参数会混淆</p>
-</li>
-<li><p>改成index，index表示参数的位置</p>
-</li>
-</ul>
-</li>
-<li><p> 直接有参构造创建bean，可以没有无参构造</p>
-</li>
-</ol>
-<h4 id="方式选择"><a href="#方式选择" class="headerlink" title="方式选择"></a>方式选择</h4><ul>
-<li><strong>强制依赖</strong>使用构造器进行，使用setter注入有概率不进行注入导致NullPointerException</li>
-<li><strong>可选依赖</strong>使用setter注入进行，灵活性强</li>
-<li>Spring框架倡导使用构造器,第三方框架内部大多数采用构造器注入的形式进行数据初始化，相对严谨</li>
-<li>如果有必要可以两者同时使用，使用构造器注入完成强制依赖的注入，使用setter注入完成可选依赖的注入</li>
-<li>实际开发过程中还要根据实际情况分析，如果受控对象没有提供setter方法就必须使用构造器注入</li>
-<li><u>自己开发的模块推荐使用setter注入</u></li>
-</ul>
-<h4 id="依赖自动装配-autowire"><a href="#依赖自动装配-autowire" class="headerlink" title="依赖自动装配 autowire"></a>依赖自动装配 <span id="autowire">autowire</span></h4><p>只适用于引用类型</p>
-<p><u>ATTRIBUTE</u> </p>
-<p>不去手动指定，在容器的bean中自动匹配适合的bean。依赖于有参构造或者setter</p>
-<h5 id="byType-依赖setter"><a href="#byType-依赖setter" class="headerlink" title="byType (依赖setter)"></a><mark>byType<mark> (依赖setter)</h5><p><code>bean属性的type</code> 要去匹配 <code>容器中bean的class</code></p>
-<p>保证相同class的bean唯一 推荐</p>
-<h5 id="byName-依赖setter"><a href="#byName-依赖setter" class="headerlink" title="byName (依赖setter)"></a>byName (依赖setter)</h5><p><code>bean属性的name</code> 要去匹配 <code>容器中bean的id</code></p>
-<p>保证必须要有指定名称的bean  耦合度高，不推荐</p>
-<h5 id="constructor-依赖有参构造器"><a href="#constructor-依赖有参构造器" class="headerlink" title="constructor(依赖有参构造器)"></a>constructor(依赖有参构造器)</h5><h5 id="default"><a href="#default" class="headerlink" title="default"></a>default</h5><p>如果&lt;beans&gt;指定了autowire 此bean跟随beans</p>
-<h5 id="no"><a href="#no" class="headerlink" title="no"></a>no</h5><h5 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h5><ul>
-<li><p>只能自动装配引用类型（IoC容器不会去管理简单类型）包装类bean根本没法写</p>
-</li>
-<li><p>优先级 &lt; 手动装配</p>
-</li>
-</ul>
-<h4 id="集合注入"><a href="#集合注入" class="headerlink" title="集合注入"></a>集合注入</h4><p>集合要注入内容，而不是注一个空壳</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;myArray&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">array</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;<span class="name">value</span>&gt;</span>1<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>3<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>5<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">array</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;myList&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;<span class="name">value</span>&gt;</span>this<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>that<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>where<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;mySet&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;<span class="name">value</span>&gt;</span>this<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>that<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>where<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;myMap&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">map</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;A&quot;</span> <span class="attr">value</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;B&quot;</span> <span class="attr">value</span>=<span class="string">&quot;2&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">entry</span> <span class="attr">key</span>=<span class="string">&quot;C&quot;</span> <span class="attr">value</span>=<span class="string">&quot;3&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">map</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">        </span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;myProperties&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">props</span>&gt;</span></span><br><span class="line">    	<span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;A&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;B&quot;</span>&gt;</span>2<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">prop</span> <span class="attr">key</span>=<span class="string">&quot;C&quot;</span>&gt;</span>3<span class="tag">&lt;/<span class="name">prop</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">props</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-
-
-<h3 id="管理第三方Bean"><a href="#管理第三方Bean" class="headerlink" title="管理第三方Bean"></a>管理第三方Bean</h3><p>别人写的对象，创建bean，类型是什么？你要配哪些参数？</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019191451764.png" alt="image-20241019191451764"></p>
-<h4 id="加载-properties-XML-Namespace"><a href="#加载-properties-XML-Namespace" class="headerlink" title="加载.properties XML Namespace"></a>加载.properties XML Namespace</h4><p>创建context命名空间</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019192317628.png" alt="image-20241019192317628"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019220634669.png" alt="image-20241019220634669"></p>
-<p>classpath:*.properties 当前模块下所有的配置文件</p>
-<h3 id="容器-ctx"><a href="#容器-ctx" class="headerlink" title="容器 ctx"></a>容器 ctx</h3><h4 id="创建容器方式"><a href="#创建容器方式" class="headerlink" title="创建容器方式"></a>创建容器方式</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019221415451.png" alt="image-20241019221415451"></p>
-<h4 id="getBean"><a href="#getBean" class="headerlink" title="getBean"></a>getBean</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019221407031.png" alt="image-20241019221407031"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019221914707.png" alt="image-20241019221914707"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019222158026.png" alt="image-20241019222158026"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019221938964.png" alt="image-20241019221938964"></p>
-<p>立即加载（饿汉），lazy-init 延迟加载 (懒汉)</p>
-<h2 id="注解开发"><a href="#注解开发" class="headerlink" title="注解开发"></a>注解开发</h2><h3 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h3><h4 id="定义bean-Component"><a href="#定义bean-Component" class="headerlink" title="定义bean@Component"></a><mark>定义bean@Component<mark></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019223116345.png" alt="image-20241019223116345"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019223156078.png" alt="image-20241019223156078"></p>
-<p>加上对应的bean的id ，不加就要加载字节码class</p>
-<h4 id="纯注解开发-Configuration-ComponetScan"><a href="#纯注解开发-Configuration-ComponetScan" class="headerlink" title="纯注解开发@Configuration  @ComponetScan"></a><mark>纯注解开发@Configuration  @ComponetScan<mark></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019224153002.png" alt="image-20241019224153002"></p>
-<p>获取ctx: <code>ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringConfig.class)</code> </p>
-<p>默认xml配置文件只给了beans的命名空间，context还得另外自己加，纯注解开发需要定义一个SpringConfig类，常用的配置都有，不用手动去加命名空间</p>
-<p>XML out!</p>
-<h3 id="2-bean管理"><a href="#2-bean管理" class="headerlink" title="2. bean管理"></a>2. bean管理</h3><h4 id="作用范围-Scope"><a href="#作用范围-Scope" class="headerlink" title="作用范围 @Scope"></a>作用范围 @Scope</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019225307356.png" alt="image-20241019225307356"></p>
-<h4 id="生命周期-PostConstruct-PreDestroy"><a href="#生命周期-PostConstruct-PreDestroy" class="headerlink" title="生命周期 @PostConstruct @PreDestroy"></a>生命周期 @PostConstruct @PreDestroy</h4><p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/2426419">探究Spring Boot中@PostConstruct注解的使用场景-腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
-<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1588212">Spring 框架中 @PostConstruct 注解详解-腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019225254913.png" alt="image-20241019225254913"></p>
-<p>Instantiate(Constructor)&gt; @Autowired &gt; @PostConstruct</p>
-<p>依赖注入完成，被显式调用之前</p>
-<p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/postconstruct-and-predestroy-annotations.html">Using @PostConstruct and @PreDestroy :: Spring Framework</a></p>
-<h3 id="DI-自动装配"><a href="#DI-自动装配" class="headerlink" title="DI 自动装配"></a>DI 自动装配</h3><h4 id="自动装配-Autowired（引用类型）"><a href="#自动装配-Autowired（引用类型）" class="headerlink" title="自动装配@Autowired（引用类型）"></a><mark>自动装配@Autowired（引用类型）<mark></h4><p>在需要注入依赖的<strong>一个</strong>属性</p>
-<p>与配置文件<a href="#autowire">autowire Attribute of Bean</a>不同，注解Autowired不依赖于setter和有参构造器，直接暴力反射访问private属性，创建对象并注入依赖。 </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020011345128.png" alt="image-20241020011345128"></p>
-<h5 id="按名称匹配-Qualifier"><a href="#按名称匹配-Qualifier" class="headerlink" title="按名称匹配@Qualifier"></a>按名称匹配@Qualifier</h5><p>autowired默认按类型装 配，同一类型多个实现，用Qualifier指定具体bean名称，<em>不加Qualifier就按一定规则选择</em> </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020011356460.png" alt="image-20241020011356460"></p>
-<h5 id="先名称匹配，再按照类型匹配-Resource"><a href="#先名称匹配，再按照类型匹配-Resource" class="headerlink" title="先名称匹配，再按照类型匹配@Resource"></a>先名称匹配，再按照类型匹配@Resource</h5><p><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/1003903">面试突击78：@Autowired 和 @Resource 有什么区别？-阿里云开发者社区 (aliyun.com)</a> </p>
-<ul>
-<li><strong>@Autowired 先根据类型（byType）查找，如果存在多个（Bean）再根据名称（byName）进行查找；</strong></li>
-<li><strong>@Resource 先根据名称（byName）查找，如果（根据名称）查找不到，再根据类型（byType）进行查找。</strong> </li>
-</ul>
-<p>注意下方的<a href="#bean">Bean注解</a></p>
-<p><strong>@Autowired 支持属性注入、构造方法注入和 Setter 注入，而 @Resource 只支持属性注入和 Setter 注入</strong> </p>
-<p>@Autowired 来自 Spring 框架，而 @Resource 来自于（Java）JSR-250；</p>
-<p>@Autowired 只支持设置 1 个参数，而 @Resource 支持设置 7 个参数；</p>
-<p>@Autowired 既支持构造方法注入，又支持属性注入和 Setter 注入，而 @Resource 只支持属性注入和 Setter 注入；</p>
-<h4 id="简单类型注入依赖-Value"><a href="#简单类型注入依赖-Value" class="headerlink" title="简单类型注入依赖@Value"></a>简单类型注入依赖@Value</h4><p>需要注入的属性上 写value</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020011954765.png" alt="image-20241020011954765"></p>
-<h4 id="导入配置文件-PropertySource"><a href="#导入配置文件-PropertySource" class="headerlink" title="导入配置文件@PropertySource"></a>导入配置文件@PropertySource</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020011844984.png" alt="image-20241020011844984"></p>
-<h4 id="循环依赖"><a href="#循环依赖" class="headerlink" title="循环依赖"></a><mark>循环依赖<mark></h4><p>Spring循环依赖指的是两个或多个Bean之间相互依赖，形成一个环状依赖的情况。简单来说，就是A依赖B，B依赖C，C依赖A，这样就形成了一个循环依赖的环。</p>
-<p>Spring循环依赖通常会导致Bean无法正确地被实例化，从而导致应用程序无法正常启动或者出现异常。因此，Spring循环依赖是一种需要尽量避免的情况。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/633066ae3fcb2fcc117ab142dd90d3da-1730639875106-2.png"></p>
-<h5 id="使用构造函数注入"><a href="#使用构造函数注入" class="headerlink" title="使用构造函数注入"></a>使用构造函数注入</h5><p>构造函数注入是一种相对保险的方式，因为在实例化Bean时，Spring会检查是否存在循环依赖，并在发现循环依赖时抛出异常，避免死循环。示例代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> B b;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">A</span><span class="params">(B b)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.b = b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> A a;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">B</span><span class="params">(A a)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.a = a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="使用-Lazy注解"><a href="#使用-Lazy注解" class="headerlink" title="使用@Lazy注解"></a>使用@Lazy注解</h5><p>@Lazy注解可以延迟Bean的实例化，从而避免循环依赖的问题。示例代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Lazy</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> B b;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Lazy</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> A a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="使用setter方法注入"><a href="#使用setter方法注入" class="headerlink" title="使用setter方法注入"></a>使用setter方法注入</h5><p>使用setter方法注入也可以解决循环依赖的问题，但要注意可能出现的空指针异常。示例代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> B b;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setB</span><span class="params">(B b)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.b = b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> A a;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setA</span><span class="params">(A a)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.a = a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="管理第三方Bean-1"><a href="#管理第三方Bean-1" class="headerlink" title="管理第三方Bean"></a>管理第三方Bean</h3><h4 id="Config配置类中bean的创建-Bean"><a href="#Config配置类中bean的创建-Bean" class="headerlink" title="Config配置类中bean的创建@Bean"></a><span id="bean"><mark>Config配置类中bean的创建@Bean<mark></span></h4><p>与@Component不同 这个是方法级别的注解，方法返回的对象将由Spring容器管理</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020012511399.png" alt="image-20241020012511399"></p>
-<h5 id="Bean声明的Bean名称？"><a href="#Bean声明的Bean名称？" class="headerlink" title="@Bean声明的Bean名称？"></a>@Bean声明的Bean名称？</h5><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/w1014074794/article/details/106768607">spring boot中通过注解@Bean声明的bean的名称是什么？_springboot 声明bean的名称-CSDN博客</a></p>
-<h6 id="不指定name属性，bean名称为方法名"><a href="#不指定name属性，bean名称为方法名" class="headerlink" title="不指定name属性，bean名称为方法名"></a>不指定name属性，bean名称为方法名</h6><h6 id="指定name属性，bean名称为name"><a href="#指定name属性，bean名称为name" class="headerlink" title="指定name属性，bean名称为name"></a>指定name属性，bean名称为name</h6><h5 id="导入其他Config类到核心配置-Import"><a href="#导入其他Config类到核心配置-Import" class="headerlink" title="导入其他Config类到核心配置@Import"></a>导入其他Config类到核心配置@Import</h5><p>不建议直接把其他的配置写到SpringConfig里面，分出去然后import</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020012755726.png" alt="image-20241020012755726"></p>
-<h4 id="DI-依赖注入-1"><a href="#DI-依赖注入-1" class="headerlink" title="DI 依赖注入"></a>DI 依赖注入</h4><p><span id="thirdpartydi">最简单的方法：自己new个对象出来，手动配参数，丢给spring</span> (其实xml就是把手动配参的过程从业务代码中解耦出来)</p>
-<h5 id="简单类型依赖注入：成员变量-Value"><a href="#简单类型依赖注入：成员变量-Value" class="headerlink" title="简单类型依赖注入：成员变量@Value"></a>简单类型依赖注入：成员变量@Value</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020013246624.png" alt="image-20241020013246624"></p>
-<h5 id="引用类型依赖注入：方法形参"><a href="#引用类型依赖注入：方法形参" class="headerlink" title="引用类型依赖注入：方法形参"></a><mark>引用类型依赖注入：方法形参<mark></h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020013406409.png" alt="image-20241020013406409"></p>
-<h3 id="XML-vs-Annotation"><a href="#XML-vs-Annotation" class="headerlink" title="XML vs. Annotation"></a>XML vs. Annotation</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020013703651.png" alt="image-20241020013703651"></p>
-<h2 id="整合第三方框架实战"><a href="#整合第三方框架实战" class="headerlink" title="整合第三方框架实战"></a>整合第三方框架实战</h2><h3 id="Spring-amp-MyBatis"><a href="#Spring-amp-MyBatis" class="headerlink" title="Spring &amp; MyBatis"></a>Spring &amp; MyBatis</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_64737877/article/details/122608987">使用纯注解方式Spring整合MyBatis_spring整合mybatis基于注解-CSDN博客</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/SerikaOnoe/article/details/90639135">Spring整合Mybatis(注解方式完整过程，摒弃MyBatis配置文件)_springboot启动去除mybatis-CSDN博客</a> </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020123544343.png" alt="image-20241020123544343"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020123756444.png" alt="image-20241020123756444"></p>
-<p>dao是session用动态代理造出来的，不同业务的内部实现有区别。session也不会一直复用，根源在sqlSessionFactory。</p>
-<p>还有一个就是mapper映射，这个跟ssf没什么关系。</p>
-<h4 id="MyBatisConfig-SqlSessionFactoryBean"><a href="#MyBatisConfig-SqlSessionFactoryBean" class="headerlink" title="MyBatisConfig - SqlSessionFactoryBean"></a>MyBatisConfig - SqlSessionFactoryBean</h4><p>导入mybatis-spring spring-jdbc，mybatis实现了Spring规定的FactoryBean接口，专门用来造sqlSessionFactory对象。</p>
-<p>回顾spring创建对象的方法，一种是<a href="#thirdpartydi">使用构造</a>器直接得到对象，另一种就是使用factoryBean&lt;E&gt;得到对象E，定义一个造E的工厂Bean，这样spring就知道类型E创对象需要用工厂Bean的方式。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020130218463.png" alt="image-20241020130218463"></p>
-<p>factorybean中提供了很多设置E参数的方法，最终返回的是一个设置好参数的E，思想还是一样的，只不过套了一层工厂的皮，封装进去很多固定的参数set方法，一般这个E需要xml进行配置(跟真正的业务代码解耦)，工厂Bean就取代了xml，直接给你返回一个配置好的对象。</p>
-<p>需要传参就直接在写上方法参数即可，spring自动匹配</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020145504890.png" alt="image-20241020145504890"></p>
-<h4 id="MyBatisConfig-MapperScannerConfigurer"><a href="#MyBatisConfig-MapperScannerConfigurer" class="headerlink" title="MyBatisConfig - MapperScannerConfigurer"></a>MyBatisConfig - MapperScannerConfigurer</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020145526730.png" alt="image-20241020145526730"></p>
-<p>DAO没有实现类了，在原始接口上加Component、Repository给ioc容器标识一下，不标也行。</p>
-<p>这个mapperScannerConfigurer是mybatis和spring集成的部分，扫描指定mapper所在的包，mapper生成代理对象，通过factoryBean方式交给Spring容器，所以重点不是让spring知道dao的实现类在哪，重点是要让mybatis知道mapper位置</p>
-<h4 id="JdbcConfig-创建DataSource的Bean交给Spring管理"><a href="#JdbcConfig-创建DataSource的Bean交给Spring管理" class="headerlink" title="JdbcConfig - 创建DataSource的Bean交给Spring管理"></a>JdbcConfig - 创建DataSource的Bean交给Spring管理</h4><h3 id="Spring-amp-JUnit"><a href="#Spring-amp-JUnit" class="headerlink" title="Spring &amp; JUnit"></a>Spring &amp; JUnit</h3><p>导入spring-test 在Test<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020191443245.png" alt="image-20241020191443245"></p>
-<p>在test.java中测试。</p>
-<h4 id="RunWith-ContextConfiguration"><a href="#RunWith-ContextConfiguration" class="headerlink" title="@RunWith @ContextConfiguration"></a>@RunWith @ContextConfiguration</h4><h4 id="Autowired-Test"><a href="#Autowired-Test" class="headerlink" title="@Autowired @Test"></a>@Autowired @Test</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020145826024.png" alt="image-20241020145826024"></p>
-<p>需要引用类型参数直接autowired注入即可，一般是业务类做测试</p>
-<h1 id="Spring-AOP"><a href="#Spring-AOP" class="headerlink" title="Spring AOP"></a>Spring AOP</h1><h2 id="AOP的含义"><a href="#AOP的含义" class="headerlink" title="AOP的含义"></a>AOP的含义</h2><p>AOP 面向切面编程 <strong>不惊动原始设计</strong>的情况下增强功能</p>
-<p>Spring理念：无侵入式增强功能</p>
-<ul>
-<li>所有原始方法-&gt;连接点(joint point) 在SpringAOP中如此<ul>
-<li>save update delete select</li>
-</ul>
-</li>
-<li>需要追加功能的方法-&gt;切入点(pointcut)<ul>
-<li>save update delete </li>
-</ul>
-</li>
-<li>具备的共性功能-&gt;通知 (advice)<ul>
-<li>method1   method2</li>
-</ul>
-</li>
-<li>通知和切入点产生关系-&gt;切面 (aspect) <ul>
-<li>save update delete追加method</li>
-</ul>
-</li>
-<li>功能的集合-&gt;通知类</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020152910091.png" alt="image-20241020152910091"></p>
-<p>连接点包含切入点</p>
-<h2 id="Spring中进行AOP编程"><a href="#Spring中进行AOP编程" class="headerlink" title="Spring中进行AOP编程"></a>Spring中进行AOP编程</h2><h3 id="导入坐标"><a href="#导入坐标" class="headerlink" title="导入坐标"></a>导入坐标</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020154236445.png" alt="image-20241020154236445"></p>
-<h3 id="MyAdvice"><a href="#MyAdvice" class="headerlink" title="MyAdvice"></a><mark>MyAdvice<mark></h3><h4 id="定义通知"><a href="#定义通知" class="headerlink" title="定义通知"></a>定义通知</h4><h4 id="定义切入点-Pointcut"><a href="#定义切入点-Pointcut" class="headerlink" title="定义切入点 @Pointcut"></a>定义切入点 @Pointcut</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020154309848.png" alt="image-20241020154309848"></p>
-<p><code>private</code> <code>void</code> <code>空参</code> </p>
-<h4 id="绑定通知与切入点"><a href="#绑定通知与切入点" class="headerlink" title="绑定通知与切入点"></a>绑定通知与切入点</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020154407660.png" alt="image-20241020154407660"></p>
-<h4 id="Spring接管此类-Component"><a href="#Spring接管此类-Component" class="headerlink" title="Spring接管此类 @Component"></a>Spring接管此类 @Component</h4><h4 id="定义AOP-Aspect"><a href="#定义AOP-Aspect" class="headerlink" title="定义AOP @Aspect"></a>定义AOP @Aspect</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020154529656.png" alt="image-20241020154529656"></p>
-<h3 id="SpringConfig-EnableAspectAutoProxy"><a href="#SpringConfig-EnableAspectAutoProxy" class="headerlink" title="SpringConfig @EnableAspectAutoProxy"></a><mark>SpringConfig @EnableAspectAutoProxy<mark></h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020154505110-1729410361899-4.png" alt="image-20241020154505110"></p>
-<h2 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h2><h3 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020155857766.png" alt="image-20241020155857766"></p>
-<p>**基于<mark>动态代理<mark>**：</p>
-<ul>
-<li><p>匹配失败，new原始对象；</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020160228368.png" alt="image-20241020160228368"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020160243146.png" alt="image-20241020160243146"></p>
-</li>
-<li><p>匹配成功，new出来的是原始对象的代理对象；</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020160302140.png" alt="image-20241020160302140"></p>
-<p> <img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020160341452.png" alt="image-20241020160341452"></p>
-</li>
-</ul>
-<p><strong>用获取到的bean执行方法</strong>：如果是代理的bean，根据通知和切入点进行方法执行。</p>
-<h3 id="切入点表达式"><a href="#切入点表达式" class="headerlink" title="切入点表达式"></a>切入点表达式</h3><p>切入点：要对其进行增强的方法</p>
-<p>切入点表达式：对切入点的描述方式</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020161523488.png" alt="image-20241020161523488"></p>
-<p>execution(<code>public</code> <code>User</code> <code>com.itheima.service.UserService.findById</code>(<code>int</code>))</p>
-<p>public exception 可省略</p>
-<p>参数必须有</p>
-<h4 id="通配符使用"><a href="#通配符使用" class="headerlink" title="通配符使用"></a>通配符使用</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020161833474.png" alt="image-20241020161833474"></p>
-<ul>
-<li>..和*的区别 *用于精准匹配到某个位置</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020163432072.png" alt="image-20241020163432072"></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Pointcut(&quot;execution(void com.itheima.dao.BookDao.update())&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(void com.itheima.dao.impl.BookDaoImpl.update())&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(* com.itheima.dao.impl.BookDaoImpl.update(*))&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(void com.*.*.*.update())&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(* *..*(..))&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(* *..*e(..))&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(void com..*())&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(* com.itheima.*.*Service.find*(..))&quot;)</span></span><br><span class="line"><span class="comment">//执行com.itheima包下的任意包下的名称以Service结尾的类或接口中的save方法，参数任意，返回值任意</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="通知类型"><a href="#通知类型" class="headerlink" title="通知类型"></a>通知类型</h3><h4 id="前置-Before"><a href="#前置-Before" class="headerlink" title="前置@Before"></a>前置@Before</h4><h4 id="后置-After"><a href="#后置-After" class="headerlink" title="后置@After"></a>后置@After</h4><h4 id="环绕-Around"><a href="#环绕-Around" class="headerlink" title="环绕@Around"></a><strong><u><mark>环绕@Around<mark></u></strong></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020170038080.png" alt="image-20241020170038080"></p>
-<ul>
-<li><p>ProceedingJoinPoint</p>
-</li>
-<li><p>原始方法在环绕方法中执行，用<code>pjp.proceed()</code>执行原始方法，<mark>不出现就能隔离原始方法，（权限校验）<mark></p>
-</li>
-<li><p>pjp能接原始方法的返回值，类型为Object，强转后可以在给他返回去，思想和动态代理里的案例比较像：利用反射invoke调用可以拿到返回值，<strong>注意修改通知方法的返回值为Object。</strong>没返回值也可以</p>
-</li>
-<li><p>强制抛Throwable </p>
-</li>
-</ul>
-<h4 id="得到返回值之后-AfterReturning"><a href="#得到返回值之后-AfterReturning" class="headerlink" title="得到返回值之后@AfterReturning"></a>得到返回值之后@AfterReturning</h4><p>和after区别：after只要方法结束即可，不管是得到返回值正常结束还是抛异常。AfterReturning需要得到返回值正常结束才能</p>
-<h4 id="抛出异常之后-AfterThrowing"><a href="#抛出异常之后-AfterThrowing" class="headerlink" title="抛出异常之后@AfterThrowing"></a>抛出异常之后@AfterThrowing</h4><h3 id="案例：JUnit-测量业务层接口执行效率"><a href="#案例：JUnit-测量业务层接口执行效率" class="headerlink" title="案例：JUnit 测量业务层接口执行效率"></a>案例：JUnit 测量业务层接口执行效率</h3><p>JUnit 测试服务类就private服务出来，<code>@Autowired</code> </p>
-<p>下面写test具体方法。详见JUnit单元测试篇(Java SE)</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020171154617.png" alt="image-20241020171154617"></p>
-<p>获取方法签名 (执行信息) <code>getSignature()</code></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020171252962.png" alt="image-20241020171252962"></p>
-<h3 id="通知获取数据"><a href="#通知获取数据" class="headerlink" title="通知获取数据"></a>通知获取数据</h3><h4 id="JoinPoint-amp-ProceedingJoinPoint"><a href="#JoinPoint-amp-ProceedingJoinPoint" class="headerlink" title="JoinPoint &amp; ProceedingJoinPoint"></a>JoinPoint &amp; ProceedingJoinPoint</h4><p><strong>作为通知的参数</strong>，如果出现，必须在第一个参数的位置上,PJP是JP的子类</p>
-<p><code>Object[] getArgs()</code>: 获取原始方法的参数</p>
-<p><code> Object proceed()</code> :环绕 PJP专用，调用原始方法同时返回这个方法的返回值</p>
-<h4 id="AOP获取原始方法调用参数"><a href="#AOP获取原始方法调用参数" class="headerlink" title="AOP获取原始方法调用参数"></a><mark>AOP获取原始方法调用参数<mark></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020173959692.png" alt="image-20241020173959692"></p>
-<p>这样可以对原始参数进行处理，可以增加程序健壮性。</p>
-<p><code>Object proceed(Object[] args)</code> 可以把处理以后的参数传给原始方法。</p>
-<h5 id="案例：网盘提取码去空格"><a href="#案例：网盘提取码去空格" class="headerlink" title="案例：网盘提取码去空格"></a>案例：网盘提取码去空格</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020180157823.png" alt="image-20241020180157823"></p>
-<p>args本身是Object数组，拿进来需要转成字符串toString getArgs 然后遍历参数数组，对每个字符串参数trim，再把处理以后的传给proceed</p>
-<h4 id="AOP获取返回值"><a href="#AOP获取返回值" class="headerlink" title="AOP获取返回值"></a>AOP获取返回值</h4><ol>
-<li>环绕 pjp proceed </li>
-<li>AfterReturning 注解的returning要和形参名字相同</li>
-</ol>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020175037570.png" alt="image-20241020175037570"></p>
-<h4 id="AOP接收异常"><a href="#AOP接收异常" class="headerlink" title="AOP接收异常"></a>AOP接收异常</h4><ol>
-<li><p>环绕 不要往出抛Throwable 内部try-catch</p>
-</li>
-<li><p>AfterThrowing 注解的throwing和形参名字相同</p>
-</li>
-</ol>
-<p>![image-20241020174307577](<a target="_blank" rel="noopener" href="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE">https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/屏幕截图</a> 2024-10-20 174257.jpg)</p>
-<h3 id="环绕通知模拟其他四种通知"><a href="#环绕通知模拟其他四种通知" class="headerlink" title="环绕通知模拟其他四种通知"></a>环绕通知模拟其他四种通知</h3><table>
-<thead>
-<tr>
-<th>前置</th>
-<th>最后调用proceed</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>后置</td>
-<td>try catch finally 在finally里写</td>
-</tr>
-<tr>
-<td>AfterReturning</td>
-<td>Object接住proceed的返回值</td>
-</tr>
-<tr>
-<td>AfterThrowing</td>
-<td>不要往出抛Throwable，try catch Throwable</td>
-</tr>
-</tbody></table>
-<h2 id="AOP编程思想—this调用实例方法失效"><a href="#AOP编程思想—this调用实例方法失效" class="headerlink" title="AOP编程思想—this调用实例方法失效"></a>AOP编程思想—this调用实例方法失效</h2><p>AOP的核心，是从调用对象的方法时生成代理对象—PROXY，this指向真正的目标对象—TARGET</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">IService</span>&#123;</span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">foo</span><span class="params">()</span>;</span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">zoo</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">IService</span>&#123;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">foo</span><span class="params">()</span>&#123;</span><br><span class="line">		System.println(<span class="string">&quot;fooStart...&quot;</span>);</span><br><span class="line">		zoo();<span class="comment">//this指针调用实例方法</span></span><br><span class="line">		System.println(<span class="string">&quot;fooFinish...&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Transactional</span></span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">zoo</span><span class="params">()</span>&#123;</span><br><span class="line">		save(a);<span class="comment">//假设是将a保存到数据库</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>/<span class="number">0</span>;</span><br><span class="line">		save(b);<span class="comment">//假设是将b保存到数据库</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Test</span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> IService service;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">        service.foo();<span class="comment">//从外部调用内部的事务方法</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>事务的实现基于spring aop，如果直接用this，则会使用target对象进行方法调用，</p>
-<p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/reference/core/aop/proxying.html#aop-understanding-aop-proxies">Proxying Mechanisms :: Spring Framework</a> </p>
-<p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/tx-decl-explained.html#page-title">Understanding the Spring Framework’s Declarative Transaction Implementation :: Spring Framework</a> </p>
-<p>如果是在类内部开启的事务，就需要CGLIB动态代理，实现的基础是方法拦截器，环绕通知，</p>
-<h3 id="直接调用方法"><a href="#直接调用方法" class="headerlink" title="直接调用方法"></a>直接调用方法</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241104161707487.png" alt="image-20241104161707487"></p>
-<h3 id="通过代理调用方法"><a href="#通过代理调用方法" class="headerlink" title="通过代理调用方法"></a>通过代理调用方法</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241104161648309.png" alt="image-20241104161648309"></p>
-<p>也就是说，如果要让代理生效，首先就是要获取代理对象，而通过@Transactional注解的方法<code>zoo()</code>，如果从外部调用，只要获得了代理对象的引用，事务功能就是生效的，因此直接在main中只要获取了代理对象的引用调用service.zoo()方法是没有问题的。</p>
-<p>而在目标对象内部，this就是目标对象本身，肯定不会走代理，因此如果实在</p>
-<h3 id="解决方案—在类的内部获取代理对象"><a href="#解决方案—在类的内部获取代理对象" class="headerlink" title="解决方案—在类的内部获取代理对象"></a>解决方案—在类的内部获取代理对象</h3><h4 id="AopContext-currentProxy"><a href="#AopContext-currentProxy" class="headerlink" title="AopContext.currentProxy()"></a>AopContext.currentProxy()</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span> (UserHolder.getUser()) &#123;</span><br><span class="line">    <span class="comment">//开启事务需要获取当前的代理对象</span></span><br><span class="line">    <span class="type">IVoucherOrderService</span> <span class="variable">proxy</span> <span class="operator">=</span> (IVoucherOrderService)AopContext.currentProxy();</span><br><span class="line">    <span class="keyword">return</span> proxy.createVoucherOrder(voucherId);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="Autowired-注入服务对象本身"><a href="#Autowired-注入服务对象本身" class="headerlink" title="@Autowired 注入服务对象本身"></a>@Autowired 注入服务对象本身</h4><p>获取service对象即可，这样就能在类内部的上下文中获取proxy代理都象的引用</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> ServiceImpl service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">synchronized</span> (UserHolder.getUser()) &#123;</span><br><span class="line">    <span class="comment">//开启事务需要获取当前的代理对象</span></span><br><span class="line">    <span class="keyword">return</span> service.createVoucherOrder(voucherId);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//也可以新开一个Impl2类，把方法移植进去，注入Impl2对象，思路一样</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="AOP：动态代理对象的生成时机"><a href="#AOP：动态代理对象的生成时机" class="headerlink" title="AOP：动态代理对象的生成时机"></a>AOP：动态代理对象的生成时机</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/xzb5566/article/details/141639614">【spring系列】spring的AOP是在哪个阶段创建的动态代理对象，spring bean的生命周期中在什么阶段创建的aop动态代理对象，很多人会说第一种，其实还有一种情况也会进行aop_spring的aop代理对象什么时候创建-CSDN博客</a></p>
-<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/2154184">关于Spring的两三事：代理对象的生成时机-腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
-<p><strong>1） Bean的实例化</strong>：首先，Spring容器会实例化Bean。</p>
-<p><strong>2）Bean的属性填充</strong>：然后，为Bean填充依赖注入的属性。</p>
-<p><strong>3）Bean的初始化：</strong></p>
-<ul>
-<li><strong>初始化前（postProcessBeforeInitialization）</strong>：在这一阶段，Spring会调用所有BeanPostProcessor的postProcessBeforeInitialization方法。但此时，代理对象可能还未被创建，因为还需要进一步判断该Bean是否需要被代理。</li>
-<li><strong>初始化</strong>：接着，执行Bean的初始化方法（如@PostConstruct注解的方法或实现了InitializingBean接口的afterPropertiesSet方法）。</li>
-<li><strong>初始化后（postProcessAfterInitialization）</strong>：在Bean初始化完成后，Spring会调用所有BeanPostProcessor的postProcessAfterInitialization方法。这通常是**创建动态代理对象的时机(AOP)**，因为此时Bean已经完全初始化并准备使用，而且代理对象可以在这一阶段被创建并替换掉原始的Bean实例。</li>
-</ul>
-<p><strong>4）代理对象的创建：</strong> </p>
-<ul>
-<li>在postProcessAfterInitialization方法中，Spring会检查该Bean是否需要被代理（通常基于是否存在对应的Advisor或Aspect）。</li>
-<li>如果需要，Spring会根据Bean的类型（是否实现了接口）选择合适的代理方式（JDK动态代理或CGLIB代理）来创建代理对象。</li>
-<li>代理对象会封装原始Bean，并在方法调用时插入增强的逻辑（如前置通知、后置通知等）。</li>
-</ul>
-<p><strong>5）Bean的交付</strong>：最后，将创建好的代理对象（如果需要的话）或原始Bean实例交付给客户端使用。</p>
-<p>因此，<strong>Spring AOP的动态代理对象主要是在Bean的初始化后的postProcessAfterInitialization阶段创建的</strong>。这一过程确保了代理对象能够封装并增强原始Bean的方法调用，同时保持了Bean的生命周期和依赖注入的完整性。</p>
-<h1 id="Spring-事务"><a href="#Spring-事务" class="headerlink" title="Spring 事务"></a>Spring 事务</h1><p>事务用于业务层或者Dao层</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/wang489687009/article/details/129259394">【Spring事务三千问】Spring的事务管理与MyBatis事务管理结合的原理_spring transaction和mybatis的整合 原理-CSDN博客</a></p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/358657396">【spring源码深度解析】：spring是如何利用@Transactional注解实现数据库事务的？把握住事务的基本用法你就懂了 - 知乎 (zhihu.com)</a></p>
-<h2 id="事务管理整合"><a href="#事务管理整合" class="headerlink" title="事务管理整合"></a>事务管理整合</h2><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jddreams/p/14024754.html">图解Java JDBC和JPA的区别 - 快乐随行 - 博客园 (cnblogs.com)</a></p>
-<h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><ul>
-<li>InnoDB存储引擎支持事务（SQL语句）</li>
-</ul>
-<h3 id="原生JDBC"><a href="#原生JDBC" class="headerlink" title="原生JDBC"></a>原生JDBC</h3><ul>
-<li> 注册驱动，</li>
-<li> 获取Connection，</li>
-<li> 建立Statement执行SQL语句，Connection可以管理事务（本质是执行SQL语句）</li>
-</ul>
-<h3 id="DataSource数据源"><a href="#DataSource数据源" class="headerlink" title="DataSource数据源"></a>DataSource数据源</h3><ul>
-<li>主要用来获取并管理，调度Connection</li>
-</ul>
-<h3 id="原生-MyBatis-ORM"><a href="#原生-MyBatis-ORM" class="headerlink" title="原生 MyBatis (ORM)"></a>原生 MyBatis (ORM)</h3><ul>
-<li><p>可以调用外部数据源获取Connection，也可以使用原生JDBC来获取，最终这些Connection可以呗SqlSession获取到。</p>
-</li>
-<li><p>SqlSession同样能管理事务，底层是基于Transaction(也是mybatis的一个类)</p>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">SqlSession</span> <span class="variable">session</span> <span class="operator">=</span> sqlSessionFactory.openSession();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">affected_rows</span> <span class="operator">=</span> session.insert(<span class="string">&quot;com.kvn.mapper.UserMapper.insert&quot;</span>, user);</span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    <span class="comment">// 捕获到异常，将操作回滚</span></span><br><span class="line">    session.rollback();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 正常执行，提交事务</span></span><br><span class="line">session.commit();</span><br><span class="line">session.close();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="Spring联合MyBatis事务管理"><a href="#Spring联合MyBatis事务管理" class="headerlink" title="Spring联合MyBatis事务管理"></a>Spring联合MyBatis事务管理</h3><p><code>SpringManagedTransaction</code> 打通了 MyBatis 的事务管理、连接管理 和 spring-tx 的 事务管理、连接管理，使得 MyBatis 与 Spring 可以使用统一的方式来管理连接的生命周期 和 事务处理。</p>
-<ol start="0">
-<li><p>原生的MyBatis 使用的是JdbcTransaction实现类</p>
-</li>
-<li><p>在一个非 <code>@Transactional</code> 标记的方法中执行 sql 命令，则事务的管理会通过 <code>SpringManagedTransaction</code> 来执行。</p>
-</li>
-<li><p>在一个 <code>@Transactional</code> 标记的事务方法中执行 sql 命令，则 <code>SpringManagedTransaction</code> 的 <code>commit()/rollback()</code> 方法不会执行任何动作，而事务的管理会走 Spring AOP 事务管理，即通过 <code>org.springframework.transaction.interceptor.TransactionInterceptor</code> 来进行拦截处理。</p>
-</li>
-</ol>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020215834772.png" alt="image-20241020215834772"></p>
-<ol start="3">
-<li>SqlSessionInterceptor 保证了 MyBatis 的 SqlSession 在执行 sql 时使用的连接与 Spring 事务管理操作使用的连接是<u>同一个</u>连接。具体就是通过 Spring 的事务同步器 <code>TransactionSynchronizationManager</code> 来保证的。</li>
-<li>SpringManagedTransaction 中连接的获取是从 Spring 管理的 DataSource 中获取的，这样，数据库连接池也就和 spring 整合在一起了。</li>
-</ol>
-<h2 id="多线程事务"><a href="#多线程事务" class="headerlink" title="多线程事务"></a>多线程事务</h2><h3 id="javax-sql-Connection"><a href="#javax-sql-Connection" class="headerlink" title="javax.sql.Connection"></a>javax.sql.Connection</h3><p>简单地来说，建立<code>Connection</code>连接，会消耗数据库系统的如下资源：</p>
-<table>
-<thead>
-<tr>
-<th align="center">资源</th>
-<th align="center">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">线程数</td>
-<td align="center">线程越多，线程的上下文切换会越频繁，会影响其处理能力</td>
-</tr>
-<tr>
-<td align="center">创建Connection的开销</td>
-<td align="center">由于Connection负责和数据库之间的通信，在创建环节会做大量的初始化 ，创建过程所需时间和内存资源上都有一定的开销</td>
-</tr>
-<tr>
-<td align="center">内存资源</td>
-<td align="center">为了维护Connection对象会消耗一定的内存</td>
-</tr>
-<tr>
-<td align="center">锁占用</td>
-<td align="center">在高并发模式下，不同的Connection可能会操作相同的表数据，就会存在锁的情况，数据库为了维护这种锁会有不少的内存开销</td>
-</tr>
-</tbody></table>
-<p>事务的执行依赖于JDBC-connection，connection的建立基于tcp连接，需要耗费很多资源，所以在多线程并发的情况下，connection数目远少于thread数，需要尽可能考虑connection的共用和复用。</p>
-<p>connection可以显式开启和关闭事务，遵循事务的ACID原则，因此虽然共用connection，但是同一时间同一connection只能有同一个事务正在执行，也就是串行执行，否则会造成事务紊乱。</p>
-<p>一个最佳实践：<strong>当线程需要做数据库操作时，才会真正请求获取JDBC数据库连接,线程使用完了之后，立即释放，被释放的JDBC数据库连接等待下次分配使用</strong></p>
-<p>最简单的方式就是把事务执行的代码块用connection锁对象锁住：事务执行完以后释放（但不销毁）</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">synchronized</span>(connection)&#123;</span><br><span class="line">    <span class="comment">//tx......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>线程如何获取锁对象？为了保证一个线程所有dao操作都是用的同一个connection，使用threadLocal存放属于线程自己的connection，如果是直接从连接池获得的话，多个 DAO 就用到了多个Connection，不能完成一个事务。而连接池负责提供缓存和提供connection</p>
-<h3 id="连接池"><a href="#连接池" class="headerlink" title="连接池"></a>连接池</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/luanlouis/article/details/37671851">《深入理解mybatis原理》 Mybatis数据源与连接池_mybatis 连接池-CSDN博客</a></p>
-<p>原生的JDBC会让connection的close()方法执行数据库连接的释放与销毁，为了保证不更改原生的功能，我们可以使用代理对象，让其close方法不会真正执行，而是回收到数据库连接池中。</p>
-<p>使用数据库连接池，通常都是得到一个javax.sql.DataSource[接口]的实例对象，它里面包含了Connection，并且数据库连接池工具类（比如C3P0、JNDI、DBCP等）重新定义了getConnection、closeConnection等方法，所以每次得到的Connection，几乎都不是新建立的连接（而是已经建立好并放到缓存里面的连接），调用closeConnection方法，也不是真正的关闭连接（一般都是起到一个标识作用，标识当前连接已经使用完毕，归还给连接池，让这个连接处于待分配状态）【PS：所以说：使用数据库连接池时，还是要显式的调用数据库连接池API提供的关闭连接的方法】。</p>
-<p>至于为什么要用ThreadLocal呢?这个和连接池无关,我认为更多的是和程序本身相关,为了更清楚的说明,我举个例子</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">servlet中获取一个连接.首先,servlet是线程安全的吗?</span><br><span class="line"></span><br><span class="line">     class MyServlet extends HttpServlet&#123;</span><br><span class="line">         private Connection conn;</span><br><span class="line">     &#125;</span><br><span class="line">     ok,遗憾的告诉你,这个conn并不是安全的,所有请求这个servlet的连接,使用的都是一个Connection,这个就是致命的了.多个人使用同一个连接,算上延迟啥的,天知道数据会成什么样.</span><br><span class="line">     因此我们要保证Connection对每个请求都是唯一的.这个时候就可以用到ThreadLocal了,保证每个线程都有自己的连接.</span><br><span class="line">     改为 private ThreadLocal&lt;Connection&gt; ct = new ThreadLocal&lt;Connnection&gt;();</span><br><span class="line">     然后从连接池获取Connection,set到ct中,再get就行了,至于得到的是哪个Connection就是连接池的问题了,你也管不到.</span><br></pre></td></tr></table></figure>
-
-<h3 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal?"></a>ThreadLocal?</h3><p>就是为每一个使用该变量的线程都提供一个变量值的副本，是每一个线程都可以独立地改变自己的副本，而不会和其它线程的副本冲</p>
-<h2 id="开启步骤"><a href="#开启步骤" class="headerlink" title="开启步骤"></a>开启步骤</h2><h3 id="业务层-接口-为业务方法打开事务-Transactional"><a href="#业务层-接口-为业务方法打开事务-Transactional" class="headerlink" title="业务层**接口**为业务方法打开事务@Transactional"></a>业务层**<mark>接口<mark>**为业务方法打开事务@Transactional</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020204651727.png" alt="image-20241020204651727"></p>
-<ul>
-<li><p>@Transactional是方法级别或者类级别的注解，可以<strong>开在整个接口上</strong>，也可以开在单个方法上</p>
-</li>
-<li><p>接口能够提高复用性，降低耦合</p>
-</li>
-</ul>
-<h3 id="JdbcConfig创建事务管理器Bean-Bean"><a href="#JdbcConfig创建事务管理器Bean-Bean" class="headerlink" title="JdbcConfig创建事务管理器Bean@Bean"></a>JdbcConfig创建事务管理器Bean@Bean</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020204933459.png" alt="image-20241020204933459"></p>
-<p>PlatformTransactionManager是Spring规定的，DataSourceTransactionManager可以动，根据具体的技术选择</p>
-<p>要注意，事务管理器的datasource和mybatis用的datasource必须是同一个，不然</p>
-<h3 id="SpringConfig打开事务-EnableTransactionManagement"><a href="#SpringConfig打开事务-EnableTransactionManagement" class="headerlink" title="SpringConfig打开事务@EnableTransactionManagement"></a>SpringConfig打开事务@EnableTransactionManagement</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020205233232.png" alt="image-20241020205233232"></p>
-<h2 id="事务角色"><a href="#事务角色" class="headerlink" title="事务角色"></a>事务角色</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020205625500.png" alt="image-20241020205625500"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020205648701.png" alt="image-20241020205648701"></p>
-<h2 id="事务配置"><a href="#事务配置" class="headerlink" title="事务配置"></a>事务配置</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020222103484.png" alt="image-20241020222103484"></p>
-<p>有些异常不会触发回滚，需要手动设置一下rollbackFor</p>
-<h3 id="追加日志"><a href="#追加日志" class="headerlink" title="追加日志"></a>追加日志</h3><p>try finally结构，finally 记日志功能必定触发</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020222628555.png" alt="image-20241020222628555"></p>
-<h3 id="事务传播行为控制"><a href="#事务传播行为控制" class="headerlink" title="事务传播行为控制"></a>事务传播行为控制</h3><p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000013341344#item-2-2">(1) java - Spring事务传播行为详解 - 个人文章 - SegmentFault 思否</a></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020222917510.png" alt="image-20241020222917510"></p>
-<p>transfer、AccountDao中所有的数据层方法、日志记录的业务方法都加了Transacitonal注解。</p>
-<ul>
-<li>transfer作为方法的调用者，是事务的管理员。</li>
-<li>其他作为被调用者，是事务的协调员。</li>
-<li>如果默认设置Required，管理员开事务，协调员都会加入</li>
-</ul>
-<p><code>@Transactional(propagation = Propagation.REQUIRES_NEW)</code></p>
-<p>开启事务：<code>@Transactional</code></p>
-<p>管理员肯定要开启事务，管理员默认是<code>REQUIRED</code>一般不用改，某一个协调员要单开另外一个事务，那么就可以把这个协调员的事务传播机制改成<code>REQUIRES_NEW</code> </p>
-<h4 id="Propagation-REQUIRED"><a href="#Propagation-REQUIRED" class="headerlink" title="Propagation.REQUIRED"></a>Propagation.REQUIRED</h4><p><strong>外围方法未开启事务的情况下<code>Propagation.REQUIRED</code>修饰的内部方法会新开启自己的事务，且开启的事务相互独立，互不干扰。</strong> </p>
-<p><strong>在外围方法开启事务的情况下<code>Propagation.REQUIRED</code>修饰的内部方法会加入到外围方法的事务中，所有<code>Propagation.REQUIRED</code>修饰的内部方法和外围方法均属于同一事务，只要一个方法回滚，整个事务均回滚。</strong></p>
-<h4 id="Propagation-REQUIRES-NEW"><a href="#Propagation-REQUIRES-NEW" class="headerlink" title="Propagation.REQUIRES_NEW"></a>Propagation.REQUIRES_NEW</h4><p><strong>外围方法未开启事务的情况下<code>Propagation.REQUIRES_NEW</code>修饰的内部方法会新开启自己的事务，且开启的事务相互独立，互不干扰。</strong> </p>
-<p><strong>在外围方法开启事务的情况下<code>Propagation.REQUIRES_NEW</code>修饰的内部方法依然会单独开启独立事务，且与外部方法事务也独立，内部方法之间、内部方法和外部方法事务均相互独立，互不干扰。</strong></p>
-<h2 id="事务失效"><a href="#事务失效" class="headerlink" title="事务失效"></a>事务失效</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/hanjiaqian/article/details/120501741">spring 事务失效的 12 种场景_spring 截获duplicatekeyexception 不抛异常-CSDN博客</a></p>
-<ul>
-<li>访问权限，private,default无法生效</li>
-<li>方法用final或static修饰，代理对象无法重写</li>
-<li>多线程调用事务方法，两个线程获取的不是同一个连接</li>
-<li>数据库或表不支持事务（MySQL的MyISAM不支持事务）</li>
-<li>未开启事务或未将类纳入Spring管理<code>@Transactional</code> <code>@Service</code> </li>
-</ul>
-<h3 id="方法自调用"><a href="#方法自调用" class="headerlink" title="方法自调用"></a><span id="selfinvoke">方法自调用</span></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserMapper userMapper;</span><br><span class="line"> </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">(UserModel userModel)</span> &#123;</span><br><span class="line">        userMapper.insertUser(userModel);</span><br><span class="line">        updateStatus(userModel);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateStatus</span><span class="params">(UserModel userModel)</span> &#123;</span><br><span class="line">        doSameThing();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们看到在事务方法 add 中，直接调用事务方法 updateStatus。从前面介绍的内容可以知道，updateStatus 方法拥有事务的能力是因为 spring aop 生成代理对象proxy，但是这种方法直接调用了 this 对象的方法，所以 updateStatus 方法不会生成事务。</p>
-<p>由此可见，在同一个类中的方法直接内部调用，会导致事务失效。</p>
-<h1 id="Spring-MVC"><a href="#Spring-MVC" class="headerlink" title="Spring MVC"></a>Spring MVC</h1><h2 id="入门案例"><a href="#入门案例" class="headerlink" title="入门案例"></a>入门案例</h2><p>Java实现MVC模型的web框架，灵活性强，主要进行<strong>表现层开发</strong> Controller。</p>
-<h3 id="导坐标"><a href="#导坐标" class="headerlink" title="导坐标"></a>导坐标</h3><h3 id="bean创建-Controller"><a href="#bean创建-Controller" class="headerlink" title="bean创建@Controller"></a>bean创建@Controller</h3><h4 id="方法级别注解-请求映射-RequestMapping"><a href="#方法级别注解-请求映射-RequestMapping" class="headerlink" title="方法级别注解 请求映射 @RequestMapping"></a>方法级别注解 请求映射 @RequestMapping</h4><h4 id="方法级别注解-设置响应-ResponseBody"><a href="#方法级别注解-设置响应-ResponseBody" class="headerlink" title="方法级别注解 设置响应 @ResponseBody"></a>方法级别注解 设置响应 @ResponseBody</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021161644841.png" alt="image-20241021161644841"></p>
-<p>都是方法级别注解    </p>
-<h3 id="创建SpringMvcConfig-Configuration-ComponentScan"><a href="#创建SpringMvcConfig-Configuration-ComponentScan" class="headerlink" title="创建SpringMvcConfig@Configuration@ComponentScan"></a>创建SpringMvcConfig@Configuration@ComponentScan</h3><p>扫描到controller</p>
-<h3 id="创建servlet容器Config"><a href="#创建servlet容器Config" class="headerlink" title="创建servlet容器Config"></a>创建servlet容器Config</h3><p>ServletContainerInitConfig继承AbstractDispatcherServeltInitializer类重写对应方法。都是一次性</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021161341011.png" alt="image-20241021161341011"></p>
-<ul>
-<li><code>getServletMappings</code> 表示接管URL的那个部分的映射</li>
-<li><code>createRootApplicationContext</code> 创建Spring Framework容器并指定配置    </li>
-<li><code>createServletApplicationContext</code> 创建web容器并指定配置</li>
-<li>web容器 <strong>servlet容器</strong></li>
-</ul>
-<h3 id="工作流程-1"><a href="#工作流程-1" class="headerlink" title="工作流程"></a>工作流程</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021162133487.png" alt="image-20241021162133487"></p>
-<h3 id="bean加载-ComponentScan-Filter"><a href="#bean加载-ComponentScan-Filter" class="headerlink" title="bean加载@ComponentScan.Filter"></a>bean加载@ComponentScan.Filter</h3><p><u>Spring避免加载springmvc的controller</u></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021162700082.png" alt="image-20241021162700082"></p>
-<p>导包：mybatis自动代理会返回dao接口的实现对象，可以不写，但是其他技术不一定是这样，所以为了通用性还是应该导dao</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021164147565.png" alt="image-20241021164147565"></p>
-<p>SpringConfig扫描排除含有Controller注解的类：<strong>Filter</strong> 可以更细粒度地加载bean</p>
-<p>exclude排除</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021164311077.png" alt="image-20241021164311077"></p>
-<p>加了configuration的类，spring都会将其作为配置类，里面如果有componentScan，就会扫上。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021164930504.png" alt="image-20241021164930504"></p>
-<p>创建容器设定配置再去返回容器，简化过程只需要指定类的字节码即可</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021165128160.png" alt="image-20241021165128160"></p>
-<h2 id="配置Controller"><a href="#配置Controller" class="headerlink" title="配置Controller"></a>配置Controller</h2><h3 id="请求Request相关"><a href="#请求Request相关" class="headerlink" title="请求Request相关"></a>请求Request相关</h3><h4 id="请求映射路径-RequestMapping"><a href="#请求映射路径-RequestMapping" class="headerlink" title="请求映射路径@RequestMapping"></a>请求映射路径@RequestMapping</h4><p>对于不同的controller可能会优相同方法，这时会有冲突问题，解决办法是在controller**<mark>类<mark><strong>上加一个@RequestMapping，要和</strong><mark>方法<mark>**的@RequestMapping注解结合一下。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021172423291.png" alt="image-20241021172423291"></p>
-<h4 id="名称匹配-指定请求参数名-RequestParam"><a href="#名称匹配-指定请求参数名-RequestParam" class="headerlink" title="名称匹配 指定请求参数名@RequestParam"></a>名称匹配 指定<mark>请求参数<mark>名@RequestParam</h4><p>用于接收GET请求中URL的查询参数，也可以接收POST请求的参数（表单）</p>
-<blockquote>
-<p>You can use the <code>@RequestParam</code> annotation to bind Servlet request parameters (that is, query parameters or form data) to a method argument in a controller.</p>
-</blockquote>
-<p>与mybatis类似，对于外部传进来的请求参数用map封装，因此**@RequestParam接收的是key-value形式的参数<strong>，</strong>发送get请求**只会处理URL中的参数，忽略请求体中的数据</p>
-<p><strong>发送post请求</strong>时，<mark>表单数据在请求体中<mark>，不过仍然是username=root这样键值对的形式存在，如果URL里有请求参数，服务端收到以后会一并加到map中，打印出来，即使方法里的参数只是一个String也能打印出来</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021220731172.png" alt="image-20241021220731172"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021220755961.png" alt="image-20241021220755961" style="zoom:150%;" /></p>
-<p>@RequestParam XXX xxx 表示查询参数用XXX类型接</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43606226/article/details/106545024">SpringMvc--@RequestBody和@RequestParam注解以及不加注解接收参数的区别_不写接收参数的注解,默认使用什么的-CSDN博客</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.51cto.com/u_12393361/5021343">解决mybatis不加@Param报错 org.apache.ibatis.binding.BindingException_51CTO博客_mybatis @Param</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zeng1994/p/9110632.html">记一次SpringMVC碰到的坑 - zeng1994 - 博客园 (cnblogs.com)</a></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/as513385/article/details/93512699">关于SpringMvc使用时,不加@RequestParam注解,根据方法形参名也可以获取请求值的分析_spring 请求体不写注解-CSDN博客</a></p>
-<p>和 <strong>MyBatis</strong> 一样，使用反射机制获取参数名称，JDK8以后 java.lang.reflect.Parameter 中能够获取参数相关信息，框架就是利用这个机制，不加RequestParam获取参数信息。不然就只有arg0 arg1这种形式。</p>
-<ul>
-<li>required参数 是否为必传参数，默认必传</li>
-<li>defaultValue 参数默认值</li>
-</ul>
-<h4 id="传递多种类型的请求参数"><a href="#传递多种类型的请求参数" class="headerlink" title="传递多种类型的请求参数"></a>传递多种类型的<mark>请求参数<mark></h4><p>与mybatis类似</p>
-<ul>
-<li><p>pojo：直接使用pojo内部的字段名称</p>
-</li>
-<li><p>嵌套pojo：address.字段名称</p>
-</li>
-<li><p>数组：直接接收字符串数组即可，请求的参数名就是数组的形参名，会把数组当成一个独立的参数</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021192646729.png" alt="image-20241021192646729"></p>
-</li>
-<li><p>集合类型：加RequestParam注解。 因为集合属于<strong>引用类型</strong>，spring会把它当成pojo处理（造pojo然后根据字段名注入依赖），不加param注解，spring就不会像数组一样把他当成一个独立的参数。</p>
-</li>
-</ul>
-<h5 id="传JSON-EnableWebMvc"><a href="#传JSON-EnableWebMvc" class="headerlink" title="传JSON @EnableWebMvc"></a>传JSON @<mark>EnableWebMvc<mark></h5><p>导坐标 webMvc</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021193842326.png" alt="image-20241021193842326"></p>
-<h6 id="参数在请求体里-RequestBody"><a href="#参数在请求体里-RequestBody" class="headerlink" title="参数在请求体里@RequestBody"></a>参数在请求体里@RequestBody</h6><p>@RequestBody XXX xxx 表示请求体中的数据用XXX类型接</p>
-<p>RequestBody请求体中的数据通常是以JSON、XML等格式发送的，可以将请求体中的数据自动绑定到指定的Java对象上。</p>
-<ol>
-<li>参数写在请求体里，用List接收json数组</li>
-</ol>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021194047781.png" alt="image-20241021194047781"></p>
-<ol start="2">
-<li>用Pojo类接单个pojo对象json</li>
-</ol>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021194303198.png" alt="image-20241021194303198"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021194445000.png" alt="image-20241021194445000"></p>
-<ol start="3">
-<li>用List<pojo>接收多个pojo对象的json，</li>
-</ol>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021194340592.png" alt="image-20241021194340592"></p>
-<p>一个请求，只有一个RequestBody；一个请求，可以有多个RequestParam。</p>
-<p><strong>Body vs Param:</strong></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021222507281.png" alt="image-20241021222507281"></p>
-<h5 id="日期参数格式化-DateTimeFormat-pattern-”yyyy-MM-dd”"><a href="#日期参数格式化-DateTimeFormat-pattern-”yyyy-MM-dd”" class="headerlink" title="日期参数格式化@DateTimeFormat(pattern=”yyyy-MM-dd”)"></a>日期参数格式化@DateTimeFormat(pattern=”yyyy-MM-dd”)</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021223057976.png" alt="image-20241021223057976"></p>
-<p>默认yyyy/MM/dd 其他形式不认识，需要自己手动指明formatPattern</p>
-<h5 id="Converter接口-将字符串参数转换成Java类型"><a href="#Converter接口-将字符串参数转换成Java类型" class="headerlink" title="Converter接口-将字符串参数转换成Java类型"></a>Converter接口-将字符串参数转换成Java类型</h5><p>请求里面的参数都是以字符串形式发来的，converter要根据形参类型，把字符串转成对应类型提供给方法，这就是为什么前面能把字符串12按照需求转换成int 12</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021223621200.png" alt="image-20241021223621200"></p>
-<p>@EnableWebMvc</p>
-<h3 id="响应Response相关"><a href="#响应Response相关" class="headerlink" title="响应Response相关"></a>响应Response相关</h3><h4 id="响应页面（跳转页面）"><a href="#响应页面（跳转页面）" class="headerlink" title="响应页面（跳转页面）"></a>响应页面（跳转页面）</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/toPage&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">toJumpPage</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;page.jsp&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>直接在方法里 return “page.jsp” </p>
-<p>Spring默认认为Controller的方法返回的就是一个页面</p>
-<h4 id="响应文本数据-ResponseBody"><a href="#响应文本数据-ResponseBody" class="headerlink" title="响应文本数据@ResponseBody"></a>响应文本数据@ResponseBody</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021225227708.png" alt="image-20241021225227708"></p>
-<p>如果直接return一个字符串Spring会认为这个字符串是一个网页，响应分为响应行响应头和响应体，响应头里是放状态码之类的，只能在响应体里返回数据，加@ResponseBody注解表示返回值就是响应体。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/toText&quot;)</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">toText</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;page.jsp&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//表示返回 page.jsp 这个字符串</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="响应POJO对象-JSON形式"><a href="#响应POJO对象-JSON形式" class="headerlink" title="响应POJO对象(JSON形式)"></a>响应POJO对象(JSON形式)</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/toJsonPOJO&quot;)</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="keyword">public</span> User <span class="title function_">toJsonPOJO</span><span class="params">()</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;返回json对象数据&quot;</span>);</span><br><span class="line">    <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    user.setName(<span class="string">&quot;itcast&quot;</span>);</span><br><span class="line">    user.setAge(<span class="number">15</span>);</span><br><span class="line">    <span class="keyword">return</span> user;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>直接返回user即可，jackson帮我们做的</p>
-<h5 id="响应POJO对象集合（JSON数组）"><a href="#响应POJO对象集合（JSON数组）" class="headerlink" title="响应POJO对象集合（JSON数组）"></a>响应POJO对象集合（JSON数组）</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/toJsonList&quot;)</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="keyword">public</span> List&lt;User&gt; <span class="title function_">toJsonList</span><span class="params">()</span>&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;返回json集合数据&quot;</span>);</span><br><span class="line">    <span class="type">User</span> <span class="variable">user1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    user1.setName(<span class="string">&quot;传智播客&quot;</span>);</span><br><span class="line">    user1.setAge(<span class="number">15</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">User</span> <span class="variable">user2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    user2.setName(<span class="string">&quot;黑马程序员&quot;</span>);</span><br><span class="line">    user2.setAge(<span class="number">12</span>);</span><br><span class="line"></span><br><span class="line">    List&lt;User&gt; userList = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;User&gt;();</span><br><span class="line">    userList.add(user1);</span><br><span class="line">    userList.add(user2);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> userList;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="HttpMessageConverter接口"><a href="#HttpMessageConverter接口" class="headerlink" title="HttpMessageConverter接口"></a>HttpMessageConverter接口</h5><p>POJO转JSON字符串</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021225843796.png" alt="image-20241021225843796"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021225823024.png" alt="image-20241021225823024"></p>
-<h3 id="REST-风格"><a href="#REST-风格" class="headerlink" title="REST 风格"></a>REST 风格</h3><p><strong>Re</strong>presentational <strong>S</strong>tate <strong>T</strong>ransfer</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021230252993.png" alt="image-20241021230252993"></p>
-<p>根据请求的方式区分 GET POST PUT DELETE</p>
-<p>同一URL，请求方式不同，调用的方法也不同</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021230150675.png" alt="image-20241021230150675"></p>
-<p>RESTful：用REST风格访问资源</p>
-<h4 id="RequestMapping-加-method-参数"><a href="#RequestMapping-加-method-参数" class="headerlink" title="@RequestMapping 加 method 参数"></a>@RequestMapping 加 method 参数</h4><p><code>@RequestMapping(value = &quot;/users/&#123;id&#125;&quot; ,method = RequestMethod.DELETE)</code> </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021231918974.png" alt="image-20241021231918974"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021231836548.png" alt="image-20241021231836548"></p>
-<h5 id="URL占位符传参-PathVariable"><a href="#URL占位符传参-PathVariable" class="headerlink" title="URL占位符传参 @PathVariable"></a>URL占位符传参 <mark>@PathVariable<mark></h5><p>value=”/users/{id}”  URL中的{id}和用@PathVariable修饰的方法参数id是一致的</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021231846312.png" alt="image-20241021231846312"></p>
-<h5 id="RequestBody-RequestParam-PathVariable"><a href="#RequestBody-RequestParam-PathVariable" class="headerlink" title="@RequestBody@RequestParam@PathVariable"></a>@RequestBody@RequestParam@PathVariable</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021232010983.png" alt="image-20241021232010983"></p>
-<h4 id="RESTful-快速开发"><a href="#RESTful-快速开发" class="headerlink" title="RESTful 快速开发"></a><mark>RESTful 快速开发<mark></h4><h5 id="类级别注解-RequestMapping"><a href="#类级别注解-RequestMapping" class="headerlink" title="类级别注解 @RequestMapping"></a>类级别注解 @RequestMapping</h5><p>省去所有user前缀，写一次就好。</p>
-<h5 id="类级别注解-RestController"><a href="#类级别注解-RestController" class="headerlink" title="类级别注解 @RestController"></a>类级别注解 @RestController</h5><p>类级别的@RequestBody，表示所有类的返回值都是请求体的数据，既然@Controller和RequestBody都要写，合而为一即可</p>
-<h5 id="方法级别注解-PostMapping"><a href="#方法级别注解-PostMapping" class="headerlink" title="方法级别注解 @PostMapping"></a>方法级别注解 @PostMapping</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(value = &quot;/&#123;id&#125;&quot; ,method = RequestMethod.DELETE)</span></span><br><span class="line"><span class="meta">@GetMapping</span></span><br><span class="line"><span class="meta">@PostMapping(&quot;/&#123;id&#125;&quot;)</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021232955549.png" alt="image-20241021232955549"></p>
-<h4 id="RESTful-页面交互案例"><a href="#RESTful-页面交互案例" class="headerlink" title="RESTful 页面交互案例"></a>RESTful 页面交互案例</h4><p>RestController PostMapping GetMapping DeleteMapping PutMapping </p>
-<p>方法参数RequestBody</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021235556399.png" alt="image-20241021235556399"></p>
-<h5 id="Config-类-SpringMvcSupport-放行静态页面访问"><a href="#Config-类-SpringMvcSupport-放行静态页面访问" class="headerlink" title="Config 类 SpringMvcSupport 放行静态页面访问"></a>Config 类 SpringMvcSupport 放行静态页面访问</h5><p>@Configuration</p>
-<p>默认SpringMvcConfig接管/后所有东西，通过ResourceHandlerRegistry 设置SpringMVC如何处理对静态资源的访问 </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021235616215.png" alt="image-20241021235616215"></p>
-<h5 id="前端ajax"><a href="#前端ajax" class="headerlink" title="前端ajax"></a>前端ajax</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021235623670.png" alt="image-20241021235623670"></p>
-<h2 id="SSM整合"><a href="#SSM整合" class="headerlink" title="SSM整合"></a>SSM整合</h2><h3 id="创建工程"><a href="#创建工程" class="headerlink" title="创建工程"></a>创建工程</h3><h3 id="整合Config包"><a href="#整合Config包" class="headerlink" title="整合Config包"></a>整合Config包</h3><h4 id="SpringConfig"><a href="#SpringConfig" class="headerlink" title="SpringConfig"></a>SpringConfig</h4><p><code>Configuration</code> <code>ComponentScan</code> <code>Import</code></p>
-<h5 id="MyBatisConfig-amp-JdbcConfig"><a href="#MyBatisConfig-amp-JdbcConfig" class="headerlink" title="MyBatisConfig &amp; JdbcConfig"></a>MyBatisConfig &amp; JdbcConfig</h5><p>JdbcConfig：数据源 DataSource Bean</p>
-<p>MyBatisConfig：sqlSessionFactoryBean</p>
-<p><code>Bean</code> <code>jdbc.properties</code> </p>
-<h4 id="SpringMvcConfig"><a href="#SpringMvcConfig" class="headerlink" title="SpringMvcConfig"></a>SpringMvcConfig</h4><p><code>Configuration</code> <code>ComponentScan</code> <code>EnableWebMvc</code></p>
-<h5 id="ServletConfig"><a href="#ServletConfig" class="headerlink" title="ServletConfig"></a>ServletConfig</h5><p>rootApplicationContext和webApplicationContext</p>
-<h3 id="编写后端模块"><a href="#编写后端模块" class="headerlink" title="编写后端模块"></a>编写后端模块</h3><h4 id="Domain"><a href="#Domain" class="headerlink" title="Domain"></a>Domain</h4><p>实体类，User</p>
-<h4 id="Dao"><a href="#Dao" class="headerlink" title="Dao"></a>Dao</h4><p>MyBatis Mapper自动代理，写接口，写方法结合注解</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022135643205.png" alt="image-20241022135643205"></p>
-<p>占位符对应参数的名称，这里映射实体类中的字段信息     </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022135845990.png" alt="image-20241022135845990"></p>
-<h4 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h4><p>BookDao@Autowired</p>
-<p>dao接口加repository注解（可加可不加）</p>
-<h4 id="RestController"><a href="#RestController" class="headerlink" title="RestController"></a>RestController</h4><p>参数在url中：PathVariable</p>
-<p>参数在请求体：RequestBody</p>
-<h4 id="JUnit-测试-Service"><a href="#JUnit-测试-Service" class="headerlink" title="JUnit 测试 Service"></a>JUnit 测试 Service</h4><h4 id="Postman-测试-Controller"><a href="#Postman-测试-Controller" class="headerlink" title="Postman 测试 Controller"></a>Postman 测试 Controller</h4><h4 id="Spring-事务激活"><a href="#Spring-事务激活" class="headerlink" title="Spring 事务激活"></a>Spring 事务激活</h4><p><code>JdbcConfig</code> 里 加PlatformTransactionManager Bean, 接dataSource参数</p>
-<p><code>Service</code>接口添加@Transactional</p>
-<h3 id="前后端联调"><a href="#前后端联调" class="headerlink" title="前后端联调"></a>前后端联调</h3><h4 id="表现层数据封装模型-设置统一的返回结果集Result"><a href="#表现层数据封装模型-设置统一的返回结果集Result" class="headerlink" title="表现层数据封装模型 - 设置统一的返回结果集Result"></a>表现层数据封装模型 - 设置统一的返回结果集Result</h4><p>实际开发过程中前后端<mark>约定<mark></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Result</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Object data;</span><br><span class="line">    <span class="keyword">private</span> Integer code;</span><br><span class="line">    <span class="keyword">private</span> String message;</span><br><span class="line">    <span class="comment">//下方提供若干构造方法,有参无参</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Result</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Result</span><span class="params">(Integer code,Object data)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.data = data;</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Result</span><span class="params">(Integer code, Object data, String msg)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.data = data;</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">        <span class="built_in">this</span>.msg = msg;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//.....getter setter</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022152253512-1729581786093-1.png" alt="image-20241022152253512"></p>
-<h5 id="Result-data"><a href="#Result-data" class="headerlink" title="Result.data"></a>Result.data</h5><p>业务方法不同返回数据格式也不同，可能是true false这样的text，也可能是json数据，还可能是json数组，约定将数据封装到<mark>data<mark>字段中</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022144637267.png" alt="image-20241022144637267"></p>
-<h5 id="Result-code"><a href="#Result-code" class="headerlink" title="Result.code"></a>Result.code</h5><p>不同业务方法可能会返回相同的内容，返回一个true可能对应新增，修改，删除的业务方法，加一个识别码<mark>code<mark>字段区分 ，可以约定尾数是0表示失败，尾数是1表示成功：</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022145108783.png" alt="image-20241022145108783"></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Code</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">SAVE_OK</span> <span class="operator">=</span> <span class="number">20011</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">DELETE_OK</span> <span class="operator">=</span> <span class="number">20021</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">UPDATE_OK</span> <span class="operator">=</span> <span class="number">20031</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">GET_OK</span> <span class="operator">=</span> <span class="number">20041</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">SAVE_ERR</span> <span class="operator">=</span> <span class="number">20010</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">DELETE_ERR</span> <span class="operator">=</span> <span class="number">20020</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">UPDATE_ERR</span> <span class="operator">=</span> <span class="number">20030</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">GET_ERR</span> <span class="operator">=</span> <span class="number">20040</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//这里Result的构造器识别的是Integer code</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Enum枚举：CodeEnum是一个类，类内部有一字段code(Integer)</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022152238169.png" alt="image-20241022152238169"></p>
-<h5 id="Result-message"><a href="#Result-message" class="headerlink" title="Result.message"></a>Result.message</h5><p>一些业务方法，本来应该返回json，没查到只能返回null，不能直接把null展示给用户看，展示的是message信息</p>
-<h5 id="Controller-返回值统一设定为-Result"><a href="#Controller-返回值统一设定为-Result" class="headerlink" title="Controller 返回值统一设定为 Result"></a>Controller 返回值统一设定为 Result</h5><p>将返回值封装到Result中，data</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span></span><br><span class="line">    <span class="keyword">public</span> Result <span class="title function_">getAll</span><span class="params">()</span> &#123;</span><br><span class="line">        List&lt;Book&gt; bookList = bookService.getAll();</span><br><span class="line">        <span class="type">Integer</span> <span class="variable">code</span> <span class="operator">=</span> bookList != <span class="literal">null</span> ? Code.GET_OK : Code.GET_ERR;</span><br><span class="line">        <span class="type">String</span> <span class="variable">msg</span> <span class="operator">=</span> bookList != <span class="literal">null</span> ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;数据查询失败，请重试！&quot;</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(code,bookList,msg);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">//data字段是否为null？</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="返回数据格式统一-异常处理器-RestControllerAdvice"><a href="#返回数据格式统一-异常处理器-RestControllerAdvice" class="headerlink" title="返回数据格式统一 - 异常处理器@RestControllerAdvice"></a>返回数据格式统一 - 异常处理器<mark>@RestControllerAdvice<mark></h4><ul>
-<li><p><mark>类级别注解<mark></p>
-</li>
-<li><p>后端抛出的异常如果不处理，就会抛到前端页面，不美观，并且不会返回任何数据，导致<mark>数据不统一<mark> </p>
-</li>
-<li><p>要让WebMvcConfig扫到这个Advice类</p>
-</li>
-</ul>
-<h5 id="常见异常诱因"><a href="#常见异常诱因" class="headerlink" title="常见异常诱因"></a>常见异常诱因</h5><ul>
-<li><strong>框架内部抛出的异常</strong>:因使用不合规导致</li>
-<li><strong>数据层抛出的异常</strong>:因外部服务器故障导致(例如:服务器访问超时)</li>
-<li><strong>业务层抛出的异常</strong>:因业务逻辑书写错误导致(例如:遍历业务书写操作，导致索引异常等)</li>
-<li><strong>表现层抛出的异常</strong>:因数据收集、校验等规则导致(例如:不匹配的数据类型间导致异常)</li>
-<li><strong>工具类抛出的异常</strong>:因工具类书写不严谨不够健壮导致(例如:必要释放的连接长期未释放等)</li>
-</ul>
-<p><u>处理方法</u>：全部抛到表现层Controller —— AOP 编程，<strong>用最少量的代码实现最强大的功能</strong>，快速统一地处理异常 </p>
-<h5 id="方法级别注解-处理具体类别的异常-ExceptionHandler"><a href="#方法级别注解-处理具体类别的异常-ExceptionHandler" class="headerlink" title="方法级别注解 处理具体类别的异常@ExceptionHandler"></a>方法级别注解 处理具体类别的异常<mark>@ExceptionHandler<mark></h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022153703868.png" alt="image-20241022153703868"></p>
-<p>处理异常返回的结果也要封装成Result</p>
-<h3 id="项目异常处理方案-捕获异常并返回Result"><a href="#项目异常处理方案-捕获异常并返回Result" class="headerlink" title="项目异常处理方案 (捕获异常并返回Result)"></a>项目异常处理方案 (捕获异常并返回Result)</h3><h4 id="异常分类"><a href="#异常分类" class="headerlink" title="异常分类"></a>异常分类</h4><ul>
-<li><strong>业务异常 BusinessException</strong> 可预期<ul>
-<li>发送对应消息，提醒用户规范操作</li>
-</ul>
-</li>
-<li><strong>系统异常 SystemException</strong> <ul>
-<li>发送固定消息，安抚用户</li>
-<li>发送特定消息给运维，提醒维护</li>
-<li>记录日志</li>
-</ul>
-</li>
-<li><strong>其他异常 Exception</strong><ul>
-<li>发送固定消息，安抚用户</li>
-<li>发送特定消息给开发，提醒维护（纳入预期范围）</li>
-<li>记录日志</li>
-</ul>
-</li>
-</ul>
-<h4 id="自定义异常"><a href="#自定义异常" class="headerlink" title="自定义异常"></a>自定义异常</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022154704744.png" alt="image-20241022154704744"></p>
-<h5 id="继承RuntimeException"><a href="#继承RuntimeException" class="headerlink" title="继承RuntimeException"></a>继承RuntimeException</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022155606802.png" alt="image-20241022155606802"></p>
-<p>加一个code属性（getter setter），重写RuntimeException的方法。异常构造的时候需要用到这些构造器，包装返回数据要用到code和message</p>
-<p>建议放在源根的exception包下面</p>
-<h5 id="异常代码扩充"><a href="#异常代码扩充" class="headerlink" title="异常代码扩充"></a>异常代码扩充</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022160311854.png" alt="image-20241022160311854"></p>
-<h5 id="触发异常"><a href="#触发异常" class="headerlink" title="触发异常"></a>触发异常</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022160332391.png" alt="image-20241022160332391"></p>
-<h5 id="拦截并处理异常-返回Result"><a href="#拦截并处理异常-返回Result" class="headerlink" title="拦截并处理异常 返回Result"></a>拦截并处理异常 返回Result</h5><p>在RestControllerAdvice下方的类中处理对应类型的异常，将异常继续封装成Result返回</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022160546843.png" alt="image-20241022160546843"></p>
-<h3 id="放行静态资源配置"><a href="#放行静态资源配置" class="headerlink" title="放行静态资源配置"></a>放行静态资源配置</h3><h4 id="SpringMvcSupport（Config类）"><a href="#SpringMvcSupport（Config类）" class="headerlink" title="SpringMvcSupport（Config类）"></a>SpringMvcSupport（Config类）</h4><p>加Configuration注解，继承WebMvcConfigurationSupport类，重写resourceHandler方法</p>
-<h4 id="Config包详解"><a href="#Config包详解" class="headerlink" title="Config包详解"></a><mark>Config包详解<mark></h4><h5 id="ServletContainersInitializerConfig-Servlet容器配置类"><a href="#ServletContainersInitializerConfig-Servlet容器配置类" class="headerlink" title="ServletContainersInitializerConfig (Servlet容器配置类)"></a>ServletContainersInitializerConfig (Servlet容器配置类)</h5><p>用来构建ServletContext，继承自 AbstractDispatcherServletInitializer，Spring MVC是建立在 DispatcherServlet 基础之上的，每一个请求最先访问的都是它，负责转发每一个Request请求，所以是必不可少的。</p>
-<p>先以 <mark>Abstract<u>DispatcherServlet</u>Initializer<mark> 为例介绍这个加载Config类的职责 具体介绍在<a href="#webappinit">下方</a></p>
-<h6 id="a-createRootApplicationContext"><a href="#a-createRootApplicationContext" class="headerlink" title="a. createRootApplicationContext"></a>a. createRootApplicationContext</h6><p>需要加载Spring IoC容器的配置类(SpringConfig)，返回配置好的 <a href="#wac">Root WAC</a> </p>
-<h6 id="b-createServletApplicationContext"><a href="#b-createServletApplicationContext" class="headerlink" title="b.createServletApplicationContext"></a>b.createServletApplicationContext</h6><p>需要加载WebMvc容器的配置类(SpringMvcConfig) 返回配置好的 <a href="#swac">Servlet WAC</a> </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022205635235.png" alt="image-20241022205635235"></p>
-<h6 id="c-getServletMappings"><a href="#c-getServletMappings" class="headerlink" title="c.getServletMappings"></a>c.getServletMappings</h6><p>配置由此DispatcherServlet接管的URL映射路径</p>
-<h5 id="SpringConfig-Configuration"><a href="#SpringConfig-Configuration" class="headerlink" title="SpringConfig(@Configuration)"></a>SpringConfig(@Configuration)</h5><p><u>对应applicationContext.xml</u>，配置 <a href="#wac">Root WAC</a>  </p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zzjlxy-225223/p/12611093.html">applicationContext.xml及spring-servlet.xml详解 - 长木木弓 - 博客园 (cnblogs.com)</a>  </p>
-<p>注解开发用来替代传统的XML配置文件，因此可以透过xml与注解的映射关系来了解，<code>@Configuration</code>用来替代<code>&lt;beans&gt;</code> <code>&lt;/beans&gt;</code> 在应用启动时，Spring 会自动扫描并加载所有带有 <code>@Configuration</code> 注解的类，根据<code>@ComponentScan</code>扫描要加入的<code>@Component</code>(代替<code>&lt;bean&gt;</code> <code>&lt;/bean&gt;</code>)，最终创建出对应的容器(Context) </p>
-<h6 id="Import-MyBatisConfig-class-JdbcConfig-class"><a href="#Import-MyBatisConfig-class-JdbcConfig-class" class="headerlink" title="@Import({MyBatisConfig.class,JdbcConfig.class})"></a>@Import({MyBatisConfig.class,JdbcConfig.class})</h6><p><code>MyBatisConfig</code> 和 <code>JdbcConfig</code>中方法级别注解<code>@Bean</code>用来替代 <code>&lt;bean&gt;</code> <code>&lt;/bean&gt;</code> 标签（表示方法返回的对象当成Bean/Component交给Spring容器管理）虽然没有加<code>Configuration</code>注解，但是会由<code>SpringConfig</code> <code>@Import</code>，导入的还是SpringConfig配置的容器，属于 <a href="#wac">Root WAC</a> </p>
-<h5 id="SpringMvcConfig-Configuration-EnableWebMvc"><a href="#SpringMvcConfig-Configuration-EnableWebMvc" class="headerlink" title="SpringMvcConfig(@Configuration @EnableWebMvc)"></a>SpringMvcConfig(@Configuration @EnableWebMvc)</h5><p><u>对应spring-servlet.xml</u>，配置 <a href="#swac">Servlet WAC</a> </p>
-<p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/config/annotation/EnableWebMvc.html">@EnableWebMvc (Spring Framework 6.1.14 API)</a> </p>
-<p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/config/annotation/WebMvcConfigurationSupport.html">WebMvcConfigurationSupport (Spring Framework 6.1.14 API)</a>  (WMCS)</p>
-<ul>
-<li><p><code>@EnableWebMvc</code> 会通过导入 <code>WMCS</code> 完成 Spring MVC 默认配置的添加，<strong>只有一个类能拥有此注解</strong> </p>
-</li>
-<li><p>不写 <code>@EnableWebMvc</code> 直接继承 WMCS 也可以实现相同效果</p>
-</li>
-<li><p>自定义具体某项WebMvc配置：<code>extends WebMvcConfigurer</code> 允许多个WebMvcConfigurer存在，但是具有一定侵入性</p>
-</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023210351697.png" alt="image-20241023210351697"></p>
-<ul>
-<li>主要Config：<code>@EnableWebMvc</code> + 继承 <code>WebMvcConfigurer</code> 重写方法 + <code>@ComponentScan</code> 其他Config类</li>
-<li>次要Config：继承 <code>WebMvcConfigurer</code>重写方法+@Configuration确保被主要Config扫描到</li>
-<li>没有暴露高级设置，如果需要高级设置 需要第二种方式直接继承 WMCS 来做更高级别的配置，此时要移除@Enable注解</li>
-</ul>
-<h6 id="SpringMvcSupport-Configuration"><a href="#SpringMvcSupport-Configuration" class="headerlink" title="SpringMvcSupport(@Configuration)"></a>SpringMvcSupport(@Configuration)</h6><p><u>对应springMvcContext.xml</u>，配置 <a href="#swac">Servlet WAC</a> </p>
-<ul>
-<li>继承WMCS，完成对SpringMVC的默认配置，重写resourceHandler方法，实现在默认配置基础上的自定义。</li>
-<li>案例中的SMS是配置类，用于配置容器，被SMC扫config包扫到了，此时SMS这里的自定义配置会覆盖SMC的Enable注解</li>
-</ul>
-<h3 id="前端逻辑"><a href="#前端逻辑" class="headerlink" title="前端逻辑"></a>前端逻辑</h3><p>查询： get请求</p>
-<p>保存/添加：post请求</p>
-<p>新增要弹出表单，添加成功要关闭表单并<strong>清空表单数据</strong>，不论成功与否finallyGetAll回显 ，按照识别码判别成功与否</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023190220059.png" alt="image-20241023190220059"></p>
-<p>修改：put请求</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023191646261.png" alt="image-20241023191646261"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023191751771.png" alt="image-20241023191751771"></p>
-<p>删除：delete请求</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023191526268.png" alt="image-20241023191526268"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023191952545.png" alt="image-20241023191952545"></p>
-<h3 id="容器之间的嵌套关系-概念解释-源码解析"><a href="#容器之间的嵌套关系-概念解释-源码解析" class="headerlink" title="容器之间的嵌套关系 + 概念解释 (源码解析)"></a>容器之间的嵌套关系 + 概念解释 (源码解析)</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022175254007-1729595662475-3.png" alt="image-20241022175254007"></p>
-<h4 id="WebApplicationContext-WAC"><a href="#WebApplicationContext-WAC" class="headerlink" title="WebApplicationContext(WAC)"></a><span id="wac">WebApplicationContext(WAC)</span></h4><ul>
-<li>ApplicationContext(AC) 表示整个 Spring 应用的上下文。WAC是普通AC的扩展，它具有Web应用程序所需的一些额外功能，比如可以<u>get</u>ServletContext或者<u>set</u>ServletContext</li>
-<li><code>Root WAC</code>在应用启动时首先被加载，并且作为父上下文，供表示层使用，主要负责管理服务层（Service）、数据访问层（DAO）、中间件配置等非 Web 层（表示层）的 Bean</li>
-</ul>
-<h4 id="Servlet-WebApplicationContext-Servlet-WAC"><a href="#Servlet-WebApplicationContext-Servlet-WAC" class="headerlink" title="Servlet WebApplicationContext(Servlet WAC)"></a><span id="swac">Servlet WebApplicationContext(Servlet WAC)</span></h4><ul>
-<li><code>Servlet WAC</code> 是 <code>Root WAC</code> 的<strong>子上下文</strong>，专门用于处理表示层的 Bean 和配置。比如控制器（<code>Controller</code>）、视图解析器、拦截器(<code>Interceptor</code>)等</li>
-<li>每个 <code>DispatcherServlet</code> 实例会有一个独立的 <code>Servlet WAC</code> </li>
-</ul>
-<h5 id="Parent-amp-Child-ApplicatitonContext"><a href="#Parent-amp-Child-ApplicatitonContext" class="headerlink" title="Parent &amp; Child ApplicatitonContext"></a>Parent &amp; Child ApplicatitonContext</h5><p>Root WAC 作为 所有 Servlet WAC 的 Parent，DispatherServlet在创建属于自己的ServletContext的getAttribute方法来判断是否存在Root WebApplicationContext。如果存在，则将其设置为自己的parent。这就是父子上下文(父子容器)的概念，getParentBeanFactory。</p>
-<p>对于作用范围而言，在DispatcherServlet中可以引用由ContextLoaderListener所创建的RootWAC中的内容，而反过来不行。当Spring在执行ApplicationContext的getBean时，如果在自己context中找不到对应的bean，则会在父ApplicationContext中去找。这也解释了为什么我们可以在DispatcherServlet中获取到RootWAC中的bean。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023154504980.png" alt="image-20241023154504980"></p>
-<h4 id="ServletContext"><a href="#ServletContext" class="headerlink" title="ServletContext"></a>ServletContext</h4><ul>
-<li>Servlet容器（Tomcat）在启动一个web应用时，根据web.xml 会为整个应用创建一个<mark>唯一<mark>的ServletContext(SC)对象，应用内部所有的Servlet共享同一个SC。</li>
-<li>ServletContext是Servlet与Servlet容器（Tomcat）之间直接通信的接口。</li>
-<li>容器中的Servlet可以通过它来访问容器中的各种资源</li>
-<li>ServletContext跟XML一样，由Attributes组成，要访问资源就要通过字符串name访问，可以通过<code>void setAttribute(name, object) </code>来将ServletContext与你的object绑定，<code>Object getAttribute(name)</code>可以得到object</li>
-<li><code>Enumeration&lt;String&gt; getInitParameterNames()</code> 获取所有 <code>&lt;context-param/&gt;</code> 参数的名称 字符串枚举</li>
-<li><code> String getInitParameter(name)</code> 根据name获取指定的 <code>&lt;context-param/&gt;</code> 参数值</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023013135254.png" alt="image-20241023013135254"></p>
-<h5 id="Root-WAC-Servlet-WAC-ServletContext之间的关系"><a href="#Root-WAC-Servlet-WAC-ServletContext之间的关系" class="headerlink" title="Root WAC, Servlet WAC, ServletContext之间的关系"></a>Root WAC, Servlet WAC, ServletContext之间的关系</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022230909096.png" alt="image-20241022230909096"></p>
-<ul>
-<li><p>Root WebApplicationContext存储key为<code>WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE</code>，可以通过此Key访问Root WAC。</p>
-</li>
-<li><p>WebApplicationContextUtis工具类提供了从ServletContext获取RootWAC的方法：</p>
-<ul>
-<li><code>WebApplicationContextUtils.getWebApplicationContext(ServletContext sc)</code></li>
-</ul>
-</li>
-<li><p>WAC提供了获取ServletContext的抽象方法 <code>getServletContext()</code> </p>
-</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/%E6%97%A0%E6%A0%87%E9%A2%98-1729654361571-5.png" alt="context"></p>
-<h5 id="web-xml-配置-ServletContext"><a href="#web-xml-配置-ServletContext" class="headerlink" title="web.xml 配置 ServletContext"></a>web.xml 配置 ServletContext</h5><p>Tomcat创建web应用时，会构建ServletContext对象，根据web.xml中的配置把如下参数都存到ServletContext对象中，注册Listener，Servlet等</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span>  </span><br><span class="line">  </span><br><span class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">version</span>=<span class="string">&quot;3.0&quot;</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    </span><br><span class="line">    &lt;!—ServletContext自有的init 参数--&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">context-param</span>&gt;</span>  </span><br><span class="line">        &lt;!—创建Root WAC所需要的配置文件路径--&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>/WEB-INF/spring/applicationContext.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">context-param</span>&gt;</span>  </span><br><span class="line">  	</span><br><span class="line">    &lt;!—注册ContextLoaderListener--&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">listener</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">listener</span>&gt;</span>  </span><br><span class="line">    </span><br><span class="line">    &lt;!—注册DispatcherServlet ServletConfig--&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>dispatcher<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>org.springframework.web.servlet.DispatcherServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span> </span><br><span class="line">        &lt;!—init Servlet所需参数--&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">init-param</span>&gt;</span>  </span><br><span class="line">            &lt;!—创建Servlet WAC所需参数--&gt;</span><br><span class="line">            <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>/WEB-INF/spring/spring-servlet.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">load-on-startup</span>&gt;</span>1<span class="tag">&lt;/<span class="name">load-on-startup</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">servlet</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span>  </span><br><span class="line">        &lt;!—指定某个servlet的URL映射路径--&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>dispatcher<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span>  </span><br><span class="line">  </span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="ContextLoaderListener-创建-Root-WAC"><a href="#ContextLoaderListener-创建-Root-WAC" class="headerlink" title="ContextLoaderListener - 创建 Root WAC"></a>ContextLoader<mark>Listener<mark> - 创建 Root WAC</h4><ul>
-<li><p>本质就是一个Listener，因此需要在web.xml中注册</p>
-</li>
-<li><p>实现了ServletContextListener接口，EventListener-&gt;ServletContextListener</p>
-</li>
-<li><p>继承了ContextLoader类，见名知意，是用来加载WAC的，有一个WAC参数context，所有方法都是围绕加工这个context字段进行的</p>
-</li>
-</ul>
-<h5 id="WebApplicationContext-initWAC-ServletContext-sc"><a href="#WebApplicationContext-initWAC-ServletContext-sc" class="headerlink" title="WebApplicationContext initWAC(ServletContext sc)"></a>WebApplicationContext initWAC(ServletContext sc)</h5><p>ContextLoaer 接收一个ServletContext参数sc，调用initWAC方法返回加载好的WAC对象this.context</p>
-<p>打印在服务器日志上 <code>servletContext.log(&quot;Initializing Spring root WebApplicationContext&quot;);</code></p>
-<p>中间调用<code>createWAC(ServletContext sc)</code>返回一个ConfigurableWAC对象，将其<strong>parentContext设置为sc</strong>，</p>
-<p>再把这个CWAC和sc传给<code>configureAndRefreshWAC(CWAC cwac,ServletContext sc)</code>方法进行配置（ServletContext是根据web.xml构建的，根据key: contextConfigLocation找到RootWAC的配置文件<code>applicationContext.xml</code>）</p>
-<p>之后在sc中创建一个Attribute，使得能通过ServletContext对这个Root WAC进行访问（键值对形式）</p>
-<p><code>setAttribute(</code> <code>WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE</code>, <code>this.context)</code></p>
-<p>最终返回 <code>this.context</code> 作为 Root WAC</p>
-<h5 id="WebApplicationContext-contextInitialized-ServletContextEvent-sce"><a href="#WebApplicationContext-contextInitialized-ServletContextEvent-sce" class="headerlink" title="WebApplicationContext contextInitialized(ServletContextEvent sce)"></a>WebApplicationContext contextInitialized(ServletContextEvent sce)</h5><p>ContextLoaderListener 能监听Web应用启动或关闭的事件（会修改ServletContext中的参数），触发contextInitializaed/contextDestroyed，创建或销毁Root WAC。</p>
-<h4 id="DispatcherServlet-创建-Servlet-WAC"><a href="#DispatcherServlet-创建-Servlet-WAC" class="headerlink" title="DispatcherServlet - 创建 Servlet WAC"></a>Dispatcher<mark>Servlet<mark> - 创建 Servlet WAC</h4><ul>
-<li><p>本质就是一个Servlet，所以需要在web.xml中注册，继承自HttpServlet-&gt;HttpServletBean-&gt;FrameworkServlet</p>
-</li>
-<li><p>Spring MVC 的核心前端控制器，用于处理所有进入的 HTTP 请求。将请求分发给适当的处理器（控制器 Controller），并在处理后将响应返回给客户端。</p>
-</li>
-<li><p>每一个 <code>DispatcherServlet</code> 都拥有自己的 <a href="#swac">Servlet WebApplicationContext</a>，管理与 Web 层(表现层)相关的 Bean，如控制器、视图解析器、拦截器等。</p>
-</li>
-<li><p>HttpServletBean有一个final的init()<strong>[Servlet的入口方法]</strong>  其中会调用抽象方法initServletBean()</p>
-</li>
-<li><p>FrameServlet实现了initServletBean(): <strong>[生成Servlet WAC，设置parent和ServletContext]</strong> 最后会调用initStrategies</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ServletContext</span> <span class="variable">var10000</span> <span class="operator">=</span> <span class="built_in">this</span>.getServletContext();</span><br><span class="line"><span class="type">String</span> <span class="variable">var10001</span> <span class="operator">=</span> <span class="built_in">this</span>.getClass().getSimpleName();</span><br><span class="line">var10000.log(<span class="string">&quot;Initializing Spring &quot;</span> + var10001 + <span class="string">&quot; &#x27;&quot;</span> + <span class="built_in">this</span>.getServletName() + <span class="string">&quot;&#x27;&quot;</span>);</span><br><span class="line"><span class="comment">//记录日志</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>同样的，途中也会调用自己的initWAC方法：<ul>
-<li>调用WACUtils工具类，获得自己所在的ServletContext的<strong>Root WAC</strong> </li>
-<li>将自己的WAC转换成CWAC，如果存在RootWAC，则将其设置为自己的parent</li>
-<li>然后configureAndRefreshWAC(cwac)：设置ServletContext为sc，从其中ServletConfig中获取 <code>&lt;init-param&gt;</code> 参数的值</li>
-</ul>
-</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023013013442.png" alt="image-20241023013013442"></p>
-<ul>
-<li>最后根据自己的ServletConfig获取到ServletContext，根据自己的名称设置自己的Servlet WAC在ServletContext中的Key</li>
-</ul>
-</li>
-<li><p>DispatcherServlet实现了initStrategies [生成各个功能组件，异常处理器，视图处理，请求映射]</p>
-</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/mvc-context-hierarchy.png" alt="mvc-context-hierarchy"></p>
-<p>这两个context都是在ServletContext中，属于dispatcherServlet的上下文是servletWAC，找不到的话就去rootWAC中找</p>
-<h4 id="替代web-xml，以Java形式配置ServletContext——WebApplicationInitializer"><a href="#替代web-xml，以Java形式配置ServletContext——WebApplicationInitializer" class="headerlink" title="替代web.xml，以Java形式配置ServletContext——WebApplicationInitializer"></a><span id="webappinit">替代web.xml，以Java形式配置ServletContext——WebApplicationInitializer</span></h4><p>![屏幕截图 2024-10-23 133904](<a target="_blank" rel="noopener" href="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE">https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/屏幕截图</a> 2024-10-23 133904.png)</p>
-<h5 id="ServletContainerInitializer"><a href="#ServletContainerInitializer" class="headerlink" title="ServletContainerInitializer"></a>ServletContainerInitializer</h5><p>之前，web容器（Tomcat）会根据WEB-INF下的web.xml初始化ServletContext</p>
-<p>Java EE Servlet 规范定义了这个接口，web容器（Tomcat）启动时根据这个初始化器做一些组件内的初始化工作。 </p>
-<p><strong>SpringServletContainerInitializer</strong> 是Spring 对其的实现，其onStartup方法会调用 <strong><a href="#webappinit">WebApplicationInitializer</a></strong> 的onStartup(<strong>ServletContext sc</strong>)初始化Web应用</p>
-<h4 id="SpringMVC-Web应用启动流程"><a href="#SpringMVC-Web应用启动流程" class="headerlink" title="SpringMVC Web应用启动流程"></a>SpringMVC Web应用启动流程</h4><ul>
-<li>Tomcat 读取web.xml中 <code>&lt;context-param&gt;</code> <code>&lt;listener&gt;</code>  然后创建一个全局共享的ServletContext</li>
-<li>Tomcat 将<code>&lt;context-param&gt;</code> <code>&lt;listener&gt;</code>转化为键值对，存到ServletContext </li>
-<li>Tomcat 加载Listener实例，实施监听，Listener必须实现<u>ServletContext</u>Listener接口（比如ContextLoaderListener）</li>
-<li><strong>Web项目继续启动中</strong>，触发Listener中的contextInitialized(ServletContexEvent event)，根据ServletContext中 <code>&lt;context-param&gt;</code> 部分创建父容器，configClass是类的形式，configLocation是xml配置文件的形式</li>
-<li>创建完父容器，如果有<code>&lt;filter&gt;</code>会创建filter，然后读取 <code>&lt;servlet&gt;</code> 用于注册DispatcherServlet（这块流程建议从init方法一步步往下看，流程还是很清晰的），因为DispatcherServlet实质是一个Servlet，所以会先执行它的init方法。这个init()方法在<strong>HttpServletBean</strong>这个类中实现，其主要工作是做一些初始化工作，将我们在web.xml中配置的参数设置到ServletContext的ServletConfig中，然后再触发<strong>FrameworkServlet</strong>的initServletBean()方法；<ul>
-<li><strong>FrameworkServlet</strong>主要作用是初始化Spring子容器，设置其父容器，并将其放入ServletContext中；</li>
-<li><strong>FrameworkServlet</strong>在调用initServletBean()的过程中同时会触发<strong>DispatcherServlet</strong>的onRefresh()方法，这个方法会初始化Spring MVC的各个功能组件。比如异常处理器、视图处理器、请求映射处理等</li>
-</ul>
-</li>
-</ul>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/54chensongxia/p/12522804.html">Spring MVC启动流程</a> </p>
-<h5 id="100-code-based"><a href="#100-code-based" class="headerlink" title="100% code-based"></a>100% code-based</h5><p>用Java类的形式配置ServletContext，有一些细微差异，Spring这边实现了ServletContainerInitializer接口，注册组件的工作就交给了WebApplicationInitializer：</p>
-<p>先根据指定的rootWacConfig配置类（SpringConfig）创建出父容器，父容器作为参数进行Listener的有参构造，最后以<mark>add<mark>Listener的方式注册到ServletContext中。</p>
-<h2 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h2><h3 id="Interceptor"><a href="#Interceptor" class="headerlink" title="Interceptor"></a>Interceptor</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023193138396.png" alt="image-20241023193138396"></p>
-<h4 id="Interceptor-vs-Filter"><a href="#Interceptor-vs-Filter" class="headerlink" title="Interceptor vs Filter"></a>Interceptor vs Filter</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023193414214.png" alt="image-20241023193414214"></p>
-<p>filter在一定是在访问servlet之前，interceptor只能在servlet中， <mark>before Controller<mark></p>
-<h3 id="功能类"><a href="#功能类" class="headerlink" title="功能类"></a>功能类</h3><p>控制表现层：controller下新建interceptor包，新建一个Interceptor类 <strong>extends HandlerInterceptor</strong> </p>
-<p>注意preHandle返回值和@Component</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023210048371.png" alt="image-20241023210048371"></p>
-<h4 id="SpringMvcSupport"><a href="#SpringMvcSupport" class="headerlink" title="SpringMvcSupport"></a>SpringMvcSupport</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023205518460.png" alt="image-20241023205518460"></p>
-<p>addInterceptors 自动注入自定义拦截器</p>
-<p>addPathPatterns 加的不是前缀，<mark>是严格的URL匹配<mark>，配/books就拦截对/books发的请求，/books/100就拦截不了</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023205715345.png" alt="image-20241023205715345"></p>
-<p><mark>preHandle<mark>，yourService，postHandle，afterCompletion 顺序</p>
-<h4 id="示意图"><a href="#示意图" class="headerlink" title="示意图"></a>示意图</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023210636045.png" alt="image-20241023210636045"></p>
-<h4 id="简化开发"><a href="#简化开发" class="headerlink" title="简化开发"></a>简化开发</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023210528299.png" alt="image-20241023210528299"></p>
-<p>已经和Spring接口绑定，侵入性强。</p>
-<h3 id="拦截方法参数配置"><a href="#拦截方法参数配置" class="headerlink" title="拦截方法参数配置"></a>拦截方法参数配置</h3><h4 id="boolean-preHandle-req-resp-handler"><a href="#boolean-preHandle-req-resp-handler" class="headerlink" title="boolean preHandle(req,resp,handler)"></a>boolean preHandle(req,resp,<mark>handler<mark>)</h4><p>req和resp是servlet的响应和请求，handler实际上是HandlerMethod，通过getMethod能拿到执行的业务方法的对象（反射）</p>
-<h4 id="void-postHandle-req-resp-handler-modelAndView"><a href="#void-postHandle-req-resp-handler-modelAndView" class="headerlink" title="void postHandle(req,resp,handler,modelAndView)"></a>void postHandle(req,resp,<mark>handler<mark>,modelAndView)</h4><p>页面跳转相关。</p>
-<h4 id="void-afterCompletion-req-resp-handler-exception"><a href="#void-afterCompletion-req-resp-handler-exception" class="headerlink" title="void afterCompletion(req,resp,handler,exception)"></a>void afterCompletion(req,resp,<mark>handler<mark>,exception)</h4><p>能拿到原始业务方法执行过程中的异常</p>
-<h3 id="拦截链顺序"><a href="#拦截链顺序" class="headerlink" title="拦截链顺序"></a>拦截链顺序</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023211911820.png" alt="image-20241023211911820"></p>
-<p>拦截顺序，和注册顺序有关系</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023212439810.png" alt="image-20241023212439810"></p>
-<p>如果某个pre返回false，post全部跳过，倒序执行，从最近一个pre返回true的拦截器开始执行afterCompletion</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023212527269.png" alt="image-20241023212527269"></p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/penriver/article/details/118571991">万字详解 GoF 23 种设计模式（多图、思维导图、模式对比），让你一文全面理解-CSDN博客</a></p>
-<h1 id="Spring-Boot"><a href="#Spring-Boot" class="headerlink" title="Spring Boot"></a>Spring Boot</h1><h2 id="入门案例——Web项目"><a href="#入门案例——Web项目" class="headerlink" title="入门案例——Web项目"></a>入门案例——Web项目</h2><h3 id="创建boot模块"><a href="#创建boot模块" class="headerlink" title="创建boot模块"></a>创建boot模块</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/dream_ready/article/details/134639886">idea创建不了spring2.X版本，无法使用JDK8，最低支持JDK17 ， 如何用idea创建spring2.X版本，使用JDK8解决方案_spring3不支持jdk8-CSDN博客</a></p>
-<p>SpringBoot2停止维护，SpringBoot3最低Java17</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025190302057.png" alt="image-20241025190302057"></p>
-<h3 id="写控制器类"><a href="#写控制器类" class="headerlink" title="写控制器类"></a>写控制器类</h3><p>把controller类写好</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025194037167.png" alt="image-20241025194037167"></p>
-<h3 id="启动app"><a href="#启动app" class="headerlink" title="启动app"></a>启动app</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025194052846.png" alt="image-20241025194052846"></p>
-<h2 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h2><h3 id="打包—jar"><a href="#打包—jar" class="headerlink" title="打包—jar"></a>打包—jar</h3><p><code>package</code> 之前 <code>clean</code> 全部设置为UTF-8参数</p>
-<h3 id="命令行启动-java-jar"><a href="#命令行启动-java-jar" class="headerlink" title="命令行启动 java -jar"></a>命令行启动 java -jar</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025194844475.png" alt="image-20241025194844475"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025194925821.png" alt="image-20241025194925821"></p>
-<p>jar执行要有入口类，boot打包需要插件才能生成可执行的入口类</p>
-<h2 id="简述boot"><a href="#简述boot" class="headerlink" title="简述boot"></a>简述boot</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025195226537.png" alt="image-20241025195226537"></p>
-<h3 id="starter-起步依赖"><a href="#starter-起步依赖" class="headerlink" title="starter 起步依赖"></a>starter 起步依赖</h3><h3 id="starter-parent-依赖管理"><a href="#starter-parent-依赖管理" class="headerlink" title="starter-parent 依赖管理"></a>starter-parent 依赖管理</h3><p>starter-parent：定义了无数jar包的版本管理和依赖管理，减少依赖冲突。只写GA 不写V</p>
-<h3 id="dependencies-辅助功能"><a href="#dependencies-辅助功能" class="headerlink" title="dependencies-辅助功能"></a>dependencies-辅助功能</h3><p>每一个dependency（以web包为例）把真正需要用到的jar包声明，去找parent要即可</p>
-<p>spring-boot-starter-web: </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025201404198.png" alt="image-20241025201404198"></p>
-<p>spring-boot-dependencies: </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025201443556.png" alt="image-20241025201443556"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025201805886.png" alt="image-20241025201805886"></p>
-<h3 id="替换starter的某个依赖"><a href="#替换starter的某个依赖" class="headerlink" title="替换starter的某个依赖"></a>替换starter的某个依赖</h3><p>依赖排除exclusion，换技术</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025202142653.png" alt="image-20241025202142653"></p>
-<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><h3 id="resources目录下配置文件加载优先级"><a href="#resources目录下配置文件加载优先级" class="headerlink" title="resources目录下配置文件加载优先级"></a>resources目录下配置文件加载优先级</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025204356892.png" alt="image-20241025204356892"></p>
-<p>properties&gt;<mark>yml<mark>&gt;yaml</p>
-<h3 id="自动提示功能消失—引入配置文件到boot模块中"><a href="#自动提示功能消失—引入配置文件到boot模块中" class="headerlink" title="自动提示功能消失—引入配置文件到boot模块中"></a>自动提示功能消失—引入配置文件到boot模块中</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025204437530.png" alt="image-20241025204437530"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025204503008.png" alt="image-20241025204503008"></p>
-<p>debug&gt;info&gt;warn</p>
-<h3 id="YAML—-YAML-Ain’t-Markup-Language"><a href="#YAML—-YAML-Ain’t-Markup-Language" class="headerlink" title="YAML—(YAML Ain’t Markup Language)"></a>YAML—(YAML Ain’t Markup Language)</h3><h4 id="YAML-简介"><a href="#YAML-简介" class="headerlink" title="YAML 简介"></a>YAML 简介</h4><p>Jamel  Camel</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025204800590.png" alt="image-20241025204800590"></p>
-<h4 id="语法规则"><a href="#语法规则" class="headerlink" title="语法规则"></a>语法规则</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025204945594.png" alt="image-20241025204945594"></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 空格数量不限，只要前面格数一样就是同一级，不允许使用tab缩进</span></span><br><span class="line"><span class="attr">enterprise:</span></span><br><span class="line"> <span class="attr">name:</span> <span class="string">John</span></span><br><span class="line"> <span class="attr">likes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Java</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Python</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">C++</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025205033642.png" alt="image-20241025205033642"></p>
-<h3 id="以Java方式读取yaml配置文件"><a href="#以Java方式读取yaml配置文件" class="headerlink" title="以Java方式读取yaml配置文件"></a>以Java方式读取yaml配置文件</h3><h4 id="读取单个数据—定义成员变量-Value-enterprise-subject"><a href="#读取单个数据—定义成员变量-Value-enterprise-subject" class="headerlink" title="读取单个数据—定义成员变量@Value(${enterprise.subject)"></a>读取单个数据—定义成员变量@Value(${enterprise.subject)</h4><p>自动赋值</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025205805383.png" alt="image-20241025205805383"></p>
-<h4 id="读取全部数据—Environment对象"><a href="#读取全部数据—Environment对象" class="headerlink" title="读取全部数据—Environment对象"></a>读取全部数据—Environment对象</h4><p>定义一个Environment，自动装配，将配置中的属性全部遍历:</p>
-<p><code>environment.getProperty(&quot;name&quot;)</code></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025210024893.png" alt="image-20241025210024893"></p>
-<h4 id="自定义对象封装指定数据-Component-ConfigurationProperties-prefix-enterprise"><a href="#自定义对象封装指定数据-Component-ConfigurationProperties-prefix-enterprise" class="headerlink" title="自定义对象封装指定数据@Component@ConfigurationProperties(prefix = enterprise)"></a><strong>自定义对象封装指定数据</strong>@Component@ConfigurationProperties(prefix = enterprise)</h4><p>可以拿到需要的某个属性的信息(prefix)</p>
-<p>在控制器中定义成员变量自动装配，常用</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025210946272.png" alt="image-20241025210710013"></p>
-<h5 id="自定义对象封装数据警告"><a href="#自定义对象封装数据警告" class="headerlink" title="自定义对象封装数据警告"></a>自定义对象封装数据警告</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025211036999.png" alt="image-20241025211036999"></p>
-<h3 id="多环境开发"><a href="#多环境开发" class="headerlink" title="多环境开发"></a>多环境开发</h3><h4 id="生产环境设定"><a href="#生产环境设定" class="headerlink" title="生产环境设定"></a>生产环境设定</h4><p><strong>独立生产环境设定</strong>：</p>
-<p><code>spring.profiles</code> <strong>boot2</strong></p>
-<p><code>spring.config.activate.on-profile</code> <strong>boot3</strong></p>
-<p><code>---</code> 三条横线分割配置</p>
-<p><code>spring.profiles.active</code> 设置激活的环境</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025214421983.png" alt="image-20241025214421983"></p>
-<h4 id="带参数启动boot"><a href="#带参数启动boot" class="headerlink" title="带参数启动boot"></a>带参数启动boot</h4><h5 id="命令行参数临时修改配置内容"><a href="#命令行参数临时修改配置内容" class="headerlink" title="命令行参数临时修改配置内容"></a>命令行参数临时修改配置内容</h5><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改启动环境为test</span></span><br><span class="line">java -jar boot_1.0_SNAPSHOT.jar --spring.profiles.active=<span class="built_in">test</span></span><br><span class="line"><span class="comment"># 修改服务器端口号为88</span></span><br><span class="line">java -jar boot_1.0_SNAPSHOT.jar --server.port=88</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h5 id="参数加载优先级"><a href="#参数加载优先级" class="headerlink" title="参数加载优先级"></a>参数加载优先级</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025215406246.png" alt="image-20241025215406246"></p>
-<h4 id="maven-amp-boot开发环境兼容—加载配置文件"><a href="#maven-amp-boot开发环境兼容—加载配置文件" class="headerlink" title="maven&amp;boot开发环境兼容—加载配置文件"></a>maven&amp;boot开发环境兼容—加载配置文件</h4><p>maven和boot都设置了多环境，但是打包工作是maven负责，所以maven应该占主导</p>
-<p>手动配置resources插件，覆盖parent设定</p>
-<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/hcgk/p/17600908.html">maven-resources-plugin详解 - 红尘过客2022 - 博客园 (cnblogs.com)</a></p>
-<h5 id="lt-resources-gt-lt-filtering-gt"><a href="#lt-resources-gt-lt-filtering-gt" class="headerlink" title="&lt;resources&gt; (&lt;filtering&gt;)"></a><code>&lt;resources&gt;</code> (<code>&lt;filtering&gt;</code>)</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026013908079.png" alt="image-20241026013908079"></p>
-<p><code>&lt;resources&gt;</code>标签其实就是<code>maven-resources-plugin</code>的<code>&lt;resources&gt;</code>配置，主要用来配置资源目录的。普通项目没有<code>parent</code>，默认继承<code>父pom.xml</code>: </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026024547372.png" alt="image-20241026024547372"></p>
-<p>可以看到<code>resources</code>默认就是项目下的<code>src/main/resources</code>，但是没开过滤<code>filtering</code>，所以之前maven课程中，<u>在配置文件中引入占位符还得重写一遍resources标签。</u></p>
-<p>而boot模块默认继承的starter-parent默认的<code>resources</code>标签是开了过滤的，而且资源明确<code>包括application.yml</code>这种配置文件，所以即使子项目里不用手动复写<code>resources</code>也能匹配到占位符：</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026025346547.png" alt="image-20241026025346547"></p>
-<h5 id="maven-resources-plugin-lt-useDefaultDelimeters-gt"><a href="#maven-resources-plugin-lt-useDefaultDelimeters-gt" class="headerlink" title="maven-resources-plugin (&lt;useDefaultDelimeters&gt; )"></a><code>maven-resources-plugin</code> (<code>&lt;useDefaultDelimeters&gt;</code> )</h5><p><code>&lt;useDefaultDelimeters&gt;</code> 支持使用<code>$&#123;&#125;或@</code>过滤资源 </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026021624316.png" alt="image-20241026021624316"></p>
-<p>boot的starter-parent默认对<code>resources-plugin</code>的配置也做了自定义更改（主要就是<code>&lt;useDefaultDelimeters&gt;</code> = false）而上文提到的父pom没有，<code>&lt;useDefaultDelimeters&gt;</code>默认就是true</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026025510839.png" alt="image-20241026025510839"></p>
-<h4 id="定义多环境-lt-profiles-gt"><a href="#定义多环境-lt-profiles-gt" class="headerlink" title="定义多环境 &lt;profiles&gt;"></a>定义多环境 <code>&lt;profiles&gt;</code></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026005328800.png" alt="image-20241026005328800"></p>
-<h4 id="配置属性替换占位符"><a href="#配置属性替换占位符" class="headerlink" title="配置属性替换占位符"></a>配置属性替换占位符</h4><h5 id=""><a href="#" class="headerlink" title="@"></a><code>@</code></h5><p>boot项目的parent为了防止spring占位符被扩展，所以只允许<code>@</code>为占位符，不解析<code>$&#123;&#125;</code>。如果已经继承starter-parent，直接在配置文件中@xxx@即可。 <a target="_blank" rel="noopener" href="https://docs.springjava.cn/spring-boot/how-to/properties-and-configuration.html#howto.properties-and-configuration.expand-properties.maven">parent不是starter-parent的解决办法</a></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026021230152.png" alt="image-20241026021230152"></p>
-<h5 id="-1"><a href="#-1" class="headerlink" title="${}"></a><code>$&#123;&#125;</code></h5><p>非要用${}，可以使用如下方法覆盖配置：</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026081744618.png" alt="image-20241026081744618"></p>
-<p>或者启用插件的<code>&lt;useDefaultDelimeters&gt;</code> = true</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026005308461-1729903011039-5.png" alt="image-20241026005308461"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026005348094-1729902750823-1-1729902803907-3.png" alt="image-20241026005348094"></p>
-<h4 id="多配置文件加载优先级"><a href="#多配置文件加载优先级" class="headerlink" title="多配置文件加载优先级"></a>多配置文件加载优先级</h4><h5 id="包外配置"><a href="#包外配置" class="headerlink" title="包外配置"></a>包外配置</h5><p>假设JAR包位于file目录下，<code>file/config/application.yml</code> &gt; <code>file/application.yml</code></p>
-<h5 id="包内配置"><a href="#包内配置" class="headerlink" title="包内配置"></a>包内配置</h5><p><code>resources/config/application.yml</code> &gt; <code>resources/application.yml</code></p>
-<h4 id="Java项目目录结构"><a href="#Java项目目录结构" class="headerlink" title="Java项目目录结构"></a>Java项目目录结构</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026140333629.png" alt="image-20241026140333629" style="zoom: 67%;" />
-
-<ul>
-<li><p>src/main 就是编译以后的classpath(classes)，java是java源代码，resources资源文件，编译完打包都在同一个classes目录下。</p>
-</li>
-<li><p>src/test 是test-classes，属于测试文件，默认不会参与打包。</p>
-</li>
-<li><p>依赖放在<strong>包内</strong>和classes并列的lib目录</p>
-</li>
-<li><p>对于maven webapp骨架，main还有webapp目录，其中WEB-INF文件夹存放web.xml，打包之后web.xml classes lib并列放在WEB-INF中</p>
-<ul>
-<li>webapp也可存放静态资源，打包之后在JAR包中的第一级</li>
-</ul>
-</li>
-</ul>
-<h4 id="JAR包内部结构"><a href="#JAR包内部结构" class="headerlink" title="JAR包内部结构"></a>JAR包内部结构</h4><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/JAR_(%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F)">JAR (文件格式) - 维基百科，自由的百科全书 (wikipedia.org)</a></p>
-<p>META-INF 整个项目的元数据，MANIFEST.MF 包含执行时的入口类等信息</p>
-<p>BOOT-INF boot项目的jar包中 classes+lib</p>
-<p>WEB-INF web项目war包中 classes+lib+web.xml</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026143753352.png" alt="image-20241026143753352"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026143816570.png" alt="image-20241026143816570"></p>
-<h5 id="APK内部结构"><a href="#APK内部结构" class="headerlink" title="APK内部结构"></a>APK内部结构</h5><p>APK作为JAR包的变种，也具有相似的结构：</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026144246642.png" alt="image-20241026144246642"></p>
-<h2 id="与其他框架整合"><a href="#与其他框架整合" class="headerlink" title="与其他框架整合"></a>与其他框架整合</h2><h3 id="Spring-Boot-X-JUnit"><a href="#Spring-Boot-X-JUnit" class="headerlink" title="Spring Boot X JUnit"></a>Spring Boot X JUnit</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026151902777.png" alt="image-20241026151902777"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026152538674.png" alt="image-20241026152538674"></p>
-<h4 id="测试类注解-SpringBootTest"><a href="#测试类注解-SpringBootTest" class="headerlink" title="测试类注解@SpringBootTest"></a>测试类注解@SpringBootTest</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026152650043.png" alt="image-20241026152650043"></p>
-<p>SpringBoot启动类：@SpringBootApplication有加载bean的功能，会扫描当前包同层以及子包中所有的bean，加载bean（包含配置类）</p>
-<p>SpringBootTest会自动扫描SpringBootApplication，测试类不在启动类所在包/子包中，需要指定启动类的class文件</p>
-<h3 id="基于SpringBoot实现SSM整合"><a href="#基于SpringBoot实现SSM整合" class="headerlink" title="基于SpringBoot实现SSM整合"></a>基于SpringBoot实现SSM整合</h3><h4 id="整合MyBatis案例"><a href="#整合MyBatis案例" class="headerlink" title="整合MyBatis案例"></a>整合MyBatis案例</h4><h5 id="启动依赖-MyBatis-MySQL"><a href="#启动依赖-MyBatis-MySQL" class="headerlink" title="启动依赖-MyBatis,MySQL"></a>启动依赖-MyBatis,MySQL</h5><h5 id="pojo-dao-Mapper-MapperScan"><a href="#pojo-dao-Mapper-MapperScan" class="headerlink" title="pojo dao @Mapper @MapperScan"></a>pojo dao @Mapper @MapperScan</h5><p>mybatis自动代理注解开发返回的对象就是实体类，所以实体类不用配置，</p>
-<p>mybatis注解开发中@Mapper注解取代了bookMapper.xml，对mybatis声明这是一个mapper。</p>
-<p>spring-mybatis整合中，mybatis生成mapper的代理对象会以FactoryBean的形式交给Spring容器管理，要让mybatis知道mapper在哪里，就要加@Mapper注解</p>
-<p>spring-mybatis整合中，不加@Mapper注解，要么配置mapperScannerConfigurer，要么加@MapperScan扫mapper包。</p>
-<h5 id="application-yml-配置数据源"><a href="#application-yml-配置数据源" class="headerlink" title="application.yml 配置数据源"></a>application.yml 配置数据源</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026163010546.png" alt="image-20241026163010546"></p>
-<h4 id="SSM项目迁移到Spring-Boot"><a href="#SSM项目迁移到Spring-Boot" class="headerlink" title="SSM项目迁移到Spring Boot"></a>SSM项目迁移到Spring Boot</h4><p>TODO 注释前面加TODO 可以有事项清单</p>
-<h5 id="配置类全部删除"><a href="#配置类全部删除" class="headerlink" title="配置类全部删除"></a>配置类全部删除</h5><h5 id="Dao加-Mapper"><a href="#Dao加-Mapper" class="headerlink" title="Dao加@Mapper"></a>Dao加@Mapper</h5><h5 id="Controller-Service不变"><a href="#Controller-Service不变" class="headerlink" title="Controller Service不变"></a>Controller Service不变</h5><h5 id="application-yml-配置端口和数据源"><a href="#application-yml-配置端口和数据源" class="headerlink" title="application.yml 配置端口和数据源"></a>application.yml 配置端口和数据源</h5><h5 id="静态资源放到resources-static"><a href="#静态资源放到resources-static" class="headerlink" title="静态资源放到resources/static"></a>静态资源放到resources/static</h5><h6 id="静态资源的重定向-JS脚本"><a href="#静态资源的重定向-JS脚本" class="headerlink" title="静态资源的重定向(JS脚本)"></a>静态资源的重定向(JS脚本)</h6><p>访问一个web资源，如果直接访问 <code>localhost:port</code> 一般会请求一个主页index.html，为了能直接从地址访问资源，创建一个index.html，添加一个跳转的js脚本</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">	<span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&quot;pages/books.html&quot;</span>;</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-
       
     </div>
 
