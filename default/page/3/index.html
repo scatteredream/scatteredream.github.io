@@ -167,7 +167,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">76</span>
+          <span class="site-state-item-count">77</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -178,7 +178,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">123</span>
+        <span class="site-state-item-count">125</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -195,6 +195,822 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/12/29/408-%E8%AE%A1%E7%BD%91-%E5%8F%82%E8%80%83%E6%A8%A1%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/12/29/408-%E8%AE%A1%E7%BD%91-%E5%8F%82%E8%80%83%E6%A8%A1%E5%9E%8B/" class="post-title-link" itemprop="url">OSI参考模型</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-12-29 00:00:00" itemprop="dateCreated datePublished" datetime="2024-12-29T00:00:00+08:00">2024-12-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-05 11:47:24" itemprop="dateModified" datetime="2025-05-05T11:47:24+08:00">2025-05-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%BD%91/" itemprop="url" rel="index"><span itemprop="name">计网</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>表示层：数据的编解码与加解密，以及压缩，socket也属于这一层</p>
+<p>会话层：连接的建立</p>
+<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><h2 id="因特网"><a href="#因特网" class="headerlink" title="因特网"></a>因特网</h2><p>inter-前缀意为“相互的”，internet表示相互连接的网络，任意的通信协议。</p>
+<p>Internet表示全球最大的开放特定计算机网络，使用TCP/IP协议族作为通信规则，前身为ARPANET</p>
+<h3 id="发展概述"><a href="#发展概述" class="headerlink" title="发展概述"></a>发展概述</h3><h4 id="ARPANET-gt-Internet"><a href="#ARPANET-gt-Internet" class="headerlink" title="ARPANET -&gt; Internet"></a>ARPANET -&gt; Internet</h4><ul>
+<li>1969，ARPANET</li>
+<li>mid 1970s，多种网络互联的研究</li>
+<li><strong>1983</strong>，TCP/IP成为ARPANET的标准协议，也是公认的Internet诞生时间</li>
+</ul>
+<h4 id="三级结构的Internet"><a href="#三级结构的Internet" class="headerlink" title="三级结构的Internet"></a>三级结构的Internet</h4><ul>
+<li>1985，NSFNET</li>
+<li>1990，ARPANET closed</li>
+<li>1991，Internet开始商业化</li>
+</ul>
+<h4 id="多层次ISP结构的Internet"><a href="#多层次ISP结构的Internet" class="headerlink" title="多层次ISP结构的Internet"></a>多层次ISP结构的Internet</h4><ul>
+<li>1993，NSFNET逐渐被商用Internet主干网取代，政府机构将其交给ISP运营</li>
+<li>1994，万维网WWW技术促使因特网迅猛发展</li>
+<li>1995，NSFNET停止运作，Internet正式商业化</li>
+</ul>
+<h3 id="ISP"><a href="#ISP" class="headerlink" title="ISP"></a>ISP</h3><p> <img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028134459569.png" alt="image-20241028134459569"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028134717845.png" alt="image-20241028134717845"></p>
+<h3 id="标准化—RFC"><a href="#标准化—RFC" class="headerlink" title="标准化—RFC"></a>标准化—RFC</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028134853049.png" alt="image-20241028134853049"></p>
+<h3 id="组成"><a href="#组成" class="headerlink" title="组成"></a>组成</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028134950779.png" alt="image-20241028134950779"></p>
+<h2 id="信息交换技术"><a href="#信息交换技术" class="headerlink" title="信息交换技术"></a>信息交换技术</h2><h3 id="电路交换"><a href="#电路交换" class="headerlink" title="电路交换"></a>电路交换</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028151306409.png" alt="image-20241028151306409"></p>
+<h3 id="报文交换"><a href="#报文交换" class="headerlink" title="报文交换"></a>报文交换</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028151319591.png" alt="image-20241028151319591"></p>
+<p>报文加首部，便于给交换机提供信息</p>
+<h3 id="分组交换"><a href="#分组交换" class="headerlink" title="分组交换"></a>分组交换</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028151351499.png" alt="image-20241028151351499"></p>
+<p>将原来的报文分组，带首部依次发送每个组</p>
+<h2 id="计算机网络概念"><a href="#计算机网络概念" class="headerlink" title="计算机网络概念"></a>计算机网络概念</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><h4 id="要点"><a href="#要点" class="headerlink" title="要点"></a>要点</h4><p><strong>互连</strong></p>
+<p>通过有线/无线方式进行通信</p>
+<p><strong>集合</strong></p>
+<p>至少两台以上计算机</p>
+<p><strong>自治</strong></p>
+<p>独立的计算机，具备自己的硬件和软件，</p>
+<h4 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h4><p><strong>一些</strong> 通用可编程的<strong>硬件</strong>（包括智能手机、电脑等各种计算机，这些硬件并不只用于数据通信，而且能支持广泛的应用程序）<strong>互联</strong>而成。</p>
+<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p><strong>按交换技术分类</strong></p>
+<ul>
+<li>电路交换</li>
+<li>报文交换</li>
+<li>分组交换</li>
+</ul>
+<p><strong>按使用者分类</strong></p>
+<ul>
+<li>专用</li>
+<li>公用</li>
+</ul>
+<p><strong>按传输介质分类</strong></p>
+<ul>
+<li>有线 Wired</li>
+<li>无线 Wireless</li>
+</ul>
+<p><strong>按覆盖范围分类</strong></p>
+<p>覆盖范围从大到小排列：</p>
+<ul>
+<li><strong>广域网</strong> <strong>WAN</strong> Wide Area 国家、洲</li>
+<li>城域网 MAN Metropolitan Area 城市 </li>
+<li><strong>局域网</strong> <strong>LAN</strong> Local Area 机构、楼房</li>
+<li>个域网 PAN Personal Area 个人电子设备 组成的多处理机系统WPAN </li>
+</ul>
+<p><strong>按拓扑结构分类</strong></p>
+<ul>
+<li><p>总线</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028160634851.png" alt="image-20241028160634851"></p>
+</li>
+<li><p>星型</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028160648577.png" alt="image-20241028160648577"></p>
+</li>
+<li><p>环形</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028160700477.png" alt="image-20241028160700477"></p>
+</li>
+<li><p>网状</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028160718347.png" alt="image-20241028160718347"></p>
+</li>
+</ul>
+<h3 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h3><h4 id="比特、字节、速率（数据率，比特率）"><a href="#比特、字节、速率（数据率，比特率）" class="headerlink" title="比特、字节、速率（数据率，比特率）"></a>比特、字节、速率（数据率，比特率）</h4><p>1 GiB = 2^30^ B（操作系统）  1 GB = 10^9^ B（硬盘厂商） binary 表示二进制</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028161416193.png" alt="image-20241028161416193"></p>
+<ul>
+<li>kilo bps, ==k==bps, Mbps, Gbps, Tbps : 1000</li>
+<li>B, KB, MB, GB, GB : 1024 </li>
+<li>bps 进制为1000，Byte 进制为1024，8 b = 1 B</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028161845070.png" alt="image-20241028161845070"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028162145504.png" alt="image-20241028162145504"></p>
+<h4 id="带宽（Band-Width）"><a href="#带宽（Band-Width）" class="headerlink" title="带宽（Band Width）"></a>带宽（Band Width）</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028163439507.png" alt="image-20241028163439507"></p>
+<p>1 Mbps = 0.125 MB/s = 128 KB/s 下载速度一般用字节表示</p>
+<h4 id="吞吐量"><a href="#吞吐量" class="headerlink" title="吞吐量"></a>吞吐量</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028163850891.png" alt="image-20241028163850891"></p>
+<h4 id="时延（Delay）"><a href="#时延（Delay）" class="headerlink" title="时延（Delay）"></a>时延（Delay）</h4><h5 id="主机的发送速率"><a href="#主机的发送速率" class="headerlink" title="主机的发送速率"></a>主机的发送速率</h5><p>主机的发送速率，由<strong>网卡的发送速率</strong>、<strong>信道带宽</strong>、<strong>接口速率</strong>共同决定，取最小的那一个，速率应该尽量匹配。</p>
+<h5 id="发送时延、传播时延、处理时延"><a href="#发送时延、传播时延、处理时延" class="headerlink" title="发送时延、传播时延、处理时延"></a>发送时延、传播时延、处理时延</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028164902463.png" alt="image-20241028164902463"></p>
+<p><strong>发送时延</strong>-&gt;发送速率和分组数据包长度</p>
+<p><strong>传播时延</strong>-&gt;电线长度和光速（电磁波速率）</p>
+<p><strong>处理时延</strong>-&gt;忽略</p>
+<p>在发送数据时，电流的大小或电压水平会发生变化，这些变化被用来表示一串二进制码。具体来说，以下是这个过程的简要说明：</p>
+<ol>
+<li><strong>信号变化</strong>：在数字信号传输中，电流或电压会在不同的电平之间切换。比如，当电流达到某个高电压水平时，可以表示比特1，而在低电压水平时表示比特0。</li>
+<li><strong>时间同步</strong>：为了确保接收方能够正确识别这些电压变化，发送方和接收方通常会使用时钟信号进行同步。这保证了信号在正确的时间被读取，从而将电流的变化准确地转化为二进制数据。</li>
+<li><strong>比特流的形成</strong>：这些电流变化在时间轴上连续发生，从而形成一个比特流（例如 10101010），每个比特对应一个电压状态的变化。</li>
+</ol>
+<p>通过这些方式，电流的变化被抽象为数字信息，使得数据可以在计算机和网络之间进行有效传输。</p>
+<h6 id="哪一个占主导？"><a href="#哪一个占主导？" class="headerlink" title="哪一个占主导？"></a>哪一个占主导？</h6><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028164759500.png" alt="image-20241028164759500"></p>
+<h5 id="时延计算要点"><a href="#时延计算要点" class="headerlink" title="时延计算要点"></a>时延计算要点</h5><p><strong>1个分组，1段链路</strong></p>
+<p>从上图也可以看出，即使是100MB的数据块，一共是800M个比特，发送时延都是全部计入的，而传播时延只需将距离除以传输速度即可。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029204300220.png" alt="image-20241029204300220"></p>
+<p>横坐标是时间，纵坐标是位置，比特是一个接着一个向前传播的，发送时延取决于发送方：每个比特的发送时间都要计入发送时延，传播时延取决于最后一个比特的尾部传到对面所需的时间。</p>
+<p><strong>n个分组，n段链路</strong></p>
+<ul>
+<li>第一段链路：n个分组发送时延+1个传播时延</li>
+<li>第二段链路：发送和接收同时进行，等到第一段链路传输完成，第二段还剩最后1个分组未发送，因此第二段链路的实际时延为1个分组发送时延+1个传播时延</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029205641630.png" alt="image-20241029205641630"></p>
+<ul>
+<li>n段路,m组：n个传播时延+[m+(n-1)*1]个分组发送时延，</li>
+<li>存储转发：只有完整地接收一个比特，才能开始发送的工作</li>
+</ul>
+<p><strong>电路交换和分组交换时延</strong></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029211907159.png" alt="image-20241029211907159"></p>
+<ul>
+<li>电路先要建立连接，然后直接发送整个报文，<strong>没有存储转发</strong>，相当于一组一链路</li>
+<li><strong>分组交换不用先建立连接，每一个分组采用存储转发方式</strong>。牢记四个变量：<ul>
+<li><strong>1个分组发送时间</strong>，</li>
+<li><strong>分组数量</strong>，</li>
+<li><strong>1个链路传播时间</strong>，</li>
+<li><strong>链路数量</strong> </li>
+</ul>
+</li>
+</ul>
+<p><strong>报文交换和分组交换</strong></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029213402856.png" alt="image-20241029213402856"></p>
+<p>报文交换需要整整发送两次，分组交换需要发送组数加1次，流水线</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029214114258.png" alt="image-20241029214114258"></p>
+<h5 id="时延带宽积"><a href="#时延带宽积" class="headerlink" title="时延带宽积"></a>时延带宽积</h5><p>传播时延x带宽 传播过去一个比特的时间内，发送了多少比特，也称为比特单位的链路长度</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028170442570.png" alt="image-20241028170442570"></p>
+<h4 id="往返时间（RTT）"><a href="#往返时间（RTT）" class="headerlink" title="往返时间（RTT）"></a>往返时间（RTT）</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028180207539.png" alt="image-20241028180207539"></p>
+<p>Round-Trip 传输耗时要考虑在内，<strong>双向交互</strong></p>
+<h4 id="利用率"><a href="#利用率" class="headerlink" title="利用率"></a>利用率</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028180135459.png" alt="image-20241028180135459"></p>
+<h4 id="丢包率（Packet-Loss）"><a href="#丢包率（Packet-Loss）" class="headerlink" title="丢包率（Packet Loss）"></a>丢包率（Packet Loss）</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028181110596.png" alt="image-20241028181110596"></p>
+<p>一些路由算法在未满时就会有丢包操作</p>
+<h2 id="体系结构"><a href="#体系结构" class="headerlink" title="体系结构"></a>体系结构</h2><h3 id="OSI-参考模型-amp-TCP-IP-模型"><a href="#OSI-参考模型-amp-TCP-IP-模型" class="headerlink" title="OSI 参考模型 &amp; TCP/IP 模型"></a>OSI 参考模型 &amp; TCP/IP 模型</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029195855494.png" alt="image-20241029195855494"></p>
+<p>表示层：通信双方交换信息表示问题（数据格式转换），包括字符集转换，数据格式化，文本压缩，数据加密和解密的工作</p>
+<p>会话层：对话管理，会话管理</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028182558729.png" alt="image-20241028182558729"  />
+
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028182833901.png" alt="image-20241028182833901"></p>
+<p>网络Network 网际Internet</p>
+<p>核心：TCP IP</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028182726625.png" alt="image-20241028182726625"></p>
+<h3 id="分层的必要性"><a href="#分层的必要性" class="headerlink" title="分层的必要性"></a>分层的必要性</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028190200363.png" alt="image-20241028190200363"></p>
+<h4 id="信号（bit）如何在两台机器之间传输—物理层"><a href="#信号（bit）如何在两台机器之间传输—物理层" class="headerlink" title="信号（bit）如何在两台机器之间传输—物理层"></a>信号（bit）如何在两台机器之间传输—物理层</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028185123827.png" alt="image-20241028185123827"></p>
+<h4 id="分组如何在网络内传输—数据链路层（MAC地址）"><a href="#分组如何在网络内传输—数据链路层（MAC地址）" class="headerlink" title="分组如何在网络内传输—数据链路层（MAC地址）"></a>分组如何在网络内传输—数据链路层（MAC地址）</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028185259670.png" alt="image-20241028185259670"></p>
+<p>PPP ARP </p>
+<h4 id="分组如何在不同网络间传输（路由）—网络层（IP地址）"><a href="#分组如何在不同网络间传输（路由）—网络层（IP地址）" class="headerlink" title="分组如何在不同网络间传输（路由）—网络层（IP地址）"></a>分组如何在不同网络间传输（路由）—网络层（IP地址）</h4><p>核心协议：IP ICMP</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028185452878.png" alt="image-20241028185452878"></p>
+<h4 id="进程之间基于网络的通信，端到端的通信—传输层（端口号）"><a href="#进程之间基于网络的通信，端到端的通信—传输层（端口号）" class="headerlink" title="进程之间基于网络的通信，端到端的通信—传输层（端口号）"></a>进程之间基于网络的通信，端到端的通信—传输层（端口号）</h4><p>核心协议：TCP UDP</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028185918747.png" alt="image-20241028185918747"></p>
+<h4 id="应用进程之间的交互实现特定网络—应用层"><a href="#应用进程之间的交互实现特定网络—应用层" class="headerlink" title="应用进程之间的交互实现特定网络—应用层"></a>应用进程之间的交互实现特定网络—应用层</h4><p>核心协议:HTTP POP3 SMTP（TCP）  DNS  RTP(UDP)</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028190013193.png" alt="image-20241028190013193"></p>
+<h3 id="案例：在浏览器敲下一个URL后发生了什么？—应用进程间基于网络的通信"><a href="#案例：在浏览器敲下一个URL后发生了什么？—应用进程间基于网络的通信" class="headerlink" title="案例：在浏览器敲下一个URL后发生了什么？—应用进程间基于网络的通信"></a>案例：在浏览器敲下一个URL后发生了什么？—应用进程间基于网络的通信</h3><p>浏览器发送HTTP请求（访问URL指向的资源），HTTP属于应用层协议，需要向下传输通过物理层传到路由器的物理层，再向上传输到达网络层，经过解析之后，再通过物理层传到服务器的物理层，物理层向上传输到应用层，应用层的Web服务器应用程序会解析HTTP报文，之后返回HTTP响应（URL对应的资源），通过类似的方法传回给浏览器进程。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/9c941130d600033193a3e02800da8fd.jpg" alt="9c941130d600033193a3e02800da8fd"></p>
+<h3 id="专用术语"><a href="#专用术语" class="headerlink" title="专用术语"></a>专用术语</h3><p>对等<strong>实体</strong>通过所属层级的通信<strong>协议</strong>，在下方层级的<strong>服务</strong>（下层两个对等实体间的逻辑通信能够向上层提供服务）下进行逻辑通信（不用考虑其他层，实际上这种通信不存在）。</p>
+<h4 id="实体"><a href="#实体" class="headerlink" title="实体"></a>实体</h4><h5 id="对等实体"><a href="#对等实体" class="headerlink" title="对等实体"></a>对等实体</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028204310699.png" alt="image-20241028204310699"></p>
+<h4 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028204254883.png" alt="image-20241028204254883"></p>
+<h5 id="语法：定义报文格式"><a href="#语法：定义报文格式" class="headerlink" title="语法：定义报文格式"></a>语法：定义报文格式</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028204056703.png" alt="image-20241028204056703"></p>
+<h5 id="语义：根据语法解析报文内容，定义出双方行为"><a href="#语义：根据语法解析报文内容，定义出双方行为" class="headerlink" title="语义：根据语法解析报文内容，定义出双方行为"></a>语义：根据语法解析报文内容，定义出双方行为</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028204146999.png" alt="image-20241028204146999"></p>
+<h5 id="同步：行为发生的时序关系（先后顺序）"><a href="#同步：行为发生的时序关系（先后顺序）" class="headerlink" title="同步：行为发生的时序关系（先后顺序）"></a>同步：行为发生的时序关系（先后顺序）</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028204026941.png" alt="image-20241028204026941"></p>
+<h4 id="服务"><a href="#服务" class="headerlink" title="服务"></a>服务</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028203948172.png" alt="image-20241028203948172"></p>
+<h5 id="服务访问点、服务原语"><a href="#服务访问点、服务原语" class="headerlink" title="服务访问点、服务原语"></a>服务访问点、服务原语</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028203743701.png" alt="image-20241028203743701"></p>
+<h5 id="协议数据单元PDU、服务数据单元SDU"><a href="#协议数据单元PDU、服务数据单元SDU" class="headerlink" title="协议数据单元PDU、服务数据单元SDU"></a>协议数据单元PDU、服务数据单元SDU</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241028203909481.png" alt="image-20241028203909481"></p>
+<h1 id="面试要点"><a href="#面试要点" class="headerlink" title="面试要点"></a>面试要点</h1><ol>
+<li>TCP/IP协议体系的认知 </li>
+<li>链路层<ol>
+<li>以太网帧的格式</li>
+<li>MTU的概念</li>
+<li>ARP协议（掌握一下ARP缓存的原理）</li>
+</ol>
+</li>
+<li>网络层<ol>
+<li>掌握IP的首部格式</li>
+<li>掌握IP的分片</li>
+<li>掌握IP选路</li>
+<li>ICMP协议<ol>
+<li>掌握报文格式</li>
+<li>分类：查询 + 差错</li>
+<li>两种 + 五种</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>传输层<ol>
+<li>UDP，次要一点，掌握特点和首部各个字段</li>
+<li>掌握TCP<ol>
+<li>特点 + 首部字段 + 可靠机制</li>
+<li>连接控制 ： 三次握手，四次挥手，同时打开，同时关闭，半关闭（可能问到为什么需要）</li>
+<li>流量控制机制：滑动窗口，慢启动，拥塞避免，快速重传，快速恢复</li>
+<li>超时重传机制</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>应用层<ol>
+<li>掌握DNS协议<ol>
+<li>名字空间</li>
+<li>指针查询（反向查找或逆向解析）基本原理</li>
+<li>DNS缓存</li>
+</ol>
+</li>
+<li>FTP协议（活化石）：<ol>
+<li>控制流和数据流</li>
+<li>两种工作模式： PASV 和 PORT</li>
+<li>各种指令和响应码</li>
+<li>断点续传和匿名FTP的概念</li>
+</ol>
+</li>
+<li>HTTP协议：<ol>
+<li>报文格式：请求报文，响应报文，请求头各种字段，响应头各种字段。</li>
+<li>HTTP状态码。</li>
+<li>HTTPS协议。</li>
+<li>握手的详细过程。</li>
+<li>摘要算法，数字签名，数字证书的原理和过程。</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h1 id="OSI七层模型"><a href="#OSI七层模型" class="headerlink" title="OSI七层模型"></a>OSI七层模型</h1><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/OSI%E6%A8%A1%E5%9E%8B">OSI模型 - 维基百科，自由的百科全书 (wikipedia.org)</a></p>
+<p>在<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1/9636548?fromModule=lemma_inlink">网络通信</a>的过程中，将发出数据的主机称为源主机，接收数据的主机称为目的主机。当源主机发出数据时，数据在源主机中从上层向下层传送。源主机中的应用进程先将数据交给应用层，应用层加上必要的控制信息就成了报文流，向下传给传输层。传输层将收到的数据单元加上本层的控制信息，形成报文段、数据报，再交给网际层。网际层加上本层的控制信息据报，传给网络接口层。网络接口层将网际层交下来的IP数据报组装成帧，并以比特流的形式传给网络硬件（即物理层），数据就离开源主机。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240921220715692.png" alt="image-20240921220715692"></p>
+<h1 id="物理层、数据链路层"><a href="#物理层、数据链路层" class="headerlink" title="物理层、数据链路层"></a>物理层、数据链路层</h1><p><strong>双绞线、集线器（HUB）</strong>：多台计算机之间物理连接，遇到并发情况会有<strong>数据碰撞与紊乱</strong>，而且数据都是广播形式传递，无法同时向上和向下传输（半双工，相当于对讲机，只能听不能说）。CSMA/CD协议，发送以前进行载波侦听。属于物理层。</p>
+<p><strong>交换机：</strong>全双工。物理连接，也支持和其他交换机连接（桥接）能更好处理并发情况，里面有一张mac地址表，用来区分不同设备，计算机1第一次联络计算机2，将计算机2的MAC地址发送给交换机，由于不知道这个mac对应哪个接口，交换机通过数据泛洪的方式，广播给所有计算机，都收到了，但只有计算机2对应的接口会回应，mac表中添加计算机2的信息，以后他们的通信就不需要广播了。<u>在数据链路层</u>。</p>
+<p>重点：以太网帧 MTU概念 ARP协议(MAC和IP互查，缓存)</p>
+<h2 id="协议-1"><a href="#协议-1" class="headerlink" title="协议"></a>协议</h2><h3 id="MAC-LLC"><a href="#MAC-LLC" class="headerlink" title="MAC LLC"></a>MAC LLC</h3><table>
+<thead>
+<tr>
+<th align="right"></th>
+<th><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BB%8B%E8%B4%A8%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6">介质访问控制(MAC, Media Access Control)</a></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%94%B5%E8%B7%AF%E4%BA%A4%E6%8D%A2">电路交换(Channel-based)</a></td>
+<td><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A2%91%E5%88%86%E5%A4%9A%E5%9D%80">FDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%AD%A3%E4%BA%A4%E9%A0%BB%E5%88%86%E5%A4%9A%E5%9D%80">OFDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E6%B3%A2%E5%88%86%E5%A4%9A%E5%9D%80&action=edit&redlink=1">WDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/SC-FDMA">SC-FDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%97%B6%E5%88%86%E5%A4%9A%E5%9D%80">TDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E5%A4%9A%E9%A2%91%E6%97%B6%E5%88%86%E5%A4%9A%E5%9D%80&action=edit&redlink=1">MF-TDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E8%87%AA%E7%BB%84%E7%BB%87%E6%97%B6%E5%88%86%E5%A4%9A%E5%9D%80&action=edit&redlink=1">STDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%88%86%E7%A2%BC%E5%A4%9A%E9%87%8D%E9%80%B2%E6%8E%A5">CDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/W-CDMA">W-CDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/TD-CDMA">TD-CDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/TD-SCDMA">TD-SCDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/DS-CDMA">DS-CDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/FH-CDMA">FH-CDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%AD%A3%E4%BA%A4%E9%A0%BB%E5%88%86%E5%A4%9A%E5%9D%80">OFHMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E5%A4%9A%E8%BD%BD%E6%B3%A2%E7%A0%81%E5%88%86%E5%A4%9A%E5%9D%80&action=edit&redlink=1">MC-CDMA</a>SDMA<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E5%A4%A7%E5%AE%B9%E9%87%8F%E7%A9%BA%E5%88%86%E5%A4%9A%E5%9D%80&action=edit&redlink=1">HC-SDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E6%9E%81%E5%88%86%E5%A4%9A%E5%9D%80&action=edit&redlink=1">PDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E8%84%89%E5%86%B2%E5%9C%B0%E5%9D%80%E5%A4%9A%E9%87%8D%E5%AD%98%E5%8F%96&action=edit&redlink=1">PAMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E6%97%B6%E6%9C%BA%E9%A9%B1%E5%8A%A8%E5%A4%9A%E5%9D%80&action=edit&redlink=1">ODMA</a></td>
+</tr>
+<tr>
+<td align="right"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%88%86%E7%BB%84%E4%BA%A4%E6%8D%A2">分组交换(Packet-based)</a></td>
+<td><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E5%86%B2%E7%AA%81%E5%B9%B2%E6%89%B0%E6%81%A2%E5%A4%8D&action=edit&redlink=1">冲突干扰恢复</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E5%86%B2%E7%AA%81%E9%81%BF%E5%85%8D&action=edit&redlink=1">冲突避免</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E6%97%A0%E5%86%B2%E7%AA%81&action=edit&redlink=1">无冲突</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/ALOHA">ALOHA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Slotted_ALOHA">Slotted ALOHA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=R-ALOHA&action=edit&redlink=1">R-ALOHA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E5%B8%A6%E5%86%B2%E7%AA%81%E9%81%BF%E5%85%8D%E7%9A%84%E5%A4%9A%E5%9D%80%E6%8E%A5%E5%85%A5&action=edit&redlink=1">MACA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E5%B8%A6%E5%86%B2%E7%AA%81%E9%81%BF%E5%85%8D%E7%9A%84%E6%97%A0%E7%BA%BF%E5%A4%9A%E5%9D%80%E6%8E%A5%E5%85%A5&action=edit&redlink=1">MACAW</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%BD%BD%E6%B3%A2%E4%BE%A6%E5%90%AC%E5%A4%9A%E8%B7%AF%E8%AE%BF%E9%97%AE">CSMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/CSMA/CD">CSMA/CD</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/CSMA/CA">CSMA/CA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E5%88%86%E6%95%A3%E5%BC%8F%E5%8D%94%E8%AA%BF%E5%8A%9F%E8%83%BD&action=edit&redlink=1">DCF</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%82%B9%E5%8D%8F%E8%B0%83%E5%8A%9F%E8%83%BD">PCF</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E6%B7%B7%E5%90%88%E5%8D%8F%E8%B0%83%E5%8A%9F%E8%83%BD&action=edit&redlink=1">HCF</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E5%9F%BA%E4%BA%8E%E4%BC%98%E5%85%88%E7%BA%A7%E7%9A%84%E5%B8%A6%E5%86%B2%E7%AA%81%E9%81%BF%E5%85%8D%E4%B8%8E%E5%88%86%E8%A7%A3%E7%9A%84%E6%9C%89%E8%BD%BD%E6%B3%A2%E4%BE%A6%E5%90%AC%E5%A4%9A%E8%B7%AF%E8%AE%BF%E9%97%AE&action=edit&redlink=1">CSMA/CARP</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BB%A4%E7%89%8C%E7%8E%AF">令牌环</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BB%A4%E7%89%8C%E6%80%BB%E7%BA%BF">令牌总线</a><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Mobile_Slotted_Aloha">MS-ALOHA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9A%A8%E5%BB%BA%E5%8D%B3%E9%80%A3%E7%B6%B2%E8%B7%AF">MANET</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%BB%8A%E8%BC%89%E9%9A%A8%E6%84%8F%E8%A1%8C%E5%8B%95%E7%B6%B2%E8%B7%AF">VANET</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E5%BB%B6%E8%BF%9F%E5%AE%B9%E5%BF%8D%E7%BD%91%E7%BB%9C&action=edit&redlink=1">DTN</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E5%8A%A8%E6%80%81%E6%BA%90%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE&action=edit&redlink=1">动态源路由协议</a></td>
+</tr>
+<tr>
+<td align="right"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%99%E5%B7%A5">双工方法</a></td>
+<td><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%99%E5%B7%A5#%E6%99%82%E5%88%86%E9%9B%99%E5%B7%A5">时分双工</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%99%E5%B7%A5#%E9%A0%BB%E5%88%86%E9%9B%99%E5%B7%A5">频分双工</a></td>
+</tr>
+</tbody></table>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%80%BB%E8%BE%91%E9%93%BE%E8%B7%AF%E6%8E%A7%E5%88%B6">逻辑链路控制 - 维基百科，自由的百科全书 (wikipedia.org)</a> LLC</p>
+<h3 id="无线网络"><a href="#无线网络" class="headerlink" title="无线网络"></a>无线网络</h3><h4 id="移动网络-Celluar-Network"><a href="#移动网络-Celluar-Network" class="headerlink" title="移动网络 (Celluar Network)"></a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%9C%82%E7%AA%9D%E7%BD%91%E7%BB%9C">移动网络 (Celluar Network)</a></h4><table>
+<thead>
+<tr>
+<th align="right"></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/0G">0G</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%84%A1%E7%B7%9A%E9%9B%BB%E8%A9%B1">无线电话</a> （1946）</td>
+<td><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%A1%8C%E5%8B%95%E9%9B%BB%E8%A9%B1%E7%B3%BB%E7%B5%B1">MTS</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Improved_Mobile_Telephone_Service&action=edit&redlink=1">IMTS</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Altai_%EF%BC%88mobile_telephone_system%EF%BC%89&action=edit&redlink=1">Altai</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=OLT_%EF%BC%88mobile_network%EF%BC%89&action=edit&redlink=1">OLT</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=MTD_%EF%BC%88mobile_network%EF%BC%89&action=edit&redlink=1">MTA - MTB - MTC - MTD</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Advanced_Mobile_Telephone_System&action=edit&redlink=1">AMTS</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Autotel&action=edit&redlink=1">Autotel （PALM）</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Autoradiopuhelin&action=edit&redlink=1">ARP</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=B-Netz&action=edit&redlink=1">B-Netz</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=AMR_radiotelephone_network_%EF%BC%88Czechoslovakia%EF%BC%89&action=edit&redlink=1">AMR</a></td>
+</tr>
+<tr>
+<td align="right"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/1G">1G</a>（1979）</td>
+<td><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A1%9E%E6%AF%94%E5%BC%8F%E8%A1%8C%E5%8B%95%E9%9B%BB%E8%A9%B1%E7%B3%BB%E7%B5%B1">AMPS</a>家族<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A1%9E%E6%AF%94%E5%BC%8F%E8%A1%8C%E5%8B%95%E9%9B%BB%E8%A9%B1%E7%B3%BB%E7%B5%B1">AMPS - N-AMPS</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Total_Access_Communication_System&action=edit&redlink=1">TACS - ETACS</a>其它<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Nordic_Mobile_Telephone&action=edit&redlink=1">NMT</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=C-Netz&action=edit&redlink=1">C-450</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Hicap&action=edit&redlink=1">Hicap</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Mobitex&action=edit&redlink=1">Mobitex</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=DataTAC&action=edit&redlink=1">DataTAC</a></td>
+</tr>
+<tr>
+<td align="right"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/2G">2G</a>（1991）</td>
+<td><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/GSM">GSM</a>/<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/3GPP">3GPP</a>家族<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/GSM">GSM</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E8%B7%AF%E4%BA%A4%E6%8F%9B%E6%95%B8%E6%93%9A">CSD - HSCSD</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/3GPP2">3GPP2</a>家族<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/CdmaOne">cdmaOne （IS-95）</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A1%9E%E6%AF%94%E5%BC%8F%E8%A1%8C%E5%8B%95%E9%9B%BB%E8%A9%B1%E7%B3%BB%E7%B5%B1">AMPS</a>家族<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/D-AMPS">D-AMPS （IS-54 and IS-136）</a>其它<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%9C%82%E7%AA%9D%E6%95%B0%E5%AD%97%E5%88%86%E7%BB%84%E6%95%B0%E6%8D%AE">CDPD</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%86%E6%88%90%E6%95%B0%E5%AD%97%E5%A2%9E%E5%BC%BA%E7%BD%91%E7%BB%9C">iDEN</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/PDC">PDC</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%B8%AA%E4%BA%BA%E6%89%8B%E6%8C%81%E5%BC%8F%E7%94%B5%E8%AF%9D%E7%B3%BB%E7%BB%9F">PHS</a></td>
+</tr>
+<tr>
+<td align="right"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/2G">2G过渡 （2.5G, 2.75G）</a></td>
+<td><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/GSM">GSM</a>/3GPP家族<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/GPRS">GPRS</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/GSM%E5%A2%9E%E5%BC%BA%E6%95%B0%E6%8D%AE%E7%8E%87%E6%BC%94%E8%BF%9B">EDGE/EGPRS - Evolved EDGE</a>3GPP2家族<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/CDMA2000">CDMA2000 1X</a>（TIA/EIA/IS-2000）<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/CDMA2000">CDMA2000 1X Advanced</a>其它<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%86%E6%88%90%E6%95%B0%E5%AD%97%E5%A2%9E%E5%BC%BA%E7%BD%91%E7%BB%9C">WiDEN</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B8%E4%BD%8D%E5%A2%9E%E5%BC%B7%E7%84%A1%E7%B7%9A%E9%9B%BB%E8%A9%B1%E7%B3%BB%E7%B5%B1">DECT</a></td>
+</tr>
+<tr>
+<td align="right"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/3G">3G</a>（2001）</td>
+<td>3GPP家族<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%80%9A%E7%94%A8%E7%A7%BB%E5%8A%A8%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F">UMTS</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/W-CDMA">UTRA-FDD / W-CDMA</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/FOMA">FOMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/TD-SCDMA">UTRA-TDD LCR / TD-SCDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%80%9A%E7%94%A8%E7%A7%BB%E5%8A%A8%E9%80%9A%E8%AE%AF%E7%B3%BB%E7%BB%9F">UTRA-TDD HCR / TD-CDMA</a>3GPP2家族<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/EV-DO">CDMA2000 1xEV-DO Release 0</a>（TIA/IS-856）</td>
+</tr>
+<tr>
+<td align="right"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/3G">3G过渡 （3.5G, 3.75G, 3.9G）</a></td>
+<td>3GPP家族<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%AB%98%E9%80%9F%E5%B0%81%E5%8C%85%E5%AD%98%E5%8F%96">HSPA</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%AB%98%E9%80%9F%E5%B0%81%E5%8C%85%E5%AD%98%E5%8F%96">HSDPA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%AB%98%E9%80%9F%E5%B0%81%E5%8C%85%E5%AD%98%E5%8F%96">HSUPA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%BC%94%E8%BF%9B%E5%BC%8FHSPA">HSPA+</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%BC%94%E8%BF%9B%E5%BC%8FHSPA">DC-HSDPA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%95%B7%E6%9C%9F%E6%BC%94%E9%80%B2%E6%8A%80%E8%A1%93">LTE</a>（<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/E-UTRA">E-UTRA</a>）3GPP2家族CDMA2000 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/EV-DO">1xEV-DO Revision A</a>（TIA/EIA/IS-856-A）<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/EV-DO">EV-DO Revision B</a>（TIA/EIA/IS-856-B）<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/EV-DO">EV-DO Revision C</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%94%B5%E6%B0%94%E7%94%B5%E5%AD%90%E5%B7%A5%E7%A8%8B%E5%B8%88%E5%AD%A6%E4%BC%9A">IEEE</a>家族<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/WiMAX">Mobile WiMAX</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/IEEE_802.16">IEEE 802.16e</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%AD%A3%E4%BA%A4%E9%A0%BB%E5%88%86%E5%A4%8D%E7%94%A8">Flash-OFDM</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=IEEE_802.20&action=edit&redlink=1">iBurst （IEEE 802.20）</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/WiBro">WiBro</a>   <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%AC%A7%E6%B4%B2%E7%94%B5%E4%BF%A1%E6%A0%87%E5%87%86%E5%8D%8F%E4%BC%9A">ETSI</a>家族<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=HiperMAN&action=edit&redlink=1">HiperMAN</a></td>
+</tr>
+<tr>
+<td align="right"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/4G">4G</a>（2009） <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=IMT_Advanced&action=edit&redlink=1">IMT Advanced</a> （2013）</td>
+<td>3GPP家族<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%80%B2%E9%9A%8E%E9%95%B7%E6%9C%9F%E6%BC%94%E9%80%B2%E6%8A%80%E8%A1%93">LTE Advanced</a>（<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/E-UTRA">E-UTRA</a>）<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%80%B2%E9%9A%8E%E5%8D%87%E7%B4%9A%E7%89%88%E9%95%B7%E6%9C%9F%E6%BC%94%E9%80%B2%E6%8A%80%E8%A1%93">LTE Advanced Pro</a>（4.5G Pro/pre-5G/4.9G）IEEE家族<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/WiMAX">WiMAX</a>（<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/IEEE_802.16">IEEE 802.16</a>m） WiMax 2.1 （<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/LTE-TDD">LTE-TDD</a>/ <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%95%B7%E6%9C%9F%E6%BC%94%E9%80%B2%E6%8A%80%E8%A1%93">TD-LTE</a>）<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/WiBro">WiBro</a></td>
+</tr>
+<tr>
+<td align="right"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/5G">5G</a>（2019） <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=IMT-2020&action=edit&redlink=1">IMT-2020</a> （开发中）</td>
+<td>3GPP家族<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/5G_NR">NR</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=NR-IIoT&action=edit&redlink=1">NR-IIoT</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=LTE-M&action=edit&redlink=1">LTE-M</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/NB-IoT">NB-IoT</a> 其它<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=DECT-5G&action=edit&redlink=1">DECT-5G</a></td>
+</tr>
+<tr>
+<td align="right">相关</td>
+<td><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%9C%82%E7%AA%9D%E7%BD%91%E7%BB%9C">蜂窝网络</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A2%91%E5%88%86%E5%A4%9A%E5%9D%80">FDMA</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%AD%A3%E4%BA%A4%E9%A0%BB%E5%88%86%E5%A4%9A%E5%9D%80">OFDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%97%B6%E5%88%86%E5%A4%9A%E5%9D%80">TDMA</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Self-organized_time-division_multiple_access&action=edit&redlink=1">STDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%89%A9%E9%A2%91">SSMA</a> CDMA<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%A9%BA%E5%88%86%E5%A4%9A%E5%9D%80">SDMA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A0%BB%E8%AD%9C%E6%95%88%E7%8E%87">频谱效率</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E8%9C%82%E7%AA%9D%E7%BD%91%E7%BB%9C%E9%A2%91%E7%8E%87&action=edit&redlink=1">频段</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/GSM%E9%A2%91%E6%AE%B5">GSM</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/UMTS%E9%A2%91%E6%AE%B5">UMTS</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%80%8B%E4%BA%BA%E9%80%9A%E8%A8%8A%E6%9C%8D%E5%8B%99">PCS</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=LTE_frequency_bands&action=edit&redlink=1">LTE</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/5G_NR%E9%A2%91%E6%AE%B5">5G NR</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%A7%BB%E5%8B%95%E5%AF%AC%E9%A0%BB">移动宽频</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Push-to-talk">Push-to-talk</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/MIMO">MIMO</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%95%BF%E6%9C%9F%E6%BC%94%E8%BF%9B%E8%AF%AD%E9%9F%B3%E6%89%BF%E8%BD%BD">VoLTE</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/VoNR">VoNR</a></td>
+</tr>
+</tbody></table>
+<h4 id="无线局域网-WLAN"><a href="#无线局域网-WLAN" class="headerlink" title="无线局域网  (WLAN)"></a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%97%A0%E7%BA%BF%E5%B1%80%E5%9F%9F%E7%BD%91">无线局域网  (WLAN)</a></h4><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/IEEE_802.11_(%E5%8E%9F%E5%A7%8B%E6%A0%87%E5%87%86)">IEEE 802.11</a> 是无线局域网（WLAN）的通用标准。</p>
+<p>1999年，几家富有远见的公司联合起来组成了一个全球性非营利性协会——无线以太网兼容性联盟（Wireless Ethernet Compatibility Alliance, WECA），其目标是使用一种新的无线网络技术，无论品牌如何，都能带来最佳的用户体验。在2000年，该小组采用术语“Wi-Fi”作为其技术工作的专有名称，并宣布了正式名称：Wi-Fi Alliance。Wi-Fi产品经由Wi-Fi联盟的一家独立授权测试实验室进行严格测试，产品成功通过测试后，授予制造商或销售商使用Wi-Fi标志、Wi-Fi CERTIFIED标志和相关商标，Wi-Fi联盟使用术语“Wi-Fi CERTIFIED”来称呼这类通过认证的产品。802.11ax为Wi-Fi 6。</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Wi-Fi">Wi-Fi</a>与<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/IEEE_802.11">IEEE 802.11</a>常常被混淆，两者的区别可以概述为IEEE 802.11是一种无线局域网标准，而Wi-Fi是IEEE 802.11标准的一种实现。</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%84%A1%E7%B7%9A%E6%8E%A5%E5%85%A5%E9%BB%9E">无线接入点 - 维基百科，自由的百科全书 (wikipedia.org)</a> WAP</p>
+<h5 id="无线个人网-WPAN"><a href="#无线个人网-WPAN" class="headerlink" title="无线个人网 (WPAN)"></a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%97%A0%E7%BA%BF%E4%B8%AA%E4%BA%BA%E7%BD%91">无线个人网 (WPAN)</a></h5><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%97%8D%E7%89%99">蓝牙 - 维基百科，自由的百科全书 (wikipedia.org)</a> Bluetooth (WPAN，IEEE 802.15.1)</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/ZigBee">ZigBee - 维基百科，自由的百科全书 (wikipedia.org)</a> ZigBee (LR-WPAN，IEEE 802.15.4)</p>
+<h3 id="有线局域网-LAN"><a href="#有线局域网-LAN" class="headerlink" title="有线局域网 (LAN)"></a>有线局域网 (LAN)</h3><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BB%A5%E5%A4%AA%E7%BD%91">以太网 - 维基百科，自由的百科全书 (wikipedia.org)</a> Ethernet LAN (IEEE 802.3)</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%82%B9%E5%AF%B9%E7%82%B9%E5%8D%8F%E8%AE%AE">点对点协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> PPP</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/PPPoE">PPPoE - 维基百科，自由的百科全书 (wikipedia.org)</a> PPP over Ethernet PPPoE</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/PPPoA">PPPoA - 维基百科，自由的百科全书 (wikipedia.org)</a></p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%92%A5%E8%99%9F%E9%80%A3%E7%B7%9A">拨号连接 - 维基百科，自由的百科全书 (wikipedia.org)</a> Dial-up</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B0%83%E5%88%B6%E8%A7%A3%E8%B0%83%E5%99%A8">调制解调器 - 维基百科，自由的百科全书 (wikipedia.org)</a> 猫 modem</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B0%E5%AD%97%E7%94%A8%E6%88%B7%E7%BA%BF%E8%B7%AF">数字用户线路 - 维基百科，自由的百科全书 (wikipedia.org)</a> DSL</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/ADSL">非对称数字用户线路- 维基百科，自由的百科全书 (wikipedia.org)</a> ADSL</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%9B%BA%E6%8E%A5%E5%B0%88%E7%B7%9A">固接专线 - 维基百科，自由的百科全书 (wikipedia.org)</a> IPLC</p>
+<h2 id="硬件"><a href="#硬件" class="headerlink" title="硬件"></a>硬件</h2><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%B6%B2%E8%B7%AF%E4%BA%A4%E6%8F%9B%E5%99%A8">网络交换机 - 维基百科，自由的百科全书 (wikipedia.org)</a> Network switch</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%A9%8B%E6%8E%A5%E5%99%A8">桥接器 - 维基百科，自由的百科全书 (wikipedia.org)</a> 网桥 Network Bridge</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BD%91%E5%8D%A1">网络适配器 - 维基百科，自由的百科全书 (wikipedia.org)</a> 网卡 Network Adapter</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%86%E7%B7%9A%E5%99%A8">集线器 - 维基百科，自由的百科全书 (wikipedia.org)</a> Hub</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/8P8C">8P8C - 维基百科，自由的百科全书 (wikipedia.org)</a> RJ45</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%B8%B2%E8%A1%8C%E7%AB%AF%E5%8F%A3">串行接口 - 维基百科，自由的百科全书 (wikipedia.org)</a> COM</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%B9%B6%E8%A1%8C%E7%AB%AF%E5%8F%A3">并行端口 - 维基百科，自由的百科全书 (wikipedia.org)</a> LPT</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/USB">USB - 维基百科，自由的百科全书 (wikipedia.org)</a> Universal Serial Bus</p>
+<h2 id="校验算法"><a href="#校验算法" class="headerlink" title="校验算法"></a>校验算法</h2><p>CRC（循环冗余校验）和汉明码都是错误检测和纠正的算法，但它们的底层原理和用途有所不同：</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BA%A0%E9%94%99%E7%A0%81">纠错码 - 维基百科，自由的百科全书 (wikipedia.org)</a></p>
+<h3 id="CRC（循环冗余校验）"><a href="#CRC（循环冗余校验）" class="headerlink" title="CRC（循环冗余校验）"></a>CRC（循环冗余校验）</h3><p>CRC 是一种通过数学方法检测数据传输错误的技术。它在底层通过<strong>多项式除法</strong>来生成校验码，将数据视为一个二进制多项式，并与一个预定的生成多项式相除。CRC的底层原理包括以下几个步骤：</p>
+<ol>
+<li><strong>数据多项式化</strong>：将待校验的数据视为一个二进制多项式，例如“1011”对应 ($x^3 + x + 1$)。</li>
+<li><strong>生成多项式</strong>：选择一个生成多项式（如 CRC-32 使用 ($x^{32} + x^{26} + x^{23} + \ldots + x + 1$)）。</li>
+<li><strong>模2除法</strong>：将数据多项式和生成多项式进行模2除法（不需要进位的二进制除法），余数即为CRC校验码。</li>
+<li><strong>传输和校验</strong>：接收方用相同的生成多项式再进行除法运算，若余数为零，则说明数据没有错误。</li>
+</ol>
+<p>CRC 常用于检测网络传输中的错误，因为其计算效率高，适合硬件实现，并能检测较高概率的错误。</p>
+<p>2^n^M  % P = FCS (Frame Check Sequence, 帧检验序列)</p>
+<p>2^n^M + FCS % P = 0  如果M在传输过程中出现差错，结果将几乎不可能为0</p>
+<h3 id="汉明码"><a href="#汉明码" class="headerlink" title="汉明码"></a>汉明码</h3><p>汉明码是一种<strong>错误纠正码</strong>，可以检测并纠正单比特错误，部分版本还能检测双比特错误。它的原理基于在数据中加入特定的校验位，使得数据在传输时出现单比特错误时可以被定位并纠正。</p>
+<ol>
+<li><strong>奇偶校验位的设置</strong>：汉明码会在原始数据中插入多个位置的奇偶校验位。这些位置是按二的幂次方设置的（如第1、2、4、8位等），每个校验位负责检查某些特定位置的数据位。</li>
+<li><strong>校验位计算</strong>：每个校验位用来检查特定数据位的奇偶性。对于一个给定的二进制数据，可以通过指定的位操作生成一组校验位。</li>
+<li><strong>错误检测和纠正</strong>：传输后，通过重新计算校验位的结果并与收到的校验位对比，可以检测并定位单个比特错误的位置，然后进行纠正。</li>
+</ol>
+<p>汉明码适用于内存或磁盘数据校验和恢复等场景，但较不适合复杂错误模式的网络数据传输。</p>
+<h2 id="多址接入"><a href="#多址接入" class="headerlink" title="多址接入"></a>多址接入</h2><p>当多个用户接入网络时，解决如何高效地共享一个无线资源（时间/频率/空间/载波）的技术。</p>
+<h3 id="CSMA-载波侦听多路访问"><a href="#CSMA-载波侦听多路访问" class="headerlink" title="CSMA 载波侦听多路访问"></a>CSMA 载波侦听多路访问</h3><p>严格意义上不算MA，因为并没有真正共享</p>
+<p>CSMA（Carrier Sense Multiple Access） 是一种<strong>载波监听多址接入</strong>协议，通常用于有线网络中，允许多台设备共享同一信道资源。CSMA 的核心思想是通过监听信道来避免冲突，主要有以下两种变体：</p>
+<h4 id="CSMA-CD"><a href="#CSMA-CD" class="headerlink" title="CSMA/CD"></a>CSMA/CD</h4><p><strong>（Collision Detection，碰撞检测）</strong>半双工</p>
+<ul>
+<li>应用于有线以太网（如 IEEE 802.3 标准）。在此模式下，设备在发送数据前先监听信道。如果信道空闲，数据即可发送；如果信道忙，设备会等待空闲后发送。</li>
+<li>若在发送过程中发生冲突（检测到信号碰撞），设备会立即停止发送，并在随机时间后重试。</li>
+<li>CSMA/CD 主要用于有线网络，如早期的以太网，由于信道冲突频繁，现已逐渐被交换式以太网替代。</li>
+</ul>
+<h4 id="CSMA-CA"><a href="#CSMA-CA" class="headerlink" title="CSMA/CA"></a>CSMA/CA</h4><p><strong>（Collision Avoidance，碰撞避免）</strong></p>
+<ul>
+<li>常用于无线网络（如 Wi-Fi/IEEE 802.11），因无线信道难以检测碰撞。</li>
+<li>CSMA/CA 通过在发送数据前监听信道，并等待一定时间以减少冲突发生，确保信道空闲时才进行发送。</li>
+<li>CSMA/CA 的碰撞避免机制更加适合无线信道的开放式环境。</li>
+</ul>
+<h3 id="CDMA-码分多址"><a href="#CDMA-码分多址" class="headerlink" title="CDMA 码分多址"></a>CDMA 码分多址</h3><p>多路复用技术</p>
+<p>CDMA 是<strong>码分多址接入</strong>（Code Division Multiple Access）技术，主要用于蜂窝网络中。CDMA 的关键思想是通过为每个用户分配独特的伪随机码（PN 码）来区分不同用户的数据流，这样多个用户可以在同一频带内同时发送数据而不产生干扰。CDMA 的工作原理和优势如下：</p>
+<ul>
+<li><strong>伪随机码分配</strong>：每个用户的数据流会被一个特定的伪随机码调制，接收端利用相同的伪随机码解调，从而提取对应的数据。</li>
+<li><strong>同时占用信道</strong>：不同用户使用不同的伪随机码，可以在同一频带内同时传输数据，极大提高了频谱利用率。</li>
+<li><strong>抗干扰能力强</strong>：CDMA 的码分多址方式在信号干扰和路径损耗上有较强的容忍度，适合蜂窝移动通信。</li>
+<li><strong>应用</strong>：CDMA 主要应用于 2G、3G 的通信网络，特别是在美国、韩国的移动通信系统中被广泛使用，如 CDMA2000。</li>
+</ul>
+<h4 id="WCDMA"><a href="#WCDMA" class="headerlink" title="WCDMA"></a>WCDMA</h4><p>WCDMA（Wideband Code Division Multiple Access） 是<strong>宽带码分多址接入</strong>技术，基于 CDMA 的一种改进版本，是 3GPP（第三代合作伙伴计划）推出的 3G 标准之一。它在 CDMA 基础上使用更宽的带宽，从而提高数据速率和网络容量，是全球范围内 3G 网络的主流技术之一。</p>
+<ul>
+<li><strong>更宽的频谱带宽</strong>：WCDMA 使用 5 MHz 的带宽（相比 CDMA 的 1.25 MHz 带宽），支持更高的数据传输速率和更多用户接入。</li>
+<li><strong>更高的数据速率</strong>：在理想条件下，WCDMA 可实现高达 2 Mbps 的速率，支持语音、数据、视频等多种业务。</li>
+<li><strong>频谱效率</strong>：通过更宽的频谱和 CDMA 的抗干扰特性，WCDMA 能在高用户密度环境下提供稳定的连接。</li>
+<li><strong>应用</strong>：WCDMA 被广泛应用于全球的 3G 网络中，尤其是欧洲和亚洲的 GSM 网络运营商采用 WCDMA 技术升级到 3G。此技术在 4G LTE 的发展中逐步退出历史舞台。</li>
+</ul>
+<h4 id="TD-SCDMA"><a href="#TD-SCDMA" class="headerlink" title="TD-SCDMA"></a>TD-SCDMA</h4><p><strong>TD-SCDMA</strong>（Time Division Synchronous Code Division Multiple Access，时分同步码分多址）是中国自主研发的第三代移动通信标准，也是 3G 标准之一，由中国大唐电信和西门子公司联合开发，并被国际电信联盟（ITU）接纳为 3G 标准之一。TD-SCDMA 在中国得到了广泛的应用，但在国际市场上相对较少。</p>
+<p>TD-SCDMA 的优势</p>
+<ul>
+<li><strong>频谱利用率高</strong>：采用 TDD 模式和同步技术，使得 TD-SCDMA 的频谱利用率相比传统的 FDD 制式更高，适合频谱资源紧张的环境。</li>
+<li><strong>适合不对称数据业务</strong>：可以根据实际流量需求调整上下行资源分配，特别适合数据业务占用较高的场景。</li>
+<li><strong>自主知识产权</strong>：TD-SCDMA 是中国自主研发的 3G 标准，拥有大量核心专利，减少了对外部技术的依赖。</li>
+</ul>
+<p>TD-SCDMA 的局限性</p>
+<ul>
+<li><strong>国际支持度低</strong>：TD-SCDMA 主要在中国应用，国际上接受度不高，设备的生态系统较小，终端设备支持度有限。</li>
+<li><strong>覆盖和稳定性问题</strong>：与 WCDMA 和 CDMA2000 相比，TD-SCDMA 的覆盖范围和信号穿透性相对较差，容易受信号衰减影响。</li>
+<li><strong>技术升级受限</strong>：由于 3G 技术已经逐渐被淘汰，TD-SCDMA 的技术升级和演进受到了较大限制。</li>
+</ul>
+<h3 id="FDMA-频分多址"><a href="#FDMA-频分多址" class="headerlink" title="FDMA 频分多址"></a>FDMA 频分多址</h3><p>FDMA（Frequency Division Multiple Access）</p>
+<ul>
+<li><strong>原理</strong>：通过将可用频谱划分成多个独立的频段，每个用户使用一个独立的频段传输数据，彼此不会干扰。</li>
+<li><strong>应用</strong>：早期的模拟蜂窝网络（如 1G），一些卫星通信系统也使用 FDMA。</li>
+<li><strong>特点</strong>：实现简单，适合带宽分配相对固定的场景，但频谱利用效率不高。</li>
+</ul>
+<h4 id="OFDMA-正交频分多址"><a href="#OFDMA-正交频分多址" class="headerlink" title="OFDMA 正交频分多址"></a>OFDMA 正交频分多址</h4><p>OFDMA（Orthogonal Frequency Division Multiple Access）</p>
+<ul>
+<li><strong>原理</strong>：将信道划分为多个子载波，通过正交性减少子载波之间的干扰，允许多个用户同时占用不同的子载波进行传输。</li>
+<li><strong>应用</strong>：4G LTE、Wi-Fi 6（802.11ax）、WiMAX（802.16）等。</li>
+<li><strong>特点</strong>：频谱利用效率高，适合宽带数据传输，并在密集环境下表现优异。</li>
+</ul>
+<h4 id="SC-FDMA-单载波频分多址"><a href="#SC-FDMA-单载波频分多址" class="headerlink" title="SC-FDMA 单载波频分多址"></a>SC-FDMA 单载波频分多址</h4><p>SC-FDMA（Single Carrier Frequency Division Multiple Access）单载波频分多址</p>
+<ul>
+<li><p><strong>原理</strong>：将上行链路的数据划分成多个子载波进行传输，使用单载波调制来减少功率峰值。</p>
+</li>
+<li><p><strong>应用</strong>：4G LTE 上行链路。</p>
+</li>
+<li><p><strong>特点</strong>：降低了上行链路中的峰均功率比（PAPR），适合移动设备的功率限制。</p>
+</li>
+<li></li>
+</ul>
+<h3 id="TDMA-时分多址"><a href="#TDMA-时分多址" class="headerlink" title="TDMA 时分多址"></a>TDMA 时分多址</h3><p>TDMA（Time Division Multiple Access）</p>
+<ul>
+<li>原理：将信道分为不同的时间片，每个用户轮流在特定时间片上使用信道，从而达到多用户共享信道的目的。</li>
+<li><strong>应用</strong>：GSM（2G）、PHS、部分卫星通信。</li>
+<li><strong>特点</strong>：在一定程度上提高了频谱利用率，但时延较高，受限于用户数量增加后的带宽分配。</li>
+</ul>
+<h3 id="SDMA-空分多址"><a href="#SDMA-空分多址" class="headerlink" title="SDMA 空分多址"></a>SDMA 空分多址</h3><p>SDMA（Space Division Multiple Access）</p>
+<ul>
+<li><strong>原理</strong>：通过空间隔离的方式区分用户信号，通常结合智能天线等技术，在同一频段和时间使用不同方向的波束来服务不同用户。</li>
+<li><strong>应用</strong>：主要在蜂窝基站和无线局域网中使用，配合 MIMO（多输入多输出）技术使用，增强信道容量。</li>
+<li><strong>特点</strong>：适合用户密集度高的环境，频谱利用效率较高。</li>
+</ul>
+<h3 id="NOMA-非正交多址"><a href="#NOMA-非正交多址" class="headerlink" title="NOMA 非正交多址"></a>NOMA 非正交多址</h3><p>NOMA（Non-Orthogonal Multiple Access）</p>
+<ul>
+<li><strong>原理</strong>：不同用户可以同时占用同一时间和频率资源，通过功率差异进行用户分离，接收端使用 SIC（Successive Interference Cancellation）分离信号。</li>
+<li><strong>应用</strong>：5G 网络中使用较多，提升频谱效率。</li>
+<li><strong>特点</strong>：频谱利用效率高，适合高用户密度场景，但对接收端的处理要求较高。</li>
+</ul>
+<h3 id="PDMA-模式分割多址"><a href="#PDMA-模式分割多址" class="headerlink" title="PDMA 模式分割多址"></a>PDMA 模式分割多址</h3><p>PDMA（Pattern Division Multiple Access）</p>
+<ul>
+<li><strong>原理</strong>：通过对信号的模式（如频域、时域、空域等）进行不同配置来分割用户信道。</li>
+<li><strong>应用</strong>：5G NR（New Radio）新型多址接入技术之一。</li>
+<li><strong>特点</strong>：结合空间、时间等多个维度的模式，进一步提高频谱效率。</li>
+</ul>
+<h3 id="MIMO"><a href="#MIMO" class="headerlink" title="MIMO"></a>MIMO</h3><p>MIMO（Multiple Input Multiple Output）多输入多输出</p>
+<ul>
+<li><strong>原理</strong>：通过多根天线发送和接收多个数据流，提高信道容量。</li>
+<li><strong>应用</strong>：4G LTE、Wi-Fi 6、5G 等。</li>
+<li><strong>特点</strong>：不属于严格的多址技术，但与 SDMA、OFDMA 等结合，能够显著提升数据传输速率和覆盖范围。</li>
+</ul>
+<h3 id="ALOHA"><a href="#ALOHA" class="headerlink" title="ALOHA"></a>ALOHA</h3><ul>
+<li><strong>原理</strong>：用户在任意时间段发送数据包，碰撞后重新发送；时隙 ALOHA 则将时间分割成固定时隙，用户在时隙开始时发送数据，减少了冲突概率。</li>
+<li><strong>应用</strong>：早期的卫星通信、无线传感器网络。</li>
+<li><strong>特点</strong>：简单易实现，但冲突率高，频谱利用率较低，通常不用于高效的现代网络。</li>
+</ul>
+<h1 id="网络层"><a href="#网络层" class="headerlink" title="网络层"></a>网络层</h1><p><strong>IP地址：</strong>MAC地址属于物理地址，不够抽象，换了网卡还得重新建立联系。IP 地址是在计算机网络中用于标识设备的，然而它本身与具体的硬件设备无关<strong>是为了支持路由而设计的</strong>，使得数据能够在复杂的网络中找到目标设备，本质上是网络层的一种抽象，根据一定的规则和协议进行分配，帮助实现数据包在全球范围内的传输。</p>
+<p><strong>ARP协议</strong>:实际通信还是要通过物理地址也就是mac的，机器1传给交换机目标IP地址，机器2收到ip广播，记录来源的mac地址，这样机器2就知道了机器1的mac，并将自己的mac返回给机器1（<strong>ARP</strong>协议,根据IP解析MAC）以后就能直接通信。缺点：MAC地址表溢出，全网泛洪，效率低下。（<u>网络层和数据链路层的边界</u>） </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240921204958721.png" alt="image-20240921204958721"></p>
+<p><strong>子网掩码：</strong> 上述交换机的缺点导致其只能连接少数设备，所以就应该把网络分成一个个子网，由交换机负责单个子网的通信，子网掩码就是告诉计算机 子网的ID是IP前几位，消息发给交换机，如果根据子网掩码，目的IP不是子网，就将信息传给路由器。<u>网络层</u> </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240921204925827.png" alt="image-20240921204925827"> </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240921205145960.png" alt="image-20240921205145960"></p>
+<p><strong>路由器：</strong> 同一台路由器连接的计算机，他们的<strong>网关</strong>(子网的关口、出口)相同，都是路由器的IP地址。路由器上有一张路由表，可以配置目标网段和 next jump ，用来决定各网段消息下一步应该交给哪个路由器。OSPF自动学习自动管理路由表，BGP是为了应对庞大的网络，确定数据包的最佳路径。在<u>网络层</u></p>
+<p><strong>路由器vs交换机</strong> </p>
+<ol>
+<li><strong>工作层次不同</strong>：</li>
+</ol>
+<ul>
+<li><strong>路由器</strong>：工作在 <strong>网络层（OSI 模型的第 3 层）</strong>，基于 IP 地址来转发数据包。它可以在不同的网络之间进行数据转发，比如将本地局域网与互联网连接起来。路由器可以通过 IP 地址进行路由选择，确定数据包的最佳传输路径。</li>
+<li><strong>交换机</strong>：工作在 <strong>数据链路层（OSI 模型的第 2 层）</strong>，基于 MAC 地址来转发数据帧。它用于在同一个局域网（LAN）内连接多个设备，并通过 MAC 地址表来进行帧的转发和处理。高端交换机（如三层交换机）也可以在网络层上进行工作，具备一定的路由功能。</li>
+</ul>
+<ol start="2">
+<li><strong>主要用途</strong>：</li>
+</ol>
+<ul>
+<li><strong>路由器</strong>：用于连接<strong>不同的网络</strong>，比如将你的家庭网络或局域网与互联网连接。它不仅能处理 LAN 内部的通信，还能通过 WAN 端口将内部网络连接到外部网络（如互联网）。路由器在网络之间转发数据，并为不同的网络分配和管理 IP 地址。</li>
+<li><strong>交换机</strong>：用于<strong>同一网络</strong>中的设备互联，主要在局域网（LAN）内部使用。交换机可以通过多个端口连接多个设备（如电脑、服务器、打印机等），并基于 MAC 地址表快速高效地在这些设备之间转发数据。它不会管理或处理外部网络通信。</li>
+</ul>
+<ol start="3">
+<li><strong>数据转发方式</strong>：</li>
+</ol>
+<ul>
+<li><strong>路由器</strong>：根据<strong>IP 地址</strong>进行路由。它维护一个路由表，用来确定数据包的最佳路径，可能需要跨越多个网络。路由器使用不同的网络协议（如 OSPF、BGP）来管理和更新这些路由表。</li>
+<li><strong>交换机</strong>：根据<strong>MAC 地址</strong>转发数据帧。它通过学习每个设备的 MAC 地址并将其存储在 MAC 地址表中，来确定应该将数据帧转发到哪个端口。交换机在一个局域网内部通过这种方式高效转发流量。</li>
+</ul>
+<ol start="4">
+<li><strong>连接范围</strong>：</li>
+</ol>
+<ul>
+<li><strong>路由器</strong>：通常连接<strong>不同的网络</strong>，比如家庭网络和互联网之间，或者连接多个子网。它的主要作用是通过不同的 IP 网段来连接和隔离不同的网络。</li>
+<li><strong>交换机</strong>：主要连接<strong>同一个局域网中的设备</strong>，如多台计算机、打印机等，形成一个共享的局域网。</li>
+</ul>
+<ol start="5">
+<li><strong>网络地址分配与管理</strong>：</li>
+</ol>
+<ul>
+<li><strong>路由器</strong>：一般可以通过 <strong>DHCP（动态主机配置协议）</strong> 分配 IP 地址，管理局域网内设备的 IP 地址，并充当网络的网关，将局域网中的设备连接到外部网络。</li>
+<li><strong>交换机</strong>：通常不具备 DHCP 等功能，它只是转发数据，不会负责分配 IP 地址。不过，高级管理型交换机可能具备一些网络管理功能。</li>
+</ul>
+<ol start="6">
+<li><strong>NAT（网络地址转换）功能</strong>：</li>
+</ol>
+<ul>
+<li><strong>路由器</strong>：大多数路由器提供 <strong>NAT 功能</strong>，这允许多个内网设备通过一个公共 IP 地址访问外部网络（如互联网）。NAT 会在网络地址翻译时修改 IP 数据包的源或目标 IP 地址。</li>
+<li><strong>交换机</strong>：没有 NAT 功能。它仅在局域网内部转发数据帧，不处理 IP 层的转换。</li>
+</ul>
+<p>重点：ip首部格式 ip分片 ip选路 路由表 ICMP格式、分类(2+5)</p>
+<h2 id="协议-2"><a href="#协议-2" class="headerlink" title="协议"></a>协议</h2><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%9C%B0%E5%9D%80%E8%A7%A3%E6%9E%90%E5%8D%8F%E8%AE%AE">地址解析协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> ARP IPv4 IP地址到MAC地址 ✅</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%82%BB%E5%B1%85%E5%8F%91%E7%8E%B0%E5%8D%8F%E8%AE%AE">邻居发现协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> NDP 基于IPv6</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BD%91%E9%99%85%E5%8D%8F%E8%AE%AE">网际协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> IP  ✅</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BA%92%E8%81%94%E7%BD%91%E6%8E%A7%E5%88%B6%E6%B6%88%E6%81%AF%E5%8D%8F%E8%AE%AE">互联网控制消息协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> ICMP  ✅</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%9B%A0%E7%89%B9%E7%BD%91%E7%BB%84%E7%AE%A1%E7%90%86%E5%8D%8F%E8%AE%AE">互联网组管理协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> IGMP  ✅</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%BE%B9%E7%95%8C%E7%BD%91%E5%85%B3%E5%8D%8F%E8%AE%AE">边界网关协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> BGP 基于 TCP  ✅</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%86%85%E9%83%A8%E7%BD%91%E5%85%B3%E5%8D%8F%E8%AE%AE">内部网关协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> IGP </p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%BC%80%E6%94%BE%E5%BC%8F%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84%E4%BC%98%E5%85%88">开放式最短路径优先 - 维基百科，自由的百科全书 (wikipedia.org)</a> OSPF 基于IP  ✅</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B7%AF%E7%94%B1%E4%BF%A1%E6%81%AF%E5%8D%8F%E8%AE%AE">路由信息协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> RIP 基于UDP  ✅</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/IPsec">IPsec - 维基百科，自由的百科全书 (wikipedia.org)</a> IPSec</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2">网络地址转换 - 维基百科，自由的百科全书 (wikipedia.org)</a> NAT  ✅</p>
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-cn/%E7%B6%B2%E8%B7%AF%E6%8F%92%E5%BA%A7">网络套接字 - 维基百科，自由的百科全书 (wikipedia.org)</a> Socket  ✅</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BA%92%E8%81%94%E7%BD%91%E6%9C%8D%E5%8A%A1%E4%BE%9B%E5%BA%94%E5%95%86">互联网服务提供商 - 维基百科，自由的百科全书 (wikipedia.org)</a>ISP  ✅</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BA%92%E8%81%94%E7%BD%91%E6%89%98%E7%AE%A1%E6%9C%8D%E5%8A%A1">互联网托管服务 - 维基百科，自由的百科全书 (wikipedia.org)</a> </p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%89%E5%B0%8E%E7%BA%96%E7%B6%AD">光导纤维 - 维基百科，自由的百科全书 (wikipedia.org)</a> Fiber</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9A%A7%E9%81%93%E5%8D%8F%E8%AE%AE">隧道协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> Tunnel  ✅</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%80%9A%E7%94%A8%E8%B7%AF%E7%94%B1%E5%B0%81%E8%A3%85">通用路由封装 - 维基百科，自由的百科全书 (wikipedia.org)</a> GRE</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%99%9B%E6%93%AC%E7%A7%81%E4%BA%BA%E7%B6%B2%E8%B7%AF">虚拟专用网 - 维基百科，自由的百科全书 (wikipedia.org)</a> VPN  ✅</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8">代理服务器 - 维基百科，自由的百科全书 (wikipedia.org)</a> Proxy  ✅</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/SOCKS">SOCKS - 维基百科，自由的百科全书 (wikipedia.org)</a> SOCKS</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%98%B2%E7%81%AB%E5%A2%99">防火墙 - 维基百科，自由的百科全书 (wikipedia.org)</a> Firewall</p>
+<h2 id="硬件-1"><a href="#硬件-1" class="headerlink" title="硬件"></a>硬件</h2><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B7%AF%E7%94%B1%E5%99%A8">路由器 - 维基百科，自由的百科全书 (wikipedia.org)</a> </p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BD%8F%E5%AE%85%E7%BD%91%E5%85%B3">住宅网关 - 维基百科，自由的百科全书 (wikipedia.org)</a></p>
+<p>Network Address Transition</p>
+<p><strong>NAT协议，公网IP</strong>：IPv4数目限制，子网共用一个IP，发送数据的时候传给路由器，路由器内部<strong>NAT</strong>映射表记录内网IP对应的内网端口以及随机分配的可用公网端口号，信息从路由器的端口里出去，之后报文里的IP和端口全部都是公网的（篡改）冒充子网计算机跟目的地通信。某个端口收到响应，路由器根据NAT表映射到内网的IP跟端口，然后把响应传给桌子往计算机</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240921211102189.png" alt="image-20240921211102189"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240921211225744.png" alt="image-20240921211225744"></p>
+<p>目的地的路由器收到报文后，再次根据NAT映射表，将报文精准发送给对应IP的对应端口，但是此时的目的地并不知道来源的真实端口和IP。因此不能直接与其通信，两台处于不同子网的设备是不能相互找到和通信的，因此有了端口转发，VPN等方式通信</p>
+<ol>
+<li><strong>内部到外部的通信</strong></li>
+</ol>
+<ul>
+<li>内网设备（使用私有 IP 地址）发起访问外部网络的请求时，NAT 会将内网设备的私有 IP 地址和端口号转换为路由器的公共 IP 地址和一个动态分配的外部端口。</li>
+<li>这种方式允许内网设备共享一个公共 IP 地址，通过不同的外部端口来区分多个连接。</li>
+</ul>
+<ol start="2">
+<li><strong>外部响应的处理</strong></li>
+</ol>
+<ul>
+<li>当外部网络（例如互联网上的服务器）响应内网设备的请求时，NAT 路由器根据维护的 NAT 表将外部响应流量（发往公共 IP 地址和端口）转换回相应的内网设备的私有 IP 地址和端口。</li>
+<li>这使得内网设备能够从外部网络获取响应数据。</li>
+</ul>
+<ol start="3">
+<li><strong>默认不处理外部对内部的主动连接</strong></li>
+</ol>
+<ul>
+<li>NAT 的设计初衷是为了<strong>保护内网</strong>，并允许内网设备访问外部网络。所以，外部设备<strong>无法直接发起请求</strong>到 NAT 后的内网设备，除非进行额外的配置（例如端口转发）。</li>
+<li>当外部网络试图访问路由器的公共 IP 地址时，NAT 路由器会没有匹配的 NAT 规则来将外部请求路由到内网设备，因为没有预先建立的映射关系。</li>
+</ul>
+<p><strong>如何让外部访问内部设备</strong>？</p>
+<p>虽然默认情况下 NAT 不允许外部设备主动访问内网设备，但通过一些配置，可以实现外部访问内部网络：</p>
+<ol>
+<li><strong>端口转发（Port Forwarding）</strong>：<ul>
+<li>通过手动配置 NAT 路由器，你可以将外部的特定端口请求映射到内网设备的 IP 地址和端口。这样，当外部网络访问路由器的公共 IP 地址和该端口时，路由器会将流量转发给指定的内网设备。</li>
+<li>例如，将外部的 <code>203.0.113.5:8080</code> 端口映射到内网设备 <code>192.168.1.10:80</code>，从而实现外部访问内网中的 Web 服务器。</li>
+</ul>
+</li>
+<li><strong>DMZ（Demilitarized Zone，非军事区）</strong>：<ul>
+<li>DMZ 功能允许你将内网中的某台设备完全暴露给外部网络。所有未指定端口的外部请求都将被路由到 DMZ 主机。</li>
+<li>这使得外部设备能够访问该主机，但同时也减少了该设备的安全性。</li>
+</ul>
+</li>
+<li><strong>VPN（虚拟专用网络）</strong>：<ul>
+<li>通过在外部设备和内网之间建立 VPN 连接，外部设备可以成为虚拟子网中的一部分，获得与内网设备直接通信的能力。VPN 通常是一种更安全的访问内部设备的方式。</li>
+</ul>
+</li>
+<li><strong>反向连接</strong>：<ul>
+<li>内网设备可以主动与外部设备建立连接（如通过反向 SSH 隧道），让外部设备通过该连接间接访问内网中的设备。</li>
+</ul>
+</li>
+</ol>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240921211251306.png" alt="image-20240921211251306"></p>
+<h2 id="DHCP"><a href="#DHCP" class="headerlink" title="DHCP"></a>DHCP</h2><p><strong>分配IP</strong>  <strong>内网-使用DHCP协议</strong>首次连接路由器，设备要广播DHCP Discover 请求，表示自己需要连接网络。路由器监听DHCP请求，能够<strong>动态</strong>管理自己的IP池，通过DHCP Offer给计算机分配IP地址和默认网关（用于访问外部地址）以及子网掩码和<strong>DNS</strong> 设备收到以后Request，路由器收到以后发送ACK，确认分配并连接成功。设备使用某个IP地址的时间有限，到时间如果设备不再续用，DHCP服务器会回收。某些设备可能需要为静态的IP，这个可以通过MAC绑定也可以手动配置。</p>
+<p> <strong>公网</strong> <strong>静态：</strong>根据运营商提供的静态IP，子网掩码，网关，dns手动配置。<strong>动态DHCP</strong>。 <strong>拨号</strong> 家庭公网使用PPPoE协议向运营商动态租用（PPPoE提供了身份验证功能，也就是宽带账号)</p>
+<h2 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h2><p>IP和<strong>域名 Domain Name</strong> dns可以将域名解析为ip地址，提供了用户友好的方式来访问互联网资源 属于<u>应用层</u> </p>
+<h1 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h1><p><strong>端口</strong>：同一台设备中，不同应用程序有不同端口，发送地址时候要加上目标端口和目标IP (UDP给应用程序标注了身份)<u>传输层</u></p>
+<p><strong>TCP</strong>: UDP没有确认机制，可靠性差于是有了TCP，在不可靠信道上建立可靠连接,但是速度慢，网络游戏和视频流仍然使用UDP</p>
+<p><strong>重试机制</strong>(接收方确认) <u>传输层</u></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240921210407572.png" alt="image-20240921210407572"></p>
+<p><strong>数据分包整理机制</strong>（分包，标注序号，大段数据的小段错误不用全部重新发送，接收方回复确认要针对序号进行回复）</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240921210327520.png" alt="image-20240921210327520"></p>
+<p><strong>连接的建立</strong>（三次握手）</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240921210305337.png" alt="image-20240921210305337"></p>
+<p><strong>流量控制机制，动态调整一次发送分包个数</strong>（滑动窗口、拥塞控制，慢启动，快速重传，快速恢复）</p>
+<p>接收方一次可能接不住全部包</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240921210631037.png" alt="image-20240921210631037"></p>
+<p> <strong>连接的断开</strong>（四次挥手）</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240921210704880.png" alt="image-20240921210704880"></p>
+<p><strong>应用层传输协议</strong></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240921210737934.png" alt="image-20240921210737934"></p>
+<h2 id="协议-3"><a href="#协议-3" class="headerlink" title="协议"></a>协议</h2><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%B6%B2%E8%B7%AF%E6%8E%A7%E5%88%B6%E7%A8%8B%E5%BC%8F">网络控制程序 - 维基百科，自由的百科全书 (wikipedia.org)</a> NCP</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BC%A0%E8%BE%93%E6%8E%A7%E5%88%B6%E5%8D%8F%E8%AE%AE">传输控制协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> TCP  ✅</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%94%A8%E6%88%B7%E6%95%B0%E6%8D%AE%E6%8A%A5">用户数据报协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> UDP  ✅</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/TCP/UDP%E7%AB%AF%E5%8F%A3%E5%88%97%E8%A1%A8">TCP/UDP端口列表 - 维基百科，自由的百科全书 (wikipedia.org)</a> </p>
+<p>重点：udp tcp(特点，首部，校验和，连接控制三握四挥 同关 同开 半关，流量控制记住，超时重传)</p>
+<h1 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h1><p>理论上讲，有了以上三层协议的支持，数据已经可以从一个主机上的应用程序传输到另一台主机的应用程序了，但此时传过来的数据是字节流，不能很好的被程序识别，操作性差，因此，应用层定义了各种各样的协议来规范数据格式，常见的有<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/http/243074?fromModule=lemma_inlink">http</a>,ftp,<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/smtp/175887?fromModule=lemma_inlink">smtp</a>等，在请求<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/Header/688992?fromModule=lemma_inlink">Header</a>中，分别定义了请求数据格式Accept和响应数据格式Content-Type，有了这个规范以后，当对方接收到请求以后就知道该用什么格式来解析，然后对请求进行处理，最后按照请求方要求的格式将数据返回，请求端接收到响应后，就按照规定的格式进行解读。</p>
+<p>除了HTTP和HTTPS之外，还有很多其他的网络协议，用于不同的应用和目的。以下是一些常见的协议：</p>
+<ol>
+<li>**FTP (File Transfer Protocol)**：用于在计算机之间传输文件。前缀为 <code>ftp://</code>。</li>
+<li>**SFTP (Secure File Transfer Protocol)**：在FTP的基础上增加了加密层，确保文件传输的安全性。前缀通常为 <code>sftp://</code>。</li>
+<li>**FTPS (FTP Secure)**：FTP的安全版本，通过TLS/SSL加密传输。前缀为 <code>ftps://</code>。</li>
+<li>**SMTP (Simple Mail Transfer Protocol)**：用于发送电子邮件。虽然它通常不在URL中直接使用，但它是邮件服务器之间传输邮件的主要协议。</li>
+<li>**IMAP (Internet Message Access Protocol)**：用于从邮件服务器检索电子邮件。常见的前缀是 <code>imap://</code>。</li>
+<li>**POP3 (Post Office Protocol version 3)**：也是用于从邮件服务器检索电子邮件的协议，前缀为 <code>pop3://</code>。</li>
+<li><strong>Telnet</strong>：一种远程终端协议，用于通过网络连接到远程计算机。前缀为 <code>telnet://</code>。</li>
+<li>**SSH (Secure Shell)**：用于安全地远程登录到计算机系统。前缀为 <code>ssh://</code>。</li>
+<li><strong>HTTP（Hypertext Transfer Protocol）</strong>：超文本传输协议，是一种用于从web服务器传输网页的协议。<ol>
+<li><code>http://</code> 表示该网页使用的是HTTP协议。HTTP是一个无状态的协议，意味着每次请求都是独立的，不会记录之前的交互状态。</li>
+<li><code>https://</code>：在HTTP的基础上，HTTPS（HTTP Secure）增加了加密层（使用TLS/SSL协议），用于确保数据在传输过程中是安全的。<code>https://</code> 用于需要保护数据隐私和完整性的网页，如在线银行和购物网站。</li>
+</ol>
+</li>
+</ol>
+<h2 id="应用间通信架构"><a href="#应用间通信架构" class="headerlink" title="应用间通信架构"></a>应用间通信架构</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%BB%88%E7%AB%AF/15634871">终端（通信技术术语）_百度百科 (baidu.com)</a> Terminal终端</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BD%91%E7%BB%9C%E4%B8%BB%E6%9C%BA">网络主机 - 维基百科，自由的百科全书 (wikipedia.org)</a> Host主机</li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Host_(network)">Host (network) - Wikipedia</a> Host</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%AE%A2%E6%88%B7%E6%9C%BA/5937024">主从式架构 - 服务器-客户机(C/S)_百度百科 (baidu.com)</a> Client/Server  ✅</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%9C%8D%E5%8A%A1%E5%99%A8">服务器 - 维基百科，自由的百科全书 (wikipedia.org)</a> server  ✅</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Client%E2%80%93server_model">Client–server model - Wikipedia</a>C/S  ✅</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/B%2FS%E7%BB%93%E6%9E%84/4868588">B/S结构_百度百科 (baidu.com)</a> Browser/Server  ✅</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Distributed_computing#Examples">Distributed computing - Wikipedia</a> 分布式计算 </p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%A1%8C%E7%A8%8B%E9%96%93%E9%80%9A%E8%A8%8A">进程间通信 - 维基百科，自由的百科全书 (wikipedia.org)</a> IPC</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Inter-process_communication">Inter-process communication - Wikipedia</a> IPC</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%81%A0%E7%A8%8B%E9%81%8E%E7%A8%8B%E8%AA%BF%E7%94%A8">远程过程调用(Remote Procedure Call) - 维基百科，自由的百科全书 (wikipedia.org)</a> RPC  ✅</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Remote_procedure_call">Remote procedure call - Wikipedia</a> RPC</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Java_remote_method_invocation">Java remote method invocation - Wikipedia</a> Java RMI </p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Java%E8%BF%9C%E7%A8%8B%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8">Java远程方法调用 - 维基百科，自由的百科全书 (wikipedia.org)</a> Java RMI</p>
+</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Multitier_architecture">Multitier architecture - Wikipedia</a> 多层架构</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%B0%8D%E7%AD%89%E7%B6%B2%E8%B7%AF">点对点网络 - 维基百科，自由的百科全书 (wikipedia.org)</a> P2P</p>
+</li>
+</ul>
+<h2 id="软件设计模式"><a href="#软件设计模式" class="headerlink" title="软件设计模式"></a>软件设计模式</h2><table>
+<thead>
+<tr>
+<th align="center">Designing Pattern</th>
+<th align="center"></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%8F%AF%E5%A4%8D%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9F%BA%E7%A1%80">设计模式</a></td>
+<td align="center"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%89%B5%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F">创建型</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82">抽象工厂</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%94%9F%E6%88%90%E5%99%A8%E6%A8%A1%E5%BC%8F">生成器</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95">工厂方法</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%83%B0%E6%80%A7%E5%88%9D%E5%A7%8B%E6%A8%A1%E5%BC%8F">惰性初始</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F">原型</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F">单例</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%B5%90%E6%A7%8B%E5%9E%8B%E6%A8%A1%E5%BC%8F">结构型</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F">适配器</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%A9%8B%E6%8E%A5%E6%A8%A1%E5%BC%8F">桥接</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Composite_pattern&action=edit&redlink=1">Composite</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BF%AE%E9%A5%B0%E6%A8%A1%E5%BC%8F">修饰</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%A4%96%E8%A7%80%E6%A8%A1%E5%BC%8F">外观</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F">享元</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F">代理</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%A1%8C%E7%82%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F">行为型</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F">责任链</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F">命令</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Interpreter_pattern&action=edit&redlink=1">Interpreter</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%BF%AD%E4%BB%A3%E5%99%A8%E6%A8%A1%E5%BC%8F">迭代器</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%B8%AD%E4%BB%8B%E8%80%85%E6%A8%A1%E5%BC%8F">中介者</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Memento_pattern&action=edit&redlink=1">Memento</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F">观察者</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Specification_pattern&action=edit&redlink=1">Specification</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=State_pattern&action=edit&redlink=1">State</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F">策略</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95">模板方法</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AE%BF%E9%97%AE%E8%80%85%E6%A8%A1%E5%BC%8F">访问者</a></td>
+</tr>
+<tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BD%B5%E7%99%BC%E5%9E%8B%E6%A8%A1%E5%BC%8F">并行模式</a></td>
+<td align="center"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E4%B8%BB%E5%8A%A8%E5%AF%B9%E8%B1%A1&action=edit&redlink=1">主动对象</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E9%98%BB%E6%AD%A2%E6%A8%A1%E5%BC%8F&action=edit&redlink=1">阻止</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Binding_properties&action=edit&redlink=1">Binding properties</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8F%8C%E9%87%8D%E6%A3%80%E6%9F%A5%E9%94%81%E5%AE%9A%E6%A8%A1%E5%BC%8F">双重检查锁定模式</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%BC%82%E6%AD%A5%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8">异步方法调用</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Guarded_suspension&action=edit&redlink=1">Guarded suspension</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Join%E6%A8%A1%E5%BC%8F&action=edit&redlink=1">Join</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%94%81_(%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6)">锁</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Messaging&action=edit&redlink=1">Messaging</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%9B%A3%E8%A6%96%E5%99%A8_(%E7%A8%8B%E5%BA%8F%E5%90%8C%E6%AD%A5%E5%8C%96)">监视器</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Proactor_pattern&action=edit&redlink=1">Proactor</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8F%8D%E5%BA%94%E5%99%A8%E6%A8%A1%E5%BC%8F">反应器</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AF%BB%E5%86%99%E9%94%81">读写锁</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B0%83%E5%BA%A6_(%E8%AE%A1%E7%AE%97%E6%9C%BA)">调度</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BA%BF%E7%A8%8B%E6%B1%A0">线程池</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BA%BF%E7%A8%8B%E5%B1%80%E9%83%A8%E5%AD%98%E5%82%A8">线程局部存储</a></td>
+</tr>
+<tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%9E%B6%E6%9E%84%E6%A8%A1%E5%BC%8F">架构模式</a></td>
+<td align="center"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Action%E2%80%93Domain%E2%80%93Responder&action=edit&redlink=1">ADR</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Broker_pattern&action=edit&redlink=1">Broker</a>主从式架构<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%9F%BA%E4%BA%8E%E7%BB%84%E4%BB%B6%E7%9A%84%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B">CBD</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE%E5%AF%B9%E8%B1%A1">DAO</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%B8%BB%E5%8A%A8%E8%AE%B0%E5%BD%95">主动记录</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B0%E6%8D%AE%E6%98%A0%E5%B0%84%E5%99%A8%E6%A8%A1%E5%BC%8F">数据映射器</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A0%98%E5%9F%9F%E9%A9%85%E5%8B%95%E8%A8%AD%E8%A8%88">DDD</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Data_transfer_object&action=edit&redlink=1">Data transfer object</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Front_controller&action=edit&redlink=1">Front controller</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Identity_map_pattern&action=edit&redlink=1">Identity map</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Interceptor_pattern&action=edit&redlink=1">Interceptor</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%8E%A7%E5%88%B6%E5%8F%8D%E8%BD%AC">控制反转</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/MVC">MVC</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%BE%AE%E6%9C%8D%E5%8B%99">微服务</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Model-view-presenter">MVP</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%96%AE%E9%AB%94%E5%BC%8F%E6%87%89%E7%94%A8%E7%A8%8B%E5%BC%8F">单体式应用程序</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%A4%9A%E5%B1%82%E6%9E%B6%E6%9E%84">多层架构</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Naked_objects&action=edit&redlink=1">Naked objects</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%B0%8D%E7%AD%89%E7%B6%B2%E8%B7%AF">P2P</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8F%91%E5%B8%83/%E8%AE%A2%E9%98%85">发布/订阅</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%A1%A8%E7%8E%B0%E5%B1%82%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2">REST</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9D%A2%E5%90%91%E6%9C%8D%E5%8A%A1%E7%9A%84%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84">SOA</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Specification_pattern&action=edit&redlink=1">Specification</a></td>
+</tr>
+<tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BA%91%E8%AE%A1%E7%AE%97">云</a> <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97">分布式</a></td>
+<td align="center"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%96%B7%E8%B7%AF%E5%99%A8%E8%A8%AD%E8%A8%88%E6%A8%A1%E5%BC%8F">断路器</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E5%91%BD%E4%BB%A4%E9%98%9F%E5%88%97%E5%88%86%E7%A6%BB&action=edit&redlink=1">CQRS</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E8%A1%A5%E5%81%BF%E4%BA%A4%E6%98%93&action=edit&redlink=1">补偿交易</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B4%A2%E5%BC%95">索引表</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E9%A2%86%E5%AF%BC%E8%80%85%E9%80%89%E4%B8%BE&action=edit&redlink=1">领导者选举</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/MapReduce">MapReduce</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E7%89%A9%E5%8C%96%E8%A7%86%E5%9B%BE&action=edit&redlink=1">物化视图</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%AE%A1%E9%81%93_(%E8%BD%AF%E4%BB%B6)">管道</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E8%BF%87%E6%BB%A4%E5%99%A8_(%E8%BD%AF%E4%BB%B6)&action=edit&redlink=1">过滤器</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8F%91%E5%B8%83/%E8%AE%A2%E9%98%85">发布/订阅</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E5%88%86%E7%89%87_(%E6%95%B0%E6%8D%AE%E5%BA%93%E6%9E%B6%E6%9E%84)&action=edit&redlink=1">分片</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E8%8A%82%E6%B5%81%E8%BF%87%E7%A8%8B_(%E8%AE%A1%E7%AE%97)&action=edit&redlink=1">节流</a></td>
+</tr>
+<tr>
+<td align="center">其他模式</td>
+<td align="center"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Blackboard_design_pattern&action=edit&redlink=1">Blackboard</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Business_delegate_pattern&action=edit&redlink=1">Business delegate</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Composite_entity_pattern&action=edit&redlink=1">Composite entity</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%A7%94%E6%89%98%E6%A8%A1%E5%BC%8F">委托</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5">依赖注入</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Intercepting_filter_pattern&action=edit&redlink=1">Intercepting filter</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%83%B0%E6%80%A7%E8%BC%89%E5%85%A5">惰性加载</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Method_chaining&action=edit&redlink=1">Method chaining</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%A8%A1%E6%8B%9F%E5%AF%B9%E8%B1%A1">模拟对象</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%A9%BA%E5%AF%B9%E8%B1%A1%E6%A8%A1%E5%BC%8F">空对象</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%AF%B9%E8%B1%A1%E6%B1%A0%E6%A8%A1%E5%BC%8F">对象池</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Servant_(design_pattern)&action=edit&redlink=1">Servant</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Twin_pattern&action=edit&redlink=1">Twin</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Type_Tunnel_pattern&action=edit&redlink=1">Type tunnel</a></td>
+</tr>
+<tr>
+<td align="center">书籍</td>
+<td align="center"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%8F%AF%E5%A4%8D%E7%94%A8%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%9F%BA%E7%A1%80">设计模式：可复用面向对象软件的基础</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BB%A3%E7%A2%BC%E5%A4%A7%E5%85%A8">代码大全</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E4%BC%81%E4%B8%9A%E9%9B%86%E6%88%90%E6%A8%A1%E5%BC%8F&action=edit&redlink=1">企业集成模式</a></td>
+</tr>
+<tr>
+<td align="center">人物</td>
+<td align="center"><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%8B%E9%87%8C%E6%96%AF%E6%89%98%E4%BD%9B%C2%B7%E4%BA%9A%E5%8E%86%E5%B1%B1%E5%A4%A7">克里斯托佛·亚历山大</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%9F%83%E9%87%8C%E5%B8%8C%C2%B7%E4%BC%BD%E7%91%AA">埃里希·伽玛</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Ralph_Johnson&action=edit&redlink=1">Ralph Johnson</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=John_Vlissides&action=edit&redlink=1">John Vlissides</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%91%9B%E4%BE%86%E8%BF%AA%C2%B7%E5%B8%83%E5%8D%80">葛来迪·布区</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%82%AF%E7%89%B9%C2%B7%E8%B2%9D%E5%85%8B">肯特·贝克</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%B2%83%E5%BE%B7%C2%B7%E5%9D%8E%E5%AE%81%E5%AE%89">沃德·坎宁安</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A9%AC%E4%B8%81%C2%B7%E7%A6%8F%E5%8B%92">马丁·福勒</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Robert_Martin&action=edit&redlink=1">Robert Martin</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Jim_Coplien&action=edit&redlink=1">Jim Coplien</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=Douglas_Schmidt&action=edit&redlink=1">Douglas Schmidt</a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Linda_Rising">Linda Rising</a></td>
+</tr>
+</tbody></table>
+<h2 id="协议-4"><a href="#协议-4" class="headerlink" title="协议"></a>协议</h2><ul>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%9F%9F%E5%90%8D%E7%B3%BB%E7%BB%9F">域名系统 - 维基百科，自由的百科全书 (wikipedia.org)</a> DNS 基于 TCP UDP  ✅</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8A%A8%E6%80%81%E4%B8%BB%E6%9C%BA%E8%AE%BE%E7%BD%AE%E5%8D%8F%E8%AE%AE">动态主机设置协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> DHCP 基于UDP  ✅</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE">超文本传输协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> HTTP  ✅</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%AE%89%E5%85%A8%E5%8D%8F%E8%AE%AE">超文本传输安全协议 - 维基百科，自由的百科全书 (wikipedia.org)</a>HTTPS  ✅</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/WebDAV">WebDAV - 维基百科，自由的百科全书 (wikipedia.org)</a> WebDav</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/WebSocket">WebSocket - 维基百科，自由的百科全书 (wikipedia.org)</a> WebSocket  ✅</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/BitTorrent_(%E5%8D%8F%E8%AE%AE)">BitTorrent (协议) - 维基百科，自由的百科全书 (wikipedia.org)</a> BitTorrent</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%88%86%E6%95%A3%E5%BC%8F%E9%9B%9C%E6%B9%8A%E8%A1%A8">分布式散列表 - 维基百科，自由的百科全书 (wikipedia.org)</a> DHT</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/EDonkey%E7%BD%91%E7%BB%9C">eDonkey网络 - 维基百科，自由的百科全书 (wikipedia.org)</a> </p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%B8%87%E7%BB%B4%E7%BD%91">万维网 - 维基百科，自由的百科全书 (wikipedia.org)</a> WWW  ✅</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BD%91%E9%A1%B5%E6%B5%8F%E8%A7%88%E5%99%A8">网页浏览器 - 维基百科，自由的百科全书 (wikipedia.org)</a> WWW Browser  ✅</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/WebRTC">WebRTC - 维基百科，自由的百科全书 (wikipedia.org)</a> WebRTC</p>
+</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE">文件传输协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> FTP  ✅</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%9B%A0%E7%89%B9%E7%BD%91%E4%BF%A1%E6%81%AF%E8%AE%BF%E9%97%AE%E5%8D%8F%E8%AE%AE">因特网信息访问协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> IMAP ✅</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%AE%80%E5%8D%95%E9%82%AE%E4%BB%B6%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE">简单邮件传输协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> SMTP  ✅</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%83%B5%E5%B1%80%E5%8D%94%E5%AE%9A">邮局协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> POP  ✅</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/MQTT">消息队列遥测传输- 维基百科，自由的百科全书 (wikipedia.org)</a> MQTT</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%B6%B2%E8%B7%AF%E6%99%82%E9%96%93%E5%8D%94%E5%AE%9A">网络时间协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> NTP</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%AE%9E%E6%97%B6%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE">实时传输协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> RTP    </p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/VoIP">VoIP - 维基百科，自由的百科全书 (wikipedia.org)</a> VoIP</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%A1%A8%E7%A4%BA%E5%B1%82">表示层 - 维基百科，自由的百科全书 (wikipedia.org)</a> Presentation Layser</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Telnet">Telnet - 维基百科，自由的百科全书 (wikipedia.org)</a> Telnet  ✅</li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Secure_Shell">Secure Shell - 维基百科，自由的百科全书 (wikipedia.org)</a> SSH  ✅</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BC%9A%E8%AF%9D%E5%B1%82">会话层 - 维基百科，自由的百科全书 (wikipedia.org)</a> Session Layer </p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%82%B3%E8%BC%B8%E5%B1%A4%E5%AE%89%E5%85%A8%E6%80%A7%E5%8D%94%E5%AE%9A">传输层安全性协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> SSL/TLS  ✅</li>
+</ul>
+</li>
+</ul>
+<p>重点：</p>
+<p>dns 指针查询 反向查找 逆向解析 dns 缓存 名字空间</p>
+<p>ftp 控制流 数据流 工作模式pasv+port 指令+响应码 断点续传</p>
+<p>http 报文格式（请求头字段和响应头字段）状态码</p>
+<p>https 详细握手 摘要算法 数字签名 数字证书 </p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -5139,170 +5955,6 @@
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653838053608.png" alt="1653838053608"></p>
 <p>经过测试：我们会发生他的误差是在允许范围内，并且内存占用极小</p>
 
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/04/MySQL%20%E8%BF%90%E7%BB%B4%E7%AF%87/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/04/MySQL%20%E8%BF%90%E7%BB%B4%E7%AF%87/" class="post-title-link" itemprop="url">MySQL 运维篇</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-10-04 00:00:00" itemprop="dateCreated datePublished" datetime="2024-10-04T00:00:00+08:00">2024-10-04</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-05 11:28:34" itemprop="dateModified" datetime="2025-05-05T11:28:34+08:00">2025-05-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="MySQL-客户端管理"><a href="#MySQL-客户端管理" class="headerlink" title="MySQL 客户端管理"></a>MySQL 客户端管理</h2><h3 id="系统数据库"><a href="#系统数据库" class="headerlink" title="系统数据库"></a>系统数据库</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018231950720-1730191893980-1.png" alt="image-20241018231950720"></p>
-<h3 id="常用工具"><a href="#常用工具" class="headerlink" title="常用工具"></a>常用工具</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018231940461-1730191893981-2.png" alt="image-20241018231940461"></p>
-<p>import只能导入dump加-T参数导出的txt文本，source用来执行.sql文件</p>
-<h2 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h2><h3 id="错误日志"><a href="#错误日志" class="headerlink" title="错误日志"></a>错误日志</h3><p>记录了当 mysqld 启动和停止时，以及<a target="_blank" rel="noopener" href="https://so.csdn.net/so/search?q=%E6%9C%8D%E5%8A%A1%E5%99%A8&spm=1001.2101.3001.7020">服务器</a>在运行过程中<strong>发生任何严重错误时的相关信息</strong>。当数据库出现任何故障导致无法正常使用时，建议首先查看此日志。</p>
-<p>该日志是默认开启的，默认存放目录 /var/log/，默认的日志文件名为 mysqld.log 。查看日志位置：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#先登录mysql</span><br><span class="line">mysql <span class="operator">-</span>uroot <span class="operator">-</span>p1234</span><br><span class="line"></span><br><span class="line">#通过此系统变量查看日志文件的位置</span><br><span class="line"><span class="keyword">show</span> variables <span class="keyword">like</span> <span class="string">&#x27;%log_error%&#x27;</span>;</span><br><span class="line"><span class="number">12345</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="binlog"><a href="#binlog" class="headerlink" title="binlog"></a>binlog</h3><h4 id="主要功能"><a href="#主要功能" class="headerlink" title="主要功能"></a>主要功能</h4><p>记录 MySQL 上的所有<strong>变化</strong>并<strong>以二进制形式</strong>保存在磁盘上。包括所有的DDL和DML语句，但不包括DQL语句。主要用于<mark>主从复制<mark>、<mark>灾难时的数据库恢复<mark>。</p>
-<p>binlog由server层的执行器生成，历史比redolog和undolog都早，和存储引擎没有关系。</p>
-<h4 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h4><h5 id="STATEMENT"><a href="#STATEMENT" class="headerlink" title="STATEMENT"></a>STATEMENT</h5><p>记录SQL语句，如果有动态函数会恢复不准确，这里就属于逻辑日志</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029171133144.png" alt="image-20241029171133144"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029191323110.png" alt="image-20241029191323110"></p>
-<h5 id="ROW"><a href="#ROW" class="headerlink" title="ROW"></a>ROW</h5><p>记录行数据修改之前和之后的数据</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029171203288.png" alt="image-20241029171203288"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029191145845.png" alt="image-20241029191145845"></p>
-<h5 id="MIXED"><a href="#MIXED" class="headerlink" title="MIXED"></a>MIXED</h5><h4 id="写入过程"><a href="#写入过程" class="headerlink" title="写入过程"></a>写入过程</h4><p>事务开始以后的执行过程都写到内存中的binlog cache，事务提交后会write写入 page cache，仍然在内存中，需要通过刷盘操作fsync才能持久化到磁盘。</p>
-<ul>
-<li><code>sync_binlog</code> = <code>1(default)</code> 表示每次提交事务都要在写入page cache的同时刷盘，性能较低但安全；</li>
-<li><code>sync_binlog</code> = <code>0</code> 表示每次提交事务以后只写入page cache，刷盘时机交给系统确定，性能高但是不安全，会导致宕机以后page cache的binlog全部丢失；</li>
-<li><code>sync_binlog</code> = <code>N</code> 表示累计N个事务才write，折中方案。 </li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029174232239.png" alt="image-20241029174232239"></p>
-<h4 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h4><h5 id="手动删除"><a href="#手动删除" class="headerlink" title="手动删除"></a>手动删除</h5><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/aa35434/article/details/133524177">MySql运维篇—008：日志：错误日志、二进制日志、查询日志、慢查询日志，主从复制：概述 虚拟机更改ip注意事项、原理、搭建步骤_mysql 错误日志-CSDN博客</a> </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029191529628.png" alt="image-20241029191529628"></p>
-<h5 id="自动删除"><a href="#自动删除" class="headerlink" title="自动删除"></a>自动删除</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029191602409.png" alt="image-20241029191602409"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029191632832.png" alt="image-20241029191632832"></p>
-<h4 id="和其他日志的异同"><a href="#和其他日志的异同" class="headerlink" title="和其他日志的异同"></a>和其他日志的异同</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/pengweid/article/details/136887291">彻底讲透：MySQL中的三种日志（Undo Log、Redo Log和Binlog）_undolog日志类型-CSDN博客</a></p>
-<h5 id="RedoLog-amp-BinLog"><a href="#RedoLog-amp-BinLog" class="headerlink" title="RedoLog &amp; BinLog"></a>RedoLog &amp; BinLog</h5><h6 id="持久化粒度不同"><a href="#持久化粒度不同" class="headerlink" title="持久化粒度不同"></a>持久化粒度不同</h6><ul>
-<li>redolog让InnoDB有了事务崩溃恢复能力，保证了<strong>事务</strong>中的持久性，确保事务已经提交的修改能正确写入磁盘中。</li>
-<li>binlog则是保证整个MySQL<strong>数据库</strong>集群架构的数据一致性。</li>
-</ul>
-<h6 id="写入时机不同—两阶段写入"><a href="#写入时机不同—两阶段写入" class="headerlink" title="写入时机不同—两阶段写入"></a>写入时机不同—两阶段写入</h6><ul>
-<li>redolog在事务执行过程中可以不断写入，依赖于存储引擎：</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029174344508.png" alt="image-20241029174344508"></p>
-<ul>
-<li>binlog只有在事务提交时才写入，依赖于执行器（调用完存储引擎API）。</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029175255030.png" alt="image-20241029175255030"></p>
-<ul>
-<li>这就导致虽然两个都能保证持久化能力，但两个是相对独立的，如果其中一个出现错误，就会出现数据不一致的情况，因此需要分阶段写入：将redolog的状态分成两个阶段：prepare和commit，在提交事务时，先写入binlog，再进行redolog commit。</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029175500294.png" alt="image-20241029175500294"></p>
-<ul>
-<li>遇到事故时停机重启，根据redolog恢复数据，redolog处于commit阶段，表明binlog正常写入；redolog处于prepare阶段，binlog正常写入，这时也是完整的，也会提交；redolog处于prepare阶段，找不到对应binlog，此次更改作废。</li>
-</ul>
-<h6 id="顺序写入但方式不同"><a href="#顺序写入但方式不同" class="headerlink" title="顺序写入但方式不同"></a>顺序写入但方式不同</h6><ul>
-<li>redolog是一个日志文件组循环写，当数据成功刷到磁盘就会擦除日志</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029173203896.png" alt="image-20241029173203896"></p>
-<p>binlog一直追加写，写满一个文件就创建新文件继续写，保存的是全量日志。事务更改提交以后刷盘失败的恢复能用redolog，如果是整个数据库层级的操作，比如主从复制或者数据备份，就必须用全量日志binlog。</p>
-<h5 id="UndoLog-amp-BinLog"><a href="#UndoLog-amp-BinLog" class="headerlink" title="UndoLog &amp; BinLog"></a>UndoLog &amp; BinLog</h5><h6 id="逻辑日志，粒度与方向不同"><a href="#逻辑日志，粒度与方向不同" class="headerlink" title="逻辑日志，粒度与方向不同"></a>逻辑日志，粒度与方向不同</h6><ul>
-<li><p>UndoLog属于底层的InnoDB，记录反向操作，粒度更细，用于<strong>事务</strong>的回滚和MVCC（避免锁竞争，提高并发性能）</p>
-</li>
-<li><p>Binlog属于Server层的执行器，记录正向操作，用于<strong>数据库</strong>备份和复制</p>
-</li>
-</ul>
-<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><ul>
-<li>Undo Log和Redo Log是为了实现ACID特性中的A（原子性）、C（一致性）和D（持久性）。Undo Log保证了事务内部的一致性以及事务失败后的回滚能力；而Redo Log则是为了保证即使在意外情况下也能恢复已提交事务的更改。</li>
-<li>Binlog的设计则更多地关注于高可用性、数据冗余以及分布式环境下的数据同步。它提供了跨节点间的数据复制功能，同时也为数据库管理员提供了审计跟踪和数据恢复手段。</li>
-</ul>
-<p>类比实际生活：</p>
-<ul>
-<li><p>首先，Undo Log这位“传令兵”，负责记录每一步操作的反向指令，一旦有差池，便能瞬间执行“撤退”命令，让事务回滚至初始状态，确保了原子性与一致性，就如同战场上的兵马未动粮草先行，进退有序。</p>
-<p>其次，Redo Log这位“记事官”，专司记录每一次<strong>物理操作</strong>的详细步骤，即便遭遇突袭或断电，也能根据记录重新搭建战局，恢复已提交事务的影响，确保数据持久不灭，犹如战场上刀光剑影过后，总能找到重整旗鼓的依据。</p>
-<p>最后，Binlog这位“信使”，肩负着跨营地同步信息的重要使命，无论主从服务器之间还是备份恢复之时，只需将它传递的信息忠实执行，就能保证所有营地的数据步调一致，仿佛军令如山，一呼百应，千里之外亦可响应无误。</p>
-</li>
-</ul>
-<h3 id="查询日志"><a href="#查询日志" class="headerlink" title="查询日志"></a>查询日志</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029191825721.png" alt="image-20241029191825721"></p>
-<h3 id="慢查询日志"><a href="#慢查询日志" class="headerlink" title="慢查询日志"></a>慢查询日志</h3><p>所有查询时间，扫描记录数超过阈值的SQL语句</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029191835513.png" alt="image-20241029191835513"></p>
-<h2 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
-<li>主库出现问题，快速切换服务</li>
-<li>读写分离降低主库压力</li>
-<li>从库执行备份，避免主库被全局锁定</li>
-</ul>
-<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029192549256.png" alt="image-20241029192549256"></p>
-<p>从上图来看，复制分成三步:<br>1.Master 主库在事务提交时，会把数据变更记录（DDL.DML）在二进制日志文件 Binlog 中。</p>
-<p>2.Slave 从库读取主库的二进制日志文件 Binlog ，写入到从库的中继日志 Relay Log 。</p>
-<p>3.Slave 从库重做中继日志中的事件，将改变反映它自己的数据</p>
-<h2 id="读写分离-分库分表"><a href="#读写分离-分库分表" class="headerlink" title="读写分离 分库分表"></a><a target="_blank" rel="noopener" href="https://javaguide.cn/high-performance/read-and-write-separation-and-library-subtable.html">读写分离 分库分表</a></h2><h2 id="冷热数据分离"><a href="#冷热数据分离" class="headerlink" title="冷热数据分离"></a><a target="_blank" rel="noopener" href="https://javaguide.cn/high-performance/data-cold-hot-separation.html">冷热数据分离</a></h2>
       
     </div>
 
