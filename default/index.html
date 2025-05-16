@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">78</span>
+          <span class="site-state-item-count">81</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -194,6 +194,234 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/16/Untitled/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/16/Untitled/" class="post-title-link" itemprop="url">未命名</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-05-16 22:49:16" itemprop="dateCreated datePublished" datetime="2025-05-16T22:49:16+08:00">2025-05-16</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/16/example-consumer-producer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/16/example-consumer-producer/" class="post-title-link" itemprop="url">生产者-消费者(有界缓冲区)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-16 00:00:00 / 修改时间：22:53:32" itemprop="dateCreated datePublished" datetime="2025-05-16T00:00:00+08:00">2025-05-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">BoundedBuffer</span>&lt;E&gt; &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">ReentrantLock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line">    <span class="keyword">final</span> <span class="type">Condition</span> <span class="variable">notFull</span>  <span class="operator">=</span> lock.newCondition(); </span><br><span class="line">    <span class="keyword">final</span> <span class="type">Condition</span> <span class="variable">notEmpty</span> <span class="operator">=</span> lock.newCondition(); </span><br><span class="line"> </span><br><span class="line">    <span class="keyword">final</span> Object[] items = <span class="keyword">new</span> <span class="title class_">Object</span>[<span class="number">100</span>];</span><br><span class="line">    <span class="type">int</span> putptr, takeptr, count;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">put</span><span class="params">(E x)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">      lock.lock();</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (count == items.length)</span><br><span class="line">          notFull.await();</span><br><span class="line">        items[putptr] = x;</span><br><span class="line">        <span class="keyword">if</span> (++putptr == items.length) putptr = <span class="number">0</span>;</span><br><span class="line">        ++count;</span><br><span class="line">        notEmpty.signal();</span><br><span class="line">      &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> E <span class="title function_">take</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">      lock.lock();</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (count == <span class="number">0</span>)</span><br><span class="line">          notEmpty.await();</span><br><span class="line">        <span class="type">E</span> <span class="variable">x</span> <span class="operator">=</span> (E) items[takeptr];</span><br><span class="line">        <span class="keyword">if</span> (++takeptr == items.length) takeptr = <span class="number">0</span>;</span><br><span class="line">        --count;</span><br><span class="line">        notFull.signal();</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">      &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/16/example-pub-sub/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/16/example-pub-sub/" class="post-title-link" itemprop="url">发布-订阅</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-16 00:00:00 / 修改时间：22:52:56" itemprop="dateCreated datePublished" datetime="2025-05-16T00:00:00+08:00">2025-05-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 事件接口</span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Event</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 示例事件类型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MessageEvent</span> <span class="keyword">implements</span> <span class="title class_">Event</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String message;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MessageEvent</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.message = message;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getMessage</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> message;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 订阅者接口</span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Subscriber</span>&lt;T <span class="keyword">extends</span> <span class="title class_">Event</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">onEvent</span><span class="params">(T event)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 事件总线（中心）</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EventBus</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;Class&lt;? <span class="keyword">extends</span> <span class="title class_">Event</span>&gt;, List&lt;Subscriber&lt;? <span class="keyword">extends</span> <span class="title class_">Event</span>&gt;&gt;&gt; subscribers = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> &lt;T <span class="keyword">extends</span> <span class="title class_">Event</span>&gt; <span class="keyword">void</span> <span class="title function_">subscribe</span><span class="params">(Class&lt;T&gt; eventType, Subscriber&lt;T&gt; subscriber)</span> &#123;</span><br><span class="line">        subscribers.computeIfAbsent(eventType, k -&gt; <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;()).add(subscriber);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> &lt;T <span class="keyword">extends</span> <span class="title class_">Event</span>&gt; <span class="keyword">void</span> <span class="title function_">publish</span><span class="params">(T event)</span> &#123;</span><br><span class="line">        List&lt;Subscriber&lt;? <span class="keyword">extends</span> <span class="title class_">Event</span>&gt;&gt; eventSubscribers = subscribers.get(event.getClass());</span><br><span class="line">        <span class="keyword">if</span> (eventSubscribers != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (Subscriber&lt;? <span class="keyword">extends</span> <span class="title class_">Event</span>&gt; sub : eventSubscribers) &#123;</span><br><span class="line">                <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">                Subscriber&lt;T&gt; typedSub = (Subscriber&lt;T&gt;) sub;</span><br><span class="line">                typedSub.onEvent(event);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2443,813 +2671,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/06/math-distribute-math-lattice/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/06/math-distribute-math-lattice/" class="post-title-link" itemprop="url">离散数学：格</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-06 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-06T00:00:00+08:00">2025-05-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-08 13:20:04" itemprop="dateModified" datetime="2025-05-08T13:20:04+08:00">2025-05-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/math/" itemprop="url" rel="index"><span itemprop="name">math</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dreamsrj/articles/17743445.html">07-格与布尔代数 - Dreamsrj - 博客园</a> </p>
-<h1 id="格及其判定"><a href="#格及其判定" class="headerlink" title="格及其判定"></a>格及其判定</h1><p>偏序集 (P, ≤)</p>
-<ul>
-<li>反身性：∀a∈P, a≤a</li>
-<li>反对称：a≤b且b≤a ⇒ a=b</li>
-<li>传递性：a≤b且b≤c ⇒ a≤c</li>
-</ul>
-<p><strong>格 (L, ∧, ∨)</strong></p>
-<ul>
-<li>定义：对任意a,b∈L, 最小上界a∨b和最大下界a∧b均存在</li>
-<li>最小上界：满足大于等于他们俩的最近的一个元素</li>
-<li>最大下界：满足小于等于他们俩的最近的一个元素</li>
-<li>等价公理：交换律、结合律、吸收律</li>
-</ul>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507153802250.png" alt="image-20250507153802250" style="zoom: 25%;" />
-
-<ul>
-<li>如图右下角 ，e和f之间没有最小上界，因此不是格</li>
-</ul>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507154055264.png" alt="image-20250507154055264" style="zoom: 25%;" />
-
-<ul>
-<li>ec无法找出。df无法找出</li>
-<li>幂集（所有子集构成的集合）上的包含关系是格</li>
-</ul>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507154417169.png" alt="image-20250507154417169" style="zoom: 25%;" />
-
-<p>格的判定技巧：最底层/最上层的两个元素之间完全没关系因此不可比较。存在多个上界或者多个下界。</p>
-<h2 id="子格、格同态"><a href="#子格、格同态" class="headerlink" title="子格、格同态"></a>子格、格同态</h2><p><strong>子格</strong></p>
-<ul>
-<li>H⊆L, 若(H,∨,∧)满足格的封闭性和公理，即为子格</li>
-<li>格L的非空子集S构成L的子格的条件：<strong>H对L的∨,∧运算<u>封闭</u>。</strong> 在原格中做运算的结果还在 H里面，那么就是封闭的</li>
-<li><strong>分配性可以继承，但是有补性不一定</strong>（有补性跟元素相关，少了一个元素可能就没有对应的补元了）</li>
-</ul>
-<p><strong>格同态</strong></p>
-<ul>
-<li>存在双射f:L→M, 满足f(a∨b)=f(a)∨f(b), f(a∧b)=f(a)∧f(b)</li>
-</ul>
-<h1 id="有补格"><a href="#有补格" class="headerlink" title="有补格"></a>有补格</h1><p><strong>有界格</strong>：格(L, ∧, ∨,O,I)</p>
-<ol>
-<li>格的全上界：对任意元素x，这个元素I都满足x&lt;=I</li>
-<li>格的全下界：对任意元素x，这个元素O都满足b&lt;=O</li>
-</ol>
-<p><strong>元素a的补元</strong>：有界格中，如果存在 b∈L，使得a和b的最大下界是0（全下界），a和b的最小上界是1（全上界）那么b为a的补元。因此8和1互为补元，24没有补元</p>
-<p>要么是全上界和全下界互为补元，要么是中间平行的这几个互为补元。</p>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507180654617.png" alt="image-20250507180654617" style="zoom:33%;" />
-
-<p><strong>有补格</strong>：每个元素都有至少一个补元。</p>
-<h1 id="分配格"><a href="#分配格" class="headerlink" title="分配格"></a>分配格</h1><p><strong>分配格</strong>：格的 ∧, ∨满足分配律。<strong>链</strong>、密集、命题格都是分配格</p>
-<ul>
-<li>判别：不存在钻石格或者五角格同构的子格</li>
-<li>四个元素及以下的都是分配格</li>
-<li>五个元素，除了五角格和钻石格，其他都是分配格</li>
-<li><strong>性质</strong>：支持消去律</li>
-<li><a target="_blank" rel="noopener" href="https://img2023.cnblogs.com/blog/1629163/202310/1629163-20231005154333651-1708543792.png"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1629163-20231005154333651-1708543792.png" alt="img" style="zoom:33%;" /></a>L1,L2L1,L2是分配格， L3(钻石格),L4(五角格)L3(钻石格),L4(五角格)不是分配格。</li>
-<li><a target="_blank" rel="noopener" href="https://img2023.cnblogs.com/blog/1629163/202310/1629163-20231005154340340-1628803049.png"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1629163-20231005154340340-1628803049.png" alt="img" style="zoom: 33%;" /></a>上述都不是分配格。 它们是钻石格或五角格的子格。</li>
-</ul>
-<h1 id="布尔代数"><a href="#布尔代数" class="headerlink" title="布尔代数"></a>布尔代数</h1><p><mark>布尔代数（布尔格）</mark>：如果<strong>有补格</strong>的∧, ∨满足分配律，那么他就是一个布尔格（布尔代数）<strong>每个元素有且只有唯一的一个补元</strong> </p>
-<img src="C:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20250507161010076.png" alt="image-20250507161010076" style="zoom:33%;" />
-
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507161155099.png" alt="image-20250507161155099" style="zoom:33%;" />
-
-<p>（2）两个元素的最小上界是全下界0，那么他们都是0。 由此可知 a和b’互为补元 b就是a </p>
-<p>性质：</p>
-<ul>
-<li><p><strong>双重性</strong>：任何布尔恒等式对偶仍成立</p>
-</li>
-<li><p><strong>Stone表征定理</strong>：每个布尔代数同构于某个集合代数的幂集（P(X), ∪, ∩, ᶜ）</p>
-</li>
-</ul>
-<p>模格</p>
-<ul>
-<li>x∨(y∧z)=(x∨y)∧z</li>
-<li>所有分配格都是模格，反过来不一定。</li>
-</ul>
-<p>对偶格：把一个格中的“$\vee$”和“$\wedge$”运算、以及“$\leq$”和“$\geq$”关系全部反向，得到的新格。它是从原格“逆向”得到的结构。</p>
-<ul>
-<li></li>
-</ul>
-<h1 id="题"><a href="#题" class="headerlink" title="题"></a>题</h1><ol>
-<li><strong>判定题</strong>：给出下列偏序集，判断是否构成格，并说明理由。<br> a. (所有自然数N, 整除关系)  b. (P({1,2,3}), ⊆)</li>
-<li><strong>等式证明</strong>：在任意格中证明：<br> a. (a∨b)∧(a∨c) = a∨(b∧c)<br> b. a∧(b∨c) ≥ (a∧b)∨(a∧c)</li>
-<li><strong>子格判别</strong>：设L是格，H={x∈L | x≥a}，证明H是L的子格</li>
-<li><strong>特殊格判别</strong>：给定有界格, 判断其是否为：<br> a. 分配格  b. 补格  c. 布尔格</li>
-<li><strong>有限布尔代数</strong>：列出所有阶为4的布尔代数，并验证它们满足补元律</li>
-</ol>
-<hr>
-<ol>
-<li><strong>判定题</strong>：<br> a. (N,|) 的上确界 gcd(m,n) 存在，下确界 lcm(m,n) 存在 ⇒ 是格<br> b. (P(X),⊆) 的∧=交集、∨=并集 ⇒ 是格</li>
-<li><strong>等式证明</strong>：<br> a. 左边 = (a∨b)∧(a∨c) = a∨(b∧c) （分配律）<br> b. 由吸收律和分配可得 ≥ 方向</li>
-<li><strong>子格判别</strong>：<ul>
-<li>H封闭：若x,y≥a，则x∨y≥a, x∧y≥a</li>
-<li>满足格公理</li>
-</ul>
-</li>
-<li><strong>特殊格判别</strong>：<ul>
-<li>分配：验证分配律是否在格中成立</li>
-<li>补格：对每个元素检查是否存在补元</li>
-<li>布尔格：同时满足上述两条</li>
-</ul>
-</li>
-<li><strong>阶4布尔代数</strong>：<ul>
-<li>同构于P({1,2})，元素{∅,{1},{2},{1,2}}，补元为集合补集</li>
-</ul>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/05/math-distribute-math-group/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/05/math-distribute-math-group/" class="post-title-link" itemprop="url">离散数学：群环域</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-05T00:00:00+08:00">2025-05-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-08 13:21:10" itemprop="dateModified" datetime="2025-05-08T13:21:10+08:00">2025-05-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/math/" itemprop="url" rel="index"><span itemprop="name">math</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dreamsrj/articles/17610183.html">06-代数系统的一般概念 - Dreamsrj - 博客园</a> </p>
-<h1 id="群、环、域"><a href="#群、环、域" class="headerlink" title="群、环、域"></a>群、环、域</h1><h2 id="特殊元"><a href="#特殊元" class="headerlink" title="特殊元"></a>特殊元</h2><p>幂等元：$a^2=e$ </p>
-<p>单位元：$ax=x$</p>
-<p>零元：$ax=a$</p>
-<p>逆元：$ab=e$</p>
-<h2 id="群的概念递进"><a href="#群的概念递进" class="headerlink" title="群的概念递进"></a>群的概念递进</h2><p><strong>广群</strong>：封闭</p>
-<p><strong>半群</strong>：封闭+可结合</p>
-<p><strong>独异点</strong>：封闭+可结合+有单位元</p>
-<p><strong>群</strong>：封闭+可结合+有单位元+所有元素有逆元</p>
-<p><strong>阿贝尔群</strong>：群+可交换</p>
-<h3 id="环、域的概念递进"><a href="#环、域的概念递进" class="headerlink" title="环、域的概念递进"></a>环、域的概念递进</h3><p>环：$(R,+,*)$ +是阿贝尔群，*是半群，并且*对+满足分配律</p>
-<p>域：$(F,+,*)$ 是一个乘法含有单位元的环，并且F扣去零之后就是乘法的阿贝尔群（整环 + 非零元都可逆。）</p>
-<p>整环：单位交换环，和域的区别是少了逆元（环 + <strong>无零因子</strong> + 交换 + 单位元。）</p>
-<h2 id="群的阶、元素的阶"><a href="#群的阶、元素的阶" class="headerlink" title="群的阶、元素的阶"></a>群的阶、元素的阶</h2><p>群的阶：里面有n个元素即为n阶群</p>
-<p>元素的阶：存在最小正整数k使得 $a^k=e$，那么a就为k阶元。</p>
-<ul>
-<li>一阶元：$a=e$，只有一个一阶元</li>
-<li><strong>二阶元：$a^2=e$，因此 $a=a^{-1}$，a和其逆元实际上是一个元素。</strong></li>
-<li><strong>二阶元以上：$a≠a^{-1}$，所以a和其逆元成对出现。</strong></li>
-<li><strong>推论：偶数阶的群，一定含有二阶元：二阶以上成对出现，一阶元只有一个，那么必定存在二阶元。</strong></li>
-</ul>
-<h2 id="子群、拉格朗日定理"><a href="#子群、拉格朗日定理" class="headerlink" title="子群、拉格朗日定理"></a>子群、拉格朗日定理</h2><p>平凡群：只有一个元素（单位元）是所有群的子群，同时也是循环群、阿贝尔群。</p>
-<p><strong>子群证明</strong>：</p>
-<ol>
-<li><strong>H是G非空子集</strong>。H通常是加了条件限定的，代入单位元证明其非空</li>
-<li><strong>H对于运算是封闭的</strong>。H的元素同样也是G的元素，同样具备G的特性，利用G的特性，证明H的元素符合之前的条件限定。逆元可以使用 $xy^{-1}$进行变换。</li>
-<li>H的非零元素都存在逆元</li>
-</ol>
-<p><strong>求所有子群</strong>：</p>
-<ul>
-<li>阶为1的子群：单位元</li>
-<li>阶为2的子群：单位元、平方等于单位元的元素。。。。</li>
-<li>阶为4的子群：单位元、四次放等于单位元的元素。。。。。</li>
-</ul>
-<p><strong>拉格朗日定理</strong>：对于有限群 G 和其子群 H，H 阶 必然是 G阶 的因子。陪集数量乘H阶=G阶</p>
-<ul>
-<li><strong>G的元素a，a 阶k 必然是 G阶n 的因子，并且 $a^n=e$（并不代表a是n阶元，因为n是k的倍数）</strong></li>
-<li><strong>若 ∣G∣= n，则 G 的子群的阶只能是 n 的约数。</strong><ul>
-<li>6-&gt; 子群阶只能是1,2,3,6</li>
-<li>8-&gt; 1,2,4,8</li>
-</ul>
-</li>
-<li>左右陪集阶为 H阶，左右陪集要么相同，要么不相交</li>
-<li>H，K为子群，H交K就是H,K的子集，所以H交K是 H 和 K 的因子，其能够整除HK的最大公因数。因为HK互质，所以 H交K只能是一阶</li>
-</ul>
-<h2 id="循环群"><a href="#循环群" class="headerlink" title="循环群"></a>循环群</h2><p>循环群：G中存在一个元素a，使得所有的元素都可以表达为 a 的幂次方的形式，那么a是群的生成元，G是循环群</p>
-<p>循环群的性质：</p>
-<ul>
-<li><strong>n 阶循环群，生成元也是 n阶元</strong>，即 $g^n=e$</li>
-<li>一定是阿贝尔群</li>
-<li>n 阶循环群，同构于$(N_n, +_n)$</li>
-<li>无限循环群，同构于$(I_n,+_n)$</li>
-</ul>
-<h2 id="群的性质总结"><a href="#群的性质总结" class="headerlink" title="群的性质总结"></a>群的性质总结</h2><p>群的性质：</p>
-<ul>
-<li>逆元和单位元唯一，没有零元</li>
-<li>$(a\times b)^{-1}=b^{-1}\times a^{-1}$ <strong>重要，证明题里面逆元出现</strong></li>
-<li><strong>支持左右消去</strong> ，方程一定可解</li>
-<li>每个元素在运算表的行/列必然出现且只会出现一次</li>
-<li>阶的性质<ul>
-<li><strong>素数阶群必是循环群，没有非平凡子群，并且除了单位元，剩下的全都是生成元。</strong></li>
-<li><strong>逆元和自己有着相同的阶数</strong></li>
-</ul>
-</li>
-</ul>
-<h2 id="群的同态"><a href="#群的同态" class="headerlink" title="群的同态"></a>群的同态</h2><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507013240349.png" alt="image-20250507013240349" style="zoom:50%;" />
-
-<p>群的同态和同构：</p>
-<p>同态： $f(a*b) = f(a)+f(b)$ 如果是$f(ab)=f(a)f(b)$，那就是自同态。</p>
-<p>同构：f是双射的同态</p>
-<p>同态核K：S中那些经过映射之后变成 S’单位元的元素，如果只有S的单位元，说明是单射</p>
-<ul>
-<li><p>f(e) = e</p>
-</li>
-<li><p>证明题：对于 x∈K，f(x)=e，</p>
-</li>
-</ul>
-<p>证明自同构：</p>
-<ol>
-<li>f是双射<ol>
-<li>先证明是入射: 任取不相等的两个元素x1x2，f(x1) f(x2)肯定不相等</li>
-<li>再证明满射: 对于任意一个y，肯定有一个x∈G对应</li>
-</ol>
-</li>
-<li>f(xy)=f(x)f(y)</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/03/408-in-one/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/03/408-in-one/" class="post-title-link" itemprop="url">22408 分值</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-03 22:25:09" itemprop="dateCreated datePublished" datetime="2025-05-03T22:25:09+08:00">2025-05-03</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-05 12:50:11" itemprop="dateModified" datetime="2025-05-05T12:50:11+08:00">2025-05-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%80%83%E7%A0%94/" itemprop="url" rel="index"><span itemprop="name">考研</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="22408"><a href="#22408" class="headerlink" title="22408"></a>22408</h1><p>转自：<a target="_blank" rel="noopener" href="https://blog.csdn.net/smilehappiness/article/details/109964058">考研公共部分科目分支分布以及计算机408分值分布-CSDN博客</a> </p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>现在考研的竞争压力越来越大，这里，笔者也把考研中计算机的，408试卷分值分布做一个总结，方便以后考研的时候使用。</p>
-<h2 id="计算机4科分值分配比"><a href="#计算机4科分值分配比" class="headerlink" title="计算机4科分值分配比"></a>计算机4科分值分配比</h2><table>
-<thead>
-<tr>
-<th><strong>科目</strong></th>
-<th><strong>大概分值</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据结构</td>
-<td>45分</td>
-</tr>
-<tr>
-<td>计算机组成原理</td>
-<td>45分</td>
-</tr>
-<tr>
-<td>操作系统</td>
-<td>35分</td>
-</tr>
-<tr>
-<td>计算机网络</td>
-<td>25分</td>
-</tr>
-</tbody></table>
-<h2 id="408"><a href="#408" class="headerlink" title="408"></a>408</h2><p><strong>408考试中，分值总分150分，大致题型以及分值如下（仅供参考）：</strong></p>
-<h3 id="选择题-共80分"><a href="#选择题-共80分" class="headerlink" title="选择题 (共80分)"></a>选择题 (共80分)</h3><table>
-<thead>
-<tr>
-<th>选择题</th>
-<th>题目序号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据结构</td>
-<td>1~11</td>
-<td>11X2=22分</td>
-</tr>
-<tr>
-<td>计算机组成原理</td>
-<td>12~22</td>
-<td>11X2=22分</td>
-</tr>
-<tr>
-<td>操作系统</td>
-<td>23~32</td>
-<td>10X2=20分</td>
-</tr>
-<tr>
-<td>计算机网络</td>
-<td>33~40</td>
-<td>8X2=16分</td>
-</tr>
-</tbody></table>
-<h3 id="综合应用题-共70分"><a href="#综合应用题-共70分" class="headerlink" title="综合应用题 (共70分)"></a>综合应用题 (共70分)</h3><p>一共有41、42、43、44 、45、46 、47，共七个大题，<code>总分值70分</code><br><strong>21年考研大题41~47分值分布依次为：</strong>15、8、15、8、7、8、9</p>
-<p>正在备考的童鞋们，根据以上的分支分布，可以做一下复习侧重点呦</p>
-<h2 id="其他公共科目"><a href="#其他公共科目" class="headerlink" title="其他公共科目"></a>其他公共科目</h2><h3 id="英二"><a href="#英二" class="headerlink" title="英二"></a>英二</h3><p>英语二试题分四部分，共48题，总计<code>100分</code>，包括<code>英语知识运用</code>、<code>阅读理解</code>、<code>英译汉</code>和<code>写作</code>。</p>
-<p><strong>表格速览：</strong></p>
-<table>
-<thead>
-<tr>
-<th>题目类型</th>
-<th>题目序号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>英语知识运用</td>
-<td>1~20</td>
-<td>20X0.5=<code>10分</code></td>
-</tr>
-<tr>
-<td>阅读理解</td>
-<td>21~45</td>
-<td>25X2=<code>50分</code></td>
-</tr>
-<tr>
-<td>英译汉</td>
-<td>第三部分</td>
-<td><code>15分</code></td>
-</tr>
-<tr>
-<td>作文</td>
-<td>第四部分</td>
-<td><code>25分</code></td>
-</tr>
-</tbody></table>
-<h4 id="第一部分（英语知识运用）"><a href="#第一部分（英语知识运用）" class="headerlink" title="第一部分（英语知识运用）"></a>第一部分（英语知识运用）</h4><p>主要考查考生对英语知识的综合运用能力。共<code>20</code>小题，每小题<code>0.5</code>分，<code>共10分</code>。</p>
-<p>在一篇约350词的文章中留出20个空白，要求考生从每题给出的4个选项中选出最佳答案，使补全后的文章意思通顺、前后连贯、结构完整。</p>
-<h4 id="第二部分（阅读理解）"><a href="#第二部分（阅读理解）" class="headerlink" title="第二部分（阅读理解）"></a>第二部分（阅读理解）</h4><p>主要考查考生获取信息、理解文章、猜测重要生词词义并进行推断等方面的能力。该部分<code>由A、B两节组成</code>，共<code>25</code>小题，每小题<code>2</code>分，共<code>50</code>分。</p>
-<ul>
-<li><p><strong>A节(20小题)</strong><br>本部分为多项选择题。<code>共四篇文章</code>，总长度为1500词左右。<code>每篇文章设5题，共20题</code>。每小题2分，共40分。</p>
-</li>
-<li><p><strong>B节(5小题)</strong><br>本部分有两种备选题型。每次考试从这两种题型中选择其中的一种形式，或者两种形式的组合进行考查。本节文章设<code>5小题</code>，每小题2分，<code>共10分</code>。</p>
-<p>备选题型包括：<br><strong>1)多项对应</strong><br>本部分为一篇长度为450~550词的文章，试题内容分为左右两栏，左侧一栏为5道题目，右侧一栏为7个选项。要求考生在阅读后根据文章内容和左侧一栏中提供的信息从右侧一栏中的7个选项中选出对应的5项相关信息。</p>
-<p><strong>2)小标题对应</strong><br>在一篇长度为450~550词的文章前有7个概括句或小标题。这些文字或标题分别是对文章中某一部分的概括或阐述。要求考生根据文章内容和篇章结构从这7个选项中选出最恰当的5个概括句或小标题填入文章空白处。</p>
-</li>
-</ul>
-<h4 id="第三部分（英译汉）"><a href="#第三部分（英译汉）" class="headerlink" title="第三部分（英译汉）"></a>第三部分（英译汉）</h4><p>要求考生阅读、理解长度为150词左右的一个或几个英语段落，并将其全部译成汉语，<code>共15分</code>。</p>
-<h4 id="第四部分（写作）"><a href="#第四部分（写作）" class="headerlink" title="第四部分（写作）"></a>第四部分（写作）</h4><p>该部分由<code>A、B</code>两节组成，主要考查考生的书面表达能力。<code>共2题</code>，<code>25分</code>。</p>
-<ul>
-<li><strong>A节</strong><br>考生根据所给情景写出约100词(标点符号不计算在内)的应用性短文，包括私人和公务信函（常见的有：）、备忘录、报告等。共10分。</li>
-</ul>
-<p><strong>大致分类如下：</strong><br><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/8c5d133eb5d9b1deaa794f4441f60b77.png" alt="在这里插入图片描述"></p>
-<ul>
-<li><strong>B节</strong><br>要求考生根据所规定的情景或给出的提纲，写出一篇150词左右的英语说明文或议论文。提供情景的形式为图画、图表或文字。共15分。</li>
-</ul>
-<h3 id="政治分值分布"><a href="#政治分值分布" class="headerlink" title="政治分值分布"></a>政治分值分布</h3><p>政治部分分值，总共<code>100</code>分。</p>
-<table>
-<thead>
-<tr>
-<th>题目类型</th>
-<th>题目序号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>单项选择题</td>
-<td>1~16</td>
-<td>16X1=<code>16分</code></td>
-</tr>
-<tr>
-<td>多项选择题</td>
-<td>17~33</td>
-<td>17X2=<code>34分</code></td>
-</tr>
-<tr>
-<td>材料分析题</td>
-<td>共5个大题</td>
-<td>10X5=<code>50分</code></td>
-</tr>
-</tbody></table>
-<h3 id="数二"><a href="#数二" class="headerlink" title="数二"></a>数二</h3><p>数学部分分值，总共<code>150</code>分。</p>
-<table>
-<thead>
-<tr>
-<th>题目类型</th>
-<th>题目序号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>单项选择题</td>
-<td>1~10</td>
-<td>10X5=<code>50分</code></td>
-</tr>
-<tr>
-<td>填空题</td>
-<td>11~16</td>
-<td>16X5=<code>30分</code></td>
-</tr>
-<tr>
-<td>大题</td>
-<td>共6个大题</td>
-<td>1X10 + 5X12=<code>70分</code></td>
-</tr>
-</tbody></table>
-<p><strong>参考资料</strong>：<a target="_blank" rel="noopener" href="https://zhidao.baidu.com/question/12821750.html">https://zhidao.baidu.com/question/12821750.html</a></p>
-<p><code>注意：</code> <strong>以上总结仅供参考，实际还是以实际的考卷分值分布为准</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">希望笔者总结的分值分布，对小伙伴有所帮助~</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>写博客是为了记住自己容易忘记的东西，另外也是对自己工作的总结，希望尽自己的努力，做到更好，大家一起努力进步！</p>
-<p>如果有什么问题，欢迎大家评论，一起探讨</p>
-<p>给自己的梦想添加一双翅膀，让它可以在天空中自由自在的飞翔！</p>
-</blockquote>
-<h1 id="11408"><a href="#11408" class="headerlink" title="11408"></a>11408</h1><h2 id="408-1"><a href="#408-1" class="headerlink" title="408"></a>408</h2><table>
-<thead>
-<tr>
-<th>科目</th>
-<th>大致分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据结构</td>
-<td>45</td>
-</tr>
-<tr>
-<td>计算机组成原理</td>
-<td>45</td>
-</tr>
-<tr>
-<td>操作系统</td>
-<td>35</td>
-</tr>
-<tr>
-<td>计算机网络</td>
-<td>25</td>
-</tr>
-</tbody></table>
-<p>其中包括</p>
-<table>
-<thead>
-<tr>
-<th>科目</th>
-<th>题号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据结构</td>
-<td>1~11</td>
-<td>22</td>
-</tr>
-<tr>
-<td>计算机组成原理</td>
-<td>12~22</td>
-<td>22</td>
-</tr>
-<tr>
-<td>操作系统</td>
-<td>23~32</td>
-<td>20</td>
-</tr>
-<tr>
-<td>计算机网络</td>
-<td>33~40</td>
-<td>16</td>
-</tr>
-</tbody></table>
-<p>以及七3道综合应用题共70分</p>
-<h2 id="数一"><a href="#数一" class="headerlink" title="数一"></a>数一</h2><table>
-<thead>
-<tr>
-<th>科目</th>
-<th>大致分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>高等数学</td>
-<td>84</td>
-</tr>
-<tr>
-<td>线性代数</td>
-<td>33</td>
-</tr>
-<tr>
-<td>概率论与数理统计</td>
-<td>33</td>
-</tr>
-</tbody></table>
-<p>其中</p>
-<table>
-<thead>
-<tr>
-<th>题型</th>
-<th>高数</th>
-<th>线代</th>
-<th>概率</th>
-<th>题号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>选择题</td>
-<td>6</td>
-<td>2</td>
-<td>2</td>
-<td>1~10</td>
-<td>50</td>
-</tr>
-<tr>
-<td>填空题</td>
-<td>4</td>
-<td>1</td>
-<td>1</td>
-<td>11~16</td>
-<td>30</td>
-</tr>
-<tr>
-<td>计算题</td>
-<td>4</td>
-<td>1</td>
-<td>1</td>
-<td>17~22</td>
-<td>70</td>
-</tr>
-</tbody></table>
-<h2 id="英一"><a href="#英一" class="headerlink" title="英一"></a>英一</h2><table>
-<thead>
-<tr>
-<th>题型</th>
-<th>题号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>英语知识运用</td>
-<td>1~20</td>
-<td>10</td>
-</tr>
-<tr>
-<td>阅读理解</td>
-<td>21~50</td>
-<td>60</td>
-</tr>
-<tr>
-<td>写作</td>
-<td>51~52</td>
-<td>30</td>
-</tr>
-</tbody></table>
-<p>其中</p>
-<p>阅读理解<br>A、B、C三节组成，考查考生理解书面英语的能力。共30小题，每小题2分，共60分。</p>
-<p>A节(20小题)：主要考查考生理解主旨要义、具体信息、概念性含义，进行有关的判断、推理和引申，根据上下文推测生词的词义等能力。要求考生根据所提供的4篇(总长度约为1 600词)文章的内容，从每题所给出的4个选项中选出最佳答案。考生在答题卡1上作答。</p>
-<p>B节(5小题)：主要考查考生对诸如连贯性、一致性等语段特征以及文章结构的理解。本部分有3种备选题型。每次考试从这3种备选题型中选择一种进行考查。考生在答题卡1上作答。</p>
-<p>C节(5小题)：主要考查考生准确理解概念或结构较复杂的英语文字材料的能力。要求考生阅读一篇约400词的文章，并将其中5个画线部分(约150词)译成汉语，要求译文准确、完整、通顺。考生在答题卡2上作答。</p>
-<p>写作<br>该部分由A、B两节组成，主要考查考生的书面表达能力。共30分。</p>
-<p>A节：考生根据所给情景写出约100词(标点符号不计算在内)的应用性短文，包括私人和公务信函、备忘录、报告等。</p>
-<p>B节：考生根据提示信息写出一篇160~200词的短文(标点符号不计算在内)。提示信息的形式有主题句、写作提纲、规定情景、图、表等。考生在答题卡2上作答。共20分。 *硕士研究生入学考试将英译汉试题作为阅读理解的一部分，其目的是测试考生根据上下文准确理解概念或复杂结构并用汉语正确予以表达的能力。</p>
-<h2 id="政治"><a href="#政治" class="headerlink" title="政治"></a>政治</h2><table>
-<thead>
-<tr>
-<th>科目</th>
-<th>大致分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>马原</td>
-<td>24</td>
-</tr>
-<tr>
-<td>毛中特</td>
-<td>30</td>
-</tr>
-<tr>
-<td>近代史</td>
-<td>14</td>
-</tr>
-<tr>
-<td>思修</td>
-<td>16</td>
-</tr>
-</tbody></table>
-<p>其中</p>
-<table>
-<thead>
-<tr>
-<th>题型</th>
-<th>题号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>单选</td>
-<td>1~16</td>
-<td>16</td>
-</tr>
-<tr>
-<td>多选</td>
-<td>17~33</td>
-<td>34</td>
-</tr>
-<tr>
-<td>材料分析</td>
-<td>34~38</td>
-<td>50</td>
-</tr>
-</tbody></table>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/default/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/default/page/8/">8</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/default/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/default/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/default/page/9/">9</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/default/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
