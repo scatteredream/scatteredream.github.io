@@ -22,7 +22,7 @@
     <meta name="description" content="序列化序列化和反序列化 - 美团技术团队  序列化乍眼一看似乎是多此一举，比如你在内存中创建了一个Person对象，你把内存中那块表示Person二进制数据原封不动地抠出来放到磁盘中，下次再原封不动地读入内存重构出Person对象不就行了吗，何必要进行序列化呢？ 但事实并非那么简单，因为内存中的数据可能是非连续的。你所创建的Person对象可能有一个Name成员变量，它可能仅仅是一个指向另一片内存">
 <meta property="og:type" content="article">
 <meta property="og:title" content="序列化">
-<meta property="og:url" content="http://scatteredream.github.io/2024/10/03/java-web-serialization/index.html">
+<meta property="og:url" content="http://scatteredream.github.io/2025/04/30/java-web-serialization/index.html">
 <meta property="og:site_name" content="scatteredream&#39;s blog">
 <meta property="og:description" content="序列化序列化和反序列化 - 美团技术团队  序列化乍眼一看似乎是多此一举，比如你在内存中创建了一个Person对象，你把内存中那块表示Person二进制数据原封不动地抠出来放到磁盘中，下次再原封不动地读入内存重构出Person对象不就行了吗，何必要进行序列化呢？ 但事实并非那么简单，因为内存中的数据可能是非连续的。你所创建的Person对象可能有一个Name成员变量，它可能仅仅是一个指向另一片内存">
 <meta property="og:locale" content="zh_CN">
@@ -31,18 +31,18 @@
 <meta property="og:image" content="https://picx.zhimg.com/80/v2-c2d640eded6b96090704a79eaf2298ad_1440w.webp?source=1def8aca">
 <meta property="og:image" content="https://pica.zhimg.com/80/v2-35121b76c4b3f29797ade34ad321ddd8_1440w.webp?source=1def8aca">
 <meta property="og:image" content="https://pic1.zhimg.com/80/v2-2d1938219e4ee344b331583866a6dc82_1440w.webp?source=1def8aca">
-<meta property="article:published_time" content="2024-10-02T16:00:00.000Z">
-<meta property="article:modified_time" content="2025-04-27T07:16:20.281Z">
+<meta property="article:published_time" content="2025-04-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-16T01:50:54.019Z">
 <meta property="article:author" content="碎梦">
 <meta property="article:tag" content="序列化">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://i-blog.csdnimg.cn/blog_migrate/29687bbe2bd05e8a45b046612cb765bf.png">
 
 
-<link rel="canonical" href="http://scatteredream.github.io/2024/10/03/java-web-serialization/">
+<link rel="canonical" href="http://scatteredream.github.io/2025/04/30/java-web-serialization/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2024/10/03/java-web-serialization/","path":"2024/10/03/java-web-serialization/","title":"序列化"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2025/04/30/java-web-serialization/","path":"2025/04/30/java-web-serialization/","title":"序列化"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>序列化 | scatteredream's blog</title>
@@ -216,7 +216,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/03/java-web-serialization/">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/04/30/java-web-serialization/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
@@ -245,14 +245,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2024-10-03 00:00:00" itemprop="dateCreated datePublished" datetime="2024-10-03T00:00:00+08:00">2024-10-03</time>
+      <time title="创建时间：2025-04-30 00:00:00" itemprop="dateCreated datePublished" datetime="2025-04-30T00:00:00+08:00">2025-04-30</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-27 15:16:20" itemprop="dateModified" datetime="2025-04-27T15:16:20+08:00">2025-04-27</time>
+      <time title="修改时间：2025-05-16 09:50:54" itemprop="dateModified" datetime="2025-05-16T09:50:54+08:00">2025-05-16</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -453,13 +453,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2024/10/02/MySQL%20%E8%BF%9B%E9%98%B6%E7%AF%87/" rel="prev" title="MySQL 进阶篇">
-                  <i class="fa fa-angle-left"></i> MySQL 进阶篇
+                <a href="/2025/04/14/cpp_cuda_parallel_programming/" rel="prev" title="多核并行编程(C++&CUDA)">
+                  <i class="fa fa-angle-left"></i> 多核并行编程(C++&CUDA)
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2024/10/03/distributed-lock/" rel="next" title="分布式锁">
-                  分布式锁 <i class="fa fa-angle-right"></i>
+                <a href="/2025/05/01/review-4-30-%E5%8D%8E%E4%B8%BA%E4%B8%80%E9%9D%A2/" rel="next" title="4.30 华为一面+主管面">
+                  4.30 华为一面+主管面 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>

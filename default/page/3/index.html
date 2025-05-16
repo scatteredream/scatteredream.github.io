@@ -203,6 +203,575 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/01/05/408-%E8%AE%A1%E7%BD%91-%E7%BD%91%E7%BB%9C%E5%B1%82/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/01/05/408-%E8%AE%A1%E7%BD%91-%E7%BD%91%E7%BB%9C%E5%B1%82/" class="post-title-link" itemprop="url">网络层</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-05 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-05T00:00:00+08:00">2025-01-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-05 11:31:17" itemprop="dateModified" datetime="2025-05-05T11:31:17+08:00">2025-05-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%BD%91/" itemprop="url" rel="index"><span itemprop="name">计网</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="网络层概述"><a href="#网络层概述" class="headerlink" title="网络层概述"></a>网络层概述</h1><h2 id="家用无线路由器组网示意图"><a href="#家用无线路由器组网示意图" class="headerlink" title="家用无线路由器组网示意图"></a>家用无线路由器组网示意图</h2><p>通过ADSL或者FTTx与ISP相连</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241124141658211.png" alt="image-20241124141658211"></p>
+<h2 id="网络层提供不可靠的传输服务"><a href="#网络层提供不可靠的传输服务" class="headerlink" title="网络层提供不可靠的传输服务"></a>网络层提供不可靠的传输服务</h2><h3 id="面向连接"><a href="#面向连接" class="headerlink" title="面向连接"></a>面向连接</h3><p>先建立起虚电路（Virtual Circuit）通过虚电路的存储转发搭配可靠的协议建立起可靠的服务。</p>
+<h3 id="无连接的数据报服务"><a href="#无连接的数据报服务" class="headerlink" title="无连接的数据报服务"></a>无连接的数据报服务</h3><p>因为计算机本身有强大的计算功能，因此完全可以将可靠的传输交给终端主机本身去做，网络层设计得尽量简单，向上提供简单的，无连接的，尽最大努力交付的数据报服务(datagram/packet) 不保证分组一定到达，到达也不保证顺序就是发送的顺序。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/91fbdd548f6b4e86d639649f7aae4c30.jpg" alt="91fbdd548f6b4e86d639649f7aae4c30"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/87d7a972d7095f0f2bcf894527d05dd1.jpg" alt="87d7a972d7095f0f2bcf894527d05dd1"></p>
+<h2 id="网络层的两个层面"><a href="#网络层的两个层面" class="headerlink" title="网络层的两个层面"></a>网络层的两个层面</h2><ul>
+<li><strong>控制层面</strong>：负责维护路由表，和其他路由节点进行路由数据交互。典型协议就是各种路由选择协议（OSPF、BGP）</li>
+<li><strong>数据层面</strong>：负责根据路由表将 分组/数据报 转发到其他路由器。典型协议就是IP</li>
+<li><strong>SDN</strong>：软件定义网络，将控制层面用一个远程控制器实现，路由器只需要做转发数据报的工作就可以了。</li>
+</ul>
+<h1 id="IP（Internet-Protocol）"><a href="#IP（Internet-Protocol）" class="headerlink" title="IP（Internet Protocol）"></a>IP（Internet Protocol）</h1><p>各个局域网通过路由器相互连接称为一个虚拟的互联网，internet</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/internet_protocol_ip_address_diagram.png" alt="IP 地址使数据包到达其目的地"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/256851fcb6cde44eb5d73863a00da8b2-1732450187866-2.jpg" alt="256851fcb6cde44eb5d73863a00da8b2"></p>
+<h2 id="IP-地址"><a href="#IP-地址" class="headerlink" title="IP 地址"></a>IP 地址</h2><p>IPv4 32位 有网络号和主机号两个部分，网络号唯一标识互联网中的一个网络，主机号表示网络中的一台设备（网络号+主机号才能唯一确定一台设备）</p>
+<h3 id="ABC-分类地址"><a href="#ABC-分类地址" class="headerlink" title="ABC 分类地址"></a>ABC 分类地址</h3><p>网络号分别是前8位，前16位，前24位，随着互联网用户暴涨，固定的分类方法显然已经无法满足需求。</p>
+<h3 id="无类别域间路由-Classless-Inter-Domain-Routing-CIDR"><a href="#无类别域间路由-Classless-Inter-Domain-Routing-CIDR" class="headerlink" title="无类别域间路由(Classless Inter-Domain Routing,==CIDR==)"></a>无类别域间路由(Classless Inter-Domain Routing,==<strong>CIDR</strong>==)</h3><ul>
+<li>不采用固定分类的做法，把网络前缀的位数放到最后。</li>
+<li>网络前缀完全相同的处于同一个CIDR地址块中。</li>
+<li>128.14.35.7/20 表示网络号是前20位。</li>
+<li>原先的分类地址法只能分出3级8/16/24，较为死板和浪费，B类地址也无法表示C类地址，导致路由表的膨胀。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">192.168.0.0/24</span><br><span class="line">192.168.1.0/24</span><br><span class="line">192.168.2.0/24</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>路由聚合：这3个地址块可以用192.168.0.0/22概括起来，多个子网的地址具有相同的前缀，便于聚合。</li>
+</ul>
+<h3 id="子网掩码（subnet-mask）"><a href="#子网掩码（subnet-mask）" class="headerlink" title="子网掩码（subnet mask）"></a>子网掩码（subnet mask）</h3><p>告诉计算机网络前缀的位数，128.14.35.7/20的子网掩码是255.255.240.0（二进制比点分十进制更加直观）子网掩码和主机的IP地址进行按位与运算结果即为网络地址。子网是在一个IP网络中划分子网使我们能将一个至少从逻辑上看上去单一的大型网络分成若干个较小的网络。而主机必须知道自己的IP地址，也要知道自己处于哪一个网段，因此mask就诞生了</p>
+<h3 id="Facts-about-IP-address"><a href="#Facts-about-IP-address" class="headerlink" title="Facts about IP address"></a>Facts about IP address</h3><ul>
+<li>IP地址实质上是对接口指派地址，路由器有多个接口，说明接入到多个网络中，准确转发到多个网络中需要根据IP。</li>
+<li>同一局域网的主机IP网络前缀相同，网络地址的主机号必须全0。</li>
+<li>路由器必须处在不同网络中，必须有大于等于2个IP地址，两台交换机互连仍在同一网络中。</li>
+<li>交换机只有MAC地址，没有IP地址。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241124133937330.png" alt="image-20241124133937330"></p>
+<h3 id="匿名网络（Anoymous-Unnumbered-Network）"><a href="#匿名网络（Anoymous-Unnumbered-Network）" class="headerlink" title="匿名网络（Anoymous/Unnumbered Network）"></a>匿名网络（Anoymous/Unnumbered Network）</h3><ul>
+<li><p>从网络层的严格定义来说，<strong>网络层主要负责不同网络之间的路由和转发</strong>。路由器用了几个接口就表示接到几个网络</p>
+</li>
+<li><p>即使路由器间直接相连，也需要抽象为一个点对点网络（匿名网络）不过通常为了节省资源，并不分配IP地址</p>
+</li>
+<li><p>A为公网<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E4%B8%BB%E6%9C%BA/0?fromModule=lemma_inlink">主机</a>，D为拥有公网IP的主机，通信过程为A－B－C－D，B和C用unnumbered，没有必要占用两个ip地址了，让B、C间的口借用另一边口的地址，这样B和C就只是<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E9%93%BE%E8%B7%AF%E5%B1%82/0?fromModule=lemma_inlink">链路层</a>连接[ip unnumber_百度百科](<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/ip">https://baike.baidu.com/item/ip</a> unnumber/4480818) 。如果两台路由器之间还有一个拥有主机的网络E，就必须给接口指派一个网络E的地址。</p>
+</li>
+</ul>
+<h1 id="地址解析协议（Address-Resolution-Protocol-ARP）"><a href="#地址解析协议（Address-Resolution-Protocol-ARP）" class="headerlink" title="地址解析协议（Address Resolution Protocol, ARP）"></a>地址解析协议（Address Resolution Protocol, ARP）</h1><ul>
+<li><p>网络层基于IP地址（虚拟地址），主机A有IP<del>1</del>= 192.168.38.10， 主机B有IP<del>2</del>=192.168.38.11 </p>
+</li>
+<li><p>下层为上层提供服务，所以上层可以不用管下层的实现细节，体现在：主机只需要一个包含源IP和目标IP的数据报即可交给网卡开始传输。实际上数据链路层的网卡要根据IP<del>2</del>解析出应该发给哪个MAC地址，以便构造以太网帧时填入目标MAC地址。<strong>ARP</strong>就提供了IP地址到MAC地址的映射。</p>
+</li>
+</ul>
+<h2 id="ARP-高速缓存（ARP-Cache）"><a href="#ARP-高速缓存（ARP-Cache）" class="headerlink" title="ARP 高速缓存（ARP Cache）"></a>ARP 高速缓存（ARP Cache）</h2><p>这是主机中的一个映射表，缓存了IP-&gt;MAC的关系，经常动态变换，所以也叫 ARP 高速缓存</p>
+<ul>
+<li><p>刚刚上电，ARP Cache为空，此时就要发送一个<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%9C%B0%E5%9D%80%E8%A7%A3%E6%9E%90%E5%8D%8F%E8%AE%AE#ARP%E6%8A%A5%E6%96%87">ARP报文</a>（<strong>广播</strong>帧 ARP request），目标MAC地址是“FF.FF.FF.FF.FF.FF”，这表示向<strong>同一网段内</strong>的所有主机发出这样的询问：“192.168.38.11的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/MAC%E5%9C%B0%E5%9D%80">MAC地址</a>是什么？” </p>
+</li>
+<li><p>网络内其他主机并不响应ARP询问，只有<strong>同一网段内</strong>的主机B接收到这个帧时，才向主机A做出回应（ARP response）：“192.168.38.11的MAC地址是00-BB-00-62-C2-02”，此回应以<strong>单播</strong>方式进行。</p>
+</li>
+<li><p>这样，主机A就知道主机B的MAC地址，它就可以向主机B发送信息。同时它还更新自己的ARP cache，下次再向主机B发送信息时，直接从ARP缓存表里查找就可。实际上，ARP Request中包含源IP和源MAC，这样B收到帧的时候就能直接写入ARP缓存，不需要多余通信</p>
+</li>
+<li><p>ARP Cache 会设置<strong>生存时间</strong>（Time To Live, TTL）逾期会自动删除，给新的映射关系留下空间（因为可能有的网卡坏了MAC地址也换了，IP地址因为是软件地址，不会跟着硬件走）</p>
+</li>
+</ul>
+<h2 id="ARP-代理（ARP-Proxy）"><a href="#ARP-代理（ARP-Proxy）" class="headerlink" title="ARP 代理（ARP Proxy）"></a>ARP 代理（ARP Proxy）</h2><p>ARP 只适用于<strong>同一局域网</strong>内部的IP到MAC的映射。<strong>不同局域网之间</strong>的通信依靠路由器，主机会把IP数据报发给自己的默认网关（也就是路由器）由于默认网关是IP地址形式，所以也要发一个ARP请求广播帧来获取<strong>路由器的MAC地址</strong>，随后将自己的IP数据报封装成以太网帧发给路由器R<del>1</del>。</p>
+<p>路由器R<del>1</del>获取网帧之后经过剥离拿到IP数据报，如果目标IP恰好跟R<del>1</del>在同一个网络内，那么再次通过ARP找到目标IP的MAC地址即可。如果<strong>仍然不在同一个网络</strong>内，则需要查路由表来确定下一跳应该发到哪个网络。</p>
+<p><strong>广播域隔离</strong>：路由器并不会在不同子网间转发<strong>基于MAC地址的广播帧</strong>，同样也不会转发<strong>IP广播数据报</strong>，因为这样可能会造成<strong>广播风暴</strong>，瘫痪网络。</p>
+<p><strong>为什么不直接使用MAC地址通信</strong>：MAC地址相比于IP地址的劣势</p>
+<ul>
+<li>MAC帧格式并不统一（以太网帧、802.11帧<del>Wi-Fi</del>等）地址转换过程非常复杂，并且和硬件绑定缺乏灵活性</li>
+<li>使用更高层次的抽象IP地址就可以屏蔽上述差异，灵活分配，具体由ARP协议负责找到IP对应的MAC。</li>
+<li>MAC地址可轻易被伪造或篡改，而IP地址则可以结合其他协议（如防火墙和ACL）进行更复杂的安全策略。</li>
+</ul>
+<h1 id="IP-数据报首部（IP-Header）"><a href="#IP-数据报首部（IP-Header）" class="headerlink" title="IP 数据报首部（IP Header）"></a>IP 数据报首部（IP Header）</h1><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/d448bf2729381d8aa9f09d12f454726d.png" alt="d448bf2729381d8aa9f09d12f454726d"></p>
+<table>
+<thead>
+<tr>
+<th>字段名称</th>
+<th>长度（bit）</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>版本</td>
+<td>4</td>
+<td>区分协议的版本 (IPv4, IPv6等)</td>
+</tr>
+<tr>
+<td>首部长度</td>
+<td>4</td>
+<td>整个<strong>首部</strong>的长度，单位4字节（0101（20字节）~1111（60字节））</td>
+</tr>
+<tr>
+<td>区分服务</td>
+<td>8</td>
+<td>用来获得更好的服务类型，区分服务类型才使用</td>
+</tr>
+<tr>
+<td>总长度</td>
+<td>16</td>
+<td>单位字节，首部+数据的总长度，最大65536，实际上超过1500（MTU）必须分片，如果分片，则为这个数据报分片的总长度</td>
+</tr>
+<tr>
+<td>标识</td>
+<td>16</td>
+<td>IP 软件给每个 IP 数据报分配的标识，属于<strong>同一个数据报的分片标识相同</strong></td>
+</tr>
+<tr>
+<td>标志</td>
+<td>3</td>
+<td>0 | DF | MF (MF =  1表示还有分片，MF = 0表示最后一个分片，DF = 1不允许分片)</td>
+</tr>
+<tr>
+<td>片偏移（Offset）</td>
+<td>13</td>
+<td>单位8字节，$2^{13}\times8 = 65536$，表示<strong>分片的数据</strong>在<strong>原数据</strong>中的偏移量</td>
+</tr>
+<tr>
+<td>生存时间（TTL）</td>
+<td>8</td>
+<td><strong>数据报的寿命</strong>，以前单位为秒，后来变成了<strong>跳数</strong>，减少路由表配置错误导致的网络风暴</td>
+</tr>
+<tr>
+<td>协议</td>
+<td>8</td>
+<td>用来标识数据部分使用的是什么协议（ICMP, UDP, TCP, OSPF 等）</td>
+</tr>
+<tr>
+<td>首部校验和（Checksum）</td>
+<td>16</td>
+<td><strong>首部</strong>按照16位字划分成如上图的几行，将首部各行加和的反码填入，发送者会先置0，然后再运算，接收者会直接运算结果，如果不出错结果肯定是0</td>
+</tr>
+<tr>
+<td>源地址</td>
+<td>32</td>
+<td>源 IPv4 地址</td>
+</tr>
+<tr>
+<td>目的地址</td>
+<td>32</td>
+<td>目标 IPv4 地址</td>
+</tr>
+<tr>
+<td>可变部分</td>
+<td>1~40</td>
+<td>用于排错、测量和安全功能，由于是可变 加重路由器的负担，可有可无，IPv6 变为定长</td>
+</tr>
+<tr>
+<td>数据部分（Payload）</td>
+<td>——</td>
+<td>上层传下来的数据</td>
+</tr>
+</tbody></table>
+<h2 id="从以太网帧中找出目的IP地址"><a href="#从以太网帧中找出目的IP地址" class="headerlink" title="从以太网帧中找出目的IP地址"></a>从以太网帧中找出目的IP地址</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241124195904437.png" alt="image-20241124195904437"></p>
+<p>以太网帧有14B的头，IP的目的地址之前有16B的头，因此目的地址从第31个字节开始</p>
+<h1 id="IP-转发分组过程"><a href="#IP-转发分组过程" class="headerlink" title="IP 转发分组过程"></a>IP 转发分组过程</h1><h2 id="基于终点转发：前缀匹配"><a href="#基于终点转发：前缀匹配" class="headerlink" title="基于终点转发：前缀匹配"></a>基于终点转发：前缀匹配</h2><table>
+<thead>
+<tr>
+<th>前缀匹配</th>
+<th>下一跳</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>128.1.2.192/26</td>
+<td>直接，接口1</td>
+</tr>
+<tr>
+<td>128.1.2.128/26</td>
+<td>直接，接口2</td>
+</tr>
+<tr>
+<td>128.1.3.64/26</td>
+<td>R<del>2</del></td>
+</tr>
+</tbody></table>
+<p>ARP代理机制中，我们接触到了逐跳转发的概念，如果转发到第一个路由器和目标IP仍然不在一个网络，就要转发到路由表的下一跳。</p>
+<p><strong>路由表</strong>：分别是网络IP地址、子网掩码和下一跳，网络地址和子网掩码确定接口在哪个网络，下一跳同样是网络的地址而不是主机的IP地址，这主要是为了防止浪费，提高转发的效率。</p>
+<p><strong>匹配前缀</strong>：将子网掩码和目的地址相与 得出的网络地址匹配，则进入下一跳，否则继续匹配下一个</p>
+<p>R<del>1</del>查到下一跳之后，会将下一跳IP地址传给数据链路层，用ARP解析出路由器R<del>2</del>的MAC地址。</p>
+<p>因此，查找路由表的过程就是寻找前缀匹配的过程。</p>
+<h2 id="查询路由表"><a href="#查询路由表" class="headerlink" title="查询路由表"></a>查询路由表</h2><h3 id="最长前缀匹配"><a href="#最长前缀匹配" class="headerlink" title="最长前缀匹配"></a>最长前缀匹配</h3><p>CIDR路由聚合可以将网络前缀相同的地址块合并，初衷就是减少路由表项，但同时也减少了路由的具体性，举例：</p>
+<p><code>128.1.24.0/22</code>与<code>128.1.24.0/24</code> 这两个CIDR地址块并不一致，尽管后者可以聚合到前者中，但是如果特意不聚合（比如公司B和公司A同时从ISP申请了同一网段的IP地址），放到路由表就表示不同的网段，</p>
+<p><strong>128.1.24.0/24</strong>：</p>
+<ul>
+<li>掩码：<code>255.255.255.0</code></li>
+<li>包含的地址范围：<code>128.1.24.0 ~ 128.1.24.255</code> （公司A）</li>
+</ul>
+<p><strong>128.1.24.0/22</strong>：</p>
+<ul>
+<li>掩码：<code>255.255.252.0</code></li>
+<li>表面上可以包含的地址范围：<code>128.1.24.0 ~ 128.1.27.255</code> </li>
+<li>实际上包含的地址范围： <code>128.1.25.0/24</code>, <code>128.1.26.0/24</code>, <code>128.1.27.0/24</code> (公司B)</li>
+<li>为了节省空间，使用路由聚合将公司B的3个地址块聚合成1个大地址块</li>
+</ul>
+<p>多个前缀匹配成功（精确和模糊网段同时出现在路由表），模糊网段实际上并没有包括这个精确网段，路由器采取的原则是 <strong>最长前缀匹配</strong> ，如果不这样做，会被错误路由到模糊的网段，找不到目标。</p>
+<p>为了方便这个实践这个原则，路由表会按照前缀长度进行排序，越长防越靠前，避免发生错误多余的查找。</p>
+<p>路由表中还有两个特殊的可选路由项：</p>
+<h3 id="主机路由（host-route）"><a href="#主机路由（host-route）" class="headerlink" title="主机路由（host route）"></a>主机路由（host route）</h3><p>前缀长度是32位，直接定位到一台主机，目标IP和主机路由相同，则直接认定匹配，网络测试比较方便，免去地址聚合带来的不确定性</p>
+<h3 id="默认路由（default-route）"><a href="#默认路由（default-route）" class="headerlink" title="默认路由（default route）"></a>默认路由（default route）</h3><p><strong>网络前缀</strong>：</p>
+<ul>
+<li><code>0.0.0.0</code>：表示网络地址是 0。</li>
+<li><code>/0</code>：表示前缀长度是 0 位，也就是说没有固定的前缀，所有 IP 地址的前缀都可以匹配它。</li>
+</ul>
+<p><strong>含义</strong>：</p>
+<ul>
+<li>默认路由是路由表中的一个“兜底规则”。</li>
+<li>当某个目标地址不匹配任何其他路由条目时，数据包会被转发到默认路由指向的下一跳（指定的网关）。</li>
+<li>适用于对外连接较少的路由器（比如这个路由器不直接跟外网连接，而是通过另一个网关）</li>
+</ul>
+<p>当路由表中存在更精确的匹配（如 <code>/24</code> 或 <code>/16</code>），则优先使用更精确的匹配；只有当没有其他匹配时，才使用默认路由。这个可以减少路由表的条数，提高单个路由表的查询性能。</p>
+<h1 id="网际控制报文协议（ICMP）"><a href="#网际控制报文协议（ICMP）" class="headerlink" title="网际控制报文协议（ICMP）"></a>网际控制报文协议（ICMP）</h1><h2 id="ICMP报文种类"><a href="#ICMP报文种类" class="headerlink" title="ICMP报文种类"></a>ICMP报文种类</h2><h3 id="差错报告报文"><a href="#差错报告报文" class="headerlink" title="差错报告报文"></a>差错报告报文</h3><ul>
+<li><p>终点不可达：路由器或主机无法交付数据报时向源点发送destination unreachable，比如UDP数据包目标是一个不存在的端口</p>
+<ul>
+<li><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241126195147654.png" alt="image-20241126195147654"></li>
+</ul>
+</li>
+<li><p>时间超过：TTL归零，路由器要丢弃数据报，并向源点发送time exceeded</p>
+</li>
+<li><p>参数问题：IP首部出错，BAD IP HEADER</p>
+</li>
+<li><p>改变路由：路由器发现了更好的路由，遂向主机发送redirecting，改变默认路由</p>
+</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241125220916277.png" alt="image-20241125220916277"></p>
+<p>ICMP的数据部分包括IP数据报首部，和IP数据负载的前8字节（UDP，TCP的目标端口和源端口，TCP报文段的发送序列号）</p>
+<h3 id="询问报文"><a href="#询问报文" class="headerlink" title="询问报文"></a>询问报文</h3><ul>
+<li>回送请求、回送回答：向特定主机发送的询问，收到回答用来测试可达和主机状态</li>
+<li>时间戳请求、时间戳回答：利用时间戳可以计算往返时间</li>
+</ul>
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><h3 id="PING"><a href="#PING" class="headerlink" title="PING"></a>PING</h3><p>Packet InterNet Gopher ，应用层直接调用网络层的一个例子，向节点连续发送ICMP回送请求报文，可以计算出往返时间，统计出丢失的分组数（不知道原因）</p>
+<p>ECHO REQUEST(8)    ECHO REPLY(0)</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241125221744772.png" alt="image-20241125221744772"></p>
+<h4 id="socket编程实现"><a href="#socket编程实现" class="headerlink" title="socket编程实现"></a>socket编程实现</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/eb0963a11439dff361dbe0e7a8876abd.png" alt="图片"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241126203039467.png" alt="image-20241126203039467"></p>
+<p>UNIX系统编程实现中，计算机传输层以下比较底层的部分通过socket接口封装起来，调用比较方便，socket编程接口就是应用程序访问网络，操作网卡的方式。</p>
+<p>创建socket套接字时有不同的参数，可以选择基于字节流（TCP）/数据报（UDP），另外一个方面，还可以选择协议TCP UDP 或者ICMP，这样socket</p>
+<p>在 TCP 传输中创建的方式是 <code>socket(AF_INET, SOCK_STREAM, 0)</code> 其中 <code>AF_INET</code> 表示将使用 IPV4 里 host:port 的方式去解析待会你输入的网络地址。<code>SOCK_STREAM</code> 是指使用面向字节流的 TCP 协议，工作在传输层。 创建好了 socket 之后，就可以愉快的把要传输的数据写到这个文件里。调用 socket 的<code>sendto</code>接口的过程中进程会从用户态进入到内核态，最后会调用到 <code>sock_sendmsg</code> 方法。 然后进入传输层，带上TCP头。网络层带上IP头，数据链路层带上 MAC头等一系列操作后。进入网卡的发送队列 ring buffer ，顺着网卡就发出去了。 回到 ping ， 整个过程也基本跟 TCP 发数据类似，差异的地方主要在于，创建 socket 的时候用的是 <code>socket(AF_INET,SOCK_RAW,IPPROTO_ICMP)</code>，<code>SOCK_RAW</code> 是原始套接字 ，工作在网络层， 所以构建ICMP（网络层协议）的数据，是再合适不过了。ping 在进入内核态后最后也是调用的 <code>sock_sendmsg</code> 方法，进入到网络层后加上ICMP和IP头后，数据链路层加上MAC头，也是顺着网卡发出。        </p>
+<p>因此 本质上ping 跟 普通应用发消息 在程序流程上没太大差别。 这也解释了<strong>为什么当你发现怀疑网络有问题的时候，别人第一时间是问你能ping通吗？</strong>因为可以简单理解为ping就是自己组了个数据包，让系统按着其他软件发送数据的路径往外发一遍，能通的话说明其他软件发的数据也能通。</p>
+<h4 id="PING-127-0-0-1"><a href="#PING-127-0-0-1" class="headerlink" title="PING 127.0.0.1"></a>PING 127.0.0.1</h4><p>PING localhost 127.0.0.1 本机IP都会走回环路径</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/c1019a8be584b27c4fc8b8abda9d3cf1.png" alt="图片"></p>
+<p>The local network card is actually a “fake network network card”. It does not have a <strong>ring buffer</strong> like the “real network card”. The “fake network card” will push data into a linked list called <code>input_pkt_queue</code>. This linked list is actually shared by <strong>all</strong> network cards, and contains various messages sent to this machine. After the message is sent to this linked list, a soft interrupt will be triggered。</p>
+<p>0.0.0.0 ping不通，不过服务器listen0.0.0.0表示监听所有目标地址</p>
+<h3 id="traceroute"><a href="#traceroute" class="headerlink" title="traceroute"></a>traceroute</h3><ol>
+<li>记录路由路径和路由时间</li>
+<li>确定链路的MTU</li>
+</ol>
+<p>连续发送多个数据报(含有目标端口非法的UDP数据报)，TTL从1开始递增，路由器减TTL并准备转发，此时看到TTL归零就会向源点发送ICMP <strong>时间超过</strong> 差错报告报文，能够记录路由的路径，如果路由到目标主机，目标主机不会继续转发，也不会减TTL，看到UDP数据报不合法向源点发送ICMP <strong>终点不可达</strong> 差错报告报文。</p>
+<p>每个TTL会发送3个相同数据报</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241125221948199.png" alt="image-20241125221948199"></p>
+<p>第二个作用：<strong>故意设置不分片，从而确定路径的 MTU</strong>。</p>
+<p>First, when the sending host sends an IP datagram, it sets the DF(Don’t Fragment) flag bit in the IP packet header to 1. According to this flag, routers on the way will not fragment large data packets, but will <strong>discard</strong> the packets.</p>
+<p>Subsequently, the value of the <strong>MTU on the data link</strong> is sent to the sending host through an ICMP unreachable message. The type of the unreachable message is “Fragmentation is required but the DF-bit is set.”</p>
+<p>Each time the sending host receives an ICMP error message, it reduces the packet size to locate an appropriate MTU value so that it can reach the target host.</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241126195846876.png" alt="image-20241126195846876"></p>
+<h1 id="网际分组管理协议（IGMP）"><a href="#网际分组管理协议（IGMP）" class="headerlink" title="网际分组管理协议（IGMP）"></a>网际分组管理协议（IGMP）</h1><h2 id="一对多通信"><a href="#一对多通信" class="headerlink" title="一对多通信"></a>一对多通信</h2><h3 id="IP-单播（Unicast）"><a href="#IP-单播（Unicast）" class="headerlink" title="IP 单播（Unicast）"></a>IP 单播（Unicast）</h3><p>单播是点对点通信，一台设备直接与另一台设备通信。数据包通过网络传输到特定的目标地址。</p>
+<p><strong>特点</strong></p>
+<ul>
+<li>每个数据包有唯一的目标 IP 地址。</li>
+<li>用于一对一的通信场景。</li>
+<li>网络负载低，目标明确。</li>
+</ul>
+<p><strong>应用场景</strong></p>
+<ul>
+<li>普通的网页浏览、邮件通信等。</li>
+<li>服务器与客户端的直接通信。</li>
+</ul>
+<p><strong>示例</strong><br>一台电脑向服务器（如 192.168.1.1）请求网页内容。</p>
+<h3 id="IP-广播（Broadcast）"><a href="#IP-广播（Broadcast）" class="headerlink" title="IP 广播（Broadcast）"></a>IP 广播（Broadcast）</h3><table>
+<thead>
+<tr>
+<th>网络号</th>
+<th>主机号</th>
+<th>源地址使用</th>
+<th>目的地址使用</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>0</td>
+<td>OK</td>
+<td>NO</td>
+<td>本网络的本主机，用于 DHCP，此时本主机 IP 未知</td>
+</tr>
+<tr>
+<td>0</td>
+<td>X</td>
+<td>OK</td>
+<td>NO</td>
+<td>本网络的 X 主机</td>
+</tr>
+<tr>
+<td>127</td>
+<td>除全0和全1</td>
+<td>OK</td>
+<td>OK</td>
+<td>本地软件测试环回地址 (loopback)</td>
+</tr>
+<tr>
+<td><strong>Y</strong></td>
+<td><strong>全1</strong></td>
+<td><strong>NO</strong></td>
+<td><strong>OK</strong></td>
+<td><strong>Y 网络的广播（路由器参与转发）</strong></td>
+</tr>
+<tr>
+<td><strong>全1</strong></td>
+<td><strong>全1</strong></td>
+<td><strong>NO</strong></td>
+<td><strong>OK</strong></td>
+<td><strong>本网络的广播（路由器不参与转发）</strong></td>
+</tr>
+</tbody></table>
+<p>由此可见，IP 广播主要是聚焦局域网（LAN）所有主机都会接收广播消息，无需特定的接收者。</p>
+<p><strong>应用场景</strong>：</p>
+<ul>
+<li>地址解析协议（ARP）。</li>
+<li>动态主机配置协议（DHCP）的请求。</li>
+</ul>
+<h3 id="IP-多播（Multicast）"><a href="#IP-多播（Multicast）" class="headerlink" title="IP 多播（Multicast）"></a>IP 多播（Multicast）</h3><ul>
+<li><strong>定义</strong>：<br>多播是一种将数据包发送给特定一组接收者（多播组）的通信方式。这组接收者需要事先加入一个特定的多播组，只有组内的成员会接收到数据包。也叫组播</li>
+<li><strong>特点</strong>：<ul>
+<li>可以跨越多个网络。</li>
+<li>使用 <strong>多播地址</strong>：IPv4中的多播地址范围是 <code>224.0.0.0</code> 到 <code>239.255.255.255</code>。（D类地址）</li>
+<li>接收者需要加入一个多播组（通过 IGMP 协议进行管理）。</li>
+<li>节省带宽，因为数据只发送给需要的设备。</li>
+</ul>
+</li>
+<li><strong>优缺点</strong>：<ul>
+<li><strong>优点</strong>：更高效，特别是在需要发送给大量接收者时。</li>
+<li><strong>缺点</strong>：需要更多的配置和支持，例如多播路由器。</li>
+</ul>
+</li>
+<li><strong>应用场景</strong>：<ul>
+<li>视频会议。</li>
+<li>实时股票行情分发。</li>
+<li>流媒体广播。</li>
+</ul>
+</li>
+</ul>
+<h3 id="IP-任播（Anycast）"><a href="#IP-任播（Anycast）" class="headerlink" title="IP 任播（Anycast）"></a>IP 任播（Anycast）</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241129180917624.png" alt="image-20241129180917624"></p>
+<p><strong>定义</strong><br>任播是点对最近点通信，数据包发送给一个目标地址，但由多个具有相同地址的设备接收，最终到达距离最近的一个设备。</p>
+<p><strong>特点</strong></p>
+<ul>
+<li>使用普通的单播地址，但配置在多个设备上。</li>
+<li>路由选择最近的目标（通常基于最短路径）。</li>
+<li>增强服务的可用性和效率。用于负载均衡和冗余。</li>
+</ul>
+<p><strong>应用场景</strong></p>
+<ul>
+<li>内容分发网络（CDN）。</li>
+<li>公共 DNS 服务（如 Google 的 8.8.8.8）。</li>
+</ul>
+<p><strong>示例</strong><br>用户请求 DNS 服务，数据包被路由到最近的 DNS 服务器（多个 DNS 服务器配置了同样的地址 8.8.8.8）。</p>
+<h3 id="对比总结"><a href="#对比总结" class="headerlink" title="对比总结"></a>对比总结</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>特点</th>
+<th>应用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>单播</td>
+<td>一对一通信，目标明确</td>
+<td>普通网络通信（网页、邮件等）</td>
+</tr>
+<tr>
+<td>组播</td>
+<td>一对多通信，针对订阅组传输</td>
+<td>视频直播、分布式同步等</td>
+</tr>
+<tr>
+<td>广播</td>
+<td>一对全通信，子网内所有设备接收</td>
+<td>ARP、DHCP 发现等</td>
+</tr>
+<tr>
+<td>任播</td>
+<td>一对最近点通信，选择最近设备</td>
+<td>CDN、全球 DNS 服务等</td>
+</tr>
+</tbody></table>
+<h3 id="局域网上的硬件多播"><a href="#局域网上的硬件多播" class="headerlink" title="局域网上的硬件多播"></a>局域网上的硬件多播</h3><p>MAC地址 FF:FF:FF:FF:FF:FF为<strong>广播地址</strong></p>
+<p>MAC地址 第一个字节末位为1 表示多播，前25位固定不变，后23位来自D类IP地址的后23位 为MAC多播地址</p>
+<h2 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h2><h3 id="IGMP"><a href="#IGMP" class="headerlink" title="IGMP"></a>IGMP</h3><h3 id="多播路由协议"><a href="#多播路由协议" class="headerlink" title="多播路由协议"></a>多播路由协议</h3><p>本质区别：多播路由需要考虑源地址的组和网络，也要考虑目的地址的组和网络</p>
+<h1 id="缓解IPv4地址短缺"><a href="#缓解IPv4地址短缺" class="headerlink" title="缓解IPv4地址短缺"></a>缓解IPv4地址短缺</h1><h2 id="CIDR"><a href="#CIDR" class="headerlink" title="CIDR"></a>CIDR</h2><h2 id="虚拟专用网络（Virtual-Private-Network-VPN）"><a href="#虚拟专用网络（Virtual-Private-Network-VPN）" class="headerlink" title="虚拟专用网络（Virtual Private Network, VPN）"></a>虚拟专用网络（Virtual Private Network, VPN）</h2><h3 id="专用IP地址与隧道技术（tunnel）"><a href="#专用IP地址与隧道技术（tunnel）" class="headerlink" title="专用IP地址与隧道技术（tunnel）"></a>专用IP地址与隧道技术（tunnel）</h3><p><code>10.0.0.0 ~ 10.255.255.255</code> 1个A类网络</p>
+<p><code>172.16.0.0 ~ 172.31.255.255</code> 16个B类网络</p>
+<p><code>192.168.0.0 ~ 192.168.255.255</code> 256个C类网络</p>
+<p>IP地址短缺，机构内部的主机都会使用专用IP网段，如果机构内部的主机AB分隔两地需要进行通信，私密性和安全性是关键，要么向运营商租用昂贵的电信线路将他们直接连成局域网，</p>
+<p>要么利用互联网，用两台路由器静态配置IP，将原本的IP数据报加密后封装到一个新的IP数据报中，这个新的IP数据报负责在公网进行路由传递，最终到达目标主机所在网络的路由器，由路由器将数据报交付给目标主机。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241125223910383.png" alt="image-20241125223910383"></p>
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>目标IP</th>
+<th>源IP</th>
+<th>所属网络</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>10.2.0.3</td>
+<td>10.1.0.1</td>
+<td>10.1.0.0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>194.4.5.6</td>
+<td>125.1.2.3</td>
+<td>公网IP</td>
+</tr>
+<tr>
+<td>3</td>
+<td>10.2.0.3</td>
+<td>10.1.0.1</td>
+<td>10.2.0.0</td>
+</tr>
+</tbody></table>
+<p>步骤2是外层数据报，13都是内层的加密数据报内容。</p>
+<h2 id="网络地址转换（Network-Address-Translation-NAT）"><a href="#网络地址转换（Network-Address-Translation-NAT）" class="headerlink" title="网络地址转换（Network Address Translation, NAT）"></a>网络地址转换（Network Address Translation, NAT）</h2><p>同样是IP地址短缺的背景，路由器给主机分配了专用IP网段，内网IP的数据包根本不可能在公网上传播，因为公网上的路由器都是屏蔽掉了这些私网IP，因此主机要通过路由器的公网IP向外发送消息，但是之后外部就无法联络内部，此时就出现了网络地址转换（NAT）NAT提供了主机的专用IP地址到路由器所持公网IP的映射关系，外部发送消息到路由器的特定公网IP，NAT路由器根据映射表将消息转发到对应的主机。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241125225315413.png" alt="image-20241125225315413"></p>
+<h3 id="NAPT"><a href="#NAPT" class="headerlink" title="NAPT"></a>NAPT</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241125225356469.png" alt="image-20241125225356469"></p>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>网络地址转换（Network Address Translation，NAT）机制的问题在于，NAT设备自动屏蔽了非内网主机主动发起的连接，也就是说，从外网发往内网的数据包将被NAT设备丢弃，这使得位于不同NAT设备之后的主机之间无法直接交换信息。这一方面保护了内网主机免于来自外部网络的攻击，另一方面也为P2P通信带来了一定困难。Internet上的NAT设备大多是地址限制圆锥形NAT或端口限制圆锥形 NAT，外部主机要与内网主机相互通信，必须由内网主机主动发起连接，使 NAT设备产生一个映射条目，这就有必要研究一下<strong>内网穿透</strong>技术。</p>
+<h3 id="内网穿透（Intranet-penetration）"><a href="#内网穿透（Intranet-penetration）" class="headerlink" title="内网穿透（Intranet penetration）"></a>内网穿透（Intranet penetration）</h3><h4 id="UDP-打洞"><a href="#UDP-打洞" class="headerlink" title="UDP 打洞"></a>UDP 打洞</h4><h5 id="通信双方一台位于-NAT-之后"><a href="#通信双方一台位于-NAT-之后" class="headerlink" title="通信双方一台位于 NAT 之后"></a>通信双方一台位于 NAT 之后</h5><p>一台主机B有一个公网 IP，另一台主机A有一个内网 IP。如图2.4所示， A 位于 NAT 之后，并拥有[IP 地址：端口]对[10.0.0.1：1234]， B位于 NAT 之前，并拥有[IP 地址：端口]对[138.76.29.7：1234]，NAT 拥有公网 IP 155.99.25.11。由于  B 有一个公网 IP， A 可以直接通过 TCP 连接到[138.76.29.7：1234]，然而，如果  B 向  A 发起主动连接，则不会成功。此时，需要一个公有的服务器辅助进行内网穿透。 A 和  B 向服务器发起登陆请求，并保持一个 TCP 或 UDP 连接，服务器记录其 IP 地址和端口号，这里服务器对  A 是记录其经过 NAT 映射之后的 IP 和端口号。当  B 想连接  A 时，首先向服务器提出请求，服务器在收到请求后向  A 发出打洞命令，并将  B 的[IP 地址：端口]对发给  A， A 根据接收到的 IP地址和端口号向  B 发起 TCP 连接或发送 UDP 数据包。接下来  A 和 B 之间便可以建立数据传输通道。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241125230637435.png" alt="image-20241125230637435"></p>
+<h5 id="通信双方主机均位于NAT设备之后"><a href="#通信双方主机均位于NAT设备之后" class="headerlink" title="通信双方主机均位于NAT设备之后"></a>通信双方主机均位于NAT设备之后</h5><p>两台主机都处于内网中，如图2.5所示。服务器记录的[IP 地址：端口]对是  A 和  B 经过 NAT 映射之后的IP 地址和端口号，此时， A 和  B 之间任意方向的连接请求都会被对方的 NAT 设备屏蔽。 A 首先向服务器提出连接请求，服务器将  A 的 IP地址和端口号对[155.99.25.11:51200]发给  B，并向  B 发出打洞命令； B 收到服务器的打洞命令后首先向[155.99.25.11:51200]发送一定数目的 UDP探测包或 TCP 连接请求，在 NAT B 上打一个方向为[155.99.25.11:51200]的洞， B 随后向服务器报告打洞完成；服务器在收到  B 的报告后将  B 的公网IP 地址和端口号对[110.10.33.10：5000]，此时由于 NAT B 上已经留下了对应于[155.99.25.11:51200]方向的洞， A 向[110.10.33.10：5000]发出的数据包或连接请求将不会被丢弃。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241125230725093.png" alt="image-20241125230725093"></p>
+<p>这项技术需要使用<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2">圆锥型NAT</a>设备，对称型NAT不能使用这项技术。</p>
+<h4 id="STUN（NAT会话穿越应用程序）"><a href="#STUN（NAT会话穿越应用程序）" class="headerlink" title="STUN（NAT会话穿越应用程序）"></a>STUN（NAT会话穿越应用程序）</h4><p>NAT 穿越技术拥有这样的功能，它能够让网络应用程序主动发现自己位于 NAT 设备之后，并且会主动获得 NAT 设备的公有 IP，并为自己建立端口映射条目，注意这些都是 NAT设备后的应用程序自动完成的。</p>
+<p>也就是说，在 NAT 穿透技术中，NAT设备后的应用程序处于主动地位，它已经明确地知道 NAT 设备要修改它外发的数据包，于是它主动配合 NAT 设备的操作，主动地建立好映射，这样就不像以前由 NAT 设备来建立映射了。</p>
+<p>说人话，就是客户端主动从 NAT 设备获取公有 IP 地址，然后自己建立端口映射条目，然后用这个条目对外通信，就不需要 NAT 设备来进行转换了。</p>
+<h1 id="路由选择协议"><a href="#路由选择协议" class="headerlink" title="路由选择协议"></a>路由选择协议</h1><h2 id="静态配置路由导致的路由环路"><a href="#静态配置路由导致的路由环路" class="headerlink" title="静态配置路由导致的路由环路"></a>静态配置路由导致的路由环路</h2><p>聚合路由和精确路由同时出现在一张路由表中，应该按照精确地址进行匹配，（模糊地址中不包括精确地址）</p>
+<p><strong>路由配置错误</strong>：路由表手动配置错误导致出现路由环路。</p>
+<p><strong>聚合不存在的网络</strong>：路由表中只有模糊地址，但是模糊地址里面不存在某个精确地址，而目的地址是精确地址会导致数据包会被错误地路由到模糊的网络，因此路由器应当配置黑洞路由，将不存在的地址路由到黑洞中（丢弃）</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241127123732804.png" alt="image-20241127123732804"></p>
+<p><strong>网络故障</strong>：路由器检测到与其直连的网络发生故障会把路由表中的条目删除，但下次来就不知道要转发到哪里，只能交给默认路由，此时可能会导致环路，正确的做法是故障时启用对应网络的黑洞路由，恢复时关闭黑洞路由，启用正常的接口路由    </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241127124109191.png" alt="image-20241127124109191"></p>
+<h2 id="路由协议概述"><a href="#路由协议概述" class="headerlink" title="路由协议概述"></a>路由协议概述</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241127124155110.png" alt="image-20241127124155110"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241127124212549.png" alt="image-20241127124212549"></p>
+<p>路由表：对网络拓扑计算最优化</p>
+<p>转发表：使得查找过程最优化，优化路由表的查找性能</p>
+<h2 id="路由信息协议（Routing-Information-Protocol-RIP）"><a href="#路由信息协议（Routing-Information-Protocol-RIP）" class="headerlink" title="路由信息协议（Routing Information Protocol, RIP）"></a>路由信息协议（Routing Information Protocol, RIP）</h2><ul>
+<li>属于内部网关协议（IGP），是一个自治系统内部的路由协议</li>
+<li>最早出现的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B7%9D%E9%9B%A2%E5%90%91%E9%87%8F%E8%B7%AF%E7%94%B1%E5%8D%94%E5%AE%9A">距离向量路由协议</a>，其主要应用于规模较小的、可靠性要求较低的网络。收敛速度较慢，支持的广播网络规模有限</li>
+<li>路由<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%AE%97%E6%B3%95">算法</a>是<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Bellman-Ford">Bellman-Ford</a>算法</li>
+</ul>
+<h3 id="原则"><a href="#原则" class="headerlink" title="原则"></a>原则</h3><ul>
+<li><p>每隔30秒会与相邻的路由器交换子消息，以动态的建立<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B7%AF%E7%94%B1%E8%A1%A8">路由表</a>。</p>
+</li>
+<li><p><strong>RIP规定度量值取0~15之间的整数，大于或等于16的跳数被定义为无穷大。</strong></p>
+</li>
+<li><p>对方的路由表复制过来，下一跳全部改成对方，距离全部加1；</p>
+</li>
+<li><p>不存在网络B的条目，直接添加；</p>
+</li>
+<li><p>存在网络A的条目，下一跳相同，直接更新；</p>
+</li>
+<li><p>存在网络A的条目，下一跳不同，距离更短才更新；距离相同则添加条目（等价负载均衡）；距离更长则不更新。</p>
+</li>
+</ul>
+<h3 id="问题：坏消息传得慢"><a href="#问题：坏消息传得慢" class="headerlink" title="问题：坏消息传得慢"></a>问题：坏消息传得慢</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241127124509184.png" alt="image-20241127124509184"></p>
+<ul>
+<li><strong>水平分割</strong>：水平分割指的是RIP从某个接口学到的路由，不会从该接口再发回给邻居设备。在帧中继和X.25等NBMA网络中，水平分割功能缺省为禁止状态。</li>
+<li><strong>触发更新</strong>：触发更新是指路由信息发生变化时，立即向邻居设备发送触发更新报文，通知变化的路由信息。（触发更新不会触发接收路由器重置自己的更新定时器）</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241127125439393.png" alt="image-20241127125439393"></p>
+<p>检测到不可达：说明之前距离是1（直连接口）</p>
+<p>收敛：R3 到网络距离为1，R2和R1到网络的距离为2</p>
+<p>不可达：R3 到网络距离为16，通告给R2，变更距离为16，随后R1没来得及更新，就将自己的路由表内容发给了</p>
+<h2 id="开放式最短路径优先（Open-Shortest-Path-First-OSPF）"><a href="#开放式最短路径优先（Open-Shortest-Path-First-OSPF）" class="headerlink" title="开放式最短路径优先（Open Shortest Path First, OSPF）"></a>开放式最短路径优先（Open Shortest Path First, OSPF）</h2><ul>
+<li><p>属于内部网关协议（IGP）</p>
+</li>
+<li><p>在链路状态路由协议中，每个节点都知晓整个网络的拓扑信息。各节点使用自己了解的网络拓扑情况来各自独立地对网络中每个可能的目的地址计算出其最佳的转发地址（下一跳）。所有最佳转发地址汇集到一起构成该节点的完整路由表。与距离-矢量路由协议使用的那种每个节点与其相邻节点分享自己的路由表的工作方式不同，链路状态路由协议的工作方式是节点间仅传播用于构造网络连通图所需的信息。最初创建这类协议就是为了解决距离-矢量路由协议收敛缓慢的缺点，然而，为此链路状态路由协议会消耗大量的内存与处理器能力。</p>
+</li>
+<li><p>大多数<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BA%92%E8%81%94%E7%BD%91%E6%9C%8D%E5%8A%A1%E4%BE%9B%E5%BA%94%E5%95%86">ISP</a>必须使用BGP来与其他ISP建立路由连接（尤其是当它们采取多宿主连接时）</p>
+</li>
+<li><p>采用<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%88%B4%E5%85%8B%E6%96%AF%E7%89%B9%E6%8B%89%E7%AE%97%E6%B3%95">Dijkstra 算法</a>计算<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%9C%80%E7%9F%AD%E8%B7%AF%E5%BE%84%E6%A0%91">最短路径树</a>，使用“开销（Cost）”作为路由度量。</p>
+</li>
+<li><p>链路状态数据库（LSDB）用来保存当前<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BD%91%E7%BB%9C%E6%8B%93%E6%89%91">网络拓扑</a>结构，<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B7%AF%E7%94%B1%E5%99%A8">路由器</a>上属于同一区域的链路状态数据库是相同的（属于多个区域的路由器会为每个区域维护一份链路状态数据库）。</p>
+</li>
+<li><p>基于 IP 协议，路由信息直接封装在 IP 数据报中</p>
+</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241127125916904.png" alt="image-20241127125916904"></p>
+<h2 id="边界网关协议（Border-Gateway-Protocol-BGP）"><a href="#边界网关协议（Border-Gateway-Protocol-BGP）" class="headerlink" title="边界网关协议（Border Gateway Protocol, BGP）"></a>边界网关协议（Border Gateway Protocol, BGP）</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241127125154032.png" alt="image-20241127125154032"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241127125208832.png" alt="image-20241127125208832"></p>
+<h2 id="向路由选择协议提供服务的实体"><a href="#向路由选择协议提供服务的实体" class="headerlink" title="向路由选择协议提供服务的实体"></a>向路由选择协议提供服务的实体</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241127125231763.png" alt="image-20241127125231763"></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/12/30/408-%E8%AE%A1%E7%BD%91-%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2472,7 +3041,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-27 14:37:58" itemprop="dateModified" datetime="2025-04-27T14:37:58+08:00">2025-04-27</time>
+      <time title="修改时间：2025-05-16 22:08:17" itemprop="dateModified" datetime="2025-05-16T22:08:17+08:00">2025-05-16</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -2878,8 +3447,11 @@
 <p>当作为 key 的 <code>ThreadLocal</code> 实例失去强引用后，只要发生 GC 就会被回收，但是其对应的 value <code>Object</code> 仍然存在于 <code>ThreadLocalMap</code> 中，因为 <code>Entry</code> 对象强引用了它。如果线程持续存活（例如线程池中的线程），<code>ThreadLocalMap</code> 也会一直存在，导致 key 为 <code>null</code> 的 entry 无法被垃圾回收，机会造成内存泄漏。</p>
 <ol>
 <li>在使用完 <code>ThreadLocal</code> 后，<mark>务必调用 <code>remove()</code> 方法<mark>。 这是最安全和最推荐的做法。 <code>remove()</code> 方法会从 <code>ThreadLocalMap</code> 中显式地移除对应的 entry，彻底解决内存泄漏的风险。 即使将 <code>ThreadLocal</code> 定义为 <code>static final</code>，也强烈建议在每次使用后调用 <code>remove()</code>。</li>
-<li>在线程池等线程复用的场景下，<mark>使用 <code>try-finally</code> 块<mark>可以确保即使发生异常，<code>remove()</code> 方法也一定会被执行。</li>
+<li>在线程池等线程复用的场景下，<mark>使用 <code>try-finally</code> 块</mark>可以确保即使发生异常，<code>remove()</code> 方法也一定会被执行。</li>
 </ol>
+<h3 id="InheritableThreadLocal"><a href="#InheritableThreadLocal" class="headerlink" title="InheritableThreadLocal"></a>InheritableThreadLocal</h3><p>这个和ThreadLocal最大的区别就是：可以将父线程的传到子线程（值传递）InheritableThreadLocal是在<mark>new Thread</mark>对象的时候<u>复制</u>父线程的local到子线程的。 因此子线程对自己这个local的remove不会影响到父线程。</p>
+<p>复制方式是只管复制，基本数据类型还好，子线程和父线程的改变不互通，值传递最大的问题在于引用：复制了引用的值，这就使得父子仍然使用的是同一个对象，使用的时候应该注意这一点。我们需要重写这个类的childValue方法，把parentValue[深拷贝](<a href="https://scatteredream.github.io/2024/10/01/java-se/#Object">https://scatteredream.github.io/2024/10/01/java-se/#Object</a> 的 clone())（json之类的）。</p>
+<h3 id="TransmittableThreadLocal-TTL"><a href="#TransmittableThreadLocal-TTL" class="headerlink" title="TransmittableThreadLocal(TTL)"></a>TransmittableThreadLocal(TTL)</h3><p>TransmittableThreadLocal 是由阿里开发的一个线程变量传递工具包，解决了InheritableThreadLocal只能再new Thread的时候传递本地变量，之后父线程再对threadLocal做改变，子线程也看不见的问题。可以应用来作链路追踪，传递变量等用途。</p>
 <h1 id="锁"><a href="#锁" class="headerlink" title="锁"></a><span id="lock">锁</span></h1><p><code>java.util.concurrent.locks</code></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241230173434255-1735551283426-42.png" alt="image-20241230173434255"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241230173500715.png" alt="image-20241230173500715"></p>
@@ -3207,16 +3779,16 @@
 
 <h3 id="FutureTask-lt-V-gt"><a href="#FutureTask-lt-V-gt" class="headerlink" title="FutureTask&lt;V&gt;"></a><code>FutureTask&lt;V&gt;</code></h3><p>FutureTask 表示一个异步运算的任务，实现了 Runnable 和 Future 接口（RunnableFuture）</p>
 <p>FutureTask 通过传入 Callable 的实现类，可以对这个异步运算的任务的结果进行等待获取、判断是否已经完成、取消任务等操作。当然也可以传入 Runnable 的实现类，但是 Runnable 没有返回值，因此需要额外传入一个指定的返回值。V 表示返回值的类型</p>
-<p>只有当任务完成的时候结果才能取回，如果<mark>任务尚未完成 <code>get()</code> 方法将会阻塞<mark>。</p>
+<p>只有当任务完成的时候结果才能取回，如果<mark>任务尚未完成 <code>get()</code> 方法将会阻塞</mark>。</p>
 <p>FutureTask 可以 submit 到线程池，还可以可以直接作为 Thread 构造器的参数(Runnable)创建新线程（实践中不建议直接创建新线程）</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FutureTaskExample</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        Callable&lt;String&gt; callable = () -&gt; &#123;</span><br><span class="line">            Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;任务完成!&quot;</span>;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        FutureTask&lt;String&gt; futureTask = <span class="keyword">new</span> <span class="title class_">FutureTask</span>&lt;&gt;(callable);</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">thread</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(futureTask);</span><br><span class="line">        thread.start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 执行其他任务</span></span><br><span class="line">        System.out.println(<span class="string">&quot;主线程正在执行其他任务...&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 等待结果</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">result</span> <span class="operator">=</span> futureTask.get(); <span class="comment">// 阻塞等待</span></span><br><span class="line">        System.out.println(<span class="string">&quot;执行结果: &quot;</span> + result);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<h2 id="ExecutorService"><a href="#ExecutorService" class="headerlink" title="ExecutorService"></a><code>ExecutorService</code></h2><p>继承了 ExecutorService 并进行一定程度扩展</p>
+<h2 id="ExecutorService"><a href="#ExecutorService" class="headerlink" title="ExecutorService"></a><code>ExecutorService</code></h2><p>继承了 Executor 并进行一定程度扩展</p>
 <p><code>shutdown()</code> 关闭            <code>submit()</code> 提交任务</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/java-concurrent-executors.png" alt="Executors"></p>
-<h3 id="execute-Runnable-command-Runnable-ONLY"><a href="#execute-Runnable-command-Runnable-ONLY" class="headerlink" title="execute(Runnable command) (Runnable ONLY)"></a><code>execute(Runnable command)</code> (<strong>Runnable ONLY</strong>)</h3><p>ThreadPoolExecutor 实现的方法，定义在 <strong><code>Executor</code></strong> 接口中。</p>
-<p>只支持提交 <strong><code>Runnable</code></strong> 类型的任务。无返回值，无法获取任务执行结果。</p>
+<h3 id="线程池工作流程：execute-Runnable-command-Runnable-ONLY"><a href="#线程池工作流程：execute-Runnable-command-Runnable-ONLY" class="headerlink" title="线程池工作流程：execute(Runnable command) (Runnable ONLY)"></a>线程池工作流程：<code>execute(Runnable command)</code> (<strong>Runnable ONLY</strong>)</h3><p>定义在 <strong><code>Executor</code></strong> 接口中，只支持提交 <strong><code>Runnable</code></strong> 类型的任务。无返回值，无法获取任务执行结果。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/thread-pool-principle.png" alt="图解线程池实现原理"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/threadPool.png" alt="threadPool"></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**********源码************/</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Proceed in 3 steps:</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 1. If fewer than corePoolSize threads are running, try to</span></span><br><span class="line"><span class="comment"> * start a new thread with the given command as its first</span></span><br><span class="line"><span class="comment"> * task.  The call to addWorker atomically checks runState and</span></span><br><span class="line"><span class="comment"> * workerCount, and so prevents false alarms that would add</span></span><br><span class="line"><span class="comment"> * threads when it shouldn&#x27;t, by returning false.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 2. If a task can be successfully queued, then we still need</span></span><br><span class="line"><span class="comment"> * to double-check whether we should have added a thread</span></span><br><span class="line"><span class="comment"> * (because existing ones died since last checking) or that</span></span><br><span class="line"><span class="comment"> * the pool shut down since entry into this method. So we</span></span><br><span class="line"><span class="comment"> * recheck state and if necessary roll back the enqueuing if</span></span><br><span class="line"><span class="comment"> * stopped, or start a new thread if there are none.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 3. If we cannot queue task, then we try to add a new</span></span><br><span class="line"><span class="comment"> * thread.  If it fails, we know we are shut down or saturated</span></span><br><span class="line"><span class="comment"> * and so reject the task.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">execute</span><span class="params">(Runnable command)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (command == <span class="literal">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NullPointerException</span>();</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> <span class="variable">c</span> <span class="operator">=</span> ctl.get();</span><br><span class="line">    <span class="comment">// 1. 当前线程数 &lt; corePoolSize，创建核心线程</span></span><br><span class="line">    <span class="keyword">if</span> (workerCountOf(c) &lt; corePoolSize) &#123;</span><br><span class="line">        <span class="keyword">if</span> (addWorker(command, <span class="literal">true</span>))</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        c = ctl.get();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 2. 如果corePoolSize已满，将任务放入阻塞队列</span></span><br><span class="line">    <span class="keyword">if</span> (isRunning(c) &amp;&amp; workQueue.offer(command)) &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">recheck</span> <span class="operator">=</span> ctl.get();</span><br><span class="line">        <span class="keyword">if</span> (!isRunning(recheck) &amp;&amp; remove(command))</span><br><span class="line">            reject(command); <span class="comment">// 检查是否需要拒绝</span></span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (workerCountOf(recheck) == <span class="number">0</span>)</span><br><span class="line">            addWorker(<span class="literal">null</span>, <span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 3. 任务队列已满，尝试扩展到 maximumPoolSize</span></span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (!addWorker(command, <span class="literal">false</span>))</span><br><span class="line">        reject(command); <span class="comment">// 执行拒绝策略</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 用例</span></span><br><span class="line"><span class="type">ExecutorService</span> <span class="variable">executor</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">executor.execute(() -&gt; &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;任务1执行: &quot;</span> + Thread.currentThread().getName());</span><br><span class="line">&#125;);</span><br><span class="line">executor.shutdown();</span><br></pre></td></tr></table></figure>
@@ -3290,47 +3862,60 @@
 </ul>
 <p>简单来说：使用<code>execute()</code>时，未捕获异常导致线程终止，线程池创建新线程替代；使用<code>submit()</code>时，异常被封装在<code>Future</code>中，线程继续复用。</p>
 <p>这种设计允许<code>submit()</code>提供更灵活的错误处理机制，因为它允许调用者决定如何处理异常，而<code>execute()</code>则适用于那些不需要关注执行结果的场景。</p>
-<h4 id="使用自定义线程池-ThreadPoolExecutor"><a href="#使用自定义线程池-ThreadPoolExecutor" class="headerlink" title="使用自定义线程池 ThreadPoolExecutor"></a><mark>使用自定义线程池 <code>ThreadPoolExecutor</code><mark></h4><p>**避免使用 <code>Executors</code> 创建线程池：推荐直接使用<code>ThreadPoolExecutor</code> 自定义线程池：因为 **<code>Executors</code> 默认队列为 <strong>无限队列</strong>，可能导致内存溢出。除了避免 OOM 的原因之外，不推荐使用 <code>Executors</code>提供快捷的线程池的原因：</p>
+<h4 id="使用自定义线程池-ThreadPoolExecutor"><a href="#使用自定义线程池-ThreadPoolExecutor" class="headerlink" title="使用自定义线程池 ThreadPoolExecutor"></a><mark>使用自定义线程池 <code>ThreadPoolExecutor</code></mark></h4><p>**避免使用 <code>Executors</code> 创建线程池：推荐直接使用<code>ThreadPoolExecutor</code> 自定义线程池：因为 **<code>Executors</code> 默认队列为 <strong>无限队列</strong>，可能导致内存溢出。除了避免 OOM 的原因之外，不推荐使用 <code>Executors</code>提供快捷的线程池的原因：</p>
+<h5 id="确定合适的线程数目"><a href="#确定合适的线程数目" class="headerlink" title="确定合适的线程数目"></a><strong>确定合适的线程数目</strong></h5><p>实际使用中需要根据自己机器的性能、业务场景来手动配置线程池的参数比如核心线程数、使用的任务队列、饱和策略等等。</p>
+<p>假如 <code>int N = Runtime.getRuntime().availableProcessors()</code></p>
 <ul>
-<li>实际使用中需要根据自己机器的性能、业务场景来手动配置线程池的参数比如核心线程数、使用的任务队列、饱和策略等等。<ul>
-<li>CPU 密集型任务的 <code>WT/ST</code> 接近或者等于 0，因此， 线程数可以设置为 N（CPU 核心数）∗（1+0）= N，和我们上面说的 N（CPU 核心数）+1 差不多。</li>
-<li>IO 密集型任务下，几乎全是线程等待时间，从理论上来说，你就可以将线程数设置为 2N（按道理来说，WT/ST 的结果应该比较大，这里选择 2N 的原因应该是为了避免创建过多线程吧）。</li>
+<li>CPU 密集型任务：N 个线程。任务主要瓶颈在于 CPU 计算能力，与核心数相等的线程数能够最大化 CPU 利用率，过多线程反而会导致竞争和上下文切换开销。<ul>
+<li>“N+1” 的初衷是希望预留线程处理突发暂停，但实际上，处理缺页中断等情况仍然需要占用 CPU 核心。CPU 密集场景下，CPU 始终是瓶颈，预留线程并不能凭空增加 CPU 处理能力，反而可能加剧竞争。</li>
 </ul>
 </li>
+<li>IO 密集型任务下：M*N 个线程。M约为1.5到2。需要通过测试和监控找到最佳平衡点。</li>
 </ul>
+<p>判断任务类型：CPU 密集型简单理解就是利用 CPU 计算能力的任务比如你在内存中对大量数据进行排序。但凡涉及到网络读取，文件读取这类都是 IO 密集型，这类任务的特点是 CPU 计算耗费时间相比于等待 IO 操作完成的时间来说很少，大部分时间都花在了等待 IO 操作完成上。</p>
+<p>最佳的线程数目 BestThreads 计算公式为：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250516214821727.png" alt="image-20250516214821727"></p>
+<p>其中，WT为等待时间，ST为计算时间，他们的和就是计算时间。可以看到，对于CPU密集型来说，N就是结果。对于IO密集型来说，WT应该远大于ST，但是为了避免过于频繁的上下文切换，设置为 1.5-2 即可。WT ST 这些参数我们可以通过 VisualVM 等工具进行检测</p>
+<h6 id="数据库连接池"><a href="#数据库连接池" class="headerlink" title="数据库连接池"></a>数据库连接池</h6><p><strong>理想情况下，数据库连接池的大小应该能够满足线程池中同时进行数据库操作的线程的需求。</strong></p>
+<p><strong>一个常用的经验法则是，将数据库连接池的最大连接数设置为与处理业务请求的线程池的</strong>最大线程数 (<code>maximumPoolSize</code>)大致相同，或者至少与核心线程数 (<code>corePoolSize</code>)相同</p>
+<p><strong>为什么是最大线程数？</strong> 在高负载时，线程池的线程数可能扩展到最大线程数。如果此时大部分任务都需要数据库连接，那么连接池至少需要提供相应数量的连接才能不成为瓶颈。</p>
+<p><strong>为什么也可能与核心线程数相关？</strong> 如果你确定在高负载时，即使线程数达到 <code>maximumPoolSize</code>，也只有一部分线程会同时进行数据库操作，或者数据库操作非常快，连接能快速释放，那么连接池大小可以设置得接近核心线程数，甚至略小于最大线程数。但这需要精确的分析和测试。<a href="#connectpool">详细</a></p>
 <h5 id="参数详解"><a href="#参数详解" class="headerlink" title="参数详解"></a>参数详解</h5><p>建议实践中手动指定线程池配置，ThreadPoolExecutor的构造器共有七个参数：</p>
 <ol>
-<li><p><code>int corePoolSize</code>: 核心线程数     </p>
+<li><p><code>int corePoolSize</code>: 核心线程数。</p>
 </li>
-<li><p><code>int maxPoolSize</code>: 最大线程数</p>
+<li><p><code>int maxPoolSize</code>: 最大线程数。</p>
 </li>
 <li><p><code>long keepAliveTime</code>: 非核心线程闲置的最长时间，超时销毁</p>
 </li>
 <li><p><code>TimeUnit unit</code>: 时间单位，枚举</p>
 </li>
-<li><p><code>BlockingQueue&lt;Runnable&gt; workQueue</code>: 保存任务的阻塞队列</p>
-<ul>
-<li><p>如果运行的线程数少于 corePoolSize，则执行器始终倾向于添加新线程而不是排队。</p>
-</li>
-<li><p>如果 corePoolSize 或更多线程正在运行，对请求进行排队而不是添加新线程。</p>
-</li>
-<li><p>如果请求无法排队，则会创建一个新线程，如果超出了 MaximumPoolSize，拒绝策略</p>
-</li>
-</ul>
+<li><p><code>BlockingQueue&lt;Runnable&gt; workQueue</code>: 保存任务的阻塞队列。</p>
 </li>
 </ol>
 <ul>
-<li><code>SynchronousQueue</code>不会保存任务，直接递交给线程，没有就创建，需要maxPoolSize很大，<code>CachedThreadPool</code> 就属于这种，创建无限个线程也会OOM。</li>
-<li><code>LinkedBlockingQueue</code>为无界队列，默认最大容量为 <strong>Integer.MAX_VALUE</strong>，可能会导致任务积压 OOM，比如 Fixed 和 Single<ul>
-<li>当所有 <code>corePoolSize</code> 线程都忙时，使用无界队列（例如没有预定义容量的 LinkedBlockingQueue）将导致新任务在队列中等待。</li>
-<li>线程最多只有corePoolSize，maxSize没有影响。</li>
+<li><p>如果运行的线程数少于 <code>corePoolSize</code>，则执行器始终倾向于添加新线程而不是排队。</p>
+</li>
+<li><p>如果 <code>corePoolSize</code> 或更多线程正在运行，对请求进行排队而不是添加新线程。</p>
+</li>
+<li><p>如果请求无法排队，则会创建一个新线程，如果超出了 <code>maxPoolSize</code>，拒绝策略</p>
+</li>
+<li><p><code>SynchronousQueue</code>不会保存任务，直接递交给线程，没有就创建，<code>maxPoolSize</code>很大，<code>CachedThreadPool</code> 就属于这种，创建无限个线程也会OOM。</p>
+</li>
+<li><p><code>LinkedBlockingQueue</code>为无界队列，默认最大容量为 <code>Integer.MAX_VALUE</code>，可能会导致任务积压 OOM，比如 <code>FixedThreadPool</code> 和 <code>SingleThreadExecutor</code></p>
+<ul>
+<li>当所有 <code>corePoolSize</code> 线程都忙时，使用无界队列（例如没有预定义容量的 <code>LinkedBlockingQueue</code>）将导致新任务在队列中等待。</li>
+<li>线程最多只有<code>corePoolSize</code>，<code>maxPoolSize</code>无所谓。</li>
 <li>当每个任务完全独立于其他任务时，这可能是合适的，因此任务不会影响彼此的执行；例如，在网页服务器中。虽然这种排队方式对于平滑请求的瞬态突发很有用，但它当命令平均到达速度继续快于处理速度时，可能发生OOM</li>
 </ul>
 </li>
-<li><code>ArrayBlockingQueue</code>为有界队列，防止OOM：<ul>
+<li><p><code>ArrayBlockingQueue</code>为有界队列，防止OOM：</p>
+<ul>
 <li>使用大队列和小池可以最大限度地减少 CPU 使用率、操作系统资源和上下文切换开销，但可能会导致人为降低吞吐量。</li>
 <li>使用小队列通常需要更大的池，提高了 CPU 的利用率，但遇到不可接受的调度开销时也会降低吞吐量。</li>
 </ul>
+</li>
+<li><p><code>DelayedWorkQueue</code> 用于定时的线程池，无界延迟阻塞队列，最大长度 <code>Integer.MAX_VALUE</code> 可能堆积大量的请求，从而导致 OOM。</p>
 </li>
 </ul>
 <p><strong><u>Optional</u> Parameters</strong>：</p>
@@ -3349,33 +3934,121 @@
 <li><code>DiscardOldestPolicy</code>: 丢弃最旧未执行的任务，工作队列头部的任务将被删除，然后重试执行（可能会再次失败，导致重复执行）。这种策略很少被接受</li>
 <li><code>DiscardPolicy</code>: 直接丢弃，不抛出任何异常</li>
 </ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.ArrayBlockingQueue;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ThreadPoolExecutor;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.TimeUnit;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadPoolExecutorDemo</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">CORE_POOL_SIZE</span> <span class="operator">=</span> <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">MAX_POOL_SIZE</span> <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">QUEUE_CAPACITY</span> <span class="operator">=</span> <span class="number">100</span>;<span class="comment">// 队列长度</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Long</span> <span class="variable">KEEP_ALIVE_TIME</span> <span class="operator">=</span> <span class="number">1L</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//使用阿里巴巴推荐的创建线程池的方式</span></span><br><span class="line">        <span class="comment">//通过ThreadPoolExecutor构造函数自定义参数创建</span></span><br><span class="line">        <span class="type">ThreadPoolExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">                CORE_POOL_SIZE,</span><br><span class="line">                MAX_POOL_SIZE,</span><br><span class="line">                KEEP_ALIVE_TIME,</span><br><span class="line">                TimeUnit.SECONDS,</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(QUEUE_CAPACITY),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.CallerRunsPolicy());</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            <span class="comment">//创建WorkerThread对象（WorkerThread类实现了Runnable 接口）</span></span><br><span class="line">            <span class="type">Runnable</span> <span class="variable">worker</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyRunnable</span>(<span class="string">&quot;&quot;</span> + i);</span><br><span class="line">            <span class="comment">//执行Runnable</span></span><br><span class="line">            executor.execute(worker);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//终止线程池</span></span><br><span class="line">        executor.shutdown();</span><br><span class="line">        <span class="keyword">while</span> (!executor.isTerminated()) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Finished all threads&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadPoolExecutorDemo</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">CORE_POOL_SIZE</span> <span class="operator">=</span> <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">MAX_POOL_SIZE</span> <span class="operator">=</span> <span class="number">10</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">QUEUE_CAPACITY</span> <span class="operator">=</span> <span class="number">100</span>;<span class="comment">// 队列长度</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Long</span> <span class="variable">KEEP_ALIVE_TIME</span> <span class="operator">=</span> <span class="number">1L</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//使用阿里巴巴推荐的创建线程池的方式</span></span><br><span class="line">        <span class="comment">//通过ThreadPoolExecutor构造函数自定义参数创建</span></span><br><span class="line">        <span class="type">ThreadPoolExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(</span><br><span class="line">                CORE_POOL_SIZE,</span><br><span class="line">                MAX_POOL_SIZE,</span><br><span class="line">                KEEP_ALIVE_TIME,</span><br><span class="line">                TimeUnit.SECONDS,</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(QUEUE_CAPACITY),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.CallerRunsPolicy());</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            <span class="comment">//创建WorkerThread对象（WorkerThread类实现了Runnable 接口）</span></span><br><span class="line">            <span class="type">Runnable</span> <span class="variable">worker</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyRunnable</span>(<span class="string">&quot;&quot;</span> + i);</span><br><span class="line">            <span class="comment">//执行Runnable</span></span><br><span class="line">            executor.execute(worker);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//终止线程池</span></span><br><span class="line">        executor.shutdown();</span><br><span class="line">        <span class="keyword">while</span> (!executor.isTerminated()) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;Finished all threads&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <ul>
 <li><p>线程池可以使用getter setter等方法进行参数的访问与更改</p>
 </li>
 <li><p>使用 Spring 内部线程池 ThreadPoolTaskExecutor 时，一定要手动自定义，合理配置参数，不然会出现生产问题（一个请求创建一个线程）。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAsync</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadPoolExecutorConfig</span> &#123;</span><br><span class="line">    <span class="meta">@Bean(name=&quot;threadPoolExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Executor <span class="title function_">threadPoolExecutor</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">threadPoolExecutor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        <span class="comment">// 返回可用处理器的Java虚拟机的数量</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">processNum</span> <span class="operator">=</span> Runtime.getRuntime().availableProcessors(); </span><br><span class="line">        <span class="type">int</span> <span class="variable">corePoolSize</span> <span class="operator">=</span> (<span class="type">int</span>) (processNum / (<span class="number">1</span> - <span class="number">0.2</span>));</span><br><span class="line">        <span class="type">int</span> <span class="variable">maxPoolSize</span> <span class="operator">=</span> (<span class="type">int</span>) (processNum / (<span class="number">1</span> - <span class="number">0.5</span>));</span><br><span class="line">        threadPoolExecutor.setCorePoolSize(corePoolSize); <span class="comment">// 核心池大小</span></span><br><span class="line">        threadPoolExecutor.setMaxPoolSize(maxPoolSize); <span class="comment">// 最大线程数</span></span><br><span class="line">        threadPoolExecutor.setQueueCapacity(maxPoolSize * <span class="number">1000</span>); <span class="comment">// 队长</span></span><br><span class="line">        threadPoolExecutor.setThreadPriority(Thread.MAX_PRIORITY);</span><br><span class="line">        threadPoolExecutor.setDaemon(<span class="literal">false</span>);</span><br><span class="line">        threadPoolExecutor.setKeepAliveSeconds(<span class="number">300</span>);<span class="comment">// 线程空闲时间</span></span><br><span class="line">        <span class="comment">// 线程名字前缀</span></span><br><span class="line">        threadPoolExecutor.setThreadNamePrefix(<span class="string">&quot;test-Executor-&quot;</span>); </span><br><span class="line">       </span><br><span class="line">        <span class="keyword">return</span> threadPoolExecutor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</li>
 </ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAsync</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadPoolExecutorConfig</span> &#123;</span><br><span class="line">    <span class="meta">@Bean(name=&quot;threadPoolExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Executor <span class="title function_">threadPoolExecutor</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">threadPoolExecutor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        <span class="comment">// 返回可用处理器的Java虚拟机的数量</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">processNum</span> <span class="operator">=</span> Runtime.getRuntime().availableProcessors(); </span><br><span class="line">        <span class="type">int</span> <span class="variable">corePoolSize</span> <span class="operator">=</span> (<span class="type">int</span>) (processNum / (<span class="number">1</span> - <span class="number">0.2</span>));</span><br><span class="line">        <span class="type">int</span> <span class="variable">maxPoolSize</span> <span class="operator">=</span> (<span class="type">int</span>) (processNum / (<span class="number">1</span> - <span class="number">0.5</span>));</span><br><span class="line">        threadPoolExecutor.setCorePoolSize(corePoolSize); <span class="comment">// 核心池大小</span></span><br><span class="line">        threadPoolExecutor.setMaxPoolSize(maxPoolSize); <span class="comment">// 最大线程数</span></span><br><span class="line">        threadPoolExecutor.setQueueCapacity(maxPoolSize * <span class="number">1000</span>); <span class="comment">// 队长</span></span><br><span class="line">        threadPoolExecutor.setThreadPriority(Thread.MAX_PRIORITY);</span><br><span class="line">        threadPoolExecutor.setDaemon(<span class="literal">false</span>);</span><br><span class="line">        threadPoolExecutor.setKeepAliveSeconds(<span class="number">300</span>);<span class="comment">// 线程空闲时间</span></span><br><span class="line">        <span class="comment">// 线程名字前缀</span></span><br><span class="line">        threadPoolExecutor.setThreadNamePrefix(<span class="string">&quot;test-Executor-&quot;</span>); </span><br><span class="line">       </span><br><span class="line">        <span class="keyword">return</span> threadPoolExecutor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h5 id="命名"><a href="#命名" class="headerlink" title="命名"></a>命名</h5><ul>
-<li><p>给线程池(实际上是ThreadFactory)命名，有助于定位问题。一般可以使用 Guava：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ThreadFactory</span> <span class="variable">threadFactory</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadFactoryBuilder</span>()</span><br><span class="line">                        .setNameFormat(threadNamePrefix + <span class="string">&quot;-%d&quot;</span>)</span><br><span class="line">                        .setDaemon(<span class="literal">true</span>).build();</span><br><span class="line"><span class="type">ExecutorService</span> <span class="variable">threadPool</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(corePoolSize,</span><br><span class="line">  maximumPoolSize, keepAliveTime, TimeUnit.MINUTES, workQueue,</span><br><span class="line"> threadFactory);</span><br></pre></td></tr></table></figure></li>
+<li>给线程池(实际上是ThreadFactory)命名，有助于定位问题。一般可以使用 Guava：</li>
 </ul>
-<h4 id="适度复用"><a href="#适度复用" class="headerlink" title="适度复用"></a><strong>适度</strong>复用</h4><ul>
-<li><p>要<mark>适当复用<mark>线程池，不要一个请求创建一个线程池，浪费资源且效率极低。</p>
-</li>
-<li><p>根据当前业务的情况对线程池进行配置，<mark>不同业务不要复用线程池<mark>：父任务占满线程池，导致子任务阻塞，但是父任务也同时被子任务阻塞，造成互相等待的死锁局面。</p>
-</li>
-</ul>
-<h4 id="正确关闭"><a href="#正确关闭" class="headerlink" title="正确关闭"></a>正确关闭</h4><p>释放资源，shutdown(Now)不过只是异步通知，不会同步阻塞等待。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ThreadFactory</span> <span class="variable">threadFactory</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadFactoryBuilder</span>()</span><br><span class="line">                        .setNameFormat(threadNamePrefix + <span class="string">&quot;-%d&quot;</span>)</span><br><span class="line">                        .setDaemon(<span class="literal">true</span>).build();</span><br><span class="line"><span class="type">ExecutorService</span> <span class="variable">threadPool</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>(corePoolSize,</span><br><span class="line">  maximumPoolSize, keepAliveTime, TimeUnit.MINUTES, workQueue,</span><br><span class="line"> threadFactory);</span><br></pre></td></tr></table></figure>
+
+<h4 id="监控线程池状态"><a href="#监控线程池状态" class="headerlink" title="监控线程池状态"></a>监控线程池状态</h4><p>除了 SpringBoot-Acuator，还可以通过线程池提供的参数进行监控，以下属性可以通过getter得到：</p>
+<ol>
+<li><code>taskCount：</code>线程池需要执行的任务数量，包括已经执行完的、未执行的和正在执行的。</li>
+<li><code>completedTaskCount：</code>线程池在运行过程中<strong>已完成的任务数量</strong>，<code>completedTaskCount &lt;= taskCount</code>。</li>
+<li><code>largestPoolSize：</code>线程池<strong>曾经创建过的最大线程数量</strong>，<code>通过这个数据可以知道线程池是否满过</code>。<strong>如等于线程池的最大大小</strong>，则表示<code>线程池曾经满了</code>。</li>
+<li><code>poolSize:</code> 线程池的线程数量。如果<code>线程池不销毁</code>的话，<code>池里的线程不会自动销毁</code>，所以<strong>线程池的线程数量只增不减</strong>。</li>
+<li><code>activeCount：</code>获取<strong>活动的</strong>线程数。</li>
+</ol>
+<p>我们可以通过一个定时线程池定期监控：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">printThreadPoolStatus</span><span class="params">(ThreadPoolExecutor threadPool)</span> &#123;</span><br><span class="line">    <span class="type">ScheduledExecutorService</span> <span class="variable">scheduledExecutorService</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ScheduledThreadPoolExecutor</span>(<span class="number">1</span>, createThreadFactory(<span class="string">&quot;print-images/thread-pool-status&quot;</span>, <span class="literal">false</span>));</span><br><span class="line">    scheduledExecutorService.scheduleAtFixedRate(() -&gt; &#123;</span><br><span class="line">        log.info(<span class="string">&quot;=========================&quot;</span>);</span><br><span class="line">        log.info(<span class="string">&quot;ThreadPool Size: [&#123;&#125;]&quot;</span>, threadPool.getPoolSize());</span><br><span class="line">        log.info(<span class="string">&quot;Active Threads: &#123;&#125;&quot;</span>, threadPool.getActiveCount());</span><br><span class="line">        log.info(<span class="string">&quot;Number of Tasks : &#123;&#125;&quot;</span>, threadPool.getCompletedTaskCount());</span><br><span class="line">        log.info(<span class="string">&quot;Number of Tasks in Queue: &#123;&#125;&quot;</span>, threadPool.getQueue().size());</span><br><span class="line">        log.info(<span class="string">&quot;=========================&quot;</span>);</span><br><span class="line">    &#125;, <span class="number">0</span>, <span class="number">1</span>, TimeUnit.SECONDS);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
 <ul>
-<li><strong><code>void shutdown()</code></strong> 有序关闭，执行完先前提交的任务。</li>
-<li><strong><code>List&lt;Runnable&gt; shutdownNow()</code></strong> 停止所有正在执行的任务，停止正在等待的任务的处理，并返回正在等待执行的任务的列表。</li>
-<li><code>awaitTermination</code> 同步阻塞等待</li>
-<li>实现了autoclosable，close方法可以阻塞等待，因此trywithresource</li>
+<li>通过<strong>继承线程池</strong>并<strong>重写</strong>线程池的 <code>beforeExecute</code>，<code>afterExecute</code> 和 <code>terminated</code> 方法，我们可以在<code>任务执行前</code>，<code>执行后</code>和<code>线程池关闭前</code>干一些事情。</li>
+<li>如监控任务的<code>平均执行时间</code>，<code>最大执行时间</code>和<code>最小执行时间</code>等。<strong>这几个方法在线程池里是空方法</strong>，如：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">beforeExecute</span><span class="params">(Thread t, Runnable r)</span> &#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="适度复用"><a href="#适度复用" class="headerlink" title="适度复用"></a><strong>适度</strong>复用</h4><ul>
+<li><p>要<mark>适当复用</mark>线程池，不要一个请求创建一个线程池，浪费资源且效率极低。</p>
+</li>
+<li><p>根据当前业务的情况对线程池进行配置，<mark>不同业务不要复用线程池</mark>：父任务占满线程池，导致子任务阻塞，但是父任务也同时被子任务阻塞，造成互相等待的死锁局面。</p>
+</li>
+</ul>
+<img src="https://oss.javaguide.cn/github/javaguide/java/concurrent/production-accident-threadpool-sharing-deadlock.png" alt="线程池使用不当导致死锁" style="zoom:67%;" />
+
+<h4 id="正确关闭：线程池状态"><a href="#正确关闭：线程池状态" class="headerlink" title="正确关闭：线程池状态"></a>正确关闭：线程池状态</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/dd7189a1bd12f507858a9f3fb95cd2dc.png" alt="在这里插入图片描述"></p>
+<p>释放资源，shutdown(Now)不过只是异步通知，不会同步阻塞等待。</p>
+<ul>
+<li><strong><code>void shutdown()</code></strong> 有序关闭，执行完先前提交的任务。对应 SHUTDOWN</li>
+<li><strong><code>List&lt;Runnable&gt; shutdownNow()</code></strong> 停止所有正在执行的任务，停止正在等待的任务的处理，并返回正在等待执行的任务的列表。对应 STOP</li>
+<li><code>awaitTermination</code> 同步阻塞等待。</li>
+<li>实现了autoclosable，close方法可以阻塞等待，因此trywithresource。</li>
 </ul>
 <h4 id="不要和-JDK-自带-ThreadLocal-共用"><a href="#不要和-JDK-自带-ThreadLocal-共用" class="headerlink" title="不要和 JDK 自带 ThreadLocal 共用"></a>不要和 JDK 自带 ThreadLocal 共用</h4><p>这是因为线程池会复用线程对象，与线程对象绑定的类的静态属性 <code>ThreadLocal</code> 变量也会被重用，这就导致一个线程可能获取到其他线程的<code>ThreadLocal</code> 值。</p>
 <h4 id="不要放入耗时任务"><a href="#不要放入耗时任务" class="headerlink" title="不要放入耗时任务"></a>不要放入耗时任务</h4><p>线程池本身的目的是为了提高任务执行效率，避免因频繁创建和销毁线程而带来的性能开销。如果将耗时任务提交到线程池中执行，可能会导致线程池中的线程被长时间占用，无法及时响应其他任务，甚至会导致线程池崩溃或者程序假死。这些任务可以采用异步 <code>CompletableFuture</code> 完成</p>
+<h3 id="线程池参数"><a href="#线程池参数" class="headerlink" title="线程池参数"></a><span id="connectpool"><mark>线程池参数</mark></span></h3><p><strong>设计线程池参数</strong></p>
+<p>基本原则是使用小法则（Little’s Law）：线程数 = 到达率 * 响应时间。对于10个连接、1秒响应时间的问题，建议线程池大小不应超过数据库连接池大小，尤其用于阻塞任务时。如果响应时间为10毫秒，则需调整线程池设计。通常核心线程池和最大线程数都应根据负载情况设置。是否使用异步取决于具体任务类型与需求。</p>
+<p><strong>设计IO密集型线程池</strong></p>
+<p>对于IO密集型任务，IO等待时间较长时，线程数应大于核心数。可以使用公式：线程数 = 核心数 * (1 + IO等待时间 / 处理时间)。这个公式在《Java并发编程实战》一书中有提到。另外，还有一篇博客推荐的公式：线程数 = 核心数 * (1 + 等待时间 / 服务时间)。我会查找相关文献引用。</p>
+<p><strong>设计线程池大小</strong></p>
+<p>对于线程池设计，假设最大化数据库连接池的利用率，线程池大小可以约为连接池大小乘以响应时间和思考时间的比例（加上1）。为了避免排队，通常线程池大小不超过连接池大小。如果响应时间为1秒，10个线程足够支持每秒10次请求。若响应时间为10毫秒，则10个连接能处理1000次请求。为了更好的CPU利用率，线程数可调整，考虑思考时间与阻塞时间的比例。</p>
+<p>在设计业务线程池时，需要综合考虑以下几方面：CPU 核心数与任务的 CPU/IO 比例、数据库连接池的并发上限、业务响应时间，以及系统的吞吐目标。常用的理论模型包括 Brian Goetz 在《Java Concurrency in Practice》中提出的线程数公式：</p>
+<blockquote>
+<p><strong>线程数 = 可用 CPU 核心数 × (1 + 平均等待时间 / 平均服务时间)</strong> (<a target="_blank" rel="noopener" href="https://engineering.zalando.com/posts/2019/04/how-to-set-an-ideal-thread-pool-size.html?utm_source=chatgpt.com">Zalando Engineering Blog</a>)</p>
+</blockquote>
+<p>以及 Little’s Law：</p>
+<blockquote>
+<p><strong>L = λ × W</strong><br>– L：系统中并发处理的请求数（即线程数）<br>– λ：系统的长时平均到达率（请求数/秒）<br>– W：请求的平均处理时间（秒） (<a target="_blank" rel="noopener" href="https://engineering.zalando.com/posts/2019/04/how-to-set-an-ideal-thread-pool-size.html?utm_source=chatgpt.com">Zalando Engineering Blog</a>)</p>
+</blockquote>
+<p>下面结合这两种方法，讨论当数据库连接池为 10 条、响应时间分别为 1 s 和 10 ms 时，如何确定线程池大小。</p>
+<hr>
+<h4 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h4><h5 id="基于-CPU-与-IO-比例的线程数公式"><a href="#基于-CPU-与-IO-比例的线程数公式" class="headerlink" title="基于 CPU 与 IO 比例的线程数公式"></a>基于 CPU 与 IO 比例的线程数公式</h5><p>对于 IO 密集型任务（如数据库调用），线程在等待 IO 完成时不会占用 CPU。Goetz 建议：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">numThreads</span> <span class="operator">=</span> numCores * (<span class="number">1</span> + waitTime / serviceTime);</span><br></pre></td></tr></table></figure>
+
+<p>其中 waitTime 是线程等待 IO 的时间，serviceTime 是实际执行业务逻辑的时间。计算密集型任务（waitTime ≈ 0）时，线程数 ≈ CPU 核心数；IO 密集型任务时，线程数会大幅 &gt; CPU 核心数，以充分利用等待期间的空闲 CPU (<a target="_blank" rel="noopener" href="https://engineering.zalando.com/posts/2019/04/how-to-set-an-ideal-thread-pool-size.html?utm_source=chatgpt.com">Zalando Engineering Blog</a>, <a target="_blank" rel="noopener" href="https://baddotrobot.com/blog/2013/06/01/optimum-number-of-threads/?utm_source=chatgpt.com">baddotrobot.com</a>)。</p>
+<h5 id="Little’s-Law（小定律）"><a href="#Little’s-Law（小定律）" class="headerlink" title="Little’s Law（小定律）"></a>Little’s Law（小定律）</h5><p>Little’s Law 给出了并行处理能力与系统延迟、吞吐率之间的关系：</p>
+<blockquote>
+<p>并发线程数 L = 系统吞吐率 λ × 平均延迟 W</p>
+</blockquote>
+<p>例如，要保持 100 QPS (λ=100) 的吞吐并且响应时间 W=0.01 s 时，需要 L=1 个并发线程才能稳定达到目标 (<a target="_blank" rel="noopener" href="https://engineering.zalando.com/posts/2019/04/how-to-set-an-ideal-thread-pool-size.html?utm_source=chatgpt.com">Zalando Engineering Blog</a>)。</p>
+<h5 id="受数据库连接池上限约束"><a href="#受数据库连接池上限约束" class="headerlink" title="受数据库连接池上限约束"></a>受数据库连接池上限约束</h5><p>如果所有线程都在等待数据库响应，且连接池最大并发连接数为 N，则有效并发线程数不应超过 N，否则线程会在应用层排队，造成不必要的上下文切换和内存占用 (<a target="_blank" rel="noopener" href="https://docs.redhat.com/en/documentation/red_hat_build_of_keycloak/24.0/html/high_availability_guide/concepts-threads-?utm_source=chatgpt.com">红帽文档</a>, <a target="_blank" rel="noopener" href="https://docs.oracle.com/cd/E19900-01/819-4742/abehg/index.html?utm_source=chatgpt.com">Oracle 文档</a>)。</p>
+<hr>
+<h4 id="具体示例"><a href="#具体示例" class="headerlink" title="具体示例"></a>具体示例</h4><h5 id="情况-A：数据库响应时间-1-s"><a href="#情况-A：数据库响应时间-1-s" class="headerlink" title="情况 A：数据库响应时间 1 s"></a>情况 A：数据库响应时间 1 s</h5><ul>
+<li><p><strong>假设</strong>：CPU 核心数 8，业务逻辑处理时间（serviceTime）≈10 ms，IO 等待时间（waitTime）≈1000 ms。</p>
+</li>
+<li><p><strong>按 Goetz 公式</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">threads = 8 * (1 + 1000/10) ≈ 8 * 101 = 808</span><br></pre></td></tr></table></figure>
+
+<p>但数据库连接池仅 10 条，此时绝大多数线程会在 JDBC 层排队，反而降低性能 (<a target="_blank" rel="noopener" href="https://engineering.zalando.com/posts/2019/04/how-to-set-an-ideal-thread-pool-size.html?utm_source=chatgpt.com">Zalando Engineering Blog</a>, <a target="_blank" rel="noopener" href="https://docs.redhat.com/en/documentation/red_hat_build_of_keycloak/24.0/html/high_availability_guide/concepts-threads-?utm_source=chatgpt.com">红帽文档</a>)。</p>
+</li>
+<li><p><strong>实践建议</strong>：将线程池大小设为连接池大小的 1.1～1.25 倍，以应对瞬时小流量峰值。例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">corePoolSize = 10</span><br><span class="line">maximumPoolSize = 12  // 允许最多两条备用线程</span><br></pre></td></tr></table></figure>
+
+<p>这样既能充分利用 10 条连接，又能在 1 s 的处理窗口内处理偶发的短暂冲击 (<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1208077/optimal-number-of-connections-in-connection-pool?utm_source=chatgpt.com">Stack Overflow</a>, <a target="_blank" rel="noopener" href="https://medium.com/@gaborfarkasds/so-how-big-should-that-connection-pool-be-e5c69f2e15dd?utm_source=chatgpt.com">Medium</a>)。</p>
+</li>
+</ul>
+<h5 id="情况-B：数据库响应时间-10-ms"><a href="#情况-B：数据库响应时间-10-ms" class="headerlink" title="情况 B：数据库响应时间 10 ms"></a>情况 B：数据库响应时间 10 ms</h5><ul>
+<li><p><strong>假设</strong>：waitTime=10 ms，serviceTime=10 ms，CPU 核心数 8。</p>
+</li>
+<li><p><strong>按 Goetz 公式</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">threads = 8 * (1 + 10/10) = 16</span><br></pre></td></tr></table></figure></li>
+<li><p><strong>受连接池约束</strong>：由于同时只能打开 10 条连接，并发线程再多也无法并行地阻塞在 JDBC 层。此时最优线程池大小依然是 10～12 之间 (<a target="_blank" rel="noopener" href="https://docs.redhat.com/en/documentation/red_hat_build_of_keycloak/24.0/html/high_availability_guide/concepts-threads-?utm_source=chatgpt.com">红帽文档</a>, <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1208077/optimal-number-of-connections-in-connection-pool?utm_source=chatgpt.com">Stack Overflow</a>)。</p>
+</li>
+<li><p><strong>基于 Little’s Law</strong>：若目标吞吐 1000 QPS，W=0.01 s，则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">L = λ * W = 1000 * 0.01 = 10 threads</span><br></pre></td></tr></table></figure>
+
+<p>刚好匹配连接池大小 (<a target="_blank" rel="noopener" href="https://engineering.zalando.com/posts/2019/04/how-to-set-an-ideal-thread-pool-size.html?utm_source=chatgpt.com">Zalando Engineering Blog</a>)。</p>
+</li>
+</ul>
+<hr>
+<h4 id="最佳实践与调优"><a href="#最佳实践与调优" class="headerlink" title="最佳实践与调优"></a>最佳实践与调优</h4><ol>
+<li><strong>分离不同任务线程池</strong><br>对于数据库调用、外部 HTTP、CPU 密集型计算等，最好使用多个专用线程池，分别根据各自的 waitTime/serviceTime 及资源约束来调优 (<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/76684733/how-to-determine-corethreadsize-if-having-multiple-threadpools-in-application?utm_source=chatgpt.com">Stack Overflow</a>)。</li>
+<li><strong>监控与压测“Measure, Don’t Guess”</strong><br>所有公式与经验值仅作起点，必须通过 A/B 测试和压测（Load Test）验证性能瓶颈，动态调整 core/max、队列长度等参数 (<a target="_blank" rel="noopener" href="https://engineering.zalando.com/posts/2019/04/how-to-set-an-ideal-thread-pool-size.html?utm_source=chatgpt.com">Zalando Engineering Blog</a>)。</li>
+<li><strong>考虑拒绝策略与队列类型</strong><br>结合业务特性选择合适的队列（SynchronousQueue、LinkedBlockingQueue 等）及拒绝策略（CallerRunsPolicy、AbortPolicy 等），避免在高并发下无界队列导致 OOM。</li>
+<li><strong>动态伸缩</strong><br>在流量可预测且波动较大时，可结合 Kubernetes/HPA、Spring Cloud TaskExecutor 等方案，实现线程池在运行时动态伸缩，以更加经济地利用资源。</li>
+</ol>
+<hr>
+<p><strong>总结</strong>：线程池大小既要遵循理论公式（Goetz 公式、Little’s Law），又要服从外部资源（如数据库连接池）的最大并发约束。对于 10 条连接池、1 s 或 10 ms 响应场景，推荐将线程池大小设置为 10～12；后续应结合压测结果不断迭代优化。</p>
 <h2 id="CompletableFuture"><a href="#CompletableFuture" class="headerlink" title="CompletableFuture"></a><code>CompletableFuture</code></h2><p><code>Future</code> 在实际使用过程中存在一些局限性比如不支持异步任务的编排组合、获取计算结果的 <code>get()</code> 方法为阻塞调用。Java 8 才被引入<code>CompletableFuture</code> 类可以解决<code>Future</code> 的这些缺陷。<code>CompletableFuture</code> 除了提供了更为好用和强大的 <code>Future</code> 特性之外，还提供了函数式编程、异步任务编排组合（可以将多个异步任务串联起来，组成一个完整的链式调用）等能力。对某些部分可以并行执行的异步任务支持比较好。</p>
 <table>
 <thead>
@@ -4602,663 +5275,6 @@
 <p>netsh http show servicestate</p>
 <p>发现是defaultAppPool在占用，控制器进程的pid为4671</p>
 <p>任务管理器中找到4671，发现是iis Publishing 服务，禁用</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/20/redis-review-optimization/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/20/redis-review-optimization/" class="post-title-link" itemprop="url">redis-review 项目优化</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-10-20 00:00:00" itemprop="dateCreated datePublished" datetime="2024-10-20T00:00:00+08:00">2024-10-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-13 16:24:28" itemprop="dateModified" datetime="2025-05-13T16:24:28+08:00">2025-05-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%A1%B9%E7%9B%AE/" itemprop="url" rel="index"><span itemprop="name">项目</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="redis-review"><a href="#redis-review" class="headerlink" title="redis-review"></a>redis-review</h1><p>配置环境： Nginx + SpringBoot + RabbitMQ + Redis</p>
-<h2 id="redis-key-设计"><a href="#redis-key-设计" class="headerlink" title="redis key 设计"></a>redis key 设计</h2><p>STRING </p>
-<ul>
-<li><code>sign:&#123;userId&#125;:202411</code> 2024年11月的userId的签到信息 （bitmap）</li>
-<li><code>incr:order:2024:11:10</code> 2024年11月10号的订单序列号serialNumber，唯一id（timestamp&lt;&lt;32 | serialNumber）</li>
-<li><code>seckill:stock:&#123;voucherId&#125;</code> voucherId的优惠券对应的库存</li>
-<li><code>cache:shop:&#123;shopId&#125;</code> shopId的商铺信息</li>
-<li><code>login:code:&#123;phoneNumber&#125;</code> 验证码信息</li>
-</ul>
-<p>LIST </p>
-<ul>
-<li><code>cache:shoptype</code>（商铺类型信息JSON数组）</li>
-</ul>
-<p>ZSET </p>
-<ul>
-<li><p><code>shop:geo:&#123;shopId&#125;</code> 商铺地理位置信息</p>
-</li>
-<li><p><code>blog:liked:&#123;blogId&#125;</code> blogId的博客点赞信息，包括userId 以及对应的score（unix时间）</p>
-</li>
-<li><p><code>feed:&#123;userId&#125;</code> userId 的收件箱，保存笔记时推送到所有粉丝（看看谁follow了我）包括了 blogId 以及对应的score </p>
-</li>
-</ul>
-<p>SET</p>
-<ul>
-<li><code>follows:&#123;userId&#125;</code> userId 关注的人</li>
-<li><code>seckill:order:&#123;voucherId&#125;</code> 抢过voucherId的优惠券的人的集合</li>
-</ul>
-<p>HASH </p>
-<ul>
-<li><code>login:token:&#123;token&#125;</code> 存储token对应的userDTO </li>
-</ul>
-<h2 id="数据库表设计"><a href="#数据库表设计" class="headerlink" title="数据库表设计"></a>数据库表设计</h2><p>blog blog评论 关注的人(x在t时间关注了y) 用户表 </p>
-<p>商铺 商铺类别</p>
-<p>券 秒杀券 秒杀券订单</p>
-<h2 id="热key-大key"><a href="#热key-大key" class="headerlink" title="热key 大key"></a>热key 大key</h2><p>在处理热key、大key以及分表问题时，可以采用以下策略进行优化：</p>
-<p>• <strong>热Key</strong>：多级缓存 + 分片 + 异步更新。<br>• <strong>大Key</strong>：拆分 + 异步删除 + 设计规避。<br>• <strong>分表</strong>：合理分片规则 + 中间件 + 缓存加速。<br>• <strong>监控</strong>：实时监控Key大小和QPS，提前预防问题。</p>
-<h3 id="热Key处理方案"><a href="#热Key处理方案" class="headerlink" title="热Key处理方案"></a>热Key处理方案</h3><ol>
-<li><p><strong>监控与识别</strong><br>• 使用Redis监控工具（如<code>redis-cli --hotkeys</code>、<code>MONITOR</code>命令）或APM系统（如Prometheus）识别高频访问的key。<br>• 业务侧预判热点（如秒杀商品ID、热门话题），提前介入优化。</p>
-</li>
-<li><p><strong>多级缓存</strong><br>• <strong>本地缓存</strong>：结合Guava Cache或Caffeine，将热key缓存在应用服务器本地，减少Redis压力。<br>• <strong>分布式缓存冗余</strong>：复制热key到多个Redis实例（如<code>key:1</code>, <code>key:2</code>），通过随机访问分散压力。</p>
-</li>
-<li><p><strong>缓存续期与互斥锁</strong><br>• <strong>逻辑过期</strong>：Value中存储过期时间，异步更新缓存，避免物理过期后大量请求穿透到DB。<br>• <strong>互斥锁（Mutex Lock）</strong>：缓存失效时，仅允许一个线程重建数据，其他线程等待或返回降级结果。</p>
-</li>
-<li><p><strong>读写分离与分片</strong><br>• 使用Redis Cluster或Codis分片，分散热key压力。<br>• 读写分离：通过从节点处理读请求，主节点处理写请求。</p>
-</li>
-</ol>
-<h3 id="大Key处理方案"><a href="#大Key处理方案" class="headerlink" title="大Key处理方案"></a>大Key处理方案</h3><ol>
-<li><p><strong>拆分与分片</strong><br>• <strong>横向拆分</strong>：将大Hash/List按字段或元素拆分（如<code>user:1000:info</code>拆为<code>user:1000:base</code>、<code>user:1000:contact</code>）。<br>• <strong>分片存储</strong>：对Key添加分片后缀（如<code>user:&#123;id%10&#125;:profile</code>），分散存储。</p>
-</li>
-<li><p><strong>异步删除</strong><br>• 使用<code>UNLINK</code>替代<code>DEL</code>，非阻塞删除大Key。<br>• 渐进式删除：通过脚本分批删除Hash/Set元素（如<code>HSCAN</code>遍历删除）。</p>
-</li>
-<li><p><strong>压缩与存储优化</strong><br>• 序列化优化：使用Protobuf或MessagePack替代JSON。<br>• 冷热分离：将大Key中低频数据存入MySQL/HBase，高频数据保留在Redis。</p>
-</li>
-<li><p><strong>设计规避</strong><br>• 避免单个Key存储超过1MB的数据。<br>• 使用HyperLogLog替代大Set统计UV，或使用TimeSeries存储时序数据。</p>
-</li>
-</ol>
-<h3 id="分表方案（以MySQL为例）"><a href="#分表方案（以MySQL为例）" class="headerlink" title="分表方案（以MySQL为例）"></a>分表方案（以MySQL为例）</h3><ol>
-<li><p><strong>水平分表</strong><br>• <strong>规则分片</strong>：按哈希（如<code>user_id % 100</code>）、范围（如时间戳）或一致性哈希拆分数据。<br>• <strong>中间件</strong>：使用ShardingSphere、Vitess等工具自动路由查询。</p>
-</li>
-<li><p><strong>垂直分表</strong><br>• 将大表按列拆分（如用户基础信息表<code>user_base</code>与扩展信息表<code>user_extend</code>），减少单行数据量。</p>
-</li>
-<li><p><strong>全局ID与查询优化</strong><br>• 分布式ID生成（雪花算法、Redis自增ID）避免主键冲突。<br>• 冗余字段或索引表：通过异步维护冗余字段（如商户ID+订单ID）支持多维度查询。</p>
-</li>
-<li><p><strong>结合Redis</strong><br>• 缓存分表路由信息（如<code>user_shard:1000 -&gt; shard_2</code>），加速查询。<br>• 热数据缓存：将分表后的热数据单独缓存，降低DB压力。</p>
-</li>
-</ol>
-<h3 id="Redis分片与集群"><a href="#Redis分片与集群" class="headerlink" title="Redis分片与集群"></a>Redis分片与集群</h3><ol>
-<li><p><strong>Redis Cluster</strong><br>• 自动分片（16384 slots），支持水平扩展和高可用。<br>• 通过<code>CRC16(key) % 16384</code>计算slot，分散数据。</p>
-</li>
-<li><p><strong>客户端分片</strong><br>• 使用一致性哈希算法（如Jedis的<code>ShardedJedis</code>）在客户端路由请求。</p>
-</li>
-<li><p><strong>Proxy方案</strong><br>• 通过Twemproxy或Codis代理层管理分片，对业务透明。</p>
-</li>
-</ol>
-<h1 id="项目剖析"><a href="#项目剖析" class="headerlink" title="项目剖析"></a>项目剖析</h1><h2 id="Login-Redis-Token"><a href="#Login-Redis-Token" class="headerlink" title="Login (Redis Token)"></a>Login (Redis Token)</h2><ol>
-<li><p>短信登录的短信怎么发送的?</p>
-<p>（使用hutool生成的随机六位数验证码）</p>
-</li>
-<li><p>如何标识用户</p>
-<p>（主要是唯一的id主键，而登录靠的是也是唯一的手机号）</p>
-</li>
-<li><p>项目的权限刷新什么意思</p>
-<p>（token具有ttl期，用户如果浏览网页就会刷新其ttl）</p>
-</li>
-</ol>
-<p><strong>原来</strong>：tomcat 的 HttpSession 是集中的，如果要扩展的话同步是一个大问题，并且可能过多占用服务器的内存。</p>
-<p><strong>改进</strong>：<mark>Redis Token</mark>是分布式的，天生不存在同步问题。</p>
-<ul>
-<li><strong>Redis</strong>：使用 Hash 数据结构—— KEY: token:xxxxxxxx, VALUE: UserDTO的字段信息</li>
-<li><strong>拦截器</strong>：配置到需要拦截器的地方（个人中心等位置）根据请求头里的 token 查到对应的UserDTO，将其放入<mark>ThreadLocal</mark>，放行，同时也会刷新 token 有效期。<mark>核心方法：preHandle + afterCompletion</mark><ul>
-<li>ThreadLocal 使用：<code>get()</code>,<code>set()</code> 在finally块调用<code>remove()</code> 用途 Spring 数据库连接、事务管理</li>
-<li>内存泄露：每个线程有个 Map，键是 tl（弱引用），值是对应的值（强引用），如果线程没有销毁，但是 tl 销毁了，就容易泄露内存。</li>
-</ul>
-</li>
-<li><strong>问题</strong>：访问别的页面也需要刷新，不然不浏览那些需要拦截器的页面就不会刷新token，莫名其妙就会过期</li>
-<li><strong>解决</strong>：新加一个拦截器，负责查token、保存到tl、刷新，放行所有。原先的拦截器只负责从tl查询用户，tl 里没有就拒绝</li>
-<li><strong>其他缺点</strong>：仍然依赖内存（redis是内存数据库） + redis接口调用会增加复杂性。需要注意的是，虽然这种方式支持分布式系统，但是根本上还是和 HttpSession 一样的<strong>中心化</strong>。</li>
-</ul>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653320764547.png" alt="优化拦截器" style="zoom:33%;" />
-
-<p>JWT：去中心化，服务端压力减小，便于分布式系统使用。基本信息可直接放在token中。功能权限较少可以直接放在token中，用bit位表示用户所具有的功能权限。但是缺点也很明显，签发以后就不能主动让其失效，拿到了就可以进行重放攻击。</p>
-<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>使用 Redis 作为商户信息缓存，避免大量请求直接打到数据库引发宕机，采取<mark>主动更新、旁路缓存</mark>的方法保证数<br>据库与 Redis 之间的缓存一致性问题。使用<mark>布隆过滤器</mark>解决商户信息的缓存穿透问题，使用 <strong>Redis 集群</strong>等方式减<br>小缓存雪崩的概率，使用<mark>逻辑过期</mark>解决缓存击穿。</p>
-<p><strong>内存更新</strong>：</p>
-<ul>
-<li>内存淘汰机制和TTL（对于低一致性场景）</li>
-<li><mark>主动更新</mark>：编写业务逻辑，修改数据库的同时操作缓存，解决一致性问题。（对于高一致性场景）✅</li>
-</ul>
-<p><strong>一致性解决方案</strong>：</p>
-<ul>
-<li><strong>cache aside 旁路缓存</strong> 编码使用客户端自行将数据写入cache ✅ 适合读多写少</li>
-<li>读写穿透：封装了旁路缓存功能，其工作由cache层的服务自动完成，但是redis并不支持写入db</li>
-<li>异步缓存写入：只操作cache，其他线程异步写到db。一般是写密集允许短暂的数据不一致</li>
-</ul>
-<p><strong>Cache Aside</strong>：</p>
-<ul>
-<li>选择删除cache，<em>更新导致的无效写比较多（更新多次但只有最后一次被查询），并且线程安全问题难以解决：<strong>要求数据库和缓存写入都要成功</strong>，此时有可能A更新到v1，线程B突然插进来把缓存更新到v2，最后A把脏数据v1更新到缓存，如果缓存更新涉及多表的查询就更加难以维护。</em> <strong>cache删除和db更新放入一个事务</strong></li>
-<li><strong>删缓存、更新db的先后顺序</strong>：读未命中、更新操作的互相穿插<ul>
-<li>选择先更新db后删除cache。导致不一致的情况：读未命中的过程中插进来一个更新操作，最后缓存里是旧数据</li>
-<li><em>如果反过来，先删cache，更新db过程中进来一个查询的又把旧数据填充到缓存里，最后导致db和cache不一致。</em></li>
-</ul>
-</li>
-<li><strong>如果缓存删除失败怎么办</strong>？（异步重试）<ul>
-<li>单机可用线程池重试，分布式用MQ</li>
-<li><strong>延迟双删：删完之后，隔段时间再尝试删一次。</strong></li>
-</ul>
-</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th><strong>场景</strong></th>
-<th><strong>解决方案</strong></th>
-<th><strong>适用性</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>瞬时故障</td>
-<td>同步重试（3次以内）</td>
-<td>低并发，容忍短暂阻塞</td>
-</tr>
-<tr>
-<td>缓存服务不稳定</td>
-<td>异步队列 + 重试（最终一致性）</td>
-<td>高并发，要求最终一致</td>
-</tr>
-<tr>
-<td>长期不可用</td>
-<td>降级读数据库 + 告警</td>
-<td>高一致性要求场景</td>
-</tr>
-<tr>
-<td>无法接受任何不一致</td>
-<td>版本号校验 + 同步双写</td>
-<td>金融、交易等强一致性场景</td>
-</tr>
-</tbody></table>
-<ul>
-<li><strong>如果删除失败以后读脏数据怎么办</strong>？<ul>
-<li>写入标记+短ttl：删除失败之后写入一个特殊的key，短ttl，标记这个缓存可能不准确，然后在正常读缓存逻辑之前加上if判断即可，遇到特殊key就直读数据库，统计缓存失败率，可以据此熔断。</li>
-</ul>
-</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th><strong>场景</strong></th>
-<th><strong>解决方案</strong></th>
-<th><strong>适用性</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>短暂删除失败（网络抖动）</td>
-<td><strong>标记待修复</strong> + 读取时主动修复</td>
-<td>高并发，允许短暂不一致</td>
-</tr>
-<tr>
-<td>长期缓存服务不可用</td>
-<td>熔断降级 + 直读数据库</td>
-<td>强一致性要求场景</td>
-</tr>
-<tr>
-<td>数据版本频繁变更</td>
-<td><strong>版本号校验</strong> + 异步补偿任务</td>
-<td>金融、订单等关键业务</td>
-</tr>
-<tr>
-<td>灰度验证修复效果</td>
-<td>流量染色 + 强制对比</td>
-<td>需要验证缓存一致性的场景</td>
-</tr>
-</tbody></table>
-<p><mark>缓存穿透和缓存击穿都实现在 <strong>CacheClient</strong> 中</mark></p>
-<p><strong>缓存穿透</strong>：恶意查询db里不存在的数据，导致db崩溃</p>
-<ul>
-<li>缓存空对象设置ttl：实现简单，维护方便。<em>造成短期的不一致，额外内存消耗。</em> <ul>
-<li>适合空key数目可控的场景，支持动态更新</li>
-</ul>
-</li>
-<li><strong>布隆过滤器</strong>：内存占用较少，没有多余key。<em>实现复杂，可能误判。</em>   本项目使用 Guava 实现。<ul>
-<li>适合海量数据，且需要高效拦截绝对不存在的请求时（如用户注册校验）需要预先初始化 @PostConstruct </li>
-<li>容量由bitmap大小与哈希函数数量决定，可能会满，满了以后可以扩容，可以业务层兜底（比如缓存空对象）。</li>
-<li>删除、扩容：不支持。</li>
-<li><strong>计数布隆过滤器</strong>(Counting Bloom Filter): 用空间复杂度换来删除功能，bit改为计数器，查询时所有位置的计数器都大于0才算存在。插入时在所有位置加1，删除时在所有位置减1，只要有一个归0就认定其不存在。</li>
-<li><strong>布谷鸟过滤器</strong>(Cuckoo Filter): <strong>指纹</strong>使用抗碰撞性强的哈希函数计算哈希值后截取低位获得。使用<strong>桶数组</strong>存储指纹，一个桶存四个指纹(连续,cpucache)。使用与当前指纹的哈希值异或的方式计算出另一个指纹副本的桶索引。<ul>
-<li>插入时，第一个桶索引 i1= hash(x) 计算，第二个桶索引 i2 = i1 ⊕ hash(fingerprint(x))。桶只要有一个空位就可以插入，如果直接和指纹本身异或，在指纹跟桶数组大小差距悬殊时两个桶离得较近不利于均匀分布。如果没有空位就从其中挑一个指纹 f’ 迁出然后迁入，对于f’我们直接使用当前的桶索引和 f’ 进行异或就能计算出就能 f’ 备用桶的位置。</li>
-<li>查询时，看两个桶里面是否存在 x 的指纹，有指纹就算存在。删除时，从两个桶里删除匹配的指纹。</li>
-<li>降低误判率：增大指纹长度，减小桶的尺寸</li>
-<li>大多数情况下，选择2个哈希函数，桶的尺寸选择4，能够达到最佳或接近最佳的空间效率的假阳性率。</li>
-</ul>
-</li>
-<li>动态数据集应该预防写满，或者使用多级过滤，例如使用 HashSet 过滤高频数据，然后用BF处理长尾数据</li>
-<li>可以使用功能更加强大的 RedisBloom</li>
-</ul>
-</li>
-</ul>
-<p><strong>缓存击穿</strong>：一个被高并发访问并且缓存重建业务较复杂的key突然失效了，无数的请求访问会在瞬间给数据库带来巨大的冲击。常见的解决方案有两种：</p>
-<ul>
-<li>互斥锁 MUTEX。线程 1 未命中，拿到锁去<strong>同步地重建缓存</strong>，线程 2 此时也紧随其后，拿不到锁就重复查询缓存。直到重建完成，线程 2 就能拿到重建的缓存值。优点是<strong>一致性可以确保</strong>，缺点是重建期间其他的线程会一直<strong>同步递归调用</strong>。</li>
-<li>逻辑过期 LOGICAL EXPIRE。不存在未命中情况，发现过期就拿到锁然后提交一个重建缓存的任务（异步重建完之后finally释放锁），然后直接返回旧值。优点是<strong>响应比较快</strong>，是非阻塞的，缺点是一致性受影响。</li>
-</ul>
-<p><strong>缓存雪崩</strong>：同一时段大量的缓存key同时失效或redis宕机</p>
-<ul>
-<li>给不同的Key的TTL添加随机值</li>
-<li>利用Redis集群提高服务的可用性</li>
-<li>给缓存业务添加降级限流策略</li>
-<li>给业务添加多级缓存</li>
-</ul>
-<h2 id="全局异常处理"><a href="#全局异常处理" class="headerlink" title="全局异常处理"></a>全局异常处理</h2><h3 id="RestControllerAdvice-和-ExceptionHandler"><a href="#RestControllerAdvice-和-ExceptionHandler" class="headerlink" title="@RestControllerAdvice 和 @ExceptionHandler"></a>@RestControllerAdvice 和 @ExceptionHandler</h3><p>对于更简单的异常处理，推荐使用 <code>@RestControllerAdvice</code>：所有方法默认返回 JSON，等价于自动添加 <code>@ResponseBody</code>。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GlobalApiExceptionHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 自动返回 JSON，无需 @ResponseBody</span></span><br><span class="line">    <span class="meta">@ExceptionHandler(UserNotFoundException.class)</span></span><br><span class="line">    <span class="meta">@ResponseStatus(HttpStatus.NOT_FOUND)</span></span><br><span class="line">    <span class="keyword">public</span> ErrorResponse <span class="title function_">handleUserNotFound</span><span class="params">(UserNotFoundException ex)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ErrorResponse</span>(ex.getMessage(), <span class="number">404</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 更灵活的控制：自定义状态码和响应体</span></span><br><span class="line">    <span class="meta">@ExceptionHandler(ValidationException.class)</span></span><br><span class="line">    <span class="keyword">public</span> ResponseEntity&lt;ErrorResponse&gt; <span class="title function_">handleValidationError</span><span class="params">(ValidationException ex)</span> &#123;</span><br><span class="line">        <span class="type">ErrorResponse</span> <span class="variable">error</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ErrorResponse</span>(ex.getMessage(), <span class="number">400</span>);</span><br><span class="line">        <span class="keyword">return</span> ResponseEntity.badRequest().body(error);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>注意事项</p>
-<ul>
-<li><strong>执行顺序</strong>：解析器按注册顺序执行。返回非空 <code>ModelAndView</code> 时终止处理。</li>
-<li><strong>默认解析器</strong>：使用 <code>extendHandlerExceptionResolvers</code> 避免覆盖Spring默认解析器（如处理<code>@ExceptionHandler</code>的解析器）。</li>
-<li><strong>与Spring Boot整合</strong>：在Spring Boot中，可结合 <code>@ControllerAdvice</code> 和 <code>ErrorController</code> 进行全局处理。</li>
-</ul>
-<h3 id="Result-封装"><a href="#Result-封装" class="headerlink" title="Result 封装"></a>Result 封装</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Result</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Boolean success;</span><br><span class="line">    <span class="keyword">private</span> String errorMsg;</span><br><span class="line">    <span class="keyword">private</span> Object data;</span><br><span class="line">    <span class="keyword">private</span> Long total;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">ok</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="literal">true</span>, <span class="literal">null</span>, <span class="literal">null</span>, <span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">ok</span><span class="params">(Object data)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="literal">true</span>, <span class="literal">null</span>, data, <span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">ok</span><span class="params">(List&lt;?&gt; data, Long total)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="literal">true</span>, <span class="literal">null</span>, data, total);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">fail</span><span class="params">(String errorMsg)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="literal">false</span>, errorMsg, <span class="literal">null</span>, <span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="秒杀抢购"><a href="#秒杀抢购" class="headerlink" title="秒杀抢购"></a>秒杀抢购</h2><p>• 使用乐观锁避免秒杀券超卖，同时提高并发。通过控制事务的粒度以及动态代理保证事务的有效性。使用 Lua 脚本解决秒杀券更新的原子性问题。 Redisson 分布式 锁解决集群环境下一人一单可能导致的并发安全问题。在 3000 并发测试中成功拦截 100%的重复请求</p>
-<h3 id="乐观锁-防止超卖"><a href="#乐观锁-防止超卖" class="headerlink" title="乐观锁 防止超卖"></a>乐观锁 防止超卖</h3><p><strong>做完&gt;0库存判断之后：</strong></p>
-<ul>
-<li>原来：不检查直接扣【超卖】</li>
-<li>改进1：扣减时的库存必须跟原来一样才成功。（类似于版本号）【成功率太低】</li>
-<li>改进2：只要大于0就可以进行扣减。</li>
-</ul>
-<h3 id="一人一单（订单接口的幂等性）"><a href="#一人一单（订单接口的幂等性）" class="headerlink" title="一人一单（订单接口的幂等性）"></a>一人一单（订单接口的幂等性）</h3><ol>
-<li><p>订单接口的幂等性是怎么做的？</p>
-<p>（意思就是post请求带着：一个用户id，一个优惠卷id。发送多次请求，如何保证只有一个成功，也就是一人一单，订单做成唯一id）还有一种方法是新加一个状态字段。</p>
-</li>
-<li><p>库存扣减之后，还要去insert一个新的订单，你是如何保存这个的一致性的？<code>createOrder(order)</code></p>
-<p>（使用spring自带的事务，将其放到一个事务里 @Transactional，注意事务有效性）</p>
-</li>
-<li><p>抢优惠券没有及时处理怎么办?</p>
-<p>（通知用户已经抢了，延迟推送结果）</p>
-</li>
-<li><p>抢优惠券处理完了如何通知用户？</p>
-<p>（没有通知，实际的业务还是基于DB的，使用券的时候db里没有就是没有，db处理完了自然就能用了）</p>
-</li>
-<li><p>秒杀场景下扣减库存太慢了怎么办？</p>
-<p>（数据库集群，分库分表，索引优化，Redis热key，大key，Redis缓存过小）</p>
-</li>
-</ol>
-<h4 id="单机解决方案"><a href="#单机解决方案" class="headerlink" title="单机解决方案"></a>单机解决方案</h4><ul>
-<li>原来：一人n单过来之后，一开始都还没有订单，问题还是一样。</li>
-<li>改进1：变成同步方法以后锁太大 createVoucherOrder()</li>
-<li>改进2：使用this作为锁缩小范围，this获取的是服务对象，只要获得了服务对象就要参与竞争，导致所有人都参与竞争</li>
-<li>改进3：使用userId.toString().intern()作为锁对象锁住一人一单的判断逻辑，但是锁在事务内部会导致事务尚未提交锁就已经释放，所以应该在 createVoucherOrder() 外部进行加锁。</li>
-<li>改进4：上方依然有问题，因为直接调用实例方法默认是使用this.createVoucherOrder的，而Spring的事务基于aop动态代理，因此需要显式获取代理对象。</li>
-<li>改进5：外部的方法不要加事务，因为事务传播机制默认是加入已经存在的事务。这边锁释放了大事务还没提交所以没用</li>
-</ul>
-<h4 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h4><p>集群环境下同步代码块会失效，因此需要使用redis作为公共的分布式锁进行改进</p>
-<p><strong>原来</strong>：setnx 到期删除锁</p>
-<ul>
-<li>问题是如果在锁内部阻塞导致过期删除，别人抢来了锁开始执行，自己出来以后就会把别人的锁删掉。</li>
-</ul>
-<p><strong>改进</strong>：分布式锁的value为自己的线程id，释放逻辑里判断id是否和自己相同。</p>
-<ul>
-<li>问题是如果发生比较极端的情况，判断逻辑里id相同，准备delete时可能发生fullgc导致超时释放，仍然会误删别人的锁，拿锁、比锁、删锁不是原子性的。因此引入LUA脚本。</li>
-<li>自定义锁的局限性：实现比较简单，没有高级功能。</li>
-</ul>
-<p><strong>REDISSON</strong> 解决了setnx的以下痛点：</p>
-<ol>
-<li>不可重入，死锁，获取锁的线程不能进入相同的所的代码块。<ul>
-<li><strong>重入机制</strong>：重入次数从0开始增加，使用hash结构存储线程id以及其重入次数。</li>
-</ul>
-</li>
-<li>不可重试，尝试获取一次就返回没有重试机制。要么就是无效自旋耗费资源<ul>
-<li>获取失败会订阅（pub/sub）释放消息，再等一段时间，收到释放信号就重试，如果一直没获取到，超出最大等待时间之后返回false。</li>
-</ul>
-</li>
-<li>超时释放：业务执行时间长导致锁过期，虽然不会误删，但是有隐患。<ul>
-<li><strong>续约</strong>：<strong>watchdog</strong> 线程，只要持有锁就会有定时更新ttl的任务，业务完成释放锁也会将定时任务取消。</li>
-</ul>
-</li>
-<li>主从一致：主从同步出现问题可能出现死锁<ul>
-<li><strong>multilock</strong>：解决主从一致问题。必须所有的redis全获取成功才算获取到。</li>
-</ul>
-</li>
-</ol>
-<h3 id="RabbitMQ-异步秒杀"><a href="#RabbitMQ-异步秒杀" class="headerlink" title="RabbitMQ 异步秒杀"></a>RabbitMQ 异步秒杀</h3><p>项目为什么要加个消息队列?</p>
-<ul>
-<li>Redis 效率比较高，而数据库效率不如redis快，tomcat中的程序，会进行串行操作，分成如下几步：查询优惠卷、<strong>判断秒杀库存是否足够</strong>、查询订单、<strong>校验是否是一人一单</strong>、扣减库存、创建订单。在这六步操作中，又有很多操作是要去操作数据库的，而且还是一个线程串行执行， 这样就会导致我们的程序执行的很慢，所以我们需要异步程序执行。</li>
-<li>将耗时比较短的逻辑判断放入到redis中，比如是否库存足够，比如是否一人一单，这样的操作，只要这种逻辑可以完成，就意味着我们是一定可以下单完成的，我们只需要进行快速的逻辑判断，根本就不用等下单逻辑走完，我们直接给用户返回成功， 再在后台开一个线程，后台线程慢慢的去执行queue里边的消息。</li>
-<li>为什么不使用线程池或者异步编排。如果访问的人很多，那么线程池中的线程可能一下子就被消耗完了，而且你使用上述方案，最大的特点在于，你觉得时效性会非常重要，但是你想想是吗？并不是，比如我只要确定他能做这件事，然后我后边慢慢做就可以了，我并不需要他一口气做完这件事，所以我们应当采用的是课程中，类似消息队列的方式来完成我们的需求，而不是使用线程池或者是异步编排的方式来完成这个需求。</li>
-</ul>
-<h4 id="Lua"><a href="#Lua" class="headerlink" title="Lua"></a>Lua</h4><p><strong>Lua 脚本</strong>：把库存和一人一单做好判断，符合就直接返回成功。构建好订单发给rabbitMQ。</p>
-<p>为了支持集群和维持原子性，lua脚本内操作的键必须在同一个哈希插槽内，因此需要使用前缀 + {voucherid}进行拼接，这样的两个键一定能在同一个哈西插槽内 HASHTAG</p>
-<h4 id="MQ"><a href="#MQ" class="headerlink" title="MQ"></a>MQ</h4><p>MQ 这边本身支持 concurrency，不过用默认的 1 就好，我们手动配置好线程池的参数，然后提交给线程池。</p>
-<p>异步：时效性不是那么重要，因此使用 MQ 慢慢消化即可。</p>
-<p>单机——轻量级异步任务编排：如并行调用多个本地接口、合并结果、链式处理。</p>
-<ul>
-<li>高并发请求处理：通过线程池快速响应，避免阻塞主线程。</li>
-<li>无需跨进程通信：所有操作在同一个 JVM 内完成。</li>
-</ul>
-<p><strong>分布式——RabbitMQ</strong>：</p>
-<ul>
-<li><p>直连交换机 <code>hmdianping.direct</code> 负责接收和分发消息</p>
-</li>
-<li><p>队列 <code>direct.seckill.queue</code>  存储消息，是消息的“最终目的地”。</p>
-</li>
-<li><p>绑定关系：队列通过路由键 <code>direct.seckill</code> 绑定到交换机。分发消息的依据（地址）</p>
-</li>
-<li><p><strong>参数注入</strong>：</p>
-<ul>
-<li><code>Message</code>：原始消息对象（含元数据）。</li>
-<li><code>Channel</code>：RabbitMQ 通道，用于手动确认消息（ACK/NACK）。</li>
-<li><code>VoucherOrder</code>：消息体自动反序列化后的业务对象（需配置消息转换器，如 <code>Jackson2JsonMessageConverter</code>）。</li>
-</ul>
-</li>
-<li><p><strong>手动ACK</strong>：manual。业务处理成功调用 <code>basicAck</code>，告知 RabbitMQ 消息已被消费。</p>
-</li>
-<li><p><strong>消息持久化</strong>：发送者发消息时设置DeliveryMode为Persistent，同时队列创建时也要指定durable = true</p>
-</li>
-<li><p><strong>生产者 confirm</strong>：correlated。需要@PostConstruct配置回调函数，到达交换机和路由成功之后会触发回调。</p>
-</li>
-<li><p>重试机制：生产者发送消息的时候设置好消息头的 <code>retryCount = 0</code>，消费者检测 <code>retryCount &lt;= 3</code>才消费。如果订单保存失败则抛异常，此时拒绝消息并重新入队，达到三次重试就将这条消息转发到延时队列中去。这样，配置延时队列的死信队列为我们的正常队列，等到消息的 ttl 到了就 Reject消息，消息就重新回到了“死信队列”，也就是消费者对应的对列中，确保了消息不丢失。</p>
-</li>
-</ul>
-<h4 id="数据库操作失败（Redis已经预扣）"><a href="#数据库操作失败（Redis已经预扣）" class="headerlink" title="数据库操作失败（Redis已经预扣）"></a>数据库操作失败（Redis已经预扣）</h4><p>lua脚本对库存（string）执行了减1操作，对集合（set）进行了add操作</p>
-<ol>
-<li>指数退避重试机制（订单id唯一保证幂等性）</li>
-<li><strong>补偿机制：最终一致性兜底</strong>。如果重试到达一定次数就变成死信，死信监听器接受消息之后出发redis回滚对库存加1，对集合进行remove的操作。</li>
-</ol>
-<h4 id="请求堆积"><a href="#请求堆积" class="headerlink" title="请求堆积"></a>请求堆积</h4><p>MQ消息堆积：使用 CallerRunsPolicy()</p>
-<table>
-<thead>
-<tr>
-<th><strong>方案</strong></th>
-<th><strong>实施难度</strong></th>
-<th><strong>见效速度</strong></th>
-<th><strong>适用阶段</strong></th>
-<th><strong>成本</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>限流降级</td>
-<td>低</td>
-<td>立即</td>
-<td>紧急处理</td>
-<td>低</td>
-</tr>
-<tr>
-<td>代码优化</td>
-<td>中</td>
-<td>1-3天</td>
-<td>短期优化</td>
-<td>低</td>
-</tr>
-<tr>
-<td>数据库读写分离</td>
-<td>高</td>
-<td>1周</td>
-<td>中期架构调整</td>
-<td>中</td>
-</tr>
-<tr>
-<td>微服务拆分</td>
-<td>高</td>
-<td>1-3个月</td>
-<td>长期重构</td>
-<td>高</td>
-</tr>
-<tr>
-<td>消息队列削峰</td>
-<td>中</td>
-<td>3-7天</td>
-<td>中期解耦</td>
-<td>中</td>
-</tr>
-</tbody></table>
-<h3 id="用户体感反馈"><a href="#用户体感反馈" class="headerlink" title="用户体感反馈"></a>用户体感反馈</h3><ol>
-<li>活动开始/结束，token，参数非法</li>
-<li>判断资格，成功则返回“抢购成功，请耐心等待结果”避免用户重复点击。</li>
-<li>入队阶段：网络异常/MQ不可用，回滚 Redis，告知用户系统繁忙</li>
-<li>异步落库：成功可以推送一个站内信，失败就发送失败通知，同时后台记录好日志，做好异常落库工作。</li>
-</ol>
-<h2 id="点赞、排行榜"><a href="#点赞、排行榜" class="headerlink" title="点赞、排行榜"></a>点赞、排行榜</h2><p><strong>使用 ZSet 与 MySQL 的自定义排序实现点赞及排行榜，使用 Set 作为共同关注的解决方案。</strong> </p>
-<p>使用Zset存储每个blog的点赞者。 保证按照点赞时间排序，并且点赞人不会重复。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  idStr 是前5个点赞的用户的 id，由于MySQL查询的结果顺序不定，因此需要 手动使用 ORDER BY FIELD 指定 ID 字段 按照 idStr 的顺序</span></span><br><span class="line">List&lt;UserDTO&gt; userDTOS = userService.query()</span><br><span class="line">        .in(<span class="string">&quot;id&quot;</span>, ids).last(<span class="string">&quot;ORDER BY FIELD(id,&quot;</span> + idStr + <span class="string">&quot;)&quot;</span>).list()</span><br><span class="line">        .stream()</span><br><span class="line">        .map(user -&gt; BeanUtil.copyProperties(user, UserDTO.class))</span><br><span class="line">        .collect(Collectors.toList());</span><br></pre></td></tr></table></figure>
-
-<h2 id="分页查询-时间线"><a href="#分页查询-时间线" class="headerlink" title="分页查询 时间线"></a>分页查询 时间线</h2><p><strong>实现了基于推模式的关注内容推送，用基于时间戳的分页查询实现时间线功能。</strong>  </p>
-<p>优点：时效快，不用临时拉取</p>
-<p>缺点：内存压力大，假设一个大V写信息，很多人关注他， 就会写很多分数据到粉丝那边去</p>
-<p>我们需要记录每次操作的最后一条，然后从这个位置开始去读取数据</p>
-<p>举个例子：我们从t1时刻开始，拿第一页数据，拿到了10~6，然后记录下当前最后一次拿取的记录，就是6，t2时刻发布了新的记录，此时这个11放到最顶上，但是不会影响我们之前记录的6，此时t3时刻来拿第二页，第二页这个时候拿数据，还是从6后一点的5去拿，就拿到了5-1的记录。我们这个地方可以采用sortedSet来做，可以进行范围查询，并且还可以记录当前获取数据时间戳最小值，就可以实现滚动分页了。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Result <span class="title function_">queryBlogOfFollow</span><span class="params">(Long max, Integer offset)</span> &#123;</span><br><span class="line">    <span class="comment">// 1.获取当前用户</span></span><br><span class="line">    <span class="type">Long</span> <span class="variable">userId</span> <span class="operator">=</span> UserHolder.getUser().getId();</span><br><span class="line">    <span class="comment">// 2.查询收件箱 ZREVRANGEBYSCORE key Max Min LIMIT offset count</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> FEED_KEY + userId;</span><br><span class="line">    Set&lt;ZSetOperations.TypedTuple&lt;String&gt;&gt; typedTuples = stringRedisTemplate.opsForZSet()</span><br><span class="line">            .reverseRangeByScoreWithScores(key, <span class="number">0</span>, max, offset, <span class="number">2</span>);</span><br><span class="line">    <span class="comment">// 3.非空判断</span></span><br><span class="line">    <span class="keyword">if</span> (typedTuples == <span class="literal">null</span> || typedTuples.isEmpty()) &#123;</span><br><span class="line">        <span class="keyword">return</span> Result.ok();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 4.解析数据：blogId、minTime（时间戳）、offset</span></span><br><span class="line">    List&lt;Long&gt; ids = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;(typedTuples.size());</span><br><span class="line">    <span class="type">long</span> <span class="variable">minTime</span> <span class="operator">=</span> <span class="number">0</span>; <span class="comment">// 2</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">os</span> <span class="operator">=</span> <span class="number">1</span>; <span class="comment">// 2</span></span><br><span class="line">    <span class="keyword">for</span> (ZSetOperations.TypedTuple&lt;String&gt; tuple : typedTuples) &#123; <span class="comment">// 5 4 4 2 2</span></span><br><span class="line">        <span class="comment">// 4.1.获取id</span></span><br><span class="line">        ids.add(Long.valueOf(tuple.getValue()));</span><br><span class="line">        <span class="comment">// 4.2.获取分数(时间戳）</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">time</span> <span class="operator">=</span> tuple.getScore().longValue();</span><br><span class="line">        <span class="keyword">if</span>(time == minTime)&#123;</span><br><span class="line">            os++;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            minTime = time;</span><br><span class="line">            os = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    os = minTime == max ? os : os + offset;</span><br><span class="line">    <span class="comment">// 5.根据id查询blog</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">idStr</span> <span class="operator">=</span> StrUtil.join(<span class="string">&quot;,&quot;</span>, ids);</span><br><span class="line">    List&lt;Blog&gt; blogs = query().in(<span class="string">&quot;id&quot;</span>, ids).last(<span class="string">&quot;ORDER BY FIELD(id,&quot;</span> + idStr + <span class="string">&quot;)&quot;</span>).list();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (Blog blog : blogs) &#123;</span><br><span class="line">        setBlogUserInfo(blog);</span><br><span class="line">        setBlogIsLike(blog);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 6.封装并返回</span></span><br><span class="line">    <span class="type">ScrollResult</span> <span class="variable">r</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ScrollResult</span>();</span><br><span class="line">    r.setList(blogs);</span><br><span class="line">    r.setOffset(os);</span><br><span class="line">    r.setMinTime(minTime);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Result.ok(r);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ScrollResult</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> List&lt;?&gt; list;</span><br><span class="line">    <span class="keyword">private</span> Long minTime;</span><br><span class="line">    <span class="keyword">private</span> Integer offset;</span><br><span class="line">    <span class="comment">//minTime 上次查询的最小值 offset从上次查询最小值偏移的个数(上次最小值有多少个)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="使用-Bitmap-签到"><a href="#使用-Bitmap-签到" class="headerlink" title="使用 Bitmap 签到"></a>使用 Bitmap 签到</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 签到实际上就是将天数所在的位置 SETBIT，重点是记录连续签到天数</span></span><br><span class="line"><span class="keyword">public</span> Result <span class="title function_">signCount</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> USER_SIGN_KEY + userId + keySuffix;</span><br><span class="line">    <span class="comment">// 4.获取今天是本月的第几天</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">dayOfMonth</span> <span class="operator">=</span> now.getDayOfMonth();</span><br><span class="line">    List&lt;Long&gt; result = stringRedisTemplate.opsForValue().bitField(key,</span><br><span class="line">            BitFieldSubCommands.create()</span><br><span class="line">            .get(BitFieldSubCommands.BitFieldType.unsigned(dayOfMonth)).valueAt(<span class="number">0</span>));</span><br><span class="line">    <span class="keyword">if</span> (result == <span class="literal">null</span> || result.isEmpty()) &#123;<span class="keyword">return</span> Result.ok(<span class="number">0</span>);&#125;</span><br><span class="line">    <span class="type">Long</span> <span class="variable">num</span> <span class="operator">=</span> result.getFirst();</span><br><span class="line">    <span class="keyword">if</span> (num == <span class="literal">null</span> || num == <span class="number">0</span>) &#123;<span class="keyword">return</span> Result.ok(<span class="number">0</span>);&#125;</span><br><span class="line">    <span class="comment">// 6.循环遍历</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">        <span class="comment">// 6.1.让这个数字与1做与运算，得到数字的最后一个bit位  // 判断这个bit位是否为0</span></span><br><span class="line">        <span class="keyword">if</span> ((num &amp; <span class="number">1</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span>; <span class="comment">// 如果为0，说明未签到，结束</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 如果不为0，说明已签到，计数器+1</span></span><br><span class="line">            count++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 把数字右移一位，抛弃最后一个bit位，继续下一个bit位</span></span><br><span class="line">        num &gt;&gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Result.ok(count);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="分布式锁≠流量削峰"><a href="#分布式锁≠流量削峰" class="headerlink" title="分布式锁≠流量削峰"></a>分布式锁≠流量削峰</h1><p>不，光开了分布式锁并不会减少外部打过来的请求数——它只是保证「同一时刻只有一个请求能拿到锁去真正执行业务」，但所有其他请求还是会去 Redis 调用一次 <code>tryLock()</code>，只不过拿不到锁而已。所以，分布式锁并不能从源头上降请求量或 Redis 的流量。</p>
-<p>如果你想真正减轻 Redis 压力、提前拦截大批量的并发请求，可以考虑在业务层或网关层做以下几种优化：</p>
-<ol>
-<li><strong>本地预热+内存拦截</strong><ul>
-<li>把库存、限流配额等关键信息缓存在应用内存（比如 <code>ConcurrentHashMap</code>、Guava Cache、Caffeine）里，先在本地判断 “库存是否用完” 或 “是否超过限流阈值”，</li>
-<li>只有本地判断通过的请求才继续走远程 Redis 锁或库存扣减，未通过的直接快速返回。</li>
-<li>这样在高并发时，大部分请求都被本地拦截掉，Redis 压力会大幅下降。</li>
-</ul>
-</li>
-<li><strong>网关限流/熔断</strong><ul>
-<li>在 Nginx 或 API 网关（如 Kong、Zuul、Spring Cloud Gateway）层面，给热点接口打限流，使用漏桶、令牌桶算法，把峰值流量削峰；</li>
-<li>超出限流阈值的请求直接在网关被拒绝，不会转到业务后端。</li>
-</ul>
-</li>
-<li><strong>消息队列异步排队</strong><ul>
-<li>接口层接到请求后，迅速把请求放到 MQ（RabbitMQ、Kafka、RocketMQ），立即返回“排队中”给用户；</li>
-<li>后端消费者单线程或限并发地从队列里拉取消息、串行执行业务、更新库存、入库；</li>
-<li>这样除了一条队列写入，后续几乎零并发冲突，也不会给 Redis 带来峰值压力。</li>
-</ul>
-</li>
-<li><strong>Lua 脚本原子化合并操作</strong><ul>
-<li>把库存检查、扣减、锁定、消息入队等逻辑写到一段 Redis Lua 脚本里，一次网络 RTT 就能完成多步校验和更新，虽然还是落到 Redis，但网络交互次数最低。</li>
-<li>适合逻辑较简单的场景。</li>
-</ul>
-</li>
-<li><strong>多级限流</strong><ul>
-<li>前端做点击防抖/禁用按钮，避免用户重复快速点击；</li>
-<li>服务端在 Controller 层用注解（如 <code>@RateLimiter</code>）做粗粒度限流；</li>
-<li>再到业务层做精确限流、库存预判。</li>
-</ul>
-</li>
-</ol>
-<ul>
-<li><strong>分布式锁能防止并发冲突</strong>，但它并不是流量削峰的手段，<strong>并不会减少对 Redis 的调用次数</strong>；</li>
-<li>如果想从源头上削峰，必须借助 <strong>本地缓存预判、网关限流、消息队列排队</strong> 等手段，才能真正降低对 Redis（或后端服务）的并发压力。</li>
-</ul>
-<h1 id="CAP"><a href="#CAP" class="headerlink" title="CAP"></a>CAP</h1><p><strong>CAP 理论</strong>，也称为 <strong>Brewer 定理</strong>，是分布式系统设计中的一个基本原则。它指出，在一个分布式存储系统中，<strong>一致性（Consistency）</strong>、<strong>可用性（Availability）</strong>、<strong>分区容错性（Partition Tolerance）</strong> 三者不可兼得，只能同时满足其中的两项。下面分点说明。</p>
-<ul>
-<li><strong>CAP 不告诉你选哪两个</strong>，而是帮助你在设计时<strong>明确取舍</strong>：<ul>
-<li>如果业务对<strong>强一致性</strong>要求高（如支付、库存扣减），在分区时宁可牺牲可用性 → 选 <strong>CP</strong>。</li>
-<li>如果业务对<strong>可用性/延迟</strong>要求高（如社交、日志收集），在分区时宁可牺牲一致性 → 选 <strong>AP</strong>。</li>
-</ul>
-</li>
-<li>在<strong>真实业务中</strong>，常结合<strong>最终一致性</strong>、<strong>多副本延迟补偿</strong>、<strong>幂等重试</strong>等手段，综合平衡一致性与可用性。</li>
-</ul>
-<p>了解 CAP 理论，有助于你在做分布式架构选型时，<strong>根据业务特性、容忍度和运维成本</strong>做出最合适的权衡。</p>
-<hr>
-<h2 id="三个核心"><a href="#三个核心" class="headerlink" title="三个核心"></a>三个核心</h2><ol>
-<li><strong>一致性（Consistency）</strong><br> 所有节点在同一时间看到的数据是一致的。一次写入操作完成后，所有后续的读取都能立刻返回最新的写入值。</li>
-<li><strong>可用性（Availability）</strong><br> 每个请求都会在有限时间内得到非错误响应（不保证是最新数据，但保证服务不宕机、总有回应）。</li>
-<li><strong>分区容错性（Partition Tolerance）</strong><br> 系统能够容忍网络分区（节点或网络断开）而继续提供服务。即使部分节点之间无法通信，系统仍能保持一致性或可用性之一。</li>
-</ol>
-<p>项目当中，CP：分布式锁判定一人一单，强一致性    AP：最终一致性，redis预扣。redis集群。</p>
-<hr>
-<h2 id="“不可兼得”-的含义"><a href="#“不可兼得”-的含义" class="headerlink" title="“不可兼得” 的含义"></a>“不可兼得” 的含义</h2><p>CAP 告诉我们：“当系统发生网络分区时（P发生），你必须在<strong>一致性</strong>（C）和<strong>可用性</strong>（A）之间做选择，<strong>不能同时满足</strong>。”</p>
-<p>在真实的分布式环境中，<strong>网络分区故障（网络抖动、链路中断）几乎不可避免</strong>。因此，<strong>要构建一个健壮的分布式系统，必须选择在网络分区时牺牲“一致性”或“可用性”中的一项</strong>：</p>
-<ul>
-<li><strong>CP 系统（Consistency + Partition Tolerance）</strong>：在网络分区时，放弃可用性，保证一致性。常见于金融交易系统。</li>
-<li><strong>AP 系统（Availability + Partition Tolerance）</strong>：在网络分区时，放弃一致性，保证可用性。常见于社交媒体、缓存系统。</li>
-<li><strong>CA 系统（Consistency + Availability）</strong>：保证一致性和可用性，但无法容忍网络分区。严格来说，分布式环境中无法真正做到 CA，因为分区总会发生。</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>模型</th>
-<th>分区发生时的策略</th>
-<th>场景举例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>CP</strong></td>
-<td>停止提供服务或延迟响应，直到网络恢复并保证数据一致</td>
-<td>ZooKeeper、HBase（强一致读写）</td>
-</tr>
-<tr>
-<td><strong>AP</strong></td>
-<td>继续提供服务，但有可能读到老数据，待网络恢复后数据再最终一致</td>
-<td>Cassandra、Redis Cluster（异步复制）</td>
-</tr>
-<tr>
-<td><strong>CA</strong></td>
-<td>不适用于跨网络数据中心的分布式系统；只在单机或无网络分区场景满足</td>
-<td>传统关系型数据库（单实例）</td>
-</tr>
-</tbody></table>
-<hr>
-<h2 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h2><ul>
-<li><strong>Cassandra（AP）</strong><ul>
-<li>选用最终一致性模型，允许在分区时继续读写，性能和可用性高，但短期内可能读不到最新写入。</li>
-</ul>
-</li>
-<li><strong>MongoDB（CP 可调）</strong><ul>
-<li>默认主从复制，主节点写入保证一致性；分区时次节点不可写（牺牲可用性），保证读写一致。</li>
-</ul>
-</li>
-<li><strong>Redis Sentinel/ZK（CP）</strong><ul>
-<li>在主备切换时，会阻止客户端写入，直到选举出新主节点，保证强一致。</li>
-</ul>
-</li>
-</ul>
-<h1 id="线程池参数"><a href="#线程池参数" class="headerlink" title="线程池参数"></a>线程池参数</h1><p><strong>设计线程池参数</strong></p>
-<p>用户问题涉及如何根据连接池及延时设计线程池。基本原则是使用小法则（Little’s Law）：线程数 = 到达率 * 响应时间。对于10个连接、1秒响应时间的问题，建议线程池大小不应超过数据库连接池大小，尤其用于阻塞任务时。如果响应时间为10毫秒，则需调整线程池设计。通常核心线程池和最大线程数都应根据负载情况设置。是否使用异步取决于具体任务类型与需求。</p>
-<p><strong>设计IO密集型线程池</strong></p>
-<p>对于IO密集型任务，IO等待时间较长时，线程数应大于核心数。可以使用公式：线程数 = 核心数 * (1 + IO等待时间 / 处理时间)。这个公式在《Java并发编程实战》一书中有提到。另外，还有一篇博客推荐的公式：线程数 = 核心数 * (1 + 等待时间 / 服务时间)。我会查找相关文献引用。</p>
-<p><strong>设计线程池大小</strong></p>
-<p>对于线程池设计，假设最大化数据库连接池的利用率，线程池大小可以约为连接池大小乘以响应时间和思考时间的比例（加上1）。为了避免排队，通常线程池大小不超过连接池大小。如果响应时间为1秒，10个线程足够支持每秒10次请求。若响应时间为10毫秒，则10个连接能处理1000次请求。为了更好的CPU利用率，线程数可调整，考虑思考时间与阻塞时间的比例。</p>
-<p>已思考 43 秒</p>
-<p>在设计业务线程池时，需要综合考虑以下几方面：CPU 核心数与任务的 CPU/IO 比例、数据库连接池的并发上限、业务响应时间，以及系统的吞吐目标。常用的理论模型包括 Brian Goetz 在《Java Concurrency in Practice》中提出的线程数公式：</p>
-<blockquote>
-<p><strong>线程数 = 可用 CPU 核心数 × (1 + 平均等待时间 / 平均服务时间)</strong> (<a target="_blank" rel="noopener" href="https://engineering.zalando.com/posts/2019/04/how-to-set-an-ideal-thread-pool-size.html?utm_source=chatgpt.com">Zalando Engineering Blog</a>)</p>
-</blockquote>
-<p>以及 Little’s Law：</p>
-<blockquote>
-<p><strong>L = λ × W</strong><br> – L：系统中并发处理的请求数（即线程数）<br> – λ：系统的长时平均到达率（请求数/秒）<br> – W：请求的平均处理时间（秒） (<a target="_blank" rel="noopener" href="https://engineering.zalando.com/posts/2019/04/how-to-set-an-ideal-thread-pool-size.html?utm_source=chatgpt.com">Zalando Engineering Blog</a>)</p>
-</blockquote>
-<p>下面结合这两种方法，讨论当数据库连接池为 10 条、响应时间分别为 1 s 和 10 ms 时，如何确定线程池大小。</p>
-<hr>
-<h2 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h2><h3 id="1-基于-CPU-与-IO-比例的线程数公式"><a href="#1-基于-CPU-与-IO-比例的线程数公式" class="headerlink" title="1. 基于 CPU 与 IO 比例的线程数公式"></a>1. 基于 CPU 与 IO 比例的线程数公式</h3><p>对于 IO 密集型任务（如数据库调用），线程在等待 IO 完成时不会占用 CPU。Goetz 建议：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">numThreads</span> <span class="operator">=</span> numCores * (<span class="number">1</span> + waitTime / serviceTime);</span><br></pre></td></tr></table></figure>
-
-<p>其中 waitTime 是线程等待 IO 的时间，serviceTime 是实际执行业务逻辑的时间。计算密集型任务（waitTime ≈ 0）时，线程数 ≈ CPU 核心数；IO 密集型任务时，线程数会大幅 &gt; CPU 核心数，以充分利用等待期间的空闲 CPU (<a target="_blank" rel="noopener" href="https://engineering.zalando.com/posts/2019/04/how-to-set-an-ideal-thread-pool-size.html?utm_source=chatgpt.com">Zalando Engineering Blog</a>, <a target="_blank" rel="noopener" href="https://baddotrobot.com/blog/2013/06/01/optimum-number-of-threads/?utm_source=chatgpt.com">baddotrobot.com</a>)。</p>
-<h3 id="2-Little’s-Law（小定律）"><a href="#2-Little’s-Law（小定律）" class="headerlink" title="2. Little’s Law（小定律）"></a>2. Little’s Law（小定律）</h3><p>Little’s Law 给出了并行处理能力与系统延迟、吞吐率之间的关系：</p>
-<blockquote>
-<p>并发线程数 L = 系统吞吐率 λ × 平均延迟 W</p>
-</blockquote>
-<p>例如，要保持 100 QPS (λ=100) 的吞吐并且响应时间 W=0.01 s 时，需要 L=1 个并发线程才能稳定达到目标 (<a target="_blank" rel="noopener" href="https://engineering.zalando.com/posts/2019/04/how-to-set-an-ideal-thread-pool-size.html?utm_source=chatgpt.com">Zalando Engineering Blog</a>)。</p>
-<h3 id="3-受数据库连接池上限约束"><a href="#3-受数据库连接池上限约束" class="headerlink" title="3. 受数据库连接池上限约束"></a>3. 受数据库连接池上限约束</h3><p>如果所有线程都在等待数据库响应，且连接池最大并发连接数为 N，则有效并发线程数不应超过 N，否则线程会在应用层排队，造成不必要的上下文切换和内存占用 (<a target="_blank" rel="noopener" href="https://docs.redhat.com/en/documentation/red_hat_build_of_keycloak/24.0/html/high_availability_guide/concepts-threads-?utm_source=chatgpt.com">红帽文档</a>, <a target="_blank" rel="noopener" href="https://docs.oracle.com/cd/E19900-01/819-4742/abehg/index.html?utm_source=chatgpt.com">Oracle 文档</a>)。</p>
-<hr>
-<h2 id="具体示例"><a href="#具体示例" class="headerlink" title="具体示例"></a>具体示例</h2><h3 id="情况-A：数据库响应时间-1-s"><a href="#情况-A：数据库响应时间-1-s" class="headerlink" title="情况 A：数据库响应时间 1 s"></a>情况 A：数据库响应时间 1 s</h3><ul>
-<li><p><strong>假设</strong>：CPU 核心数 8，业务逻辑处理时间（serviceTime）≈10 ms，IO 等待时间（waitTime）≈1000 ms。</p>
-</li>
-<li><p><strong>按 Goetz 公式</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">threads = 8 * (1 + 1000/10) ≈ 8 * 101 = 808</span><br></pre></td></tr></table></figure>
-
-<p>但数据库连接池仅 10 条，此时绝大多数线程会在 JDBC 层排队，反而降低性能 (<a target="_blank" rel="noopener" href="https://engineering.zalando.com/posts/2019/04/how-to-set-an-ideal-thread-pool-size.html?utm_source=chatgpt.com">Zalando Engineering Blog</a>, <a target="_blank" rel="noopener" href="https://docs.redhat.com/en/documentation/red_hat_build_of_keycloak/24.0/html/high_availability_guide/concepts-threads-?utm_source=chatgpt.com">红帽文档</a>)。</p>
-</li>
-<li><p><strong>实践建议</strong>：将线程池大小设为连接池大小的 1.1～1.25 倍，以应对瞬时小流量峰值。例如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">corePoolSize = 10</span><br><span class="line">maximumPoolSize = 12  // 允许最多两条备用线程</span><br></pre></td></tr></table></figure>
-
-<p>这样既能充分利用 10 条连接，又能在 1 s 的处理窗口内处理偶发的短暂冲击 (<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1208077/optimal-number-of-connections-in-connection-pool?utm_source=chatgpt.com">Stack Overflow</a>, <a target="_blank" rel="noopener" href="https://medium.com/@gaborfarkasds/so-how-big-should-that-connection-pool-be-e5c69f2e15dd?utm_source=chatgpt.com">Medium</a>)。</p>
-</li>
-</ul>
-<h3 id="情况-B：数据库响应时间-10-ms"><a href="#情况-B：数据库响应时间-10-ms" class="headerlink" title="情况 B：数据库响应时间 10 ms"></a>情况 B：数据库响应时间 10 ms</h3><ul>
-<li><p><strong>假设</strong>：waitTime=10 ms，serviceTime=10 ms，CPU 核心数 8。</p>
-</li>
-<li><p><strong>按 Goetz 公式</strong>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">threads = 8 * (1 + 10/10) = 16</span><br></pre></td></tr></table></figure></li>
-<li><p><strong>受连接池约束</strong>：由于同时只能打开 10 条连接，并发线程再多也无法并行地阻塞在 JDBC 层。此时最优线程池大小依然是 10～12 之间 (<a target="_blank" rel="noopener" href="https://docs.redhat.com/en/documentation/red_hat_build_of_keycloak/24.0/html/high_availability_guide/concepts-threads-?utm_source=chatgpt.com">红帽文档</a>, <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1208077/optimal-number-of-connections-in-connection-pool?utm_source=chatgpt.com">Stack Overflow</a>)。</p>
-</li>
-<li><p><strong>基于 Little’s Law</strong>：若目标吞吐 1000 QPS，W=0.01 s，则</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">L = λ * W = 1000 * 0.01 = 10 threads</span><br></pre></td></tr></table></figure>
-
-<p>刚好匹配连接池大小 (<a target="_blank" rel="noopener" href="https://engineering.zalando.com/posts/2019/04/how-to-set-an-ideal-thread-pool-size.html?utm_source=chatgpt.com">Zalando Engineering Blog</a>)。</p>
-</li>
-</ul>
-<hr>
-<h2 id="最佳实践与调优"><a href="#最佳实践与调优" class="headerlink" title="最佳实践与调优"></a>最佳实践与调优</h2><ol>
-<li><strong>分离不同任务线程池</strong><br> 对于数据库调用、外部 HTTP、CPU 密集型计算等，最好使用多个专用线程池，分别根据各自的 waitTime/serviceTime 及资源约束来调优 (<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/76684733/how-to-determine-corethreadsize-if-having-multiple-threadpools-in-application?utm_source=chatgpt.com">Stack Overflow</a>)。</li>
-<li><strong>监控与压测“Measure, Don’t Guess”</strong><br> 所有公式与经验值仅作起点，必须通过 A/B 测试和压测（Load Test）验证性能瓶颈，动态调整 core/max、队列长度等参数 (<a target="_blank" rel="noopener" href="https://engineering.zalando.com/posts/2019/04/how-to-set-an-ideal-thread-pool-size.html?utm_source=chatgpt.com">Zalando Engineering Blog</a>)。</li>
-<li><strong>考虑拒绝策略与队列类型</strong><br> 结合业务特性选择合适的队列（SynchronousQueue、LinkedBlockingQueue 等）及拒绝策略（CallerRunsPolicy、AbortPolicy 等），避免在高并发下无界队列导致 OOM。</li>
-<li><strong>动态伸缩</strong><br> 在流量可预测且波动较大时，可结合 Kubernetes/HPA、Spring Cloud TaskExecutor 等方案，实现线程池在运行时动态伸缩，以更加经济地利用资源。</li>
-</ol>
-<hr>
-<p><strong>总结</strong>：线程池大小既要遵循理论公式（Goetz 公式、Little’s Law），又要服从外部资源（如数据库连接池）的最大并发约束。对于 10 条连接池、1 s 或 10 ms 响应场景，推荐将线程池大小设置为 10～12；后续应结合压测结果不断迭代优化。</p>
 
       
     </div>
