@@ -3914,7 +3914,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-17 20:21:32" itemprop="dateModified" datetime="2025-05-17T20:21:32+08:00">2025-05-17</time>
+      <time title="修改时间：2025-05-18 10:43:05" itemprop="dateModified" datetime="2025-05-18T10:43:05+08:00">2025-05-18</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -4238,6 +4238,40 @@
 <h3 id="锁的升级"><a href="#锁的升级" class="headerlink" title="锁的升级"></a>锁的升级</h3><p>锁主要有四种状态：无锁、偏向锁、轻量级锁、重量级锁，他们会随着竞争的激烈而逐渐升级。注意锁可以升级不可降级，这种策略是为了提高获得锁和释放锁的效率。</p>
 <img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/3230688-20231101142724469-1226844103.png" alt="img" style="zoom: 80%;" />
 
+<p><strong>1. 无锁状态（Lock-Free）</strong></p>
+<ul>
+<li><strong>特点</strong>：对象未被任何线程锁定，Mark Word 存储对象的哈希码、分代年龄等信息。</li>
+<li><strong>场景</strong>：对象刚被创建，未被线程访问。</li>
+</ul>
+<p><strong>2. 偏向锁（Biased Locking）</strong></p>
+<ul>
+<li><strong>设计初衷</strong>：在大多数情况下，锁总是由同一个线程多次获取，不存在多线程竞争。偏向锁通过消除同步操作来提高性能。</li>
+<li><strong>加锁过程</strong>：<ol>
+<li>当第一个线程访问对象并尝试获取锁时，会在 Mark Word 中记录该线程的 ID（通过 CAS 操作），并将偏向锁标志位设为 1。</li>
+<li>此后该线程再次获取锁时，无需任何同步操作，直接检查 Mark Word 中的线程 ID 是否与自身相同。</li>
+</ol>
+</li>
+<li><strong>解锁过程</strong>：偏向锁不会主动释放，只有当其他线程尝试竞争该锁时，持有偏向锁的线程才会释放锁（通过暂停原持有线程，重置 Mark Word）。</li>
+<li><strong>撤销条件</strong>：当有多个线程竞争同一把锁时，偏向锁会被撤销并升级为轻量级锁。</li>
+</ul>
+<p><strong>3. 轻量级锁（Lightweight Lock）</strong></p>
+<ul>
+<li><strong>设计初衷</strong>：在多线程交替执行同步块的情况下，避免重量级锁的性能开销。</li>
+<li>加锁过程：<ol>
+<li>线程在进入同步块时，会在栈帧中创建一个锁记录（Lock Record），并将 Mark Word 复制到锁记录中。</li>
+<li>线程尝试通过 CAS 将 Mark Word 的指针指向锁记录。如果成功，则获取轻量级锁；如果失败，表示有其他线程竞争，锁升级为重量级锁。</li>
+</ol>
+</li>
+<li><strong>解锁过程</strong>：通过 CAS 将锁记录中的 Mark Word 复制回对象头。如果失败，表示有竞争，需要唤醒等待的线程。</li>
+<li><strong>性能开销</strong>：轻量级锁的竞争通过 CAS 操作解决，避免了线程阻塞和唤醒的开销，但如果竞争激烈，频繁的 CAS 操作会消耗 CPU 资源。</li>
+</ul>
+<p><strong>4. 重量级锁（Heavyweight Lock）</strong></p>
+<ul>
+<li><strong>设计初衷</strong>：在多线程竞争激烈的情况下，保证线程安全。</li>
+<li><strong>实现机制</strong>：依赖操作系统的互斥量（Mutex）实现，涉及用户态和内核态的切换，性能开销大。</li>
+<li><strong>加锁过程</strong>：当轻量级锁竞争失败时，锁会膨胀为重量级锁，线程被挂起进入阻塞状态，等待锁释放后被唤醒。</li>
+<li><strong>适用场景</strong>：多线程频繁竞争同一把锁的场景。</li>
+</ul>
 <p><strong>对象头中的 Mark Word</strong></p>
 <p>Java 对象在内存中由以下部分组成：</p>
 <table>
@@ -4276,6 +4310,9 @@
 <p>上面说得很明白了，final 属性的写操作不会和此引用的赋值操作发生重排序，如：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x.finalField = v; ...; sharedRef = x;</span><br></pre></td></tr></table></figure>
 
+<h2 id="并发安全总结"><a href="#并发安全总结" class="headerlink" title="并发安全总结"></a>并发安全总结</h2><p>原子性：atomic、锁</p>
+<p>可见性：synchronized volatile final</p>
+<p>有序性：锁、volatile、happens before原则</p>
 <h2 id="ThreadLocal-lt-T-gt"><a href="#ThreadLocal-lt-T-gt" class="headerlink" title="ThreadLocal&lt;T&gt;"></a><mark><code>ThreadLocal&lt;T&gt;</code><mark></h2><p><code>ThreadLocal</code> 主要用于以下场景：</p>
 <ol>
 <li><strong>线程安全的变量管理：</strong> 比如事务管理、用户会话等。</li>
