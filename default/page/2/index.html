@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">80</span>
+          <span class="site-state-item-count">81</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -177,7 +177,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">125</span>
+        <span class="site-state-item-count">126</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -194,6 +194,196 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/06/math-distribute-math-lattice/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/06/math-distribute-math-lattice/" class="post-title-link" itemprop="url">离散数学：格</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-05-06 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-06T00:00:00+08:00">2025-05-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-08 13:20:04" itemprop="dateModified" datetime="2025-05-08T13:20:04+08:00">2025-05-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/math/" itemprop="url" rel="index"><span itemprop="name">math</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dreamsrj/articles/17743445.html">07-格与布尔代数 - Dreamsrj - 博客园</a> </p>
+<h1 id="格及其判定"><a href="#格及其判定" class="headerlink" title="格及其判定"></a>格及其判定</h1><p>偏序集 (P, ≤)</p>
+<ul>
+<li>反身性：∀a∈P, a≤a</li>
+<li>反对称：a≤b且b≤a ⇒ a=b</li>
+<li>传递性：a≤b且b≤c ⇒ a≤c</li>
+</ul>
+<p><strong>格 (L, ∧, ∨)</strong></p>
+<ul>
+<li>定义：对任意a,b∈L, 最小上界a∨b和最大下界a∧b均存在</li>
+<li>最小上界：满足大于等于他们俩的最近的一个元素</li>
+<li>最大下界：满足小于等于他们俩的最近的一个元素</li>
+<li>等价公理：交换律、结合律、吸收律</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507153802250.png" alt="image-20250507153802250" style="zoom: 25%;" />
+
+<ul>
+<li>如图右下角 ，e和f之间没有最小上界，因此不是格</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507154055264.png" alt="image-20250507154055264" style="zoom: 25%;" />
+
+<ul>
+<li>ec无法找出。df无法找出</li>
+<li>幂集（所有子集构成的集合）上的包含关系是格</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507154417169.png" alt="image-20250507154417169" style="zoom: 25%;" />
+
+<p>格的判定技巧：最底层/最上层的两个元素之间完全没关系因此不可比较。存在多个上界或者多个下界。</p>
+<h2 id="子格、格同态"><a href="#子格、格同态" class="headerlink" title="子格、格同态"></a>子格、格同态</h2><p><strong>子格</strong></p>
+<ul>
+<li>H⊆L, 若(H,∨,∧)满足格的封闭性和公理，即为子格</li>
+<li>格L的非空子集S构成L的子格的条件：<strong>H对L的∨,∧运算<u>封闭</u>。</strong> 在原格中做运算的结果还在 H里面，那么就是封闭的</li>
+<li><strong>分配性可以继承，但是有补性不一定</strong>（有补性跟元素相关，少了一个元素可能就没有对应的补元了）</li>
+</ul>
+<p><strong>格同态</strong></p>
+<ul>
+<li>存在双射f:L→M, 满足f(a∨b)=f(a)∨f(b), f(a∧b)=f(a)∧f(b)</li>
+</ul>
+<h1 id="有补格"><a href="#有补格" class="headerlink" title="有补格"></a>有补格</h1><p><strong>有界格</strong>：格(L, ∧, ∨,O,I)</p>
+<ol>
+<li>格的全上界：对任意元素x，这个元素I都满足x&lt;=I</li>
+<li>格的全下界：对任意元素x，这个元素O都满足b&lt;=O</li>
+</ol>
+<p><strong>元素a的补元</strong>：有界格中，如果存在 b∈L，使得a和b的最大下界是0（全下界），a和b的最小上界是1（全上界）那么b为a的补元。因此8和1互为补元，24没有补元</p>
+<p>要么是全上界和全下界互为补元，要么是中间平行的这几个互为补元。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507180654617.png" alt="image-20250507180654617" style="zoom:33%;" />
+
+<p><strong>有补格</strong>：每个元素都有至少一个补元。</p>
+<h1 id="分配格"><a href="#分配格" class="headerlink" title="分配格"></a>分配格</h1><p><strong>分配格</strong>：格的 ∧, ∨满足分配律。<strong>链</strong>、密集、命题格都是分配格</p>
+<ul>
+<li>判别：不存在钻石格或者五角格同构的子格</li>
+<li>四个元素及以下的都是分配格</li>
+<li>五个元素，除了五角格和钻石格，其他都是分配格</li>
+<li><strong>性质</strong>：支持消去律</li>
+<li><a target="_blank" rel="noopener" href="https://img2023.cnblogs.com/blog/1629163/202310/1629163-20231005154333651-1708543792.png"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1629163-20231005154333651-1708543792.png" alt="img" style="zoom:33%;" /></a>L1,L2L1,L2是分配格， L3(钻石格),L4(五角格)L3(钻石格),L4(五角格)不是分配格。</li>
+<li><a target="_blank" rel="noopener" href="https://img2023.cnblogs.com/blog/1629163/202310/1629163-20231005154340340-1628803049.png"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1629163-20231005154340340-1628803049.png" alt="img" style="zoom: 33%;" /></a>上述都不是分配格。 它们是钻石格或五角格的子格。</li>
+</ul>
+<h1 id="布尔代数"><a href="#布尔代数" class="headerlink" title="布尔代数"></a>布尔代数</h1><p><mark>布尔代数（布尔格）</mark>：如果<strong>有补格</strong>的∧, ∨满足分配律，那么他就是一个布尔格（布尔代数）<strong>每个元素有且只有唯一的一个补元</strong> </p>
+<img src="C:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20250507161010076.png" alt="image-20250507161010076" style="zoom:33%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507161155099.png" alt="image-20250507161155099" style="zoom:33%;" />
+
+<p>（2）两个元素的最小上界是全下界0，那么他们都是0。 由此可知 a和b’互为补元 b就是a </p>
+<p>性质：</p>
+<ul>
+<li><p><strong>双重性</strong>：任何布尔恒等式对偶仍成立</p>
+</li>
+<li><p><strong>Stone表征定理</strong>：每个布尔代数同构于某个集合代数的幂集（P(X), ∪, ∩, ᶜ）</p>
+</li>
+</ul>
+<p>模格</p>
+<ul>
+<li>x∨(y∧z)=(x∨y)∧z</li>
+<li>所有分配格都是模格，反过来不一定。</li>
+</ul>
+<p>对偶格：把一个格中的“$\vee$”和“$\wedge$”运算、以及“$\leq$”和“$\geq$”关系全部反向，得到的新格。它是从原格“逆向”得到的结构。</p>
+<ul>
+<li></li>
+</ul>
+<h1 id="题"><a href="#题" class="headerlink" title="题"></a>题</h1><ol>
+<li><strong>判定题</strong>：给出下列偏序集，判断是否构成格，并说明理由。<br> a. (所有自然数N, 整除关系)  b. (P({1,2,3}), ⊆)</li>
+<li><strong>等式证明</strong>：在任意格中证明：<br> a. (a∨b)∧(a∨c) = a∨(b∧c)<br> b. a∧(b∨c) ≥ (a∧b)∨(a∧c)</li>
+<li><strong>子格判别</strong>：设L是格，H={x∈L | x≥a}，证明H是L的子格</li>
+<li><strong>特殊格判别</strong>：给定有界格, 判断其是否为：<br> a. 分配格  b. 补格  c. 布尔格</li>
+<li><strong>有限布尔代数</strong>：列出所有阶为4的布尔代数，并验证它们满足补元律</li>
+</ol>
+<hr>
+<ol>
+<li><strong>判定题</strong>：<br> a. (N,|) 的上确界 gcd(m,n) 存在，下确界 lcm(m,n) 存在 ⇒ 是格<br> b. (P(X),⊆) 的∧=交集、∨=并集 ⇒ 是格</li>
+<li><strong>等式证明</strong>：<br> a. 左边 = (a∨b)∧(a∨c) = a∨(b∧c) （分配律）<br> b. 由吸收律和分配可得 ≥ 方向</li>
+<li><strong>子格判别</strong>：<ul>
+<li>H封闭：若x,y≥a，则x∨y≥a, x∧y≥a</li>
+<li>满足格公理</li>
+</ul>
+</li>
+<li><strong>特殊格判别</strong>：<ul>
+<li>分配：验证分配律是否在格中成立</li>
+<li>补格：对每个元素检查是否存在补元</li>
+<li>布尔格：同时满足上述两条</li>
+</ul>
+</li>
+<li><strong>阶4布尔代数</strong>：<ul>
+<li>同构于P({1,2})，元素{∅,{1},{2},{1,2}}，补元为集合补集</li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1760,7 +1950,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-16 19:40:58" itemprop="dateModified" datetime="2025-05-16T19:40:58+08:00">2025-05-16</time>
+      <time title="修改时间：2025-05-18 19:12:44" itemprop="dateModified" datetime="2025-05-18T19:12:44+08:00">2025-05-18</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1792,6 +1982,63 @@
 <li>集成 SpringBoot。通过<a href="#annotation">自定义注解</a>，提供者自动扫描并注册服务 Bean，消费者自动注入<a href="#proxy">代理对象</a>。自定义 starter 实现<a href="#autoconfig">自动装配</a>。</li>
 <li>参考 Dubbo 实现 <a href="#spi">SPI</a>，支持<a href="#spi1">序列化</a>、<a href="#spi2">服务发现</a>等的动态扩展，实现与类型解耦的<a href="#cache">单例缓存</a>，减少大量冗余的对象创建。</li>
 </ul>
+<h2 id="Netty-NIO"><a href="#Netty-NIO" class="headerlink" title="Netty/NIO"></a>Netty/NIO</h2><p>Java NIO（New I/O）是 Java 1.4 引入的非阻塞 I/O API，提供了基于通道（Channel）、缓冲区（Buffer）和选择器（Selector）的异步非阻塞编程模型。它允许单线程处理多个连接，显著提升了高并发场景下的性能。</p>
+<p>Netty 是基于 Java NIO 构建的高性能网络编程框架，它简化了 NIO 的复杂操作，提供了更易用的 API，同时解决了 NIO 编程中的许多陷阱（如断连重连、半包读写、心跳处理等）。Netty 广泛应用于各类高性能网络应用，如分布式系统中的 RPC 框架、游戏服务器等。</p>
+<ul>
+<li><strong>选择 Java NIO</strong>：如果需要完全控制底层实现，应用场景简单，或想深入理解 NIO 原理。</li>
+<li><strong>选择 Netty</strong>：如果需要快速开发高性能网络应用，避免处理 NIO 的复杂性和陷阱。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Java NIO</th>
+<th>Netty</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>API 复杂度</td>
+<td>复杂，需要深入理解 Selector 等机制</td>
+<td>简单，封装了底层细节</td>
+</tr>
+<tr>
+<td>内存管理</td>
+<td>需手动管理 ByteBuffer</td>
+<td>自动内存管理，提供更高效的 ByteBuf</td>
+</tr>
+<tr>
+<td>可靠性</td>
+<td>需要自己处理断连、粘包等问题</td>
+<td>内置多种编解码器和处理器</td>
+</tr>
+<tr>
+<td>扩展性</td>
+<td>需自行实现</td>
+<td>模块化设计，易于扩展</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>高，但需要优化</td>
+<td>更高，针对性能做了优化</td>
+</tr>
+<tr>
+<td>应用场景</td>
+<td>简单应用或学习 NIO 原理</td>
+<td>复杂网络应用，如 RPC 框架、游戏服务器</td>
+</tr>
+</tbody></table>
+<h3 id="Java-NIO-核心组件"><a href="#Java-NIO-核心组件" class="headerlink" title="Java NIO 核心组件"></a>Java NIO 核心组件</h3><ol>
+<li><strong>Channel</strong>：数据的双向通道，类似传统 IO 中的 Stream，但更灵活，可以异步读写。</li>
+<li><strong>Buffer</strong>：数据的容器，所有数据必须通过 Buffer 处理。</li>
+<li><strong>Selector</strong>：单线程管理多个 Channel 的关键，实现多路复用。</li>
+<li><strong>SelectionKey</strong>：表示 Channel 在 Selector 中的注册关系及就绪状态。</li>
+</ol>
+<h3 id="Netty-核心组件"><a href="#Netty-核心组件" class="headerlink" title="Netty 核心组件"></a>Netty 核心组件</h3><ol>
+<li><strong>EventLoop</strong>：处理 I/O 操作的多线程事件循环器，替代了原生 Selector。</li>
+<li><strong>ChannelPipeline</strong>：处理网络事件的责任链模式实现。</li>
+<li><strong>ChannelHandler</strong>：处理或拦截 I/O 事件的接口。</li>
+<li><strong>ByteBuf</strong>：更高效的字节缓冲区，替代了原生 ByteBuffer。</li>
+</ol>
 <h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/项目架构图.png" alt="项目架构图" style="zoom:67%;" />
 
 <p><code>consumer</code>模块：服务的消费者，依赖于 <code>rpc-client-spring-boot-starter</code> 模块；</p>
@@ -3976,246 +4223,8 @@ return 0;
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/01/14/408-%E8%AE%A1%E7%BD%91-%E5%BA%94%E7%94%A8%E5%B1%82/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/01/14/408-%E8%AE%A1%E7%BD%91-%E5%BA%94%E7%94%A8%E5%B1%82/" class="post-title-link" itemprop="url">应用层</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-01-14 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-14T00:00:00+08:00">2025-01-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-14 15:48:32" itemprop="dateModified" datetime="2025-05-14T15:48:32+08:00">2025-05-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%BD%91/" itemprop="url" rel="index"><span itemprop="name">计网</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="域名系统（DNS）"><a href="#域名系统（DNS）" class="headerlink" title="域名系统（DNS）"></a>域名系统（DNS）</h1><p>Domain Name System based on UDP port 53 </p>
-<h2 id="域名-名字空间"><a href="#域名-名字空间" class="headerlink" title="域名 名字空间"></a>域名 名字空间</h2><p><strong>层次结构</strong>：………三级域名.二级域名.顶级域名</p>
-<p><strong>根</strong>：无名字</p>
-<p><strong>顶级域名</strong>：国家、组织</p>
-<p><strong>二级域名</strong>（我国）：类别域名、行政区域名</p>
-<p>属于不同父亲的孩子节点可以有相同的名称: <a target="_blank" rel="noopener" href="http://www.example.cn/">www.example.cn</a>  <a target="_blank" rel="noopener" href="http://www.example.com/">www.example.com</a> </p>
-<h2 id="域名服务器"><a href="#域名服务器" class="headerlink" title="域名服务器"></a>域名服务器</h2><p>DNS服务器实际是一个分布式的数据库。主从复制，读写分离，增强可用性。服务器可以采用anycast任播技术，多台服务器使用同一IP地址，路由自动选择最近的服务器。</p>
-<p>分类：</p>
-<ul>
-<li><strong>根域名服务器</strong>（Root）：所有的根域名服务器都知道所有顶级域名服务器的IP地址和域名<ul>
-<li>根域名有13个，分布于全球的若干根域名服务器，使用IP anycast技术，每个域名有多个物理实例，但对外展示同一个 IP。</li>
-</ul>
-</li>
-<li><strong>顶级域名服务器</strong>（Top Level Domain）：管辖属于自己的二级域名</li>
-<li><strong>权限域名服务器</strong>（Authoriative Name Server）：管辖区内的域名，一个服务器管一个域名，效率比较低，所以采用 <strong>区</strong> 的概念，区是域的子集。</li>
-<li><strong>本地域名服务器</strong>：不在上述层次中，但是离客户最近的DNS服务器。</li>
-</ul>
-<h2 id="DNS-查询顺序"><a href="#DNS-查询顺序" class="headerlink" title="DNS 查询顺序"></a>DNS 查询顺序</h2><h3 id="先查缓存的查询流程"><a href="#先查缓存的查询流程" class="headerlink" title="先查缓存的查询流程"></a>先查缓存的查询流程</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241129143353140.png" alt="image-20241129143353140"></p>
-<ol>
-<li>浏览器 DNS 缓存：首先，浏览器会检查自己的缓存中是否已经有该域名的IP地址记录。如果有，则直接使用这个IP地址，而不会发起DNS查询</li>
-<li>操作系统 DNS 缓存：如果浏览器缓存中没有找到，浏览器会请求操作系统进行DNS解析。操作系统会先检查自己的DNS缓存。大多数现代操作系统都会维护一个 DNS 缓存来存储最近解析过的域名和对应的IP地址</li>
-<li>本地 hosts 文件：如果操作系统缓存中也没有找到对应的记录，并且您使用的是Unix-like系统（如Linux或macOS），操作系统会查询本地的/etc/hosts文件。这个文件通常包含静态的IP地址到域名的映射</li>
-<li>路由器DNS缓存：我们常用的路由器也带有自动缓存功能，路由器DNS被篡改会造成<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=216036547&content_type=Article&match_order=1&q=%E5%9F%9F%E5%90%8D%E5%8A%AB%E6%8C%81&zhida_source=entity">域名劫持</a>，将访问网址定位到另外一个服务器；</li>
-<li>本地DNS服务器（递归查询，本地DNS服务器替主机查询，主机作为DNS客户端向DNS服务器请求服务）：如果/etc/hosts文件中也没有找到，操作系统会向配置的本地DNS服务器发送查询请求。这个本地DNS服务器可能是您的网络服务提供商提供的，或者是您在公司或学校网络中配置的，也具有缓存功能。本地DNS将解析结果告知客户端的同时，将记录缓存下来，当下次请求同一个域名时，直接会将记录返回，而无需再进行全球查询。</li>
-<li>根域名服务器（迭代查询，从此开始就是本地DNS服务器反复查询）：如果本地DNS服务器无法解析该域名，它会向根域名服务器发送查询请求。根域名服务器会返回负责顶级域名（如.com）的权威DNS服务器的地址</li>
-<li>顶级域名服务器：本地DNS服务器然后会向顶级域名服务器发送查询请求，获取该域名的权威DNS服务器的地址</li>
-<li>权威DNS服务器：最后，本地DNS服务器会向权威DNS服务器发送查询请求，获取该域名的IP地址</li>
-<li>返回IP地址：一旦本地DNS服务器从权威DNS服务器那里获得了IP地址，它就会将这个IP地址返回给操作系统，操作系统再返回给浏览器。浏览器最后使用这个IP地址来建立与服务器的连接</li>
-</ol>
-<p>在查询的过程中，一旦在某一环节找到有效的IP地址记录，就会停止后续的查询。而且，为了提高效率，本地DNS服务器和操作系统通常会对查询结果进行缓存，以便在后续请求中直接使用，减少网络延迟</p>
-<h3 id="DNS-缓存"><a href="#DNS-缓存" class="headerlink" title="DNS 缓存"></a>DNS 缓存</h3><p>所谓DNS缓存是指DNS返回正确的IP地址之后，系统会将这个结果临时储存起来，并为缓存设定一个失效时间（<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=216036547&content_type=Article&match_order=1&q=TTL%E5%80%BC&zhida_source=entity">TTL值</a>），在TTL失效前，当再次访问这个网站，系统就会直接从<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=216036547&content_type=Article&match_order=1&q=DNS+%E7%BC%93%E5%AD%98&zhida_source=entity">DNS 缓存</a>中将结果返回，而不必再次委托递归服务器进行全球解析查询，加快了<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=216036547&content_type=Article&match_order=4&q=DNS%E8%A7%A3%E6%9E%90&zhida_source=entity">DNS解析</a>的流程。</p>
-<p>当然TTL值失效后，系统还会自动再次询问DNS服务器以获取最新的解析结果。</p>
-<h4 id="DNS-污染"><a href="#DNS-污染" class="headerlink" title="DNS 污染"></a>DNS 污染</h4><p>在中国大陆，对所有经过<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%98%B2%E7%81%AB%E9%95%B7%E5%9F%8E">防火长城</a>（英语：Great Firewall，常用简称：GFW）的在<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%94%A8%E6%88%B7%E6%95%B0%E6%8D%AE%E6%8A%A5%E5%8D%8F%E8%AE%AE">UDP</a>的53<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%80%9A%E4%BF%A1%E7%AB%AF%E5%8F%A3">端口</a>上的域名查询进行IDS<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%A5%E4%BE%B5%E6%A3%80%E6%B5%8B">入侵检测</a>，一经发现与黑名单关键词相匹配的域名查询请求，会马上伪装成目标解析服务器注入伪造的查询结果。攻击仅出现在DNS查询之路由经过防火长城时。伪造的查询结果中的IP地址不是一成不变的，在一段时间后会更新。</p>
-<p>对于TCP协议下的域名查询，防火长城可使用<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/TCP%E9%87%8D%E7%BD%AE%E6%94%BB%E5%87%BB">TCP重置攻击</a>的方法进行干扰。</p>
-<blockquote>
-<p>重置（reset）是<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BC%A0%E8%BE%93%E6%8E%A7%E5%88%B6%E5%8D%8F%E8%AE%AE">传输控制协议</a>（TCP）的一种消息，例如服务器端在没有客户端请求的端口或者其它连接信息不符时，系统的TCP协议栈就会给客户端回复一个重置通知消息，该功能本来用于应对例如服务器意外重启等情况，而防火长城阻止TCP连接的技术实际上就是比连接双方更快地发送连接重置消息，使连接双方以为对方终止了连接[<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%98%B2%E7%81%AB%E9%95%BF%E5%9F%8E#cite_note-clayton2006-66">65]</a>。</p>
-</blockquote>
-<h1 id="动态主机配置协议（DHCP）"><a href="#动态主机配置协议（DHCP）" class="headerlink" title="动态主机配置协议（DHCP）"></a>动态主机配置协议（DHCP）</h1><p>Dynamic Host Configuration Protocol based on <code>UDP</code> port <code>68</code> for <code>client</code>, <code>67</code> for <code>server</code></p>
-<p>采用C/S通信模式，由客户端（DHCP Client）向服务器（DHCP Server）提出配置申请</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241129172615802.png" alt="image-20241129172615802"></p>
-<h2 id="报文格式"><a href="#报文格式" class="headerlink" title="报文格式"></a><a target="_blank" rel="noopener" href="https://blog.csdn.net/scanf_linux/article/details/89415965#t2">报文格式</a></h2><p><strong>dhcp offer</strong>:</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241129175130504.png" alt="image-20241129175130504"></p>
-<ul>
-<li>Relay Agent 中继</li>
-<li>Next Server 其他DHCP服务器</li>
-<li>Client MAC Address 之前 Discover含有 客户端的MAC地址</li>
-<li>bootp flags unicast 单播</li>
-</ul>
-<p><strong>dhcp offer:</strong></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241129175445723.png" alt="image-20241129175445723"></p>
-<h2 id="分配IP"><a href="#分配IP" class="headerlink" title="分配IP"></a>分配IP</h2><p>  <strong>内网 使用DHCP协议</strong></p>
-<ul>
-<li><p>首次接入网络的DHCP客户端不知道DHCP服务器的<a target="_blank" rel="noopener" href="https://info.support.huawei.com/info-finder/encyclopedia/zh/IPv4.html">IP地址</a>，为了学习到DHCP服务器的IP地址，DHCP客户端以广播方式发送<code>DHCP DISCOVER</code>报文（目的IP地址为255.255.255.255）给同一网段内的所有设备（包括DHCP服务器或中继）。<code>DHCP DISCOVER</code>报文中携带了客户端的MAC地址（<a target="_blank" rel="noopener" href="https://support.huawei.com/hedex/pages/EDOC1100087046AZJ0324D/10/EDOC1100087046AZJ0324D/10/resources/dc/dc_cfg_dhcp_6005.html#ZH-CN_CONCEPT_0176371535__c1">chaddr字段</a>）、需要请求的参数列表选项（<a target="_blank" rel="noopener" href="https://support.huawei.com/hedex/pages/EDOC1100087046AZJ0324D/10/EDOC1100087046AZJ0324D/10/resources/dc/dc_cfg_dhcp_6005.html#ZH-CN_CONCEPT_0176371535__op55">Option55</a>）、广播标志位（<a target="_blank" rel="noopener" href="https://support.huawei.com/hedex/pages/EDOC1100087046AZJ0324D/10/EDOC1100087046AZJ0324D/10/resources/dc/dc_cfg_dhcp_6005.html#ZH-CN_CONCEPT_0176371535__f1">flags字段</a>）等信息。源IP 地址0.0.0.0   目的IP:255.255.255.255</p>
-</li>
-<li><p>某个（可能有多个服务器）DHCP服务器A监听到了DHCP请求，能够<strong>动态</strong>管理自己的IP池，通过<code>DHCP Offer</code>给计算机分配IP地址和默认网关（用于访问外部地址）以及子网掩码和<strong>DNS</strong>、租约信息，注意并不一定要全部提供。源IP为DHCP服务器的IP  目的IP:分配给客户端的IP，里面也有客户端的MAC地址。</p>
-</li>
-<li><p>设备收到以后会正式提出租用请求，<code>DHCP Request</code>，源IP为0.0.0.0  目的IP:255.255.255.255，==广播==形式可以告诉其他可能存在的DHCP服务器已经向DHCP服务器A提出租用请求，。</p>
-</li>
-<li><p>路由器收到以后发送<code>DHCP ACK</code>，确认分配并连接成功。源IP为DHCP服务器的IP  目的IP:分配给</p>
-</li>
-<li><p>客户端收到<code>DHCP ACK</code>报文，会广播发送<a target="_blank" rel="noopener" href="https://info.support.huawei.com/info-finder/encyclopedia/zh/ARP.html">免费ARP</a>报文，探测本网段是否有其他终端使用服务器分配的IP地址，如果在指定时间内没有收到回应，表示客户端可以使用此地址。如果收到了回应，说明有其他终端使用了此地址，客户端会向服务器发送<code>DHCP DECLINE</code>报文，并重新向服务器请求IP地址，同时，服务器会将此地址列为冲突地址。当服务器没有空闲地址可分配时，再选择冲突地址进行分配，尽量减少分配出去的地址冲突。</p>
-</li>
-<li><p>设备使用某个IP地址的时间有限，==单播==发送<code>DHCP Request</code>报文进行续约，如果收到<code>DHCP NAK</code>报文说明续租失败；如果到时间如果设备不再续用发送<code>DHCP Release</code>报文进行释放，DHCP服务器会回收，设备收到<code>DHCP</code>。某些设备可能需要为静态的IP，这个可以通过MAC绑定也可以手动配置。</p>
-</li>
-</ul>
-<p><strong>宽带</strong>：</p>
-<ul>
-<li><p><strong>静态IP</strong>：根据运营商提供的静态IP，子网掩码，网关，DNS手动配置，是固定的IP。</p>
-</li>
-<li><p><strong>动态DHCP</strong> ：自动从ISP获取IP地址等网络配置信息。</p>
-</li>
-<li><p><strong>ADSL虚拟拨号</strong> ：使用PPPoE协议向运营商动态租用（PPPoE提供了身份验证功能，也就是宽带账号)。</p>
-</li>
-</ul>
-<h2 id="典型场景"><a href="#典型场景" class="headerlink" title="典型场景"></a>典型场景</h2><ol>
-<li><p>路由器从运营商的网络获取一个公网IP地址（通过运营商的DHCP服务器分配）。</p>
-</li>
-<li><p>路由器在局域网内充当DHCP服务器，为局域网设备分配私有IP地址（如192.168.0.x）。</p>
-</li>
-</ol>
-<h2 id="RARP-协议"><a href="#RARP-协议" class="headerlink" title="RARP 协议"></a>RARP 协议</h2><p>RARP（反向地址转换协议，Reverse Address Resolution Protocol）是局域网的物理机器从网关服务器的ARP表或者缓存上根据MAC地址请求IP地址的协议。它的功能与ARP协议相反。</p>
-<ol>
-<li><strong>请求IP地址</strong>：当局域网中的某个物理机器只知道自己的MAC地址而不知道IP地址时，它可以通过RARP协议向RARP服务器发送一个请求，请求分配一个IP地址。</li>
-<li><strong>服务器响应</strong>：RARP服务器在收到请求后，会查找其RARP列表或ARP表，查找该MAC地址对应的IP地址。如果找到匹配的MAC地址，RARP服务器就会将对应的IP地址发送给请求者。</li>
-<li><strong>获取IP地址并通信</strong>：请求者在收到RARP服务器的响应后，就可以利用得到的IP地址进行网络通信。</li>
-</ol>
-<p><strong>RARP</strong>（Reverse Address Resolution Protocol）和<strong>DHCP</strong>（Dynamic Host Configuration Protocol）是两种网络协议，它们都可以为某个刚接入网络的设备提供IP地址以实现互联通信。区别主要有以下几点：</p>
-<ol>
-<li>RARP是数据链路层的协议，无法跨路由器和网段工作，每个本地网络都必须配置一台RARP服务器；而DHCP属于应用层协议，可以跨路由器和网段工作，因此多个网段可以共享同一个DHCP服务器。</li>
-<li>RARP协议中，必须提前在RAPR服务器中手工配置好MAC地址和IP地址之间的映射；而DHCP允许动态的分配IP，更适应当前网络的需求。</li>
-<li>RARP协议仅仅是分配IP地址，而DHCP协议不仅提供IP地址，还提供其他网络配置信息，如子网掩码、网关、DNS服务器</li>
-</ol>
-<h1 id="万维网（WWW）"><a href="#万维网（WWW）" class="headerlink" title="万维网（WWW）"></a>万维网（WWW）</h1><h2 id="超文本传输协议（HTTP）"><a href="#超文本传输协议（HTTP）" class="headerlink" title="超文本传输协议（HTTP）"></a><a href="https://scatteredream.github.io/2025/05/14/408-%E8%AE%A1%E7%BD%91-HTTP/">超文本传输协议（HTTP）</a></h2><h2 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/2_http/http_websocket.html">WebSocket</a></h2><h2 id="内容分发网络（CDN）"><a href="#内容分发网络（CDN）" class="headerlink" title="内容分发网络（CDN）"></a>内容分发网络（CDN）</h2><p><strong>Content Distribution Network</strong></p>
-<p><strong>push</strong>： 源服务器将内容推送给CDN</p>
-<p><strong>pull</strong>：CDN遇到自己没有的资源就从源服务器pull过来</p>
-<p><strong>anycast</strong>: 任播，与DNS服务器类似，很多CDN具有相同的IP地址，可以负载均衡。</p>
-<p>CDN所需要的节点数量随着需求而不同，依照所需要服务的对象大小，有可能有数万台服务器。</p>
-<p>服务器的运作方式一般是基于<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Nginx">nginx</a>的模式，通过HTTP头的Host字段等方式区分服务域名来提供HTTP服务。不过，随着2017年世界各地CDN服务商纷纷推出<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/HTTPS">HTTPS</a>加速功能，运作方式也变得略有不同，变成了nginx+<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%8D%E7%A7%B0%E6%8C%87%E7%A4%BA">SNI</a>模式，同一个CDN节点上可以借此机制绑定多个域名而为不同域名提供HTTPS服务。同时，<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/BGP">BGP</a>的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Anycast">anycast</a>技术也逐渐引入了CDN领域中。</p>
-<p>P2P CDN(PCDN)：用户自愿以PC或专用设备利用闲置上行带宽充当CDN缓存节点</p>
-<h1 id="进程间通信（IPC）"><a href="#进程间通信（IPC）" class="headerlink" title="进程间通信（IPC）"></a>进程间通信（IPC）</h1><p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/2_http/http_rpc.html">既然有 HTTP 协议，为什么还要有 RPC？</a> </p>
-<h1 id="P2P"><a href="#P2P" class="headerlink" title="P2P"></a>P2P</h1><h1 id="文件传送协议（FTP）"><a href="#文件传送协议（FTP）" class="headerlink" title="文件传送协议（FTP）"></a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE">文件传送协议（FTP）</a></h1><p><strong>FTP 协议</strong> 基于 TCP 协议，是一种用于在计算机之间传输文件的协议，可以屏蔽操作系统和文件存储方式。</p>
-<p>FTP 是基于客户—服务器（C/S）模型而设计的，在客户端与 FTP 服务器之间建立两个连接。如果我们要基于 FTP 协议开发一个文件传输的软件的话，首先需要搞清楚 FTP 的原理。关于 FTP 的原理，很多书籍上已经描述的非常详细了：</p>
-<blockquote>
-<p>FTP 的独特的优势同时也是与其它客户服务器程序最大的不同点就在于它在两台通信的主机之间使用了两条 TCP 连接（其它客户服务器应用程序一般只有一条 TCP 连接）：</p>
-<ol>
-<li>控制连接：用于传送控制信息（命令和响应）</li>
-<li>数据连接：用于数据传送；</li>
-</ol>
-<p>这种将命令和数据分开传送的思想大大提高了 FTP 的效率。</p>
-</blockquote>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/ftp.png" alt="FTP工作过程">FTP工作过程</p>
-<p>注意 ：FTP 是一种不安全的协议，因为它在传输过程中不会对数据进行加密。因此，FTP 传输的文件可能会被窃听或篡改。建议在传输敏感数据时使用更安全的协议，如 SFTP（SSH File Transfer Protocol，一种基于 SSH 协议的安全文件传输协议，用于在网络上安全地传输文件）。</p>
-<h1 id="电子邮件"><a href="#电子邮件" class="headerlink" title="电子邮件"></a>电子邮件</h1><h2 id="SMTP"><a href="#SMTP" class="headerlink" title="SMTP"></a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%AE%80%E5%8D%95%E9%82%AE%E4%BB%B6%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE#%E7%9B%B8%E5%85%B3_RFC">SMTP</a></h2><p><strong>简单邮件传输(发送)协议（SMTP，Simple Mail Transfer Protocol）</strong> 基于 TCP 协议，是一种用于发送电子邮件的协议</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/what-is-smtp.png" alt="SMTP 协议">SMTP 协议</p>
-<p>注意 ⚠️：<strong>接受邮件的协议不是 SMTP 而是 POP3 协议。</strong></p>
-<p>SMTP 协议这块涉及的内容比较多，下面这两个问题比较重要：</p>
-<ol>
-<li>电子邮件的发送过程</li>
-<li>如何判断邮箱是真正存在的？</li>
-</ol>
-<p><strong>电子邮件的发送过程？</strong></p>
-<p>比如我的邮箱是“<a href="mailto:dabai@cszhinan.com">dabai@cszhinan.com</a>”，我要向“<a href="mailto:xiaoma@qq.com">xiaoma@qq.com</a>”发送邮件，整个过程可以简单分为下面几步：</p>
-<ol>
-<li>通过 <strong>SMTP</strong> 协议，我将我写好的邮件交给 163 邮箱服务器（邮局）。</li>
-<li>163 邮箱服务器发现我发送的邮箱是 qq 邮箱，然后它使用 SMTP 协议将我的邮件转发到 qq 邮箱服务器。</li>
-<li>qq 邮箱服务器接收邮件之后就通知邮箱为“<a href="mailto:xiaoma@qq.com">xiaoma@qq.com</a>”的用户来收邮件，然后用户就通过 <strong>POP3/IMAP</strong> 协议将邮件取出。</li>
-</ol>
-<p><strong>如何判断邮箱是真正存在的？</strong></p>
-<p>很多场景(比如邮件营销)下面我们需要判断我们要发送的邮箱地址是否真的存在，这个时候我们可以利用 SMTP 协议来检测：</p>
-<ol>
-<li>查找邮箱域名对应的 SMTP 服务器地址</li>
-<li>尝试与服务器建立连接</li>
-<li>连接成功后尝试向需要验证的邮箱发送邮件</li>
-<li>根据返回结果判定邮箱地址的真实性</li>
-</ol>
-<p>推荐几个在线邮箱是否有效检测工具：</p>
-<ol>
-<li><a target="_blank" rel="noopener" href="https://verify-email.org/">https://verify-email.org/</a></li>
-<li><a target="_blank" rel="noopener" href="http://tool.chacuo.net/mailverify">http://tool.chacuo.net/mailverify</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.emailcamel.com/">https://www.emailcamel.com/</a></li>
-</ol>
-<h2 id="IMAP-POP3"><a href="#IMAP-POP3" class="headerlink" title="IMAP/POP3"></a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%9B%A0%E7%89%B9%E7%BD%91%E4%BF%A1%E6%81%AF%E8%AE%BF%E9%97%AE%E5%8D%8F%E8%AE%AE">IMAP</a>/<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%83%B5%E5%B1%80%E5%8D%94%E5%AE%9A">POP3</a></h2><p>这两个协议没必要多做阐述，只需要了解 <strong>POP3 和 IMAP 两者都是负责邮件接收的协议</strong> 即可（二者也是基于 TCP 协议）。另外，需要注意不要将这两者和 SMTP 协议搞混淆了。<strong>SMTP 协议只负责邮件的发送，真正负责接收的协议是 POP3/IMAP。</strong></p>
-<p>IMAP 协议是比 POP3 更新的协议，它在功能和性能上都更加强大。IMAP 支持邮件搜索、标记、分类、归档等高级功能，而且可以在多个设备之间同步邮件状态。几乎所有现代电子邮件客户端和服务器都支持 IMAP。</p>
-<h2 id="E-mail-on-WWW"><a href="#E-mail-on-WWW" class="headerlink" title="E-mail on WWW"></a>E-mail on WWW</h2><h2 id="MIME"><a href="#MIME" class="headerlink" title="MIME"></a>MIME</h2><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BA%92%E8%81%94%E7%BD%91%E5%AA%92%E4%BD%93%E7%B1%BB%E5%9E%8B">MIME</a>改善了由 <a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc822">RFC 822</a> 转变而来的 <a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc2822">RFC 2822</a> ，这些旧标准规定<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E9%83%B5%E4%BB%B6">电子邮件</a>标准并不允许在邮件消息中使用7位ASCII字符集以外的字符。正因如此，一些非英语字符消息和二进制文件，图像，声音等非文字消息原本都不能在电子邮件中传输（MIME可以）。MIME规定了用于表示各种各样的数据类型的符号化方法。此外，在<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%B8%87%E7%BB%B4%E7%BD%91">万维网</a>中使用的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/HTTP">HTTP协议</a>中也使用了MIME的框架，标准被扩展为<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BA%92%E8%81%94%E7%BD%91%E5%AA%92%E4%BD%93%E7%B1%BB%E5%9E%8B">互联网媒体形式</a>。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Type: [type]/[subtype]; parameter</span><br></pre></td></tr></table></figure>
-
-<h1 id="Telnet-amp-SSH"><a href="#Telnet-amp-SSH" class="headerlink" title="Telnet &amp; SSH"></a>Telnet &amp; SSH</h1><p><strong><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Telnet">Telnet</a> 协议</strong> 基于 TCP 协议，用于通过一个终端登陆到其他服务器。Telnet 协议的最大缺点之一是所有数据（包括用户名和密码）均以明文形式发送，这有潜在的安全风险。这就是为什么如今很少使用 Telnet，而是使用一种称为 SSH 的非常安全的网络传输协议的主要原因。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/Telnet_is_vulnerable_to_eavesdropping-2.png" alt="Telnet:远程登陆协议"></p>
-<p><strong><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Secure_Shell">SSH</a> （Secure Shell）</strong> 基于 TCP 协议，通过加密和认证机制实现安全的访问和文件传输等业务。</p>
-<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV13P4y1o76u">SSH 握手详解 - bilibili 技术蛋老师</a> </p>
-<p>SSH 的经典用途是登录到远程电脑中执行命令。除此之外，SSH 也支持隧道协议、端口映射和 X11 连接（允许用户在本地运行远程服务器上的图形应用程序）。借助 SFTP（SSH File Transfer Protocol） 或 SCP（Secure Copy Protocol） 协议，SSH 还可以安全传输文件。</p>
-<p>SSH 使用客户端-服务器模型，默认端口是 22。SSH 是一个守护进程，负责实时监听客户端请求，并进行处理。大多数现代操作系统都提供了 SSH。</p>
-<p>如下图所示，SSH Client（SSH 客户端）和 SSH Server（SSH 服务器）通过公钥交换生成共享的对称加密密钥，用于后续的加密通信。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/ssh-client-server.png" alt="SSH:安全的网络传输协议"></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/default/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/default/">1</a><span class="page-number current">2</span><a class="page-number" href="/default/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/default/page/8/">8</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/default/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/default/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/default/">1</a><span class="page-number current">2</span><a class="page-number" href="/default/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/default/page/9/">9</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/default/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

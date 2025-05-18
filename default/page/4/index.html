@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">80</span>
+          <span class="site-state-item-count">81</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -177,7 +177,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">125</span>
+        <span class="site-state-item-count">126</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -194,6 +194,247 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/11/15/digital-S.M.A.R.T/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/11/15/digital-S.M.A.R.T/" class="post-title-link" itemprop="url">S.M.A.R.T 概述</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-11-15 00:00:00" itemprop="dateCreated datePublished" datetime="2024-11-15T00:00:00+08:00">2024-11-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-05 11:19:24" itemprop="dateModified" datetime="2025-05-05T11:19:24+08:00">2025-05-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E7%A0%81/" itemprop="url" rel="index"><span itemprop="name">数码</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="一、SMART概述"><a href="#一、SMART概述" class="headerlink" title="一、SMART概述"></a>一、SMART概述</h2><p><a target="_blank" rel="noopener" href="https://www.smzdm.com/fenlei/yingpan/">硬盘</a>的故障一般分为两种：可预测的（predictable）和不可预测的（unpredictable）。后者偶而会发生，也没有办法去预防它，例如芯片突然失效，机械撞击等。但像电机轴承磨损、盘片磁介质性能下降等都属于可预测的情况，可以在在几天甚至几星期前就发现这种不正常的现象。如果发生这种问题，SMART功能会在开机时响起警报，至少让使用者有足够的时间把重要资料转移到其它储存设备上。</p>
+<p>最早期的硬盘监控技术起源于1992年，IBM在AS/400计算机的IBM 0662 SCSI 2代硬盘驱动器中使用了后来被命名为Predictive Failure Analysis（故障预警分析技术）的监控技术，它是通过在固件中测量几个重要的硬盘安全参数和评估他们的情况，然后由监控软件得出两种结果：“硬盘安全”或“不久后会发生故障”。</p>
+<p>不久，当时的微机制造商康柏和硬盘制造商希捷、昆腾以及康纳共同提出了名为IntelliSafe的类似技术。通过该技术，硬盘可以测量自身的的健康指标并将参量值传送给操作系统和用户的监控软件中，每个硬盘生产商有权决定哪些指标需要被监控以及设定它们的安全阈值。</p>
+<p>1995年，康柏公司将该技术方案提交到Small Form Factor(SFF)委员会进行标准化，该方案得到IBM、希捷、昆腾、康纳和西部数据的支持，1996年6月进行了1.3版的修正，正式更名为S.M.A.R.T.（Self-Monitoring Analysis And Reporting Technology），全称就是“自我检测分析与报告技术”，成为一种自动监控硬盘驱动器完好状况和报告潜在问题的技术标准。</p>
+<p>作为行业规范，SMART规定了硬盘制造厂商应遵循的标准，满足SMART标准的条件主要包括：</p>
+<p>1）在设备制造期间完成SMART需要的各项参数、属性的设定；</p>
+<p>2）在特定系统平台下，能够正常使用SMART；通过BIOS检测，能够识别设备是否支持SMART并可显示相关信息，而且能辨别有效和失效的SMART信息；</p>
+<p>3）允许用户自由开启和关闭SMART功能；</p>
+<p>4）在用户使用过程中，能提供SMART的各项有效信息，确定设备的工作状态，并能发出相应的修正指令或警告。在硬盘及操作系统都支持SMART技术并且开启的情况下，若硬盘状态不良，SMART技术能够在屏幕上显示英文警告信息：“WARNING：IMMEDIATLY BACKUP YOUR DATA AND REPLACE YOUR HARD DISK DRIVE，A FAILURE MAY BE IMMINENT．”(警告：立刻备份你的数据并更换硬盘，硬盘可能失效。)</p>
+<p>SMART功能不断从硬盘上的各个传感器收集信息，并把信息保存在硬盘的系统保留区(service area)内，这个区域一般位于硬盘0物理面的最前面几十个物理磁道，由厂商写入相关的内部管理程序。这里除了SMART信息表外还包括低级格式化程序、加密解密程序、自监控程序、自动修复程序等。用户使用的监测软件通过名为“SMART Return Status”的命令（命令代码为：B0h）对SMART信息进行读取，且不允许最终用户对信息进行修改。</p>
+<h2 id="二、SMART的ID代码"><a href="#二、SMART的ID代码" class="headerlink" title="二、SMART的ID代码"></a>二、SMART的ID代码</h2><p>硬盘SMART检测的ID代码以两位十六进制数表示（括号里对应的是十进制数）硬盘的各项检测参数。目前，各硬盘制造商的绝大部分SMART ID代码所代表的参数含义是一致的，但厂商也可以根据需要使用不同的ID代码，或者根据检测项目的多少增减ID代码。一般来说，以下这些检测项是必需的：</p>
+<p>01（001） 底层数据读取错误率 Raw Read Error Rate</p>
+<p>04（004） 启动/停止计数 Start/Stop Count</p>
+<p>05（005） 重映射扇区数 Relocated Sector Count</p>
+<p>09（009） 通电时间累计 Power-On Time Count (POH)</p>
+<p>0A（010） 主轴起旋重试次数（即硬盘主轴电机启动重试次数） Spin up Retry Count</p>
+<p>0B（011） 磁盘校准重试次数 Calibration Retry Count</p>
+<p>0C（012） 磁盘通电次数 Power Cycle Count</p>
+<p>C2（194） 温度 Temperature</p>
+<p>C7（199） ULTRA DMA奇偶校验错误率 ULTRA ATA CRC Error Rate</p>
+<p>C8（200） 写错误率 Write Error Rate</p>
+<h2 id="三、SMART的描述（Description）"><a href="#三、SMART的描述（Description）" class="headerlink" title="三、SMART的描述（Description）"></a>三、SMART的描述（Description）</h2><p>描述，即某一检测项目的名称，是ID代码的文字解释。对用户而言，不仅要了解描述的含义，重要的是要了解各参数的值如“临界值”、“最差值”的定义，“当前值”与“数据值”的区别等，才能对自己的硬盘状态有一个基本了解。</p>
+<h2 id="四、SMART的值"><a href="#四、SMART的值" class="headerlink" title="四、SMART的值"></a>四、SMART的值</h2><h3 id="1、临界值（Threshold）"><a href="#1、临界值（Threshold）" class="headerlink" title="1、临界值（Threshold）"></a>1、临界值（Threshold）</h3><p>临界值是硬盘厂商指定的表示某一项目可靠性的门限值，也称阈值，它通过特定公式计算而得。如果某个参数的当前值接近了临界值，就意味着硬盘将变得不可靠，可能导致数据丢失或者硬盘故障。由于临界值是硬盘厂商根据自己产品特性而确定的，因此用厂商提供的专用检测软件往往会跟Windows下检测软件的检测结果有较大出入。</p>
+<p>以参数Raw Read Error Rate（底层数据读取错误率）为例：某型硬盘对该参数的计算公式为“10×log10（主机和硬盘之间所传输数据的扇区数）×512×8／重读的扇区数”。其中“512×8”是把扇区数转化为所传输的数据位(bits)，这个值只在所传输的数据位处于1010～1012范围时才作计算，而当Windows系统启动后，主机和硬盘之间所传输的数据扇区大于或等于1012时，此值将重新复位，所以有些值在不同的操作环境、不同检测程序下时会有较大的波动。</p>
+<h3 id="2、当前值（Normalized-value）"><a href="#2、当前值（Normalized-value）" class="headerlink" title="2、当前值（Normalized value）"></a>2、当前值（Normalized value）</h3><p>当前值是各ID项在硬盘运行时根据实测数据通过公式计算的结果，计算公式由硬盘厂家自定。</p>
+<p>硬盘出厂时各ID项目都有一个预设的最大正常值，也即出厂值，这个预设的依据及计算方法为硬盘厂家保密，不同型号的硬盘都不同，最大正常值通常为100或200或253，新硬盘刚开始使用时显示的当前值可以认为是预设的最大正常值（有些ID项如温度等除外）。随着使用损耗或出现错误，当前值会根据实测数据而不断刷新并逐渐减小。因此，当前值接近临界值就意味着硬盘寿命的减少，发生故障的可能性增大，所以当前值也是判定硬盘健康状态或推测寿命的依据之一。</p>
+<h3 id="3、最差值（Worst）"><a href="#3、最差值（Worst）" class="headerlink" title="3、最差值（Worst）"></a>3、最差值（Worst）</h3><p>最差值是硬盘运行时各ID项曾出现过的最大的非正常值。</p>
+<p>最差值是对硬盘运行中某项数据变劣的峰值统计，该数值也会不断刷新。通常，最差值与当前值是相等的，如果最差值出现较大的波动（小于当前值），表明硬盘曾出现错误或曾经历过恶劣的工作环境（如温度）。</p>
+<h3 id="4、数据值（Data或Raw-value）"><a href="#4、数据值（Data或Raw-value）" class="headerlink" title="4、数据值（Data或Raw value）"></a>4、数据值（Data或Raw value）</h3><p>数据值是硬盘运行时各项参数的实测值，大部分SMART工具以十进制显示数据。</p>
+<p>数据值代表的意义随参数而定，大致可以分为三类：</p>
+<p>1）数据值并不直接反映硬盘状态，必须经过硬盘内置的计算公式换算成当前值才能得出结果；</p>
+<p>2）数据值是直接累计的，如Start/Stop Count（启动/停止计数）的数据是50，即表示该硬盘从出厂到现在累计启停了50次；</p>
+<p>3）有些参数的数据是即时数，如Temperature（温度）的数据值是44，表示硬盘的当前温度是44℃。</p>
+<p>因此，有些参数直接查看数据也能大致了解硬盘目前的工作状态。</p>
+<h2 id="五、状态-Status"><a href="#五、状态-Status" class="headerlink" title="五、状态(Status)"></a>五、状态(Status)</h2><p>硬盘的每项SMART信息中都有一个临界值（阈值），不同硬盘的临界值是不同的，SMART针对各项的当前值、最差值和临界值的比较结果以及数据值进行分析后，提供硬盘当前的评估状态，也是我们直观判断硬盘健康状态的重要信息。根据SMART的规定，状态一般有正常、警告、故障或错误三种状态。</p>
+<p>SMART判定这三个状态与SMART的 Pre-failure/advisory BIT（预测错误/发现位）参数的赋值密切相关，当Pre-failure/advisory BIT=0，并且当前值、最差值远大于临界值的情况下，为正常标志。当Pre-failure/advisory BIT=0，并且当前值、最差值大于但接近临界值时，为警告标志；当Pre-failure/advisory BIT=1，并且当前值、最差值小于临界值时，为故障或错误标志。</p>
+<h2 id="六、SMART参数详解"><a href="#六、SMART参数详解" class="headerlink" title="六、SMART参数详解"></a>六、SMART参数详解</h2><p>一般情况下，用户只要观察当前值、最差值和临界值的关系，并注意状态提示信息即可大致了解硬盘的健康状况。下面简单介绍各参数的含义，以红色标出的项目是寿命关键项，蓝色为<a target="_blank" rel="noopener" href="https://www.smzdm.com/fenlei/gutaiyingpan/">固态硬盘</a>（SSD）特有的项目。</p>
+<p>在基于闪存的固态硬盘中，存储单元分为两类：SLC（Single Layer Cell，单层单元）和MLC（Multi-Level Cell，多层单元）。SLC成本高、容量小、但读写速度快，可靠性高，擦写次数可高达100000次，比MLC高10倍。而MLC虽容量大、成本低，但其性能大幅落后于SLC。为了保证MLC的寿命，控制芯片还要有智能磨损平衡技术算法，使每个存储单元的写入次数可以平均分摊，以达到100万小时的平均无故障时间。因此固态硬盘有许多SMART参数是<a target="_blank" rel="noopener" href="https://www.smzdm.com/fenlei/jixieyingpan/">机械硬盘</a>所没有的，如存储单元的擦写次数、备用块统计等等，这些新增项大都由厂家自定义，有些尚无详细的解释，有些解释也未必准确，此处也只是仅供参考。下面凡未注明厂商的固态硬盘特有的项均为SandForce主控芯片特有的，其它厂商各自单独注明。</p>
+<h3 id="01（001）底层数据读取错误率-Raw-Read-Error-Rate"><a href="#01（001）底层数据读取错误率-Raw-Read-Error-Rate" class="headerlink" title="01（001）底层数据读取错误率 Raw Read Error Rate"></a>01（001）底层数据读取错误率 Raw Read Error Rate</h3><p>数据为0或任意值，当前值应远大于与临界值。</p>
+<p>底层数据读取错误率是磁头从磁盘表面读取数据时出现的错误，对某些硬盘来说，大于0的数据表明磁盘表面或者读写磁头发生问题，如介质损伤、磁头污染、磁头共振等等。不过对希捷硬盘来说，许多硬盘的这一项会有很大的数据量，这不代表有任何问题，主要是看当前值下降的程度。</p>
+<p>在固态硬盘中，此项的数据值包含了可校正的错误与不可校正的RAISE错误（UECC＋URAISE）。</p>
+<p>注：RAISE（Redundant Array of Independent Silicon Elements）意为独立硅元素冗余阵列，是固态硬盘特有的一种冗余恢复技术，保证内部有类似RAID阵列的数据安全性。</p>
+<h3 id="02（002）磁盘读写通量性能-Throughput-Performance"><a href="#02（002）磁盘读写通量性能-Throughput-Performance" class="headerlink" title="02（002）磁盘读写通量性能 Throughput Performance"></a>02（002）磁盘读写通量性能 Throughput Performance</h3><p>此参数表示硬盘的读写通量性能，数据值越大越好。当前值如果偏低或趋近临界值，表示硬盘存在严重的问题，但现在的硬盘通常显示数据值为0或根本不显示此项，一般在进行了人工脱机SMART测试后才会有数据量。</p>
+<h3 id="03（003）主轴起旋时间-Spin-Up-Time"><a href="#03（003）主轴起旋时间-Spin-Up-Time" class="headerlink" title="03（003）主轴起旋时间 Spin Up Time"></a>03（003）主轴起旋时间 Spin Up Time</h3><p>主轴起旋时间就是主轴电机从启动至达到额定转速所用的时间，数据值直接显示时间，单位为毫秒或者秒，因此数据值越小越好。不过对于正常硬盘来说，这一项仅仅是一个参考值，硬盘每次的启动时间都不相同，某次启动的稍慢些也不表示就有问题。</p>
+<p>硬盘的主轴电机从启动至达到额定转速大致需要4秒～15秒左右，过长的启动时间说明电机驱动电路或者轴承机构有问题。旦这一参数的数据值在某些型号的硬盘上总是为0，这就要看当前值和最差值来判断了。</p>
+<p>对于固态硬盘来说，所有的数据都是保存在半导体集成电路中，没有主轴电机，所以这项没有意义，数据固定为0，当前值固定为100。</p>
+<h3 id="04（004）启停计数-Start-Stop-Count"><a href="#04（004）启停计数-Start-Stop-Count" class="headerlink" title="04（004）启停计数 Start/Stop Count"></a>04（004）启停计数 Start/Stop Count</h3><p>这一参数的数据是累计值，表示硬盘主轴电机启动/停止的次数，新硬盘通常只有几次，以后会逐渐增加。系统的某些功能如空闲时关闭硬盘等会使硬盘启动/停止的次数大为增加，在排除定时功能的影响下，过高的启动/停止次数（远大于通电次数0C）暗示硬盘电机及其驱动电路可能有问题。</p>
+<p>这个参数的当前值是依据某种公式计算的结果，例如对希捷某硬盘来说临界值为20，当前值是通过公式“100－（启停计数/1024）”计算得出的。若新硬盘的启停计数为0，当前值为100－(0/1024)＝100，随着启停次数的增加，该值不断下降，当启停次数达到81920次时，当前值为100－(81920/1024)＝20，已达到临界值，表示从启停次数来看，该硬盘已达设计寿命，当然这只是个寿命参考值，并不具有确定的指标性。</p>
+<p>这一项对于固态硬盘同样没有意义，数据固定为0，当前值固定为100。</p>
+<h3 id="05（005）重映射扇区计数-Reallocated-Sectors-Count-退役块计数-Retired-Block-Count"><a href="#05（005）重映射扇区计数-Reallocated-Sectors-Count-退役块计数-Retired-Block-Count" class="headerlink" title="05（005）重映射扇区计数 Reallocated Sectors Count/ 退役块计数 Retired Block Count"></a>05（005）重映射扇区计数 Reallocated Sectors Count/ 退役块计数 Retired Block Count</h3><p>数据应为0，当前值应远大于临界值。</p>
+<p>当硬盘的某扇区持续出现读/写/校验错误时，硬盘固件程序会将这个扇区的物理地址加入缺陷表(G-list)，将该地址重新定向到预先保留的备用扇区并将其中的数据一并转移，这就称为重映射。执行重映射操作后的硬盘在Windows常规检测中是无法发现不良扇区的，因其地址已被指向备用扇区，这等于屏蔽了不良扇区。</p>
+<p>这项参数的数据值直接表示已经被重映射扇区的数量，当前值则随着数据值的增加而持续下降。当发现此项的数据值不为零时，要密切注意其发展趋势，若能长期保持稳定，则硬盘还可以正常运行；若数据值不断上升，说明不良扇区不断增加，硬盘已处于不稳定状态，应当考虑更换了。如果当前值接近或已到达临界值（此时的数据值并不一定很大，因为不同硬盘保留的备用扇区数并不相同），表示缺陷表已满或备用扇区已用尽，已经失去了重映射功能，再出现不良扇区就会显现出来并直接导致数据丢失。</p>
+<p>这一项不仅是硬盘的寿命关键参数，而且重映射扇区的数量也直接影响硬盘的性能，例如某些硬盘会出现数据量很大，但当前值下降不明显的情况，这种硬盘尽管还可正常运行，但也不宜继续使用。因为备用扇区都是位于磁盘尾部（靠近盘片轴心处），大量的使用备用扇区会使寻道时间增加，硬盘性能明显下降。</p>
+<p>这个参数在机械硬盘上是非常敏感的，而对于固态硬盘来说同样具有重要意义。闪存的寿命是正态分布的，例如说MLC能写入一万次以上，实际上说的是写入一万次之前不会发生“批量损坏”，但某些单元可能写入几十次就损坏了。换言之，机械硬盘的盘片不会因读写而损坏，出现不良扇区大多与工艺质量相关，而闪存的读写次数则是有限的，因而损坏是正常的。所以固态硬盘在制造时也保留了一定的空间，当某个存储单元出现问题后即把损坏的部分隔离，用好的部分来顶替。这一替换方法和机械硬盘的扇区重映射是一个道理，只不过机械硬盘正常时极少有重映射操作，而对于固态硬盘是经常性的。</p>
+<p>在固态硬盘中这一项的数据会随着使用而不断增长，只要增长的速度保持稳定就可以。通常情况下，数据值＝100－（100×被替换块/必需块总数），因此也可以估算出硬盘的剩余寿命。</p>
+<p>Intel固态硬盘型号的第十二个字母表示了两种规格，该字母为1表示第一代的50纳米技术的SSD，为2表示第二代的34纳米技术的SSD，如SSDSA2M160G2GN就表示是34nm的SSD。所以参数的查看也有两种情况：</p>
+<p>50nm的SSD（一代）要看当前值。这个值初始是100，当出现替换块的时候这个值并不会立即变化，一直到已替换四个块时这个值变为1，之后每增加四个块当前值就＋1。也就是100对应0～3个块，1对应4～7个块，2对应8～11个块……</p>
+<p>34nm的SSD（二代）直接查看数据值，数据值直接表示有多少个被替换的块。</p>
+<h3 id="06（006）读取通道余量-Read-Channel-Margin"><a href="#06（006）读取通道余量-Read-Channel-Margin" class="headerlink" title="06（006）读取通道余量 Read Channel Margin"></a>06（006）读取通道余量 Read Channel Margin</h3><p>这一项功能不明，现在的硬盘也不显示这一项。</p>
+<h3 id="07（007）寻道错误率-Seek-Error-Rate"><a href="#07（007）寻道错误率-Seek-Error-Rate" class="headerlink" title="07（007）寻道错误率 Seek Error Rate"></a>07（007）寻道错误率 Seek Error Rate</h3><p>数据应为0，当前值应远大于与临界值。</p>
+<p>这一项表示磁头寻道时的错误率，有众多因素可导致寻道错误率上升，如磁头组件的机械系统、伺服电路有局部问题，盘片表面介质不良，硬盘温度过高等等。</p>
+<p>通常此项的数据应为0，但对希捷硬盘来说，即使是新硬盘，这一项也可能有很大的数据量，这不代表有任何问题，还是要看当前值是否下降。</p>
+<h3 id="08（008）寻道性能-Seek-Time-Performance"><a href="#08（008）寻道性能-Seek-Time-Performance" class="headerlink" title="08（008）寻道性能 Seek Time Performance"></a>08（008）寻道性能 Seek Time Performance</h3><p>此项表示硬盘寻道操作的平均性能（寻道速度），通常与前一项（寻道错误率）相关联。当前值持续下降标志着磁头组件、寻道电机或伺服电路出现问题，但现在许多硬盘并不显示这一项。</p>
+<h3 id="09（009）通电时间累计-Power-On-Time-Count-POH"><a href="#09（009）通电时间累计-Power-On-Time-Count-POH" class="headerlink" title="09（009）通电时间累计 Power-On Time Count (POH)"></a>09（009）通电时间累计 Power-On Time Count (POH)</h3><p>这个参数的含义一目了然，表示硬盘通电的时间，数据值直接累计了设备通电的时长，新硬盘当然应该接近0，但不同硬盘的计数单位有所不同，有以小时计数的，也有以分、秒甚至30秒为单位的，这由磁盘制造商来定义。</p>
+<p>这一参数的临界值通常为0，当前值随着硬盘通电时间增加会逐渐下降，接近临界值表明硬盘已接近预计的设计寿命，当然这并不表明硬盘将出现故障或立即报废。参考磁盘制造商给出的该型号硬盘的MTBF（平均无故障时间）值，可以大致估计剩余寿命或故障概率。</p>
+<p>对于固态硬盘，要注意“设备优先电源管理功能（device initiated power management，DIPM）”会影响这个统计：如果启用了DIPM，持续通电计数里就不包括睡眠时间；如果关闭了DIPM功能，那么活动、空闲和睡眠三种状态的时间都会被统计在内。</p>
+<h3 id="0A（010）主轴起旋重试次数-Spin-up-Retry-Count"><a href="#0A（010）主轴起旋重试次数-Spin-up-Retry-Count" class="headerlink" title="0A（010）主轴起旋重试次数 Spin up Retry Count"></a>0A（010）主轴起旋重试次数 Spin up Retry Count</h3><p>数据应为0，当前值应大于临界值。</p>
+<p>主轴起旋重试次数的数据值就是主轴电机尝试重新启动的计数，即主轴电机启动后在规定的时间里未能成功达到额定转速而尝试再次启动的次数。数据量的增加表示电机驱动电路或是机械子系统出现问题，整机供电不足也会导致这一问题。</p>
+<h3 id="0B（011）磁头校准重试计数-Calibration-Retry-Count"><a href="#0B（011）磁头校准重试计数-Calibration-Retry-Count" class="headerlink" title="0B（011）磁头校准重试计数 Calibration Retry Count"></a>0B（011）磁头校准重试计数 Calibration Retry Count</h3><p>数据应为0，当前值应远大于与临界值。</p>
+<p>硬盘在温度发生变化时，机械部件（特别是盘片）会因热胀冷缩出现形变，因此需要执行磁头校准操作消除误差，有的硬盘还内置了磁头定时校准功能。这一项记录了需要再次校准（通常因上次校准失败）的次数。</p>
+<p>这一项的数据量增加，表示电机驱动电路或是机械子系统出现问题，但有些型号的新硬盘也有一定的数据量，并不表示有问题，还要看当前值和最差值。</p>
+<h3 id="0C（012）通电周期计数-Power-Cycle-Count"><a href="#0C（012）通电周期计数-Power-Cycle-Count" class="headerlink" title="0C（012）通电周期计数 Power Cycle Count"></a>0C（012）通电周期计数 Power Cycle Count</h3><p>通电周期计数的数据值表示了硬盘通电/断电的次数，即电源开关次数的累计，新硬盘通常只有几次。</p>
+<p>这一项与启停计数（04）是有区别的，一般来说，硬盘通电/断电意味着计算机的开机与关机，所以经历一次开关机数据才会加1；而启停计数（04）表示硬盘主轴电机的启动/停止（硬盘在运行时可能多次启停，如系统进入休眠或被设置为空闲多少时间而关闭）。所以大多情况下这个通电/断电的次数会小于启停计数（04）的次数。</p>
+<p>通常，硬盘设计的通电次数都很高，如至少5000次，因此这一计数只是寿命参考值，本身不具指标性。</p>
+<h3 id="0D（013）软件读取错误率-Soft-Read-Error-Rate"><a href="#0D（013）软件读取错误率-Soft-Read-Error-Rate" class="headerlink" title="0D（013）软件读取错误率 Soft Read Error Rate"></a>0D（013）软件读取错误率 Soft Read Error Rate</h3><p>软件读取错误率也称为可校正的读取误码率，就是报告给操作系统的未经校正的读取错误。数据值越低越好，过高则可能暗示盘片磁介质有问题。</p>
+<h3 id="AA（170）坏块增长计数-Grown-Failing-Block-Count（Micron-镁光）"><a href="#AA（170）坏块增长计数-Grown-Failing-Block-Count（Micron-镁光）" class="headerlink" title="AA（170）坏块增长计数 Grown Failing Block Count（Micron 镁光）"></a>AA（170）坏块增长计数 Grown Failing Block Count（Micron 镁光）</h3><p>读写失败的块增长的总数。</p>
+<h3 id="AB（171）编程失败块计数-Program-Fail-Block-Count"><a href="#AB（171）编程失败块计数-Program-Fail-Block-Count" class="headerlink" title="AB（171）编程失败块计数 Program Fail Block Count"></a>AB（171）编程失败块计数 Program Fail Block Count</h3><p>Flash编程失败块的数量。</p>
+<h3 id="AC（172）擦写失败块计数-Erase-Fail-Block-Count"><a href="#AC（172）擦写失败块计数-Erase-Fail-Block-Count" class="headerlink" title="AC（172）擦写失败块计数 Erase Fail Block Count"></a>AC（172）擦写失败块计数 Erase Fail Block Count</h3><p>擦写失败块的数量。</p>
+<h3 id="AD（173）磨损平衡操作次数（平均擦写次数）-Wear-Leveling-Count（Micron-镁光）"><a href="#AD（173）磨损平衡操作次数（平均擦写次数）-Wear-Leveling-Count（Micron-镁光）" class="headerlink" title="AD（173）磨损平衡操作次数（平均擦写次数） / Wear Leveling Count（Micron 镁光）"></a>AD（173）磨损平衡操作次数（平均擦写次数） / Wear Leveling Count（Micron 镁光）</h3><p>所有好块的平均擦写次数。</p>
+<p>Flash芯片有写入次数限制，当使用FAT文件系统时，需要频繁地更新文件分配表。如果闪存的某些区域读写过于频繁，就会比其它区域磨损的更快，这将明显缩短整个硬盘的寿命（即便其它区域的擦写次数还远小于最大限制）。所以，如果让整个区域具有均匀的写入量，就可明显延长芯片寿命，这称为磨损均衡措施。</p>
+<h3 id="AE（174）意外失电计数-Unexpected-Power-Loss-Count"><a href="#AE（174）意外失电计数-Unexpected-Power-Loss-Count" class="headerlink" title="AE（174）意外失电计数 Unexpected Power Loss Count"></a>AE（174）意外失电计数 Unexpected Power Loss Count</h3><p>硬盘自启用后发生意外断电事件的次数。</p>
+<h3 id="B1（177）磨损范围对比值-Wear-Range-Delta"><a href="#B1（177）磨损范围对比值-Wear-Range-Delta" class="headerlink" title="B1（177）磨损范围对比值 Wear Range Delta"></a>B1（177）磨损范围对比值 Wear Range Delta</h3><p>磨损最重的块与磨损最轻的块的磨损百分比之差。</p>
+<h3 id="B4（180）未用的备用块计数-Unused-Reserved-Block-Count-Total（惠普）"><a href="#B4（180）未用的备用块计数-Unused-Reserved-Block-Count-Total（惠普）" class="headerlink" title="B4（180）未用的备用块计数 Unused Reserved Block Count Total（惠普）"></a>B4（180）未用的备用块计数 Unused Reserved Block Count Total（惠普）</h3><p>固态硬盘会保留一些容量来准备替换损坏的存储单元，所以可用的预留空间数非常重要。这个参数的当前值表示的是尚未使用的预留的存储单元数量。</p>
+<h3 id="B5（181）编程失败计数-Program-Fail-Count"><a href="#B5（181）编程失败计数-Program-Fail-Count" class="headerlink" title="B5（181）编程失败计数 Program Fail Count"></a>B5（181）编程失败计数 Program Fail Count</h3><p>用4个字节显示已编程失败的次数，与（AB）参数相似。</p>
+<h3 id="B5（181）非4KB对齐访问数-Non-4k-Aligned-Access（Micron-镁光）"><a href="#B5（181）非4KB对齐访问数-Non-4k-Aligned-Access（Micron-镁光）" class="headerlink" title="B5（181）非4KB对齐访问数 Non-4k Aligned Access（Micron 镁光）"></a>B5（181）非4KB对齐访问数 Non-4k Aligned Access（Micron 镁光）</h3><h3 id="B6（182）擦写失败计数-Erase-Fail-Count"><a href="#B6（182）擦写失败计数-Erase-Fail-Count" class="headerlink" title="B6（182）擦写失败计数 Erase Fail Count"></a>B6（182）擦写失败计数 Erase Fail Count</h3><p>用4个字节显示硬盘自启用后块擦写失败的次数，与（AC）参数相似。</p>
+<h3 id="B7（183）串口降速错误计数-SATA-Downshift-Error-Count"><a href="#B7（183）串口降速错误计数-SATA-Downshift-Error-Count" class="headerlink" title="B7（183）串口降速错误计数 SATA Downshift Error Count"></a>B7（183）串口降速错误计数 SATA Downshift Error Count</h3><p>这一项表示了SATA接口速率错误下降的次数。通常硬盘与主板之间的兼容问题会导致SATA传输级别降级运行。</p>
+<h3 id="B8（184）I-O错误检测与校正-I-O-Error-Detection-and-Correction（IOEDC）"><a href="#B8（184）I-O错误检测与校正-I-O-Error-Detection-and-Correction（IOEDC）" class="headerlink" title="B8（184）I/O错误检测与校正 I/O Error Detection and Correction（IOEDC）"></a>B8（184）I/O错误检测与校正 I/O Error Detection and Correction（IOEDC）</h3><p>“I/O错误检测与校正”是惠普公司专有的SMART IV技术的一部分，与其他制造商的I/O错误检测和校正架构一样，它记录了数据通过驱动器内部高速缓存RAM传输到主机时的奇偶校验错误数量。</p>
+<h3 id="B8（184）点到点错误检测计数-End-to-End-Error-Detection-Count"><a href="#B8（184）点到点错误检测计数-End-to-End-Error-Detection-Count" class="headerlink" title="B8（184）点到点错误检测计数 End to End Error Detection Count"></a>B8（184）点到点错误检测计数 End to End Error Detection Count</h3><p>Intel第二代的34nm固态硬盘有点到点错误检测计数这一项。固态硬盘里有一个LBA（logical block addressing，逻辑块地址）记录，这一项显示了SSD内部逻辑块地址与真实物理地址间映射的出错次数。</p>
+<p>B8（184）原始坏块数 Init Bad Block Count（Indilinx芯片）</p>
+<p>硬盘出厂时已有的坏块数量。</p>
+<h3 id="B9（185）磁头稳定性-Head-Stability（西部数据）"><a href="#B9（185）磁头稳定性-Head-Stability（西部数据）" class="headerlink" title="B9（185）磁头稳定性 Head Stability（西部数据）"></a>B9（185）磁头稳定性 Head Stability（西部数据）</h3><p>意义不明。</p>
+<h3 id="BA（186）感应运算振动检测-nduced-Op-Vibration-Detection（西部数据）"><a href="#BA（186）感应运算振动检测-nduced-Op-Vibration-Detection（西部数据）" class="headerlink" title="BA（186）感应运算振动检测 nduced Op-Vibration Detection（西部数据）"></a>BA（186）感应运算振动检测 nduced Op-Vibration Detection（西部数据）</h3><p>意义不明。</p>
+<h3 id="BB（187）无法校正的错误-Reported-Uncorrectable-Errors（希捷）"><a href="#BB（187）无法校正的错误-Reported-Uncorrectable-Errors（希捷）" class="headerlink" title="BB（187）无法校正的错误 Reported Uncorrectable Errors（希捷）"></a>BB（187）无法校正的错误 Reported Uncorrectable Errors（希捷）</h3><p>报告给操作系统的无法通过硬件ECC校正的错误。如果数据值不为零，就应该备份硬盘上的数据了。</p>
+<p>报告给操作系统的在所有存取命令中出现的无法校正的RAISE（URAISE）错误。</p>
+<h3 id="BC（188）命令超时-Command-Timeout"><a href="#BC（188）命令超时-Command-Timeout" class="headerlink" title="BC（188）命令超时 Command Timeout"></a>BC（188）命令超时 Command Timeout</h3><p>由于硬盘超时导致操作终止的次数。通常数据值应为0，如果远大于零，最有可能出现的是电源供电问题或者<a target="_blank" rel="noopener" href="https://www.smzdm.com/fenlei/shujuxian/">数据线</a>氧化致使接触不良，也可能是硬盘出现严重问题。</p>
+<h3 id="BD（189）高飞写入-High-Fly-Writes"><a href="#BD（189）高飞写入-High-Fly-Writes" class="headerlink" title="BD（189）高飞写入 High Fly Writes"></a>BD（189）高飞写入 High Fly Writes</h3><p>磁头飞行高度监视装置可以提高读写的可靠性，这一装置时刻监测磁头的飞行高度是否在正常范围来保证可靠的写入数据。如果磁头的飞行高度出现偏差，写入操作就会停止，然后尝试重新写入或者换一个位置写入。这种持续的监测过程提高了写入数据的可靠性，同时也降低了读取错误率。这一项的数据值就统计了写入时磁头飞行高度出现偏差的次数。</p>
+<h3 id="BD（189）出厂坏块计数-Factory-Bad-Block-Count（Micron-镁光芯片）"><a href="#BD（189）出厂坏块计数-Factory-Bad-Block-Count（Micron-镁光芯片）" class="headerlink" title="BD（189）出厂坏块计数 Factory Bad Block Count（Micron 镁光芯片）"></a>BD（189）出厂坏块计数 Factory Bad Block Count（Micron 镁光芯片）</h3><h3 id="BE（190）气流温度-Airflow-Temperature"><a href="#BE（190）气流温度-Airflow-Temperature" class="headerlink" title="BE（190）气流温度 Airflow Temperature"></a>BE（190）气流温度 Airflow Temperature</h3><p>这一项表示的是硬盘内部盘片表面的气流温度。在希捷公司的某些硬盘中，当前值=（100－当前温度），因此气流温度越高，当前值就越低，最差值则是当前值曾经到达过的最低点，临界值由制造商定义的最高允许温度来确定，而数据值不具实际意义。许多硬盘也没有这一项参数。</p>
+<h3 id="BF（191）冲击错误率-G-sense-error-rate"><a href="#BF（191）冲击错误率-G-sense-error-rate" class="headerlink" title="BF（191）冲击错误率 G-sense error rate"></a>BF（191）冲击错误率 G-sense error rate</h3><p>这一项的数据值记录了硬盘受到机械冲击导致出错的频度。</p>
+<h3 id="C0（192）断电返回计数-Power-Off-Retract-Count"><a href="#C0（192）断电返回计数-Power-Off-Retract-Count" class="headerlink" title="C0（192）断电返回计数 Power-Off Retract Count"></a>C0（192）断电返回计数 Power-Off Retract Count</h3><p>当计算机关机或意外断电时，硬盘的磁头都要返回停靠区，不能停留在盘片的数据区里。正常关机时电源会给硬盘一个通知，即Standby Immediate，就是说主机要求将缓存数据写入硬盘，然后就准备关机断电了（休眠、待机也是如此）；意外断电则表示硬盘在未收到关机通知时就失电，此时磁头会自动复位，迅速离开盘片。</p>
+<p>这个参数的数据值累计了磁头返回的次数。但要注意这个参数对某些硬盘来说仅记录意外断电时磁头的返回动作；而某些硬盘记录了所有（包括休眠、待机，但不包括关机时）的磁头返回动作；还有些硬盘这一项没有记录。因此这一参数的数据值在某些硬盘上持续为0或稍大于0，但在另外的硬盘上则会大于通电周期计数（0C）或启停计数（04）的数据。在一些新型节能硬盘中，这一参数的数据量还与硬盘的节能设计相关，可能会远大于通电周期计数（0C）或启停计数（04）的数据，但又远小于磁头加载/卸载计数（C1）的数据量。</p>
+<p>对于固态硬盘来说，虽然没有磁头的加载/卸载操作，但这一项的数据量仍然代表了不安全关机，即发生意外断电的次数。</p>
+<h3 id="C1（193）磁头加载-卸载计数-Load-Unload-Cycle-Count"><a href="#C1（193）磁头加载-卸载计数-Load-Unload-Cycle-Count" class="headerlink" title="C1（193）磁头加载/卸载计数 Load/Unload Cycle Count"></a>C1（193）磁头加载/卸载计数 Load/Unload Cycle Count</h3><p>对于过去的硬盘来说，盘片停止旋转时磁头臂停靠于盘片中心轴处的停泊区，磁头与盘片接触，只有当盘片旋转到一定转速时，磁头才开始漂浮于盘片之上并开始向外侧移动至数据区。这使得磁头在硬盘启停时都与盘片发生摩擦，虽然盘片的停泊区不存储数据，但无疑启停一个循环，就使磁头经历两次磨损。所以对以前的硬盘来说，磁头起降（加载/卸载）次数是一项重要的寿命关键参数。</p>
+<p>而在现代硬盘中，平时磁头臂是停靠于盘片之外的一个专门设计的停靠架上，远离盘片。只有当盘片旋转达到额定转速后，磁头臂才开始向内（盘片轴心）转动使磁头移至盘片区域（加载），磁头臂向外转动返回至停靠架即卸载。这样就彻底杜绝了硬盘启停时磁头与盘片接触的现象，西部数据公司将其称为“斜坡加载技术”。由于磁头在加载/卸载过程中始终不与盘片接触，不存在磁头的磨损，使得这一参数的重要性已经大大下降。</p>
+<p>这个参数的数据值就是磁头执行加载/卸载操作的累计次数。从原理上讲，这个加载/卸载次数应当与硬盘的启停次数相当，但对于笔记本内置硬盘以及<a target="_blank" rel="noopener" href="https://www.smzdm.com/fenlei/taishiji/">台式机</a>新型节能硬盘来说，这一项的数据量会很大。这是因为磁头臂组件设计有一个固定的返回力矩，保证在意外断电时磁头能靠弹簧力自动离开盘片半径范围，迅速返回停靠架。所以要让硬盘运行时磁头保持在盘片的半径之内，就要使磁头臂驱动电机（寻道电机）持续通以电流。而让磁头臂在硬盘空闲几分钟后就立即执行卸载动作，返回到停靠架上，既有利于节能，又降低了硬盘受外力冲击导致磁头与盘片接触的概率。虽然再次加载会增加一点寻道时间，但毕竟弊大于利，所以在这类硬盘中磁头的加载/卸载次数会远远大于通电周期计数（0C）或启停计数（04）的数据量。不过这种加载/卸载方式已经没有了磁头与盘片的接触，所以设计值也已大大增加，通常笔记本内置硬盘的磁头加载/卸载额定值在30～60万次，而台式机新型节能硬盘的磁头加载/卸载设计值可达一百万次。</p>
+<h3 id="C2（194）温度-Temperature"><a href="#C2（194）温度-Temperature" class="headerlink" title="C2（194）温度 Temperature"></a>C2（194）温度 Temperature</h3><p>温度的数据值直接表示了硬盘内部的当前温度。硬盘运行时最好不要超过45℃，温度过高虽不会导致数据丢失，但引起的机械变形会导致寻道与读写错误率上升，降低硬盘性能。硬盘的最高允许运行温度可查看硬盘厂商给出的数据，一般不会超过60℃。</p>
+<p>不同厂家对温度参数的当前值、最差值和临界值有不同的表示方法：希捷公司某些硬盘的当前值就是实际温度（摄氏）值，最差值则是曾经达到过的最高温度，临界值不具意义；而西部数据公司一些硬盘的最差值是温度上升到某值后的时间函数，每次升温后的持续时间都将导致最差值逐渐下降，当前值则与当前温度成反比，即当前温度越高，当前值越低，随实际温度波动。</p>
+<h3 id="C3（195）硬件ECC校正-Hardware-ECC-Recovered"><a href="#C3（195）硬件ECC校正-Hardware-ECC-Recovered" class="headerlink" title="C3（195）硬件ECC校正 Hardware ECC Recovered"></a>C3（195）硬件ECC校正 Hardware ECC Recovered</h3><p>ECC（Error Correcting Code）的意思是“错误检查和纠正”，这个技术能够容许错误，并可以将错误更正，使读写操作得以持续进行，不致因错误而中断。这一项的数据值记录了磁头在盘片上读写时通过ECC技术校正错误的次数，不过许多硬盘有其制造商特定的数据结构，因此数据量的大小并不能直接说明问题。</p>
+<h3 id="C3（195）实时无法校正错误计数-On-the-fly-ECC-Uncorrectable-Error-Count"><a href="#C3（195）实时无法校正错误计数-On-the-fly-ECC-Uncorrectable-Error-Count" class="headerlink" title="C3（195）实时无法校正错误计数 On the fly ECC Uncorrectable Error Count"></a>C3（195）实时无法校正错误计数 On the fly ECC Uncorrectable Error Count</h3><p>这一参数记录了无法校正（UECC）的错误数量。</p>
+<h3 id="C3（195）编程错误块计数-Program-Failure-block-Count（Indilinx芯片）"><a href="#C3（195）编程错误块计数-Program-Failure-block-Count（Indilinx芯片）" class="headerlink" title="C3（195）编程错误块计数 Program Failure block Count（Indilinx芯片）"></a>C3（195）编程错误块计数 Program Failure block Count（Indilinx芯片）</h3><h3 id="C4（196）重映射事件计数-Reallocetion-Events-Count"><a href="#C4（196）重映射事件计数-Reallocetion-Events-Count" class="headerlink" title="C4（196）重映射事件计数 Reallocetion Events Count"></a>C4（196）重映射事件计数 Reallocetion Events Count</h3><p>数据应为0，当前值应远大于临界值。</p>
+<p>这个参数的数据值记录了将重映射扇区的数据转移到备用扇区的尝试次数，是重映射操作的累计值，成功的转移和不成功的转移都会被计数。因此这一参数与重映射扇区计数（05）相似，都是反映硬盘已经存在不良扇区。</p>
+<h3 id="C4（196）擦除错误块计数-Erase-Failure-block-Count（Indilinx芯片）"><a href="#C4（196）擦除错误块计数-Erase-Failure-block-Count（Indilinx芯片）" class="headerlink" title="C4（196）擦除错误块计数 Erase Failure block Count（Indilinx芯片）"></a>C4（196）擦除错误块计数 Erase Failure block Count（Indilinx芯片）</h3><p>在固态硬盘中，这一参数记录了被重映射的块编程失败的数量。</p>
+<h3 id="C5（197）当前待映射扇区计数-Current-Pending-Sector-Count"><a href="#C5（197）当前待映射扇区计数-Current-Pending-Sector-Count" class="headerlink" title="C5（197）当前待映射扇区计数 Current Pending Sector Count"></a>C5（197）当前待映射扇区计数 Current Pending Sector Count</h3><p>数据应为0，当前值应远大于临界值。</p>
+<p>这个参数的数据表示了“不稳定的”扇区数，即等待被映射的扇区（也称“被挂起的扇区”）数量。如果不稳定的扇区随后被读写成功，该扇区就不再列入等待范围，数据值就会下降。</p>
+<p>仅仅读取时出错的扇区并不会导致重映射，只是被列入“等待”，也许以后读取就没有问题，所以只有在写入失败时才会发生重映射。下次对该扇区写入时如果继续出错，就会产生一次重映射操作，此时重映射扇区计数（05）与重映射事件计数（C4）的数据值增加，此参数的数据值下降。</p>
+<h3 id="C5（197）读取错误块计数（不可修复错误）Read-Failure-block-Count（Indilinx芯片）"><a href="#C5（197）读取错误块计数（不可修复错误）Read-Failure-block-Count（Indilinx芯片）" class="headerlink" title="C5（197）读取错误块计数（不可修复错误）Read Failure block Count（Indilinx芯片）"></a>C5（197）读取错误块计数（不可修复错误）Read Failure block Count（Indilinx芯片）</h3><h3 id="C6（198）脱机无法校正的扇区计数-Offline-Uncorrectable-Sector-Count"><a href="#C6（198）脱机无法校正的扇区计数-Offline-Uncorrectable-Sector-Count" class="headerlink" title="C6（198）脱机无法校正的扇区计数 Offline Uncorrectable Sector Count"></a>C6（198）脱机无法校正的扇区计数 Offline Uncorrectable Sector Count</h3><p>数据应为0，当前值应远大于临界值。</p>
+<p>这个参数的数据累计了读写扇区时发生的无法校正的错误总数。数据值上升表明盘片表面介质或机械子系统出现问题，有些扇区肯定已经不能读取，如果有文件正在使用这些扇区，操作系统会返回读盘错误的信息。下一次写操作时会对该扇区执行重映射。</p>
+<h3 id="C6（198）总读取页数-Total-Count-of-Read-Sectors（Indilinx芯片）"><a href="#C6（198）总读取页数-Total-Count-of-Read-Sectors（Indilinx芯片）" class="headerlink" title="C6（198）总读取页数 Total Count of Read Sectors（Indilinx芯片）"></a>C6（198）总读取页数 Total Count of Read Sectors（Indilinx芯片）</h3><h3 id="C7（199）Ultra-ATA访问校验错误率-Ultra-ATA-CRC-Error-Rate"><a href="#C7（199）Ultra-ATA访问校验错误率-Ultra-ATA-CRC-Error-Rate" class="headerlink" title="C7（199）Ultra ATA访问校验错误率 Ultra ATA CRC Error Rate"></a>C7（199）Ultra ATA访问校验错误率 Ultra ATA CRC Error Rate</h3><p>这个参数的数据值累计了通过接口循环冗余校验（Interface Cyclic Redundancy Check，ICRC）发现的数据线传输错误的次数。如果数据值不为0且持续增长，表示硬盘控制器→数据线→硬盘接口出现错误，劣质的数据线、接口接触不良都可能导致此现象。由于这一项的数据值不会复零，所以某些新硬盘也会出现一定的数据量，只要更换数据线后数据值不再继续增长，即表示问题已得到解决。</p>
+<h3 id="C7（199）总写入页数-Total-Count-of-Write-Sectors（Indilinx芯片）"><a href="#C7（199）总写入页数-Total-Count-of-Write-Sectors（Indilinx芯片）" class="headerlink" title="C7（199）总写入页数 Total Count of Write Sectors（Indilinx芯片）"></a>C7（199）总写入页数 Total Count of Write Sectors（Indilinx芯片）</h3><h3 id="C8（200）写入错误率-Write-Error-Rate-多区域错误率-Multi-Zone-Error-Rate（西部数据）"><a href="#C8（200）写入错误率-Write-Error-Rate-多区域错误率-Multi-Zone-Error-Rate（西部数据）" class="headerlink" title="C8（200）写入错误率 Write Error Rate / 多区域错误率 Multi-Zone Error Rate（西部数据）"></a>C8（200）写入错误率 Write Error Rate / 多区域错误率 Multi-Zone Error Rate（西部数据）</h3><p>数据应为0，当前值应远大于临界值。</p>
+<p>这个参数的数据累计了向扇区写入数据时出现错误的总数。有的新硬盘也会有一定的数据量，若数据值持续快速升高（当前值偏低），表示盘片、磁头组件可能有问题。</p>
+<h3 id="C8（200）总读取指令数-Total-Count-of-Read-Command（Indilinx芯片）"><a href="#C8（200）总读取指令数-Total-Count-of-Read-Command（Indilinx芯片）" class="headerlink" title="C8（200）总读取指令数 Total Count of Read Command（Indilinx芯片）"></a>C8（200）总读取指令数 Total Count of Read Command（Indilinx芯片）</h3><h3 id="C9（201）脱道错误率-Off-Track-Error-Rate-逻辑读取错误率-Soft-Read-Error-Rate"><a href="#C9（201）脱道错误率-Off-Track-Error-Rate-逻辑读取错误率-Soft-Read-Error-Rate" class="headerlink" title="C9（201）脱道错误率 Off Track Error Rate / 逻辑读取错误率 Soft Read Error Rate"></a>C9（201）脱道错误率 Off Track Error Rate / 逻辑读取错误率 Soft Read Error Rate</h3><p>数据值累积了读取时脱轨的错误数量，如果数据值不为0，最好备份硬盘上的资料。</p>
+<h3 id="C9（201）TA-Counter-Detected（意义不明）"><a href="#C9（201）TA-Counter-Detected（意义不明）" class="headerlink" title="C9（201）TA Counter Detected（意义不明）"></a>C9（201）TA Counter Detected（意义不明）</h3><h3 id="C9（201）写入指令总数-Total-Count-of-Write-Command（Indilinx芯片）"><a href="#C9（201）写入指令总数-Total-Count-of-Write-Command（Indilinx芯片）" class="headerlink" title="C9（201）写入指令总数 Total Count of Write Command（Indilinx芯片）"></a>C9（201）写入指令总数 Total Count of Write Command（Indilinx芯片）</h3><h3 id="CA（202）数据地址标记错误-Data-Address-Mark-errors"><a href="#CA（202）数据地址标记错误-Data-Address-Mark-errors" class="headerlink" title="CA（202）数据地址标记错误 Data Address Mark errors"></a>CA（202）数据地址标记错误 Data Address Mark errors</h3><p>此项的数据值越低越好（或者由制造商定义）。</p>
+<h3 id="CA（202）TA-Counter-Increased（意义不明）"><a href="#CA（202）TA-Counter-Increased（意义不明）" class="headerlink" title="CA（202）TA Counter Increased（意义不明）"></a>CA（202）TA Counter Increased（意义不明）</h3><h3 id="CA（202）剩余寿命-Percentage-Of-The-Rated-Lifetime-Used（Micron-镁光芯片）"><a href="#CA（202）剩余寿命-Percentage-Of-The-Rated-Lifetime-Used（Micron-镁光芯片）" class="headerlink" title="CA（202）剩余寿命 Percentage Of The Rated Lifetime Used（Micron 镁光芯片）"></a>CA（202）剩余寿命 Percentage Of The Rated Lifetime Used（Micron 镁光芯片）</h3><p>当前值从100开始下降至0，表示所有块的擦写余量统计。计算方法是以MLC擦写次数除以50，SLC擦写次数除以1000，结果取整数，将其与100的差值作为当前值（MLC预计擦写次数为5000，SLC预计擦写次数为100000）。</p>
+<h3 id="CA（202）闪存总错误bit数-Total-Count-of-error-bits-from-flash（Indilinx芯片）"><a href="#CA（202）闪存总错误bit数-Total-Count-of-error-bits-from-flash（Indilinx芯片）" class="headerlink" title="CA（202）闪存总错误bit数 Total Count of error bits from flash（Indilinx芯片）"></a>CA（202）闪存总错误bit数 Total Count of error bits from flash（Indilinx芯片）</h3><h3 id="CB（203）软件ECC错误数-Run-Out-Cancel"><a href="#CB（203）软件ECC错误数-Run-Out-Cancel" class="headerlink" title="CB（203）软件ECC错误数 Run Out Cancel"></a>CB（203）软件ECC错误数 Run Out Cancel</h3><p>错误检查和纠正（ECC）出错的频度。</p>
+<h3 id="CB（203）校正bit错误的总读取页数-Total-Count-of-Read-Sectors-with-correct-bits-error（Indilinx芯片）"><a href="#CB（203）校正bit错误的总读取页数-Total-Count-of-Read-Sectors-with-correct-bits-error（Indilinx芯片）" class="headerlink" title="CB（203）校正bit错误的总读取页数 Total Count of Read Sectors with correct bits error（Indilinx芯片）"></a>CB（203）校正bit错误的总读取页数 Total Count of Read Sectors with correct bits error（Indilinx芯片）</h3><h3 id="CC（204）软件ECC校正-Soft-ECC-Correction"><a href="#CC（204）软件ECC校正-Soft-ECC-Correction" class="headerlink" title="CC（204）软件ECC校正 Soft ECC Correction"></a>CC（204）软件ECC校正 Soft ECC Correction</h3><p>通过软件ECC纠正错误的计数。</p>
+<h3 id="CC（204）坏块满标志-Bad-Block-Full-Flag（Indilinx芯片）"><a href="#CC（204）坏块满标志-Bad-Block-Full-Flag（Indilinx芯片）" class="headerlink" title="CC（204）坏块满标志 Bad Block Full Flag（Indilinx芯片）"></a>CC（204）坏块满标志 Bad Block Full Flag（Indilinx芯片）</h3><h3 id="CD（205）热骚动错误率-Thermal-Asperity-Rate-TAR"><a href="#CD（205）热骚动错误率-Thermal-Asperity-Rate-TAR" class="headerlink" title="CD（205）热骚动错误率 Thermal Asperity Rate (TAR)"></a>CD（205）热骚动错误率 Thermal Asperity Rate (TAR)</h3><p>由超温导致的错误。数据值应为0。</p>
+<h3 id="CD（205）最大可编程-擦除次数-Max-P-E-Count（Indilinx芯片）"><a href="#CD（205）最大可编程-擦除次数-Max-P-E-Count（Indilinx芯片）" class="headerlink" title="CD（205）最大可编程/擦除次数 Max P/E Count（Indilinx芯片）"></a>CD（205）最大可编程/擦除次数 Max P/E Count（Indilinx芯片）</h3><h3 id="CE（206）磁头飞行高度-Flying-Height"><a href="#CE（206）磁头飞行高度-Flying-Height" class="headerlink" title="CE（206）磁头飞行高度 Flying Height"></a>CE（206）磁头飞行高度 Flying Height</h3><p>磁头距离盘片表面的垂直距离。高度过低则增加了磁头与盘片接触导致损坏的可能性；高度偏高则增大了读写错误率。不过准确地说，硬盘中并没有任何装置可以直接测出磁头的飞行高度，制造商也只是根据磁头读取的信号强度来推算磁头飞行高度。</p>
+<h3 id="CE（206）底层数据写入出错率-Write-Error-Rate"><a href="#CE（206）底层数据写入出错率-Write-Error-Rate" class="headerlink" title="CE（206）底层数据写入出错率 Write Error Rate"></a>CE（206）底层数据写入出错率 Write Error Rate</h3><h3 id="CE（206）最小擦写次数-Erase-Count-Min（Indilinx芯片）"><a href="#CE（206）最小擦写次数-Erase-Count-Min（Indilinx芯片）" class="headerlink" title="CE（206）最小擦写次数 Erase Count Min（Indilinx芯片）"></a>CE（206）最小擦写次数 Erase Count Min（Indilinx芯片）</h3><h3 id="CF（207）主轴过电流-Spin-High-Current"><a href="#CF（207）主轴过电流-Spin-High-Current" class="headerlink" title="CF（207）主轴过电流 Spin High Current"></a>CF（207）主轴过电流 Spin High Current</h3><p>数据值记录了主轴电机运行时出现浪涌电流的次数，数据量的增加意味着轴承或电机可能有问题。</p>
+<h3 id="CF（207）最大擦写次数-Erase-Count-Max（Indilinx芯片）"><a href="#CF（207）最大擦写次数-Erase-Count-Max（Indilinx芯片）" class="headerlink" title="CF（207）最大擦写次数 Erase Count Max（Indilinx芯片）"></a>CF（207）最大擦写次数 Erase Count Max（Indilinx芯片）</h3><h3 id="D0（208）主轴电机重启次数-Spin-Buzz"><a href="#D0（208）主轴电机重启次数-Spin-Buzz" class="headerlink" title="D0（208）主轴电机重启次数 Spin Buzz"></a>D0（208）主轴电机重启次数 Spin Buzz</h3><p>数据值记录了主轴电机反复尝试启动的次数，这通常是由于电源供电不足引起的。</p>
+<h3 id="D0（208）平均擦写次数Erase-Count-Average（Indilinx芯片）"><a href="#D0（208）平均擦写次数Erase-Count-Average（Indilinx芯片）" class="headerlink" title="D0（208）平均擦写次数Erase Count Average（Indilinx芯片）"></a>D0（208）平均擦写次数Erase Count Average（Indilinx芯片）</h3><h3 id="D1（209）脱机寻道性能-Offline-Seek-Performance"><a href="#D1（209）脱机寻道性能-Offline-Seek-Performance" class="headerlink" title="D1（209）脱机寻道性能 Offline Seek Performance"></a>D1（209）脱机寻道性能 Offline Seek Performance</h3><p>这一项表示驱动器在脱机状态下的寻道性能，通常用于工厂内部测试。</p>
+<h3 id="D1（209）剩余寿命百分比-Remaining-Life-（Indilinx芯片）"><a href="#D1（209）剩余寿命百分比-Remaining-Life-（Indilinx芯片）" class="headerlink" title="D1（209）剩余寿命百分比 Remaining Life %（Indilinx芯片）"></a>D1（209）剩余寿命百分比 Remaining Life %（Indilinx芯片）</h3><h3 id="D2（210）斜坡加载值-Ramp-Load-Value"><a href="#D2（210）斜坡加载值-Ramp-Load-Value" class="headerlink" title="D2（210）斜坡加载值 Ramp Load Value"></a>D2（210）斜坡加载值 Ramp Load Value</h3><p>这一项仅见于几年前迈拓制造的部分硬盘。通常数据值为0，意义不明。</p>
+<h3 id="D2（210）坏块管理错误日志-BBM-Error-Log（Indilinx芯片）"><a href="#D2（210）坏块管理错误日志-BBM-Error-Log（Indilinx芯片）" class="headerlink" title="D2（210）坏块管理错误日志 BBM Error Log（Indilinx芯片）"></a>D2（210）坏块管理错误日志 BBM Error Log（Indilinx芯片）</h3><h3 id="D3（211）写入时振动-Vibration-During-Write"><a href="#D3（211）写入时振动-Vibration-During-Write" class="headerlink" title="D3（211）写入时振动 Vibration During Write"></a>D3（211）写入时振动 Vibration During Write</h3><p>写入数据时受到受到外部振动的记录。</p>
+<h3 id="D3（211）SATA主机接口CRC写入错误计数-SATA-Error-Count-CRC-Write-（Indilinx芯片）"><a href="#D3（211）SATA主机接口CRC写入错误计数-SATA-Error-Count-CRC-Write-（Indilinx芯片）" class="headerlink" title="D3（211）SATA主机接口CRC写入错误计数 SATA Error Count CRC (Write)（Indilinx芯片）"></a>D3（211）SATA主机接口CRC写入错误计数 SATA Error Count CRC (Write)（Indilinx芯片）</h3><h3 id="D4（212）写入时冲击-Shock-During-Write"><a href="#D4（212）写入时冲击-Shock-During-Write" class="headerlink" title="D4（212）写入时冲击 Shock During Write"></a>D4（212）写入时冲击 Shock During Write</h3><p>写入数据时受到受到外部机械冲击的记录。</p>
+<h3 id="D4（212）SATA主机接口读取错误计数-SATA-Error-Count-Count-CRC-Read-（Indilinx芯片）"><a href="#D4（212）SATA主机接口读取错误计数-SATA-Error-Count-Count-CRC-Read-（Indilinx芯片）" class="headerlink" title="D4（212）SATA主机接口读取错误计数 SATA Error Count Count CRC (Read)（Indilinx芯片）"></a>D4（212）SATA主机接口读取错误计数 SATA Error Count Count CRC (Read)（Indilinx芯片）</h3><h3 id="DC（220）盘片偏移量-Disk-Shift"><a href="#DC（220）盘片偏移量-Disk-Shift" class="headerlink" title="DC（220）盘片偏移量 Disk Shift"></a>DC（220）盘片偏移量 Disk Shift</h3><p>硬盘中的盘片相对主轴的偏移量（通常是受外力冲击或温度变化所致），单位未知，数据值越小越好。</p>
+<h3 id="DD（221）冲击错误率-G-sense-error-rate"><a href="#DD（221）冲击错误率-G-sense-error-rate" class="headerlink" title="DD（221）冲击错误率 G-sense error rate"></a>DD（221）冲击错误率 G-sense error rate</h3><p>与（BF）相同，数据值记录了硬盘受到外部机械冲击或振动导致出错的频度。</p>
+<h3 id="DE（222）磁头寻道时间累计-Loaded-Hours"><a href="#DE（222）磁头寻道时间累计-Loaded-Hours" class="headerlink" title="DE（222）磁头寻道时间累计 Loaded Hours"></a>DE（222）磁头寻道时间累计 Loaded Hours</h3><p>磁头臂组件运行的小时数，即寻道电机运行时间累计。</p>
+<h3 id="DF（223）磁头加载-卸载重试计数-Load-Unload-Retry-Count"><a href="#DF（223）磁头加载-卸载重试计数-Load-Unload-Retry-Count" class="headerlink" title="DF（223）磁头加载/卸载重试计数 Load/Unload Retry Count"></a>DF（223）磁头加载/卸载重试计数 Load/Unload Retry Count</h3><p>这一项与（C1）项类似，数据值累积了磁头尝试重新加载/卸载的次数。</p>
+<h3 id="E0（224）磁头阻力-Load-Friction"><a href="#E0（224）磁头阻力-Load-Friction" class="headerlink" title="E0（224）磁头阻力 Load Friction"></a>E0（224）磁头阻力 Load Friction</h3><p>磁头工作时受到的机械部件的阻力。</p>
+<h3 id="E1（225）主机写入数据量-Host-Writes"><a href="#E1（225）主机写入数据量-Host-Writes" class="headerlink" title="E1（225）主机写入数据量 Host Writes"></a>E1（225）主机写入数据量 Host Writes</h3><p>由于闪存的擦写次数是有限的，所以这项是固态硬盘特有的统计。Intel的SSD是每当向硬盘写入了65536个扇区，这一项的数据就＋1。如果用HDTune等软件查看SMART时可以自己计算，Intel SSD Toolbox已经为你算好了，直接就显示了曾向SSD中写入过的数据量。</p>
+<h3 id="E2（226）磁头加载时间累计-Load-‘In’-time"><a href="#E2（226）磁头加载时间累计-Load-‘In’-time" class="headerlink" title="E2（226）磁头加载时间累计 Load ‘In’-time"></a>E2（226）磁头加载时间累计 Load ‘In’-time</h3><p>磁头组件运行时间的累积数，即磁头臂不在停靠区的时间，与（DE）项相似。</p>
+<h3 id="E3（227）扭矩放大计数-Torque-Amplification-Count"><a href="#E3（227）扭矩放大计数-Torque-Amplification-Count" class="headerlink" title="E3（227）扭矩放大计数 Torque Amplification Count"></a>E3（227）扭矩放大计数 Torque Amplification Count</h3><p>主轴电机试图提高扭矩来补偿盘片转速变化的次数。当主轴轴承存在问题时，主轴电机会尝试增加驱动力使盘片稳定旋转。这个参数的当前值下降，说明硬盘的机械子系统出现了严重的问题。</p>
+<h3 id="E4（228）断电返回计数-Power-Off-Retract-Cycle"><a href="#E4（228）断电返回计数-Power-Off-Retract-Cycle" class="headerlink" title="E4（228）断电返回计数 Power-Off Retract Cycle"></a>E4（228）断电返回计数 Power-Off Retract Cycle</h3><p>数据值累计了磁头因设备意外断电而自动返回的次数，与（C0）项相似。</p>
+<h3 id="E6（230）GMR磁头振幅-GMR-Head-Amplitude"><a href="#E6（230）GMR磁头振幅-GMR-Head-Amplitude" class="headerlink" title="E6（230）GMR磁头振幅 GMR Head Amplitude"></a>E6（230）GMR磁头振幅 GMR Head Amplitude</h3><p>磁头“抖动”，即正向/反向往复运动的距离。</p>
+<h3 id="E7（231）温度-Temperature"><a href="#E7（231）温度-Temperature" class="headerlink" title="E7（231）温度 Temperature"></a>E7（231）温度 Temperature</h3><p>温度的数据值直接表示了硬盘内部的当前温度，与（C2）项相同。</p>
+<h3 id="E7（231）剩余寿命-SSD-Life-Left"><a href="#E7（231）剩余寿命-SSD-Life-Left" class="headerlink" title="E7（231）剩余寿命 SSD Life Left"></a>E7（231）剩余寿命 SSD Life Left</h3><p>剩余寿命是基于P/E周期与可用的备用块作出的预测。新硬盘为100；10表示PE周期已到设计值，但尚有足够的保留块；0表示保留块不足，硬盘将处于只读方式以便备份数据。</p>
+<h3 id="E8（232）寿命余量-Endurance-Remaining"><a href="#E8（232）寿命余量-Endurance-Remaining" class="headerlink" title="E8（232）寿命余量 Endurance Remaining"></a>E8（232）寿命余量 Endurance Remaining</h3><p>寿命余量是指硬盘已擦写次数与设计最大可擦写次数的百分比，与（CA）项相似。</p>
+<h3 id="E8（232）预留空间剩余量-Available-Reserved-Space（Intel芯片）"><a href="#E8（232）预留空间剩余量-Available-Reserved-Space（Intel芯片）" class="headerlink" title="E8（232）预留空间剩余量 Available Reserved Space（Intel芯片）"></a>E8（232）预留空间剩余量 Available Reserved Space（Intel芯片）</h3><p>对于Intel的SSD来说，前边05项提到会保留一些容量来准备替换损坏的存储单元，所以可用的预留空间数非常重要。当保留的空间用尽，再出现损坏的单元就将出现数据丢失，这个SSD的寿命就结束了。所以仅看05项意义并不大，这一项才最重要。这项参数可以看当前值，新的SSD里所有的预留空间都在，所以是100。随着预留空间的消耗，当前值将不断下降，减小到接近临界值（一般是10）时，就说明只剩下10%的预留空间了，SSD的寿命将要结束。这个与（B4）项相似。</p>
+<h3 id="E9（233）通电时间累计-Power-On-Hours"><a href="#E9（233）通电时间累计-Power-On-Hours" class="headerlink" title="E9（233）通电时间累计 Power-On Hours"></a>E9（233）通电时间累计 Power-On Hours</h3><p>对于普通硬盘来说，这一项与（09）相同。</p>
+<h3 id="E9（233）介质磨耗指数-Media-Wareout-Indicator（Intel芯片）"><a href="#E9（233）介质磨耗指数-Media-Wareout-Indicator（Intel芯片）" class="headerlink" title="E9（233）介质磨耗指数 Media Wareout Indicator（Intel芯片）"></a>E9（233）介质磨耗指数 Media Wareout Indicator（Intel芯片）</h3><p>由于固态硬盘的擦写次数是有限的，当到达一定次数的时候，就会出现大量的单元同时损坏，这时候预留空间也顶不住了，所以这项参数实际上表示的是硬盘设计寿命。Intel的SSD要看当前值，随着NAND的平均擦写次数从0增长到最大的设计值，这一参数的当前值从开始的100逐渐下降至1为止。这表示SSD的设计寿命已经终结。当然到达设计寿命也不一定意味着SSD就立即报废，这与闪存芯片的品质有着很大的关系。</p>
+<p>注：Total Erase Count全擦写计数是指固态硬盘中所有块的擦写次数的总和，不同规格的NAND芯片以及不同容量的SSD，其最大全擦写次数均有所不同。</p>
+<h3 id="F0（240）磁头飞行时间-Head-Flying-Hours-传输错误率-Transfer-Error-Rate（富士通）"><a href="#F0（240）磁头飞行时间-Head-Flying-Hours-传输错误率-Transfer-Error-Rate（富士通）" class="headerlink" title="F0（240）磁头飞行时间 Head Flying Hours / 传输错误率 Transfer Error Rate（富士通）"></a>F0（240）磁头飞行时间 Head Flying Hours / 传输错误率 Transfer Error Rate（富士通）</h3><p>磁头位于工作位置的时间。</p>
+<p>富士通硬盘表示在数据传输时连接被重置的次数。</p>
+<h3 id="F1（241）LBA写入总数-Total-LBAs-Written"><a href="#F1（241）LBA写入总数-Total-LBAs-Written" class="headerlink" title="F1（241）LBA写入总数 Total LBAs Written"></a>F1（241）LBA写入总数 Total LBAs Written</h3><p>LBA写入数的累计。</p>
+<h3 id="F1（241）写入剩余寿命-Lifetime-Writes-from-Host"><a href="#F1（241）写入剩余寿命-Lifetime-Writes-from-Host" class="headerlink" title="F1（241）写入剩余寿命 Lifetime Writes from Host"></a>F1（241）写入剩余寿命 Lifetime Writes from Host</h3><p>自硬盘启用后主机向硬盘写入的数据总量，以4个字节表示，每写入64GB字节作为一个单位。</p>
+<h3 id="F2（242）LBA读取总数-Total-LBAs-Read"><a href="#F2（242）LBA读取总数-Total-LBAs-Read" class="headerlink" title="F2（242）LBA读取总数 Total LBAs Read"></a>F2（242）LBA读取总数 Total LBAs Read</h3><p>LBA读取数的累计。某些SMART读取工具会显示负的数据值，是因为采用了48位LBA，而不是32位LBA。</p>
+<h3 id="F2（242）读取剩余寿命-Lifetime-Reads-from-Host"><a href="#F2（242）读取剩余寿命-Lifetime-Reads-from-Host" class="headerlink" title="F2（242）读取剩余寿命 Lifetime Reads from Host"></a>F2（242）读取剩余寿命 Lifetime Reads from Host</h3><p>自硬盘启用后主机从硬盘读取的数据总量，以4个字节表示，每读取64GB字节作为一个单位。</p>
+<h3 id="FA（250）读取错误重试率-Read-Error-Retry-Rate"><a href="#FA（250）读取错误重试率-Read-Error-Retry-Rate" class="headerlink" title="FA（250）读取错误重试率 Read Error Retry Rate"></a>FA（250）读取错误重试率 Read Error Retry Rate</h3><p>从磁盘上读取时出错的次数。</p>
+<h3 id="FE（254）自由坠落保护-Free-Fall-Protection"><a href="#FE（254）自由坠落保护-Free-Fall-Protection" class="headerlink" title="FE（254）自由坠落保护 Free Fall Protection"></a>FE（254）自由坠落保护 Free Fall Protection</h3><p>现在有些笔记本硬盘具有自由坠落保护功能，当硬盘内置的加速度探测装置检测到硬盘位移时，会立即停止读写操作，将磁头臂复位。这个措施防止了磁头与盘片之间发生摩擦撞击，提高了硬盘的抗震性能。这个参数的数据里记录了这一保护装置动作的次数。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2414,7 +2655,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/04/MySQL%20%E8%BF%90%E7%BB%B4%E7%AF%87/">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/04/mysql-maintain/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
@@ -2432,7 +2673,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/04/MySQL%20%E8%BF%90%E7%BB%B4%E7%AF%87/" class="post-title-link" itemprop="url">MySQL 运维篇</a>
+          <a href="/2024/10/04/mysql-maintain/" class="post-title-link" itemprop="url">MySQL 运维篇</a>
         </h2>
 
         <div class="post-meta-container">
@@ -3571,7 +3812,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/02/MySQL%20%E8%BF%9B%E9%98%B6%E7%AF%87/">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/02/mysql-theory/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
@@ -3589,7 +3830,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/10/02/MySQL%20%E8%BF%9B%E9%98%B6%E7%AF%87/" class="post-title-link" itemprop="url">MySQL 进阶篇</a>
+          <a href="/2024/10/02/mysql-theory/" class="post-title-link" itemprop="url">MySQL 进阶篇</a>
         </h2>
 
         <div class="post-meta-container">
@@ -3607,7 +3848,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-05 11:28:16" itemprop="dateModified" datetime="2025-05-05T11:28:16+08:00">2025-05-05</time>
+      <time title="修改时间：2025-05-18 23:23:44" itemprop="dateModified" datetime="2025-05-18T23:23:44+08:00">2025-05-18</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -3629,40 +3870,43 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><h4 id="B-Tree"><a href="#B-Tree" class="headerlink" title="B-Tree"></a>B-Tree</h4><p>度数：一个节点上面最大的指针数</p>
-<p>度数为5，最多5个指针，4个key</p>
-<p>当一个节点上面key数超过4，中间节点向上分裂，其余两段分成两个节点，连到上面</p>
+          <h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><h4 id="B-Tree"><a href="#B-Tree" class="headerlink" title="B-Tree"></a>B-Tree</h4><p>度数：一个节点上面最大的指针数。度数为5，最多5个指针，4个key</p>
+<p>当一个节点上面 key 数目超过 4，中间节点向上分裂，其余两段分成两个节点，连到上面。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185901845-1728392950452-1.png" alt="image-20241008185901845"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185828031-1728392950452-2.png" alt="image-20241008185828031"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185947095-1728392950452-4.png" alt="image-20241008185947095"></p>
 <h4 id="B-Tree-1"><a href="#B-Tree-1" class="headerlink" title="B+Tree"></a>B+Tree</h4><p>只有叶子节点存储数据。非叶子节点只有索引的作用</p>
-<p>中间节点向上分裂，并且中间节点保留在叶子节点，其余两段分成两个节点连到上面，节点与节点之间通过链表进行连接</p>
+<p>中间节点向上分裂，并且中间节点保留在叶子节点，其余两段分成两个节点连到上面，节点与节点之间通过链表进行连接。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191613613-1728392950452-3.png" alt="image-20241008191613613"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191730054-1728392950453-5.png" alt="image-20241008191730054"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191755751-1728392950453-7.png" alt="image-20241008191755751"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191802276-1728392950454-9.png" alt="image-20241008191802276"></p>
 <p>两个索引中间的指针指向的节点位于这两个索引之间</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008192952009-1728392950453-6.png" alt="image-20241008192952009"></p>
-<p>MySQL优化B+Tree<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008193116742-1728392950453-8.png" alt="image-20241008193116742"></p>
+<p>MySQL优化的B+Tree：双向链表</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008193116742-1728392950453-8.png" alt="image-20241008193116742"></p>
 <p>段-区-页-行</p>
-<h4 id="B-Tree-vs-B-Tree"><a href="#B-Tree-vs-B-Tree" class="headerlink" title="B+Tree vs. B-Tree"></a>B+Tree vs. B-Tree</h4><ul>
-<li>都比二叉树层级更少，搜索效率高</li>
-<li>B+树因为只有叶子节点能够存储数据，所以非叶子节点能够储存的key和指针数量更多，key和指针数量增多，指向的节点数目也会更多，相同数据量的情况下，需要的层数就比较少，节点数目少了，磁盘IO减少</li>
-<li>B树 因为一个节点中存储的指针数目少，所以一个节点只能指向很少的一个节点，相同数据量下需要更多的节点储存指针，层级较深</li>
-<li>B+树搜索效率很稳定（数据全在叶子节点上）相比Hash索引，支持了范围匹配和排序操作</li>
-</ul>
-<h4 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h4><p><strong>聚集索引</strong>（key是主键or唯一键or自动隐式生成的rowid）通常键的值以升序排列 底部存储一整行的数据（对应的键值）</p>
-<p><strong>二级索引</strong> 通常键的值以字典序排列 底部存储行号（聚集索引的键值 也就是主键值）</p>
-<p>select * from tb_user where name = ‘Arm’;</p>
-<p>查询时先根据<strong>二级索引</strong>找到对应的行的索引key（主键/唯一键/rowid），然后再根据聚集索引拿到行数据（回<strong>表查询</strong>）</p>
-<p>主键查询不需要回表.</p>
-<p>InnoDB主键索引的B+树高度：</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241011162420695.png" alt="image-20241011162420695"></p>
-<p>根据一页数据的大小能够得出一页中能储存几个指针，树高度为2，指向1171个节点，1171个节点一共有1171*16行数据</p>
+<h4 id="B-Tree-vs-B-Tree"><a href="#B-Tree-vs-B-Tree" class="headerlink" title="B+Tree vs. B-Tree"></a>B+Tree vs. B-Tree</h4><p>都比二叉树层级更少，搜索效率高。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241011162503825.png" alt="image-20241011162503825"></p>
-<p>create index on</p>
-<p>show index from</p>
-<p>drop index on</p>
+<p>根据一页数据的大小能够得出一页中能储存几个指针，树高度为2，指向1171个节点，1171个节点一共有1171*16行数据。</p>
+<ul>
+<li>范围查询：  B+树在非叶子节点只存储键值信息，而不存储数据记录的具体位置，再加上底部的叶子节点之间还有双向链表连接，这使得B+树在进行范围查询时更加高效。B树还得进行回溯。</li>
+<li>B+树的内部节点只存储键值信息，而不存储具体数据，这意味着在同样的内存空间下，B+树的内部节点可以容纳更多的key和指针，指向的节点多了，<strong>相同数据量，树高更低，查找快</strong>。<ul>
+<li>m 阶 B+树，意思是每个非叶子节点最多指向m个子节点，上面只是为了举例说明使用了5阶B树，但是实际上数据库使用的是超高阶，三层就能存储2000万条数据。</li>
+</ul>
+</li>
+<li>B+ 树<strong>搜索效率很稳定</strong>（数据全在叶子节点上）相比 Hash 索引，支持了<strong>范围匹配</strong>和<strong>排序</strong>操作</li>
+</ul>
+<h4 id="聚簇索引、二级索引"><a href="#聚簇索引、二级索引" class="headerlink" title="聚簇索引、二级索引"></a>聚簇索引、二级索引</h4><p><strong>聚集索引</strong>（key是主键/唯一键/自动隐式生成的rowid）通常键的值升序排列 底部存储一整行的数据（对应的键值）如下图所示。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/79bf1e4b38ccba1c02c487f2989af6bd.png" alt="在这里插入图片描述"></p>
+<p><strong>二级索引</strong> 通常键的值以字典序排列 叶子节点是二级索引的key，下面不挂数据，只挂主键的值（聚集索引的键值 也就是主键值）</p>
+<p><code>select * from tb_user where name = &#39;Arm&#39;;</code></p>
+<p>查询时先根据<strong>二级索引</strong>找到主键（主键/唯一键/rowid），然后拿着key到聚集索引拿到具体行数据（回<strong>表查询</strong>）主键查询不需要回表。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/201308807GwQJsAM8f.png" alt="img"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> index <span class="keyword">on</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">show</span> index <span class="keyword">from</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">drop</span> index <span class="keyword">on</span></span><br></pre></td></tr></table></figure>
+
+
+
 <h3 id="SQL优化-性能指标"><a href="#SQL优化-性能指标" class="headerlink" title="SQL优化 性能指标"></a>SQL优化 性能指标</h3><h4 id="慢查询日志"><a href="#慢查询日志" class="headerlink" title="慢查询日志"></a>慢查询日志</h4><p>可以设置 <code>long_query_time</code> 参数，定义什么算作“慢查询”。</p>
 <p>输出到文件或者表中</p>
 <h4 id="profiles"><a href="#profiles" class="headerlink" title="profiles"></a>profiles</h4><p>通过启用 <code>PROFILE</code>，可以获取查询的执行时间和资源消耗，包括 CPU 使用、锁等待、IO 等信息。</p>
@@ -3671,21 +3915,43 @@
 <li>ref：非唯一索引查询</li>
 <li>index，all 性能差</li>
 </ul>
-<h3 id="索引使用规则"><a href="#索引使用规则" class="headerlink" title="索引使用规则"></a>索引使用规则</h3><h4 id="索引失效情况"><a href="#索引失效情况" class="headerlink" title="索引失效情况"></a>索引失效情况</h4><ol>
-<li><strong>联合索引</strong>：跳过某个，后边的全部失效，使用&gt;=否则后边的失效</li>
+<h3 id="索引使用规则"><a href="#索引使用规则" class="headerlink" title="索引使用规则"></a>索引使用规则</h3><h4 id="最左前缀匹配（联合索引）"><a href="#最左前缀匹配（联合索引）" class="headerlink" title="最左前缀匹配（联合索引）"></a>最左前缀匹配（联合索引）</h4><p>最左原则指的就是如果你的 SQL 语句中<strong>用到了联合索引中的最左边的索引</strong>，那么这条 SQL 语句就可以利用这个联合索引去进行匹配，值得注意的是：1. 当遇到范围查询(&gt;、&lt;、between、like)就会停止匹配。2. 最左索引的条件不一定是最左边的那个，但必须要有这个条件，并且存在等值查询。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER TABLE</span> mytable <span class="keyword">ADD</span> INDEX name_city_age (username,city,age);</span><br></pre></td></tr></table></figure>
+
+<p>在构建联合索引时，是<strong>按字段的顺序进行排序和存储的</strong>，其实是相当于分别建立了下面三组组合索引：<code>[ username, city, age ] [ username, city ] [ username ]</code> </p>
+<p>联合索引 <code>(a, b, c)</code> 的底层 B+ 树是按照 <code>a -&gt; b -&gt; c</code> 这样的字典序构建的：</p>
+<ul>
+<li>没有 <code>a</code>，数据库无法定位到哪一部分子树中可能存在 <code>b</code> 或 <code>c</code> 的值。</li>
+<li>就像字典中查“banana”时，你必须先知道它以“b”开头，不能跳过前缀直接查“anana”。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/725429-20200324102532494-195018706.png" alt="img"></p>
+<p>如图所示他们是按照a来进行排序，在a相等的情况下，才按b来排序。</p>
+<p>因此，我们可以看到a是有序的1，1，2，2，3，3。而b是一种全局无序，局部相对有序状态!</p>
+<h4 id="覆盖查询（联合索引）"><a href="#覆盖查询（联合索引）" class="headerlink" title="覆盖查询（联合索引）"></a>覆盖查询（联合索引）</h4><p><strong>回表</strong>是指根据<strong>非主键索引条件</strong>，先查出对应的主键值，拿着主键值去聚集索引树中检索数据，如果联合索引中，索引成功最左匹配，但是你查的内容不止索引里的内容，那就只能跟着底下挂着的主键去聚簇索引那里查询，这个就叫回表查询。</p>
+<p>覆盖查询，联合索引查到了对应的键，也能查到对应的主键值，只查这几列不需要回表，如果多查其他的列就需要到聚集索引处回表查询，性能较慢。</p>
+<p>对联合索引(col1,col2,col3)，如果有如下的sql: <code>select col1,col2,col3 from test where col1=1 and col2=2</code>。那么MySQL可以直接通过遍历索引取得数据，而无需回表，这减少了很多的随机io操作。减少io操作，特别的随机io其实是dba主要的优化策略。所以，在真正的实际应用中，覆盖索引是主要的提升性能的优化手段之一。</p>
+<img src="https://i-blog.csdnimg.cn/blog_migrate/492e0e5857459a335db7c7aea5377791.png" alt="在这里插入图片描述" style="zoom: 67%;" />
+
+<ul>
+<li><p>效率高。<br>索引列越多，通过索引筛选出的数据越少。</p>
+<p>有1000W条数据的表，有如下sql:select from table where col1=1 and col2=2 and col3=3,假设假设每个条件可以筛选出10%的数据，如果只有单值索引，那么通过该索引能筛选出<code>1000W*10%=100w</code>条数据，然后再回表从100w条数据中找到符合col2=2 and col3= 3的数据，然后再排序，再分页；</p>
+<p>如果是联合索引，通过索引筛选出<code>1000w10% *10% *10%=1w</code>，效率提升可想而知！</p>
+</li>
+</ul>
+<h4 id="单列索引还是联合索引？"><a href="#单列索引还是联合索引？" class="headerlink" title="单列索引还是联合索引？"></a>单列索引还是联合索引？</h4><p>or 其中一个没有索引，肯定全都不走索引。</p>
+<p>都有索引，但是全是单列查询，则只会选择其中一个效率最高进行查询</p>
+<p>所以多条件的查询用联合索引，减少回表。</p>
+<h4 id="前缀索引"><a href="#前缀索引" class="headerlink" title="前缀索引"></a>前缀索引</h4><p>搜索文本时对一些长字符数据没有必要把他们全部都创建索引，而只是截取一部分</p>
+<p>算出他们的选择性数据，方法：对email截取不同的长度，去重count再除以总数count</p>
+<p>前缀索引，查询字符串先截取前缀，根据前缀进行辅助查询，查到主键id就回表查询拿到整行数据，拿到整行数据以后再进行核实，看字段后半部分是否匹配。一定需要回表查询。</p>
+<h4 id="索引失效"><a href="#索引失效" class="headerlink" title="索引失效"></a>索引失效</h4><ol>
+<li><strong>联合索引（最左匹配）</strong>：跳过某个，后边的全部失效，出现范围匹配，后边的失效</li>
 <li><strong>函数</strong>：不要对索引的字段用字符串，否则失效</li>
 <li><strong>字符串要括起来</strong>：否则失效</li>
 <li><strong>模糊</strong>：前面不能模糊，否则失效</li>
 <li><strong>OR</strong>：其中一个没索引，剩下的都失效</li>
 <li><strong>数据库自行判断：</strong>如果走全表查询比走索引还快，优化器会直接走全表索引</li>
 </ol>
-<h4 id="覆盖查询（联合索引）"><a href="#覆盖查询（联合索引）" class="headerlink" title="覆盖查询（联合索引）"></a>覆盖查询（联合索引）</h4><p>覆盖查询，联合索引查到了对应的键，也能查到对应的主键值，只查这几列不需要回表，如果多查其他的列就需要到聚集索引处回表查询，性能较慢</p>
-<h4 id="前缀索引"><a href="#前缀索引" class="headerlink" title="前缀索引"></a>前缀索引</h4><p>搜索文本时对一些长字符数据没有必要把他们全部都创建索引，而只是截取一部分</p>
-<p>算出他们的选择性数据，方法：对email截取不同的长度，去重count再除以总数count</p>
-<p>前缀索引，查询字符串先截取前缀，根据前缀进行辅助查询，查到主键id就回表查询拿到整行数据，拿到整行数据以后再进行核实，看字段后半部分是否匹配。一定需要回表查询</p>
-<h4 id="单列or联合索引"><a href="#单列or联合索引" class="headerlink" title="单列or联合索引"></a>单列or联合索引</h4><p>or 其中一个没有索引，肯定全都不走索引</p>
-<p>都有索引，但是全是单列查询，则只会选择其中一个效率最高进行查询</p>
-<p>所以多条件的查询用联合索引，减少回表</p>
 <h4 id="原则"><a href="#原则" class="headerlink" title="原则"></a>原则</h4><ul>
 <li>什么样的表要建立索引：数据量超过百万，且查询很频繁</li>
 <li>哪些字段建立索引：where group by order by  并且尽量是唯一的，区分度要高</li>
@@ -3701,9 +3967,10 @@
 </li>
 <li>load</li>
 </ol>
-<h3 id="SQL-优化-主键"><a href="#SQL-优化-主键" class="headerlink" title="SQL 优化 - 主键"></a>SQL 优化 - 主键</h3><ol>
+<h3 id="SQL-优化-主键"><a href="#SQL-优化-主键" class="headerlink" title="SQL 优化 - 主键"></a>SQL 优化 - 主键</h3><p><strong>只要索引是相邻的，那么对应的数据一定也是相邻地存放在磁盘上的</strong> 若表的主键不是顺序的id，而是无规律数据，比如字符串，InnoDB无法简单的把一行记录插入到索引的最后，而是需要找一个合适的位置（已有数据的中间位置），甚至产生大量的页分裂并且移动大量数据，在寻找合适位置进行插入时，目标页可能不在内存中，这就导致了大量的随机IO操作，影响插入效率。除此之外，大量的页分裂会导致大量的内存碎片。</p>
+<ol>
 <li>主键顺序插入</li>
-<li>主键自增</li>
+<li>主键自增 </li>
 <li>主键长度尽量小一些，不要用uuid或者身份证号</li>
 <li>避免在业务操作时修改主键</li>
 </ol>
@@ -5360,410 +5627,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/09/30/MySQL%20%E5%9F%BA%E7%A1%80%E7%AF%87/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/09/30/MySQL%20%E5%9F%BA%E7%A1%80%E7%AF%87/" class="post-title-link" itemprop="url">MySQL 基础</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-09-30 00:00:00" itemprop="dateCreated datePublished" datetime="2024-09-30T00:00:00+08:00">2024-09-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-16 19:47:17" itemprop="dateModified" datetime="2025-05-16T19:47:17+08:00">2025-05-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h2><p><strong>DB</strong>: organized data</p>
-<p><strong>DBMS</strong>: manage system</p>
-<p><strong>RDBMS</strong>: SQLite PostgreSQL MySQL Oracle Microsoft SQL Server (relational)</p>
-<p><strong>SQL</strong>: programming language</p>
-<p><strong>数据模型</strong>：管理系统：数据库：表：数据</p>
-<p><strong>RDBMS</strong>: 表结构格式统一</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920142153024.png" alt="image-20240920142153024"></p>
-<h2 id="约束"><a href="#约束" class="headerlink" title="约束"></a>约束</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923202742353.png" alt="image-20240923202742353"></p>
-<p>auto_increment 从零开始自动增长 (列是数字的类型，并且是UNIQUE约束)</p>
-<p> 这一列不指定id，或者id赋值null 不影响自增</p>
-<h3 id="非空，唯一，主键，默认，检查约束"><a href="#非空，唯一，主键，默认，检查约束" class="headerlink" title="非空，唯一，主键，默认，检查约束"></a>非空，唯一，主键，默认，检查约束</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923220639875.png" alt="image-20240923220639875"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923220734860.png" alt="image-20240923220734860"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923220750052.png" alt="image-20240923220750052"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923220711866.png" alt="image-20240923220711866"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005154832392.png" alt="image-20241005154832392"></p>
-<h3 id="外键约束"><a href="#外键约束" class="headerlink" title="外键约束"></a>外键约束</h3><p>数据一致性 完整性</p>
-<p>外键：连接两个表的数据</p>
-<ul>
-<li>（<strong>constraint</strong> foreKeyCons）<strong>foreign key</strong>(dept_id) <strong>references</strong> dept(id) 建表时</li>
-<li>给当前表中的dept_id列定义了一个 名为 foreKeyCons 的外键约束，外键引用dept表的id列，dept_id就是外键</li>
-<li>dept就是主表，必须存在，并且id是主键</li>
-<li>因为有外键约束，所以不能直接删除主表的内容，</li>
-</ul>
-<p>建表以后对外键的操作：添加和删除。外键属于表的属性</p>
-<ul>
-<li><strong>alter table</strong> emp <strong>drop foreign key</strong> foreKeyCons</li>
-<li><strong>alter table</strong> emp <strong>add constraint</strong> foreKeyCons <strong>foreign key</strong>(dept_id) <strong>references</strong> dept(id)</li>
-</ul>
-<h4 id="外键的删除、更新行为"><a href="#外键的删除、更新行为" class="headerlink" title="外键的删除、更新行为"></a>外键的删除、更新行为</h4><p>on update 更新   on delete 删除</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005155438576.png" alt="image-20241005155438576"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005155543394.png" alt="image-20241005155543394"></p>
-<p>NOACTION RESTRICT 默认</p>
-<p>CASCADE 主表变了，子表跟着变，主表删了，子表跟着没</p>
-<p><strong>ON DELETE</strong> SET NULL 主表删了，子表把对应的值设为null，只支持删除操作，并且要求外键可以为null</p>
-<h2 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923224354382.png" alt="image-20240923224354382"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923224409160.png" alt="image-20240923224409160"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923224759437.png" alt="image-20240923224759437"></p>
-<p>1-M 多的一方建立外键，少的一方作为主表，连接起来</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923225452261.png" alt="image-20240923225452261"></p>
-<p>M-N 一起连到一张中间表，中间表做从表，建立外键，连到两张表的主键上</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240923225514320.png" alt="image-20240923225514320"></p>
-<p>一个商品可能属于不同订单，一个订单也可能有不同商品，所以用类似坐标的方式</p>
-<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><p>管理DML语句，InnoDB引擎才支持事务</p>
-<p>MySQL默认设置事务自动提交，也就是执行完自动COMMIT.</p>
-<p>如果要显式开启事务要SET AUTOCOMMIT = 0;（以后的事务都需要手动提交）</p>
-<p>或者 START Transaction /  BEGIN （临时开启一条事务）</p>
-<p>COMMIT 提交事务 如果没有问题就提交</p>
-<p>ROLLBACK 回滚事务 出现异常就要回滚事务到BEGIN处，即更改前</p>
-<h3 id="四大特征-acid"><a href="#四大特征-acid" class="headerlink" title="四大特征 acid"></a>四大特征 acid</h3><p>一致性依赖于应用层，开发者。</p>
-<p><strong>A</strong>tomic <strong>C</strong>onsistency <strong>I</strong>solation <strong>D</strong>urability</p>
-<p>最小操作单位，不可分割；</p>
-<p>完成时必须让所有数据都前后一致，由开发者指定，比如转账，金钱总额不能变化；</p>
-<p>多个事务是互相隔离的，排除其他事务对本事务的影响（解决并发问题）；</p>
-<p>事务对数据库的修改是持久的；</p>
-<p>一什么是隔离性？</p>
-<p>隔离性是数据库事务的四个基本属性之一，即 <strong>ACID</strong> 特性中的 “I”（Isolation）。隔离性保证了一个事务在未完成之前，它的操作对其他事务是不可见的，或者说部分可见（取决于隔离级别）。这样可以防止因并发执行而导致的数据问题。</p>
-<h3 id="高并发下可能遇到的问题："><a href="#高并发下可能遇到的问题：" class="headerlink" title="高并发下可能遇到的问题："></a>高并发下可能遇到的问题：</h3><ol>
-<li><p><strong>脏读</strong>（Dirty Read）：一个事务读取了另一个事务<strong>开始了但未提交</strong>的数据。如果另一个事务回滚或者提交，这些数据将无效，导致第一个事务读取了错误数据。</p>
-<ol>
-<li><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005213034469.png" alt="image-20241005213034469"></li>
-</ol>
-</li>
-<li><p><strong>不可重复读</strong>（Non-repeatable Read）：在同一个事务中，前后两次读取相同的数据时，数据值发生了变化，因为另一个事务在两次读取之间<strong>修改并提交了该数据</strong>。</p>
-<ol>
-<li><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005213018573.png" alt="image-20241005213018573"></li>
-</ol>
-</li>
-<li><p><strong>幻读</strong>（Phantom Read）：一个事务内，连续两次执行相同的查询（select）时，再次进行查询的时候真实的数据集已经发生了变化，但是A却查询不出来这种变化，因此产生了幻读。</p>
-<ol>
-<li>如果已经解决了12，将会发现：第一次查询没有结果，随后另一个事务插入数据并进行了提交，试图插入数据，会报错，提示不能有重复的主键，但是在第二次查询仍然没有结果，读不到别人已经提交的数据（repeatable read）但是别人提交的数据还在影响。</li>
-<li><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005214729161.png" alt="image-20241005214729161"></li>
-</ol>
-</li>
-</ol>
-<h3 id="通过隔离性解决高并发问题："><a href="#通过隔离性解决高并发问题：" class="headerlink" title="通过隔离性解决高并发问题："></a>通过隔离性解决高并发问题：</h3><p>数据库系统通常提供多种<strong>事务隔离级别</strong>，每个级别可以解决一部分或全部并发问题。这些隔离级别定义了事务之间可见性规则，数据库可以根据应用场景选择适当的隔离级别来权衡性能与数据一致性。</p>
-<p><code>select @@transaction_isolation</code> 查看当前的隔离级别</p>
-<p><code>set session transaction isolation level read uncommitted</code>设置当前会话的隔离级别，</p>
-<h3 id="SQL-标准定义的四种隔离级别"><a href="#SQL-标准定义的四种隔离级别" class="headerlink" title="SQL 标准定义的四种隔离级别"></a>SQL 标准定义的四种隔离级别</h3><ol>
-<li><strong>读未提交（Read Uncommitted）</strong>：<ul>
-<li><strong>脏读</strong>、<strong>不可重复读</strong> 和 <strong>幻读</strong> 都可能发生。</li>
-<li>最低的隔离级别，事务可以读取未提交的数据。</li>
-<li>使用场景：极高并发要求且对数据一致性要求不高的场景。</li>
-</ul>
-</li>
-<li><strong>读已提交（Read Committed）</strong>：Oracle 默认<ul>
-<li>解决脏读问题，但仍然可能出现不可重复读和幻读。</li>
-<li>一个事务只能读取已提交的数据，保证不会读取到未提交的修改。</li>
-<li>使用场景：大多数数据库系统的默认隔离级别，较好的性能和数据一致性的平衡。</li>
-</ul>
-</li>
-<li><strong>可重复读（Repeatable Read）</strong>：MySQL 默认<ul>
-<li>解决脏读和不可重复读问题，但幻读仍然可能发生。</li>
-<li>在同一事务中，事务两次读取相同的数据，保证两次读取的结果一定相同。不会读取其他事务已经提交的数据，但是仍然无法避免其他事务的影响（比如重复插入相同主键失败但是查不到这条主键的数据）</li>
-<li>使用场景：需要保证数据一致性、避免更新数据不一致的场景。</li>
-<li>普通的select快照读不会受到其他事务update、insert的影响，但是自己执行update时会进行当前读，会把其他事务update、insert的数据更新成自己的版本号，下一次读取就会读到了。</li>
-<li>幻读：尽管B事务在A事务还未结束的时候，增加了表中的数据，但是为了维护可重复读，A事务中不管怎么查询，是查询不到新增的数据的。但是对于真实的表而言，表中的数据是的的确确增加了，所以插入重复的主键会报错。</li>
-</ul>
-</li>
-<li><strong>串行化（Serializable）</strong>：<ul>
-<li>解决脏读、不可重复读和幻读问题。</li>
-<li>最高的隔离级别，所有事务串行执行，完全避免并发导致的数据问题。要等先开始的事务执行完提交或者回滚，后开始的事务才能开始执行，完全放弃并发性。</li>
-<li>使用场景：极端数据一致性要求的场景，但代价是性能较低，容易出现锁等待甚至死锁。</li>
-</ul>
-</li>
-</ol>
-<h3 id="隔离性和并发控制的关系"><a href="#隔离性和并发控制的关系" class="headerlink" title="隔离性和并发控制的关系"></a>隔离性和并发控制的关系</h3><ul>
-<li><strong>锁机制</strong>：隔离性通常通过锁机制（例如行锁、表锁）实现。在高隔离级别下（如可串行化），数据库会使用更严格的锁定策略，确保其他事务在未提交前不能读取或修改被锁定的数据。</li>
-<li>**多版本并发控制 (MVCC)**：有些数据库（如 PostgreSQL、MySQL 的 InnoDB 存储引擎）采用了多版本并发控制，允许在较高隔离级别下提高性能。MVCC 通过保存数据的多个版本，允许读取操作无需阻塞写入操作，从而在高并发下仍然能够提供一致的数据读取。</li>
-</ul>
-<h2 id="SQL"><a href="#SQL" class="headerlink" title="SQL"></a>SQL</h2><h3 id="通用语法"><a href="#通用语法" class="headerlink" title="通用语法"></a>通用语法</h3><ul>
-<li>可以多行书写，分号结尾</li>
-<li>可用空格和缩进增强可读性</li>
-<li>MySQL的SQL语句不区分大小写，关键字建议大写</li>
-</ul>
-<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>DDL definition 定义数据库对象(表、db，字段)</p>
-<p>DML manipulation 操作数据，增删改</p>
-<p>DQL query 查询</p>
-<p>DCL control 创建用户，控制访问权限</p>
-<h3 id="DCL"><a href="#DCL" class="headerlink" title="DCL"></a>DCL</h3><p>control 控制数据库访问权限和管理数据库用户</p>
-<h4 id="DCL-用户管理"><a href="#DCL-用户管理" class="headerlink" title="DCL-用户管理"></a>DCL-用户管理</h4><p>use mysql;</p>
-<p>select * from user;</p>
-<ul>
-<li><p>创建用户 <strong>create user</strong> ‘itcast‘<strong>@</strong>‘localhost’ <strong>identified by</strong> ‘123456’ 密码123456用户名itcast 主机localhost</p>
-</li>
-<li><p>创建用户 <strong>create user</strong> ‘heima‘<strong>@</strong>‘%’ <strong>identified by</strong> ‘123456’ 密码123456用户名heima  任意主机均可访问</p>
-</li>
-<li><p>改密码 alter user ‘heima‘<strong>@</strong>‘%’ <strong>identified with</strong> mysql_native_password by ‘1234’ 改成1234</p>
-</li>
-<li><p>drop user ‘heima‘<strong>@</strong>‘%’  删除用户</p>
-</li>
-</ul>
-<h4 id="DCL-控制权限"><a href="#DCL-控制权限" class="headerlink" title="DCL - 控制权限"></a>DCL - 控制权限</h4><ul>
-<li>查询有什么权限：SHOW GRANTS FOR 用户@主机</li>
-<li>授予用户权限：grant all on 数据库名.表名 to 用户@主机</li>
-<li>撤销用户权限：revoke all on 数据库名.表名 from 用户@主机</li>
-</ul>
-<h3 id="DDL"><a href="#DDL" class="headerlink" title="DDL"></a>DDL</h3><h4 id="数据库操作-database"><a href="#数据库操作-database" class="headerlink" title="数据库操作-database"></a>数据库操作-database</h4><ul>
-<li><code>SHOW DATABASES;</code> 查询所有数据库（展示）</li>
-<li><code>SELECT DATABASE();</code> 查询当前数据库（展示）</li>
-<li><code>CREATE DATABASE if not exists name;</code>如果不存在则创建一个名为 name 的数据库，后面可以加<code>default charset + 字符集</code> <code>COLLATE 排序规则</code></li>
-<li><code>DROP DATABASE IF EXISTS;</code> 如果存在则删除</li>
-<li><code>USE name;</code> 使用名为name的数据库</li>
-</ul>
-<h4 id="表操作-查询-table"><a href="#表操作-查询-table" class="headerlink" title="表操作-查询 table"></a>表操作-查询 table</h4><ul>
-<li><code>SHOW TABLES; </code> </li>
-<li><code>DESC 表名;</code> 查询表结构</li>
-<li><code>SHOW CREATE TABLE 表名;</code> 查询建表时候的信息</li>
-</ul>
-<h4 id="表操作-创建-table"><a href="#表操作-创建-table" class="headerlink" title="表操作-创建 table"></a>表操作-创建 table</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">use itcast;</span><br><span class="line"><span class="keyword">create table</span> tb_user(</span><br><span class="line">    id <span class="type">int</span> comment <span class="string">&#x27;编号&#x27;</span>,</span><br><span class="line">    name <span class="type">varchar</span>(<span class="number">50</span>) comment <span class="string">&#x27;姓名&#x27;</span>,</span><br><span class="line">    age <span class="type">int</span> comment <span class="string">&#x27;年龄&#x27;</span>,</span><br><span class="line">    gender <span class="type">varchar</span>(<span class="number">1</span>) comment <span class="string">&#x27;性别&#x27;</span></span><br><span class="line">    ) comment <span class="string">&#x27;用户表&#x27;</span>;</span><br><span class="line"><span class="keyword">desc</span> tb_user;</span><br></pre></td></tr></table></figure>
-
-<h4 id="表操作-数据类型"><a href="#表操作-数据类型" class="headerlink" title="表操作- 数据类型"></a>表操作- 数据类型</h4><h5 id="数值类型："><a href="#数值类型：" class="headerlink" title="数值类型："></a>数值类型：</h5><p>TINYINT-byte   SMALLINT-short MEDIUMINT-3 bytes INT/INTEGER-int </p>
-<p>BIGINT-long  FLOAT DOUBLE DECIMAL </p>
-<p>TINYINT UNSIGNED(0-255) 无符号的tinyint</p>
-<p>DOUBLE(4,1)4代表总位数 1代表小数部分的位数 </p>
-<h5 id="字符串类型："><a href="#字符串类型：" class="headerlink" title="字符串类型："></a>字符串类型：</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920183842122.png" alt="image-20240920183842122"></p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>char(10)</th>
-<th>varchar(10)</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>最小长度</td>
-<td>10</td>
-<td>0</td>
-</tr>
-<tr>
-<td>最大长度</td>
-<td>10</td>
-<td>10</td>
-</tr>
-<tr>
-<td>eg</td>
-<td>性别、手机号</td>
-<td>用户名</td>
-</tr>
-</tbody></table>
-<h5 id="日期类型"><a href="#日期类型" class="headerlink" title="日期类型"></a>日期类型</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920184425055.png" alt="image-20240920184425055"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926153912988.png" alt="image-20240926153912988"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926153925471.png" alt="image-20240926153925471"></p>
-<h4 id="表操作-修改表属性"><a href="#表操作-修改表属性" class="headerlink" title="表操作-修改表属性"></a>表操作-修改表属性</h4><p><strong>alter table</strong> employee <strong>add</strong> nickname varchar(20) [comment] [约束]; <strong>添加属性</strong></p>
-<p><strong>alter table</strong> employee <strong>modify</strong> nickname char(20); <strong>修改数据类型</strong></p>
-<p><strong>alter table</strong> employee <strong>change</strong> nickname idCard char(18) [comment] [约束]; <strong>改名字+数据类型</strong> </p>
-<p><strong>alter table</strong> employee <strong>drop</strong> nickname; <strong>删除</strong> </p>
-<p><strong>alter table</strong> employee <strong>rename to</strong> emp; <strong>改表名</strong>  </p>
-<h4 id="表操作-删除"><a href="#表操作-删除" class="headerlink" title="表操作-删除"></a>表操作-删除</h4><p><strong>drop table</strong> [if exists] 表名;   <strong>删除整个表</strong></p>
-<p><strong>truncate table</strong> 表名; <strong>删除数据不删表结构</strong></p>
-<h4 id="MySQL-GUI"><a href="#MySQL-GUI" class="headerlink" title="MySQL GUI"></a>MySQL GUI</h4><p>SQLyog Navicat DataGrip</p>
-<h3 id="DML"><a href="#DML" class="headerlink" title="DML"></a>DML</h3><p>INSERT UPDATE DELETE </p>
-<h4 id="添加数据"><a href="#添加数据" class="headerlink" title="添加数据"></a>添加数据</h4><p><strong>insert into</strong> 表名(属性1，属性2….) <strong>values</strong>（v1,v2…）指定属性</p>
-<p><strong>insert into</strong> 表名 <strong>values</strong>（v1,v2…）所有</p>
-<p>字段和值一一对应，字符串和日期在单引号中</p>
-<p><strong>多条数据</strong>: <strong>values</strong></p>
-<p>​        （v1,v2…）,</p>
-<p>​        (v1,v2….) 不同条数据用逗号隔开</p>
-<h4 id="修改数据"><a href="#修改数据" class="headerlink" title="修改数据"></a>修改数据</h4><p><strong>update</strong> employee <strong>set</strong> name = ‘itheima’ <strong>where</strong> id=1;</p>
-<h4 id="删除数据"><a href="#删除数据" class="headerlink" title="删除数据"></a>删除数据</h4><p><strong>delete from</strong> 表名 [where 条件] 无条件会删除整张表格的数据</p>
-<h3 id="DQL"><a href="#DQL" class="headerlink" title="DQL"></a>DQL</h3><p>SELECT </p>
-<h4 id="基本查询"><a href="#基本查询" class="headerlink" title="基本查询"></a>基本查询</h4><h5 id="查询多个字段"><a href="#查询多个字段" class="headerlink" title="查询多个字段"></a>查询多个字段</h5><p><strong>select</strong> 字段1，字段2…….. <strong>from</strong> 表名</p>
-<p><strong>select * from</strong> 表名       通配符</p>
-<h5 id="设置别名"><a href="#设置别名" class="headerlink" title="设置别名"></a>设置别名</h5><p><strong>select</strong> 字段1[<strong>as</strong> 别名1]，字段2[<strong>as</strong> 别名2]…. <strong>from</strong> 表名 as可省略</p>
-<h5 id="去重"><a href="#去重" class="headerlink" title="去重"></a>去重</h5><p> <strong>select distinct</strong> ……..</p>
-<h4 id="条件查询-WHERE"><a href="#条件查询-WHERE" class="headerlink" title="条件查询 WHERE"></a>条件查询 WHERE</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920211218098.png" alt="image-20240920211218098"></p>
-<p><strong>select * from</strong> employ where age <strong>in</strong>(12,45,43);</p>
-<p><strong>select * from</strong> employ where name <strong>like ‘__’</strong>; 名字是两个字符  模糊查询 模糊匹配</p>
-<h5 id="sql-模糊查询"><a href="#sql-模糊查询" class="headerlink" title="sql 模糊查询"></a>sql 模糊查询</h5><p>通配符：</p>
-<ul>
-<li><p>%: %网% 查询含有网字的数据</p>
-<p>​     %网    查询以网字结尾的数据</p>
-<p>​      %网%车    查询含有 网 和 车的数据 有先后顺序</p>
-</li>
-<li><p>_ :   网_ 网开头 长度为2个字</p>
-<p>​    _ _ 网 长度为3个字 最后一个字是网</p>
-</li>
-</ul>
-<p>between and </p>
-<p>in </p>
-<p>is null </p>
-<h4 id="聚合函数"><a href="#聚合函数" class="headerlink" title="聚合函数"></a>聚合函数</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920212134476.png" alt="image-20240920212134476"></p>
-<p>count(*)所有行 count(age)age非空的行数</p>
-<p>作用在列数据，<strong>null不参与运算~</strong></p>
-<p>select count(age) from emp where workAddress = ‘西安’; </p>
-<p>位于select关键字之后 可以加where条件</p>
-<h4 id="分组查询-GROUP-BY-amp-HAVING"><a href="#分组查询-GROUP-BY-amp-HAVING" class="headerlink" title="分组查询 GROUP BY &amp; HAVING"></a>分组查询 GROUP BY &amp; HAVING</h4><p>group by xxx 将具有相同xxx值的行归为一组，每一组执行聚合count  </p>
-<p><strong>select</strong> gender, count(*) <strong>from</strong> emp <strong><u>group by</u></strong> gender;  计算行的数量，并按照gender分组</p>
-<ul>
-<li>where 分组之前过滤 </li>
-<li><strong>having</strong> 对分组之后的结果进行过滤</li>
-<li>where 不能对聚合函数判断， having可以，要判断聚合函数就要分完组</li>
-<li>执行顺序：where&gt;聚合函数&gt;having</li>
-<li>先用where筛选个体，然后分组，再对组内执行聚合函数，执行的结果可以再用having筛选</li>
-</ul>
-<h4 id="排序查询-ORDER-BY"><a href="#排序查询-ORDER-BY" class="headerlink" title="排序查询 ORDER BY"></a>排序查询 ORDER BY</h4><p>ASC:ascending 默认</p>
-<p>DESC:descending</p>
-<ul>
-<li>语句的最后，添加 <strong>order by</strong> age <strong>asc</strong>;</li>
-<li><strong>order by</strong> age <strong>desc</strong> , entryDate; 先按照age降序，如果age相同在按照entryDate升序</li>
-</ul>
-<h4 id="分页查询-LIMIT"><a href="#分页查询-LIMIT" class="headerlink" title="分页查询 LIMIT"></a>分页查询 LIMIT</h4><p>查询xx页码</p>
-<p>LIMIT 起始索引，查询记录数</p>
-<p>每页是20条，第一页的起始数据是0，第二页的20</p>
-<p>limit 0,5 第一页，一页5条记录</p>
-<p><strong>limit</strong> 5 <strong>offset</strong> 0 第一页 limit 5 offset 20 第五页</p>
-<h4 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h4><p>先执行from 再用where过滤，然后用group by和having指定分组以及过滤，然后执行字段的select，接着是排序，最后分页</p>
-<p>在字段名，表名后加别名，看是否报错，验证上述顺序</p>
-<h3 id="多表查询"><a href="#多表查询" class="headerlink" title="多表查询"></a>多表查询</h3><h4 id="表关系"><a href="#表关系" class="headerlink" title="表关系"></a>表关系</h4><p>多对多：同一个学生可以选择多门课程，同一个课程也可以被多名学生选择，如果要描述他们之间的关系，添加一张中间表，里面的外键分别对应两张表的主键。</p>
-<p>一对多：多的一方建立外键，关联到少的主键。</p>
-<p>一对一：任意一方建立外键（UNIQUE），关联到另外的主键。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005161911780.png" alt="image-20241005161911780"></p>
-<h4 id="链接查询-JOIN"><a href="#链接查询-JOIN" class="headerlink" title="链接查询 JOIN"></a>链接查询 JOIN</h4><h5 id="消除笛卡尔积"><a href="#消除笛卡尔积" class="headerlink" title="消除笛卡尔积"></a>消除笛卡尔积</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005162327168.png" alt="image-20241005162327168"></p>
-<h5 id="内连接"><a href="#内连接" class="headerlink" title="内连接"></a>内连接</h5><p>只查询A和B相交的部分</p>
-<p><strong>select</strong> <em>e</em>.name,<em>e</em>.gender,<em>d</em>.dname <strong>from</strong> <em>emp e</em>,<em>dept d</em> … <strong>where</strong>    条件 (隐式) </p>
-<p><strong>select</strong> * <strong>from</strong> <em>emp</em> <strong>join</strong> <em>dept</em> on     条件（显式）</p>
-<h5 id="外连接"><a href="#外连接" class="headerlink" title="外连接"></a>外连接</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005163112728.png" alt="image-20241005163112728"></p>
-<p>e.* emp的全部数据 </p>
-<p>from <em>A</em> left join B 查询<em>A</em> ∪ (A∩B)</p>
-<p>from <em>A</em> right join B 查询<em>B</em> ∪ (A∩B)</p>
-<h5 id="自链接"><a href="#自链接" class="headerlink" title="自链接"></a>自链接</h5><p>一定要起别名</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005163553452.png" alt="image-20241005163553452"></p>
-<p>没有必要专门搞一张领导表出来，如果要实现需求就要把一张表分成两张看，a的经理id等于b的id</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005163805094.png" alt="image-20241005163805094"></p>
-<h5 id="外键？连接查询？"><a href="#外键？连接查询？" class="headerlink" title="外键？连接查询？"></a>外键？连接查询？</h5><p>在多表查询中，<strong>连接查询</strong>（JOIN）并不强制要求外键的存在。外键的作用是维护表之间的<strong>参照完整性</strong>，确保一张表中的某些值对应另一张表中的有效值。但在进行连接查询时，只要有可以用于关联两个表的字段（如主键和某个相应的列），就可以进行查询，而不需要一定设置外键。</p>
-<h4 id="联合查询"><a href="#联合查询" class="headerlink" title="联合查询"></a>联合查询</h4><p>把两条单表查询结果联合起来，字段数量必须一致</p>
-<p>UNION：自动根据主键去重</p>
-<p>UNION ALL: 不去重</p>
-<h4 id="子查询-按返回值分类"><a href="#子查询-按返回值分类" class="headerlink" title="子查询 按返回值分类"></a>子查询 按返回值分类</h4><h5 id="单行单列：只返回一个值"><a href="#单行单列：只返回一个值" class="headerlink" title="单行单列：只返回一个值"></a><strong>单行单列</strong>：只返回一个<strong>值</strong></h5><ul>
-<li><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005165024271.png" alt="image-20241005165024271"></li>
-</ul>
-<h5 id="单行多列：返回的是一行数据"><a href="#单行多列：返回的是一行数据" class="headerlink" title="单行多列：返回的是一行数据"></a><strong>单行多列</strong>：返回的是一行数据</h5><ul>
-<li><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005171121759.png" alt="image-20241005S171121759"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005171132602.png" alt="image-20241005171132602"></p>
-</li>
-<li><p>第一步返回的是<strong>一行两列</strong>的数据（salary，managerid），第二步的条件可以用where (salary, managerid) = 第一行的结果</p>
-</li>
-<li><p><a href="#extension">多行多列扩展</a></p>
-</li>
-</ul>
-<h5 id="多行单列：子查询返回的是多行单列的数据"><a href="#多行单列：子查询返回的是多行单列的数据" class="headerlink" title="多行单列：子查询返回的是多行单列的数据"></a><strong>多行单列</strong>：子查询返回的是多行单列的数据</h5><p>也就是同一个字段的值的集合，用括号括起来，最后查询可以如下操作符（操作对象是同一字段的值的集合）</p>
-<ul>
-<li><p>in <strong>等于</strong>集合内部的某一个值</p>
-</li>
-<li><p>any/some <strong>大于</strong> any 只需大于最小值 小于any只需小于最大值<strong>相当于存在量词∃</strong> </p>
-</li>
-<li><p>all <strong>相当于全称量词∀</strong></p>
-</li>
-<li><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005165513314.png" alt="image-20241005165513314"></p>
-</li>
-<li><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005165204726.png" alt="image-20241005165204726"></p>
-</li>
-</ul>
-<h5 id="多行多列：-虚拟表"><a href="#多行多列：-虚拟表" class="headerlink" title="多行多列： 虚拟表"></a><strong>多行多列</strong>： 虚拟表</h5><p>子查询返回的是多行多列数据，也就是虚拟表，从这张虚拟表中再和其他表进行连接查询。</p>
-<ul>
-<li><strong>虚拟表</strong>: 查询入职日期 在2011-11-11之后的员工信息和部门信息：先查入职在2011-11-11之后的员工信息，根据这些信息（虚拟表,也叫临时表）和部门表 连接查询</li>
-</ul>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> (<span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> emp <span class="keyword">where</span> join_date<span class="operator">&gt;</span><span class="string">&#x27;2011-11-11&#x27;</span>)e <span class="keyword">JOIN</span> dept <span class="keyword">on</span> e.dep_id <span class="operator">=</span> dept.id</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><p><span id="extension"><strong>也可以作为单行多列的扩展</strong></span> in 关键字</p>
-<ul>
-<li>查询第一步返回的是<strong>多行多列</strong>的数据（salary，managerid），第二步的条件可以用where (salary, managerid) in 第一行的结果</li>
-</ul>
-</li>
-</ul>
-<h2 id="JDBC"><a href="#JDBC" class="headerlink" title="JDBC"></a>JDBC</h2><h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p>可以直接被另一段程序调用的程序或代码——-常见MySQL内置函数</p>
-<h3 id="字符串函数"><a href="#字符串函数" class="headerlink" title="字符串函数"></a>字符串函数</h3><p>concat substring TRIM upper </p>
-<p>LPAD(STR, 6, ‘0’) 左对齐，6位补0</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005154345722.png" alt="image-20241005154345722"></p>
-<h3 id="数值函数"><a href="#数值函数" class="headerlink" title="数值函数"></a>数值函数</h3><p>ceil floor round rand（0-1随机数）mod</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005154156390.png" alt="image-20241005154156390"></p>
-<h3 id="日期函数"><a href="#日期函数" class="headerlink" title="日期函数"></a>日期函数</h3><p>date_add now curdate curtime datediff</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005154146380.png" alt="image-20241005154146380"></p>
-<h3 id="流程控制"><a href="#流程控制" class="headerlink" title="流程控制"></a>流程控制</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005153559225.png" alt="image-20241005153559225"></p>
-<p><code>if(expr, caseTrue, caseFalse) expr = true</code> 返回caseTrue</p>
-<p><code>ifnull(v1,v2)</code> v1=null 返回v2 空字符串不是null，null必须是什么都没有，v1不为null，则返回v1</p>
-<p>case when</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005153230584.png" alt="image-20241005153230584"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241005153515232.png" alt="image-20241005153515232"></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/default/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/default/">1</a><span class="space">&hellip;</span><a class="page-number" href="/default/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/default/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/default/page/8/">8</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/default/page/5/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/default/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/default/">1</a><span class="space">&hellip;</span><a class="page-number" href="/default/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/default/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/default/page/9/">9</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/default/page/5/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

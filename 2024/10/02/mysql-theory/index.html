@@ -19,12 +19,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="索引数据结构B-Tree度数：一个节点上面最大的指针数 度数为5，最多5个指针，4个key 当一个节点上面key数超过4，中间节点向上分裂，其余两段分成两个节点，连到上面    B+Tree只有叶子节点存储数据。非叶子节点只有索引的作用 中间节点向上分裂，并且中间节点保留在叶子节点，其余两段分成两个节点连到上面，节点与节点之间通过链表进行连接     两个索引中间的指针指向的节点位于这两个索引之间">
+    <meta name="description" content="索引数据结构B-Tree度数：一个节点上面最大的指针数。度数为5，最多5个指针，4个key 当一个节点上面 key 数目超过 4，中间节点向上分裂，其余两段分成两个节点，连到上面。    B+Tree只有叶子节点存储数据。非叶子节点只有索引的作用 中间节点向上分裂，并且中间节点保留在叶子节点，其余两段分成两个节点连到上面，节点与节点之间通过链表进行连接。     两个索引中间的指针指向的节点位于这">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL 进阶篇">
-<meta property="og:url" content="http://scatteredream.github.io/2024/10/02/MySQL%20%E8%BF%9B%E9%98%B6%E7%AF%87/index.html">
+<meta property="og:url" content="http://scatteredream.github.io/2024/10/02/mysql-theory/index.html">
 <meta property="og:site_name" content="scatteredream&#39;s blog">
-<meta property="og:description" content="索引数据结构B-Tree度数：一个节点上面最大的指针数 度数为5，最多5个指针，4个key 当一个节点上面key数超过4，中间节点向上分裂，其余两段分成两个节点，连到上面    B+Tree只有叶子节点存储数据。非叶子节点只有索引的作用 中间节点向上分裂，并且中间节点保留在叶子节点，其余两段分成两个节点连到上面，节点与节点之间通过链表进行连接     两个索引中间的指针指向的节点位于这两个索引之间">
+<meta property="og:description" content="索引数据结构B-Tree度数：一个节点上面最大的指针数。度数为5，最多5个指针，4个key 当一个节点上面 key 数目超过 4，中间节点向上分裂，其余两段分成两个节点，连到上面。    B+Tree只有叶子节点存储数据。非叶子节点只有索引的作用 中间节点向上分裂，并且中间节点保留在叶子节点，其余两段分成两个节点连到上面，节点与节点之间通过链表进行连接。     两个索引中间的指针指向的节点位于这">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185901845-1728392950452-1.png">
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185828031-1728392950452-2.png">
@@ -35,8 +35,11 @@
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191802276-1728392950454-9.png">
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008192952009-1728392950453-6.png">
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008193116742-1728392950453-8.png">
-<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241011162420695.png">
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241011162503825.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/79bf1e4b38ccba1c02c487f2989af6bd.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/201308807GwQJsAM8f.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/725429-20200324102532494-195018706.png">
+<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/492e0e5857459a335db7c7aea5377791.png">
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241015190857506.png">
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017194645333.png">
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017194802298.png">
@@ -61,7 +64,7 @@
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018155530221.png">
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018155805136.png">
 <meta property="article:published_time" content="2024-10-01T16:00:00.000Z">
-<meta property="article:modified_time" content="2025-05-05T03:28:16.008Z">
+<meta property="article:modified_time" content="2025-05-18T15:23:44.892Z">
 <meta property="article:author" content="碎梦">
 <meta property="article:tag" content="锁">
 <meta property="article:tag" content="mysql">
@@ -74,10 +77,10 @@
 <meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185901845-1728392950452-1.png">
 
 
-<link rel="canonical" href="http://scatteredream.github.io/2024/10/02/MySQL%20%E8%BF%9B%E9%98%B6%E7%AF%87/">
+<link rel="canonical" href="http://scatteredream.github.io/2024/10/02/mysql-theory/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2024/10/02/MySQL%20%E8%BF%9B%E9%98%B6%E7%AF%87/","path":"2024/10/02/MySQL 进阶篇/","title":"MySQL 进阶篇"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2024/10/02/mysql-theory/","path":"2024/10/02/mysql-theory/","title":"MySQL 进阶篇"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>MySQL 进阶篇 | scatteredream's blog</title>
@@ -198,7 +201,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">1.</span> <span class="nav-text">索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#B-Tree"><span class="nav-number">1.1.1.</span> <span class="nav-text">B-Tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-Tree-1"><span class="nav-number">1.1.2.</span> <span class="nav-text">B+Tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-Tree-vs-B-Tree"><span class="nav-number">1.1.3.</span> <span class="nav-text">B+Tree vs. B-Tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E7%B1%BB"><span class="nav-number">1.1.4.</span> <span class="nav-text">分类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E4%BC%98%E5%8C%96-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-number">1.2.</span> <span class="nav-text">SQL优化 性能指标</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97"><span class="nav-number">1.2.1.</span> <span class="nav-text">慢查询日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#profiles"><span class="nav-number">1.2.2.</span> <span class="nav-text">profiles</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#explain-%E8%AF%AD%E5%8F%A5-%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92"><span class="nav-number">1.2.3.</span> <span class="nav-text">explain +语句 执行计划</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E4%BD%BF%E7%94%A8%E8%A7%84%E5%88%99"><span class="nav-number">1.3.</span> <span class="nav-text">索引使用规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88%E6%83%85%E5%86%B5"><span class="nav-number">1.3.1.</span> <span class="nav-text">索引失效情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A6%86%E7%9B%96%E6%9F%A5%E8%AF%A2%EF%BC%88%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%EF%BC%89"><span class="nav-number">1.3.2.</span> <span class="nav-text">覆盖查询（联合索引）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95"><span class="nav-number">1.3.3.</span> <span class="nav-text">前缀索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E5%88%97or%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95"><span class="nav-number">1.3.4.</span> <span class="nav-text">单列or联合索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E5%88%99"><span class="nav-number">1.3.5.</span> <span class="nav-text">原则</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">SQL 优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-%E6%8F%92%E5%85%A5"><span class="nav-number">2.1.</span> <span class="nav-text">SQL 优化 - 插入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-%E4%B8%BB%E9%94%AE"><span class="nav-number">2.2.</span> <span class="nav-text">SQL 优化 - 主键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-order-by"><span class="nav-number">2.3.</span> <span class="nav-text">SQL 优化 - order by</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-group-by"><span class="nav-number">2.4.</span> <span class="nav-text">SQL 优化 - group by</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-limit"><span class="nav-number">2.5.</span> <span class="nav-text">SQL 优化 - limit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-count-%E4%BC%98%E5%8C%96"><span class="nav-number">2.6.</span> <span class="nav-text">SQL 优化 - count 优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-update-%E4%BC%98%E5%8C%96"><span class="nav-number">2.7.</span> <span class="nav-text">SQL 优化 - update 优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%86%E5%9B%BE%E3%80%81%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E3%80%81%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">视图、存储过程、触发器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">4.</span> <span class="nav-text">锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E9%94%81"><span class="nav-number">4.1.</span> <span class="nav-text">全局锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8%E7%BA%A7%E9%94%81"><span class="nav-number">4.2.</span> <span class="nav-text">表级锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A8%E9%94%81"><span class="nav-number">4.2.1.</span> <span class="nav-text">表锁</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#S-%E5%85%B1%E4%BA%AB%E8%AF%BB%E9%94%81"><span class="nav-number">4.2.1.1.</span> <span class="nav-text">S 共享读锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#X-%E7%8B%AC%E5%8D%A0%E5%86%99%E9%94%81"><span class="nav-number">4.2.1.2.</span> <span class="nav-text">X 独占写锁</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E9%94%81"><span class="nav-number">4.2.2.</span> <span class="nav-text">元数据锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%84%8F%E5%90%91%E9%94%81-%E8%A7%A3%E5%86%B3%E8%A1%8C%E9%94%81%E8%A1%A8%E9%94%81%E5%86%B2%E7%AA%81"><span class="nav-number">4.2.3.</span> <span class="nav-text">意向锁 解决行锁表锁冲突</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#IX"><span class="nav-number">4.2.3.1.</span> <span class="nav-text">IX</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#IS"><span class="nav-number">4.2.3.2.</span> <span class="nav-text">IS</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.2.3.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A8%E9%94%81%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9F%A9%E9%98%B5"><span class="nav-number">4.2.4.</span> <span class="nav-text">表锁兼容性矩阵</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E7%BA%A7%E9%94%81"><span class="nav-number">4.3.</span> <span class="nav-text">行级锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%8C%E9%94%81"><span class="nav-number">4.3.1.</span> <span class="nav-text">行锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%B4%E9%9A%99%E3%80%81%E4%B8%B4%E9%94%AE%E9%94%81"><span class="nav-number">4.3.2.</span> <span class="nav-text">间隙、临键锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E7%BA%A7%E9%94%81-%E5%8A%A0%E9%94%81%E8%8C%83%E5%9B%B4%E9%AA%8C%E8%AF%81"><span class="nav-number">4.4.</span> <span class="nav-text">行级锁 加锁范围验证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%E7%AD%89%E5%80%BC%E6%9F%A5%E8%AF%A2-%E2%80%94%E2%80%94-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%9C%A8"><span class="nav-number">4.4.1.</span> <span class="nav-text">主键等值查询 —— 数据存在</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%E7%AD%89%E5%80%BC%E6%9F%A5%E8%AF%A2-%E2%80%94%E2%80%94-%E6%95%B0%E6%8D%AE%E4%B8%8D%E5%AD%98%E5%9C%A8"><span class="nav-number">4.4.2.</span> <span class="nav-text">主键等值查询 —— 数据不存在</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2"><span class="nav-number">4.4.3.</span> <span class="nav-text">主键范围查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E7%B4%A2%E5%BC%95%E7%AD%89%E5%80%BC%E6%9F%A5%E8%AF%A2"><span class="nav-number">4.4.4.</span> <span class="nav-text">普通索引等值查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E7%B4%A2%E5%BC%95%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2"><span class="nav-number">4.4.5.</span> <span class="nav-text">普通索引范围查询</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB"><span class="nav-number">5.</span> <span class="nav-text">InnoDB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84"><span class="nav-number">5.1.</span> <span class="nav-text">架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="nav-number">5.2.</span> <span class="nav-text">事务管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RedoLog-%E6%8C%81%E4%B9%85%E6%80%A7"><span class="nav-number">5.2.1.</span> <span class="nav-text">RedoLog - 持久性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UndoLog-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="nav-number">5.2.2.</span> <span class="nav-text">UndoLog - 原子性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVCC-%E9%9A%94%E7%A6%BB%E6%80%A7"><span class="nav-number">5.3.</span> <span class="nav-text">MVCC - 隔离性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BD%93%E5%89%8D%E8%AF%BB"><span class="nav-number">5.3.1.</span> <span class="nav-text">当前读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BF%AB%E7%85%A7%E8%AF%BB"><span class="nav-number">5.3.2.</span> <span class="nav-text">快照读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%90%E8%97%8F%E5%AD%97%E6%AE%B5"><span class="nav-number">5.3.3.</span> <span class="nav-text">隐藏字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A9%E7%94%A8-UndoLog"><span class="nav-number">5.3.4.</span> <span class="nav-text">利用 UndoLog</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%9F%E6%88%90UndoLog"><span class="nav-number">5.3.4.1.</span> <span class="nav-text">生成UndoLog</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E9%93%BE"><span class="nav-number">5.3.4.2.</span> <span class="nav-text">版本链</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ReadView-amp-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%81%E6%80%A7%E7%AE%97%E6%B3%95"><span class="nav-number">5.3.5.</span> <span class="nav-text">ReadView &amp; 数据可见性算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RC-amp-RR-%E8%A7%A3%E5%86%B3%E5%B9%B6%E5%8F%91%E4%BA%8B%E5%8A%A1%E5%BC%95%E5%8F%91%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">5.3.6.</span> <span class="nav-text">RC &amp; RR 解决并发事务引发的问题</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">1.</span> <span class="nav-text">索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#B-Tree"><span class="nav-number">1.1.1.</span> <span class="nav-text">B-Tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-Tree-1"><span class="nav-number">1.1.2.</span> <span class="nav-text">B+Tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-Tree-vs-B-Tree"><span class="nav-number">1.1.3.</span> <span class="nav-text">B+Tree vs. B-Tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%95%E3%80%81%E4%BA%8C%E7%BA%A7%E7%B4%A2%E5%BC%95"><span class="nav-number">1.1.4.</span> <span class="nav-text">聚簇索引、二级索引</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E4%BC%98%E5%8C%96-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-number">1.2.</span> <span class="nav-text">SQL优化 性能指标</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97"><span class="nav-number">1.2.1.</span> <span class="nav-text">慢查询日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#profiles"><span class="nav-number">1.2.2.</span> <span class="nav-text">profiles</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#explain-%E8%AF%AD%E5%8F%A5-%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92"><span class="nav-number">1.2.3.</span> <span class="nav-text">explain +语句 执行计划</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E4%BD%BF%E7%94%A8%E8%A7%84%E5%88%99"><span class="nav-number">1.3.</span> <span class="nav-text">索引使用规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%80%E5%B7%A6%E5%89%8D%E7%BC%80%E5%8C%B9%E9%85%8D%EF%BC%88%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%EF%BC%89"><span class="nav-number">1.3.1.</span> <span class="nav-text">最左前缀匹配（联合索引）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A6%86%E7%9B%96%E6%9F%A5%E8%AF%A2%EF%BC%88%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%EF%BC%89"><span class="nav-number">1.3.2.</span> <span class="nav-text">覆盖查询（联合索引）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E5%88%97%E7%B4%A2%E5%BC%95%E8%BF%98%E6%98%AF%E8%81%94%E5%90%88%E7%B4%A2%E5%BC%95%EF%BC%9F"><span class="nav-number">1.3.3.</span> <span class="nav-text">单列索引还是联合索引？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95"><span class="nav-number">1.3.4.</span> <span class="nav-text">前缀索引</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88"><span class="nav-number">1.3.5.</span> <span class="nav-text">索引失效</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E5%88%99"><span class="nav-number">1.3.6.</span> <span class="nav-text">原则</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96"><span class="nav-number">2.</span> <span class="nav-text">SQL 优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-%E6%8F%92%E5%85%A5"><span class="nav-number">2.1.</span> <span class="nav-text">SQL 优化 - 插入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-%E4%B8%BB%E9%94%AE"><span class="nav-number">2.2.</span> <span class="nav-text">SQL 优化 - 主键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-order-by"><span class="nav-number">2.3.</span> <span class="nav-text">SQL 优化 - order by</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-group-by"><span class="nav-number">2.4.</span> <span class="nav-text">SQL 优化 - group by</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-limit"><span class="nav-number">2.5.</span> <span class="nav-text">SQL 优化 - limit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-count-%E4%BC%98%E5%8C%96"><span class="nav-number">2.6.</span> <span class="nav-text">SQL 优化 - count 优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E4%BC%98%E5%8C%96-update-%E4%BC%98%E5%8C%96"><span class="nav-number">2.7.</span> <span class="nav-text">SQL 优化 - update 优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%86%E5%9B%BE%E3%80%81%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B%E3%80%81%E8%A7%A6%E5%8F%91%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">视图、存储过程、触发器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">4.</span> <span class="nav-text">锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E9%94%81"><span class="nav-number">4.1.</span> <span class="nav-text">全局锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8%E7%BA%A7%E9%94%81"><span class="nav-number">4.2.</span> <span class="nav-text">表级锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A8%E9%94%81"><span class="nav-number">4.2.1.</span> <span class="nav-text">表锁</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#S-%E5%85%B1%E4%BA%AB%E8%AF%BB%E9%94%81"><span class="nav-number">4.2.1.1.</span> <span class="nav-text">S 共享读锁</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#X-%E7%8B%AC%E5%8D%A0%E5%86%99%E9%94%81"><span class="nav-number">4.2.1.2.</span> <span class="nav-text">X 独占写锁</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%E9%94%81"><span class="nav-number">4.2.2.</span> <span class="nav-text">元数据锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%84%8F%E5%90%91%E9%94%81-%E8%A7%A3%E5%86%B3%E8%A1%8C%E9%94%81%E8%A1%A8%E9%94%81%E5%86%B2%E7%AA%81"><span class="nav-number">4.2.3.</span> <span class="nav-text">意向锁 解决行锁表锁冲突</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#IX"><span class="nav-number">4.2.3.1.</span> <span class="nav-text">IX</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#IS"><span class="nav-number">4.2.3.2.</span> <span class="nav-text">IS</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.2.3.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A8%E9%94%81%E5%85%BC%E5%AE%B9%E6%80%A7%E7%9F%A9%E9%98%B5"><span class="nav-number">4.2.4.</span> <span class="nav-text">表锁兼容性矩阵</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E7%BA%A7%E9%94%81"><span class="nav-number">4.3.</span> <span class="nav-text">行级锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%8C%E9%94%81"><span class="nav-number">4.3.1.</span> <span class="nav-text">行锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%B4%E9%9A%99%E3%80%81%E4%B8%B4%E9%94%AE%E9%94%81"><span class="nav-number">4.3.2.</span> <span class="nav-text">间隙、临键锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E7%BA%A7%E9%94%81-%E5%8A%A0%E9%94%81%E8%8C%83%E5%9B%B4%E9%AA%8C%E8%AF%81"><span class="nav-number">4.4.</span> <span class="nav-text">行级锁 加锁范围验证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%E7%AD%89%E5%80%BC%E6%9F%A5%E8%AF%A2-%E2%80%94%E2%80%94-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%9C%A8"><span class="nav-number">4.4.1.</span> <span class="nav-text">主键等值查询 —— 数据存在</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%E7%AD%89%E5%80%BC%E6%9F%A5%E8%AF%A2-%E2%80%94%E2%80%94-%E6%95%B0%E6%8D%AE%E4%B8%8D%E5%AD%98%E5%9C%A8"><span class="nav-number">4.4.2.</span> <span class="nav-text">主键等值查询 —— 数据不存在</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E9%94%AE%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2"><span class="nav-number">4.4.3.</span> <span class="nav-text">主键范围查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E7%B4%A2%E5%BC%95%E7%AD%89%E5%80%BC%E6%9F%A5%E8%AF%A2"><span class="nav-number">4.4.4.</span> <span class="nav-text">普通索引等值查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E7%B4%A2%E5%BC%95%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2"><span class="nav-number">4.4.5.</span> <span class="nav-text">普通索引范围查询</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB"><span class="nav-number">5.</span> <span class="nav-text">InnoDB</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84"><span class="nav-number">5.1.</span> <span class="nav-text">架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="nav-number">5.2.</span> <span class="nav-text">事务管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RedoLog-%E6%8C%81%E4%B9%85%E6%80%A7"><span class="nav-number">5.2.1.</span> <span class="nav-text">RedoLog - 持久性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UndoLog-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="nav-number">5.2.2.</span> <span class="nav-text">UndoLog - 原子性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVCC-%E9%9A%94%E7%A6%BB%E6%80%A7"><span class="nav-number">5.3.</span> <span class="nav-text">MVCC - 隔离性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BD%93%E5%89%8D%E8%AF%BB"><span class="nav-number">5.3.1.</span> <span class="nav-text">当前读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BF%AB%E7%85%A7%E8%AF%BB"><span class="nav-number">5.3.2.</span> <span class="nav-text">快照读</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%90%E8%97%8F%E5%AD%97%E6%AE%B5"><span class="nav-number">5.3.3.</span> <span class="nav-text">隐藏字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A9%E7%94%A8-UndoLog"><span class="nav-number">5.3.4.</span> <span class="nav-text">利用 UndoLog</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%94%9F%E6%88%90UndoLog"><span class="nav-number">5.3.4.1.</span> <span class="nav-text">生成UndoLog</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E9%93%BE"><span class="nav-number">5.3.4.2.</span> <span class="nav-text">版本链</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ReadView-amp-%E6%95%B0%E6%8D%AE%E5%8F%AF%E8%A7%81%E6%80%A7%E7%AE%97%E6%B3%95"><span class="nav-number">5.3.5.</span> <span class="nav-text">ReadView &amp; 数据可见性算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RC-amp-RR-%E8%A7%A3%E5%86%B3%E5%B9%B6%E5%8F%91%E4%BA%8B%E5%8A%A1%E5%BC%95%E5%8F%91%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">5.3.6.</span> <span class="nav-text">RC &amp; RR 解决并发事务引发的问题</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -213,7 +216,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">80</span>
+          <span class="site-state-item-count">81</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -224,7 +227,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">125</span>
+        <span class="site-state-item-count">126</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -251,7 +254,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/02/MySQL%20%E8%BF%9B%E9%98%B6%E7%AF%87/">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/10/02/mysql-theory/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
@@ -287,7 +290,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-05 11:28:16" itemprop="dateModified" datetime="2025-05-05T11:28:16+08:00">2025-05-05</time>
+      <time title="修改时间：2025-05-18 23:23:44" itemprop="dateModified" datetime="2025-05-18T23:23:44+08:00">2025-05-18</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -308,40 +311,43 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><h4 id="B-Tree"><a href="#B-Tree" class="headerlink" title="B-Tree"></a>B-Tree</h4><p>度数：一个节点上面最大的指针数</p>
-<p>度数为5，最多5个指针，4个key</p>
-<p>当一个节点上面key数超过4，中间节点向上分裂，其余两段分成两个节点，连到上面</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><h4 id="B-Tree"><a href="#B-Tree" class="headerlink" title="B-Tree"></a>B-Tree</h4><p>度数：一个节点上面最大的指针数。度数为5，最多5个指针，4个key</p>
+<p>当一个节点上面 key 数目超过 4，中间节点向上分裂，其余两段分成两个节点，连到上面。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185901845-1728392950452-1.png" alt="image-20241008185901845"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185828031-1728392950452-2.png" alt="image-20241008185828031"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008185947095-1728392950452-4.png" alt="image-20241008185947095"></p>
 <h4 id="B-Tree-1"><a href="#B-Tree-1" class="headerlink" title="B+Tree"></a>B+Tree</h4><p>只有叶子节点存储数据。非叶子节点只有索引的作用</p>
-<p>中间节点向上分裂，并且中间节点保留在叶子节点，其余两段分成两个节点连到上面，节点与节点之间通过链表进行连接</p>
+<p>中间节点向上分裂，并且中间节点保留在叶子节点，其余两段分成两个节点连到上面，节点与节点之间通过链表进行连接。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191613613-1728392950452-3.png" alt="image-20241008191613613"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191730054-1728392950453-5.png" alt="image-20241008191730054"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191755751-1728392950453-7.png" alt="image-20241008191755751"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008191802276-1728392950454-9.png" alt="image-20241008191802276"></p>
 <p>两个索引中间的指针指向的节点位于这两个索引之间</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008192952009-1728392950453-6.png" alt="image-20241008192952009"></p>
-<p>MySQL优化B+Tree<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008193116742-1728392950453-8.png" alt="image-20241008193116742"></p>
+<p>MySQL优化的B+Tree：双向链表</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008193116742-1728392950453-8.png" alt="image-20241008193116742"></p>
 <p>段-区-页-行</p>
-<h4 id="B-Tree-vs-B-Tree"><a href="#B-Tree-vs-B-Tree" class="headerlink" title="B+Tree vs. B-Tree"></a>B+Tree vs. B-Tree</h4><ul>
-<li>都比二叉树层级更少，搜索效率高</li>
-<li>B+树因为只有叶子节点能够存储数据，所以非叶子节点能够储存的key和指针数量更多，key和指针数量增多，指向的节点数目也会更多，相同数据量的情况下，需要的层数就比较少，节点数目少了，磁盘IO减少</li>
-<li>B树 因为一个节点中存储的指针数目少，所以一个节点只能指向很少的一个节点，相同数据量下需要更多的节点储存指针，层级较深</li>
-<li>B+树搜索效率很稳定（数据全在叶子节点上）相比Hash索引，支持了范围匹配和排序操作</li>
-</ul>
-<h4 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h4><p><strong>聚集索引</strong>（key是主键or唯一键or自动隐式生成的rowid）通常键的值以升序排列 底部存储一整行的数据（对应的键值）</p>
-<p><strong>二级索引</strong> 通常键的值以字典序排列 底部存储行号（聚集索引的键值 也就是主键值）</p>
-<p>select * from tb_user where name = ‘Arm’;</p>
-<p>查询时先根据<strong>二级索引</strong>找到对应的行的索引key（主键/唯一键/rowid），然后再根据聚集索引拿到行数据（回<strong>表查询</strong>）</p>
-<p>主键查询不需要回表.</p>
-<p>InnoDB主键索引的B+树高度：</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241011162420695.png" alt="image-20241011162420695"></p>
-<p>根据一页数据的大小能够得出一页中能储存几个指针，树高度为2，指向1171个节点，1171个节点一共有1171*16行数据</p>
+<h4 id="B-Tree-vs-B-Tree"><a href="#B-Tree-vs-B-Tree" class="headerlink" title="B+Tree vs. B-Tree"></a>B+Tree vs. B-Tree</h4><p>都比二叉树层级更少，搜索效率高。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241011162503825.png" alt="image-20241011162503825"></p>
-<p>create index on</p>
-<p>show index from</p>
-<p>drop index on</p>
+<p>根据一页数据的大小能够得出一页中能储存几个指针，树高度为2，指向1171个节点，1171个节点一共有1171*16行数据。</p>
+<ul>
+<li>范围查询：  B+树在非叶子节点只存储键值信息，而不存储数据记录的具体位置，再加上底部的叶子节点之间还有双向链表连接，这使得B+树在进行范围查询时更加高效。B树还得进行回溯。</li>
+<li>B+树的内部节点只存储键值信息，而不存储具体数据，这意味着在同样的内存空间下，B+树的内部节点可以容纳更多的key和指针，指向的节点多了，<strong>相同数据量，树高更低，查找快</strong>。<ul>
+<li>m 阶 B+树，意思是每个非叶子节点最多指向m个子节点，上面只是为了举例说明使用了5阶B树，但是实际上数据库使用的是超高阶，三层就能存储2000万条数据。</li>
+</ul>
+</li>
+<li>B+ 树<strong>搜索效率很稳定</strong>（数据全在叶子节点上）相比 Hash 索引，支持了<strong>范围匹配</strong>和<strong>排序</strong>操作</li>
+</ul>
+<h4 id="聚簇索引、二级索引"><a href="#聚簇索引、二级索引" class="headerlink" title="聚簇索引、二级索引"></a>聚簇索引、二级索引</h4><p><strong>聚集索引</strong>（key是主键/唯一键/自动隐式生成的rowid）通常键的值升序排列 底部存储一整行的数据（对应的键值）如下图所示。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/79bf1e4b38ccba1c02c487f2989af6bd.png" alt="在这里插入图片描述"></p>
+<p><strong>二级索引</strong> 通常键的值以字典序排列 叶子节点是二级索引的key，下面不挂数据，只挂主键的值（聚集索引的键值 也就是主键值）</p>
+<p><code>select * from tb_user where name = &#39;Arm&#39;;</code></p>
+<p>查询时先根据<strong>二级索引</strong>找到主键（主键/唯一键/rowid），然后拿着key到聚集索引拿到具体行数据（回<strong>表查询</strong>）主键查询不需要回表。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/201308807GwQJsAM8f.png" alt="img"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> index <span class="keyword">on</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">show</span> index <span class="keyword">from</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">drop</span> index <span class="keyword">on</span></span><br></pre></td></tr></table></figure>
+
+
+
 <h3 id="SQL优化-性能指标"><a href="#SQL优化-性能指标" class="headerlink" title="SQL优化 性能指标"></a>SQL优化 性能指标</h3><h4 id="慢查询日志"><a href="#慢查询日志" class="headerlink" title="慢查询日志"></a>慢查询日志</h4><p>可以设置 <code>long_query_time</code> 参数，定义什么算作“慢查询”。</p>
 <p>输出到文件或者表中</p>
 <h4 id="profiles"><a href="#profiles" class="headerlink" title="profiles"></a>profiles</h4><p>通过启用 <code>PROFILE</code>，可以获取查询的执行时间和资源消耗，包括 CPU 使用、锁等待、IO 等信息。</p>
@@ -350,21 +356,43 @@
 <li>ref：非唯一索引查询</li>
 <li>index，all 性能差</li>
 </ul>
-<h3 id="索引使用规则"><a href="#索引使用规则" class="headerlink" title="索引使用规则"></a>索引使用规则</h3><h4 id="索引失效情况"><a href="#索引失效情况" class="headerlink" title="索引失效情况"></a>索引失效情况</h4><ol>
-<li><strong>联合索引</strong>：跳过某个，后边的全部失效，使用&gt;=否则后边的失效</li>
+<h3 id="索引使用规则"><a href="#索引使用规则" class="headerlink" title="索引使用规则"></a>索引使用规则</h3><h4 id="最左前缀匹配（联合索引）"><a href="#最左前缀匹配（联合索引）" class="headerlink" title="最左前缀匹配（联合索引）"></a>最左前缀匹配（联合索引）</h4><p>最左原则指的就是如果你的 SQL 语句中<strong>用到了联合索引中的最左边的索引</strong>，那么这条 SQL 语句就可以利用这个联合索引去进行匹配，值得注意的是：1. 当遇到范围查询(&gt;、&lt;、between、like)就会停止匹配。2. 最左索引的条件不一定是最左边的那个，但必须要有这个条件，并且存在等值查询。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER TABLE</span> mytable <span class="keyword">ADD</span> INDEX name_city_age (username,city,age);</span><br></pre></td></tr></table></figure>
+
+<p>在构建联合索引时，是<strong>按字段的顺序进行排序和存储的</strong>，其实是相当于分别建立了下面三组组合索引：<code>[ username, city, age ] [ username, city ] [ username ]</code> </p>
+<p>联合索引 <code>(a, b, c)</code> 的底层 B+ 树是按照 <code>a -&gt; b -&gt; c</code> 这样的字典序构建的：</p>
+<ul>
+<li>没有 <code>a</code>，数据库无法定位到哪一部分子树中可能存在 <code>b</code> 或 <code>c</code> 的值。</li>
+<li>就像字典中查“banana”时，你必须先知道它以“b”开头，不能跳过前缀直接查“anana”。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/725429-20200324102532494-195018706.png" alt="img"></p>
+<p>如图所示他们是按照a来进行排序，在a相等的情况下，才按b来排序。</p>
+<p>因此，我们可以看到a是有序的1，1，2，2，3，3。而b是一种全局无序，局部相对有序状态!</p>
+<h4 id="覆盖查询（联合索引）"><a href="#覆盖查询（联合索引）" class="headerlink" title="覆盖查询（联合索引）"></a>覆盖查询（联合索引）</h4><p><strong>回表</strong>是指根据<strong>非主键索引条件</strong>，先查出对应的主键值，拿着主键值去聚集索引树中检索数据，如果联合索引中，索引成功最左匹配，但是你查的内容不止索引里的内容，那就只能跟着底下挂着的主键去聚簇索引那里查询，这个就叫回表查询。</p>
+<p>覆盖查询，联合索引查到了对应的键，也能查到对应的主键值，只查这几列不需要回表，如果多查其他的列就需要到聚集索引处回表查询，性能较慢。</p>
+<p>对联合索引(col1,col2,col3)，如果有如下的sql: <code>select col1,col2,col3 from test where col1=1 and col2=2</code>。那么MySQL可以直接通过遍历索引取得数据，而无需回表，这减少了很多的随机io操作。减少io操作，特别的随机io其实是dba主要的优化策略。所以，在真正的实际应用中，覆盖索引是主要的提升性能的优化手段之一。</p>
+<img src="https://i-blog.csdnimg.cn/blog_migrate/492e0e5857459a335db7c7aea5377791.png" alt="在这里插入图片描述" style="zoom: 67%;" />
+
+<ul>
+<li><p>效率高。<br>索引列越多，通过索引筛选出的数据越少。</p>
+<p>有1000W条数据的表，有如下sql:select from table where col1=1 and col2=2 and col3=3,假设假设每个条件可以筛选出10%的数据，如果只有单值索引，那么通过该索引能筛选出<code>1000W*10%=100w</code>条数据，然后再回表从100w条数据中找到符合col2=2 and col3= 3的数据，然后再排序，再分页；</p>
+<p>如果是联合索引，通过索引筛选出<code>1000w10% *10% *10%=1w</code>，效率提升可想而知！</p>
+</li>
+</ul>
+<h4 id="单列索引还是联合索引？"><a href="#单列索引还是联合索引？" class="headerlink" title="单列索引还是联合索引？"></a>单列索引还是联合索引？</h4><p>or 其中一个没有索引，肯定全都不走索引。</p>
+<p>都有索引，但是全是单列查询，则只会选择其中一个效率最高进行查询</p>
+<p>所以多条件的查询用联合索引，减少回表。</p>
+<h4 id="前缀索引"><a href="#前缀索引" class="headerlink" title="前缀索引"></a>前缀索引</h4><p>搜索文本时对一些长字符数据没有必要把他们全部都创建索引，而只是截取一部分</p>
+<p>算出他们的选择性数据，方法：对email截取不同的长度，去重count再除以总数count</p>
+<p>前缀索引，查询字符串先截取前缀，根据前缀进行辅助查询，查到主键id就回表查询拿到整行数据，拿到整行数据以后再进行核实，看字段后半部分是否匹配。一定需要回表查询。</p>
+<h4 id="索引失效"><a href="#索引失效" class="headerlink" title="索引失效"></a>索引失效</h4><ol>
+<li><strong>联合索引（最左匹配）</strong>：跳过某个，后边的全部失效，出现范围匹配，后边的失效</li>
 <li><strong>函数</strong>：不要对索引的字段用字符串，否则失效</li>
 <li><strong>字符串要括起来</strong>：否则失效</li>
 <li><strong>模糊</strong>：前面不能模糊，否则失效</li>
 <li><strong>OR</strong>：其中一个没索引，剩下的都失效</li>
 <li><strong>数据库自行判断：</strong>如果走全表查询比走索引还快，优化器会直接走全表索引</li>
 </ol>
-<h4 id="覆盖查询（联合索引）"><a href="#覆盖查询（联合索引）" class="headerlink" title="覆盖查询（联合索引）"></a>覆盖查询（联合索引）</h4><p>覆盖查询，联合索引查到了对应的键，也能查到对应的主键值，只查这几列不需要回表，如果多查其他的列就需要到聚集索引处回表查询，性能较慢</p>
-<h4 id="前缀索引"><a href="#前缀索引" class="headerlink" title="前缀索引"></a>前缀索引</h4><p>搜索文本时对一些长字符数据没有必要把他们全部都创建索引，而只是截取一部分</p>
-<p>算出他们的选择性数据，方法：对email截取不同的长度，去重count再除以总数count</p>
-<p>前缀索引，查询字符串先截取前缀，根据前缀进行辅助查询，查到主键id就回表查询拿到整行数据，拿到整行数据以后再进行核实，看字段后半部分是否匹配。一定需要回表查询</p>
-<h4 id="单列or联合索引"><a href="#单列or联合索引" class="headerlink" title="单列or联合索引"></a>单列or联合索引</h4><p>or 其中一个没有索引，肯定全都不走索引</p>
-<p>都有索引，但是全是单列查询，则只会选择其中一个效率最高进行查询</p>
-<p>所以多条件的查询用联合索引，减少回表</p>
 <h4 id="原则"><a href="#原则" class="headerlink" title="原则"></a>原则</h4><ul>
 <li>什么样的表要建立索引：数据量超过百万，且查询很频繁</li>
 <li>哪些字段建立索引：where group by order by  并且尽量是唯一的，区分度要高</li>
@@ -380,9 +408,10 @@
 </li>
 <li>load</li>
 </ol>
-<h3 id="SQL-优化-主键"><a href="#SQL-优化-主键" class="headerlink" title="SQL 优化 - 主键"></a>SQL 优化 - 主键</h3><ol>
+<h3 id="SQL-优化-主键"><a href="#SQL-优化-主键" class="headerlink" title="SQL 优化 - 主键"></a>SQL 优化 - 主键</h3><p><strong>只要索引是相邻的，那么对应的数据一定也是相邻地存放在磁盘上的</strong> 若表的主键不是顺序的id，而是无规律数据，比如字符串，InnoDB无法简单的把一行记录插入到索引的最后，而是需要找一个合适的位置（已有数据的中间位置），甚至产生大量的页分裂并且移动大量数据，在寻找合适位置进行插入时，目标页可能不在内存中，这就导致了大量的随机IO操作，影响插入效率。除此之外，大量的页分裂会导致大量的内存碎片。</p>
+<ol>
 <li>主键顺序插入</li>
-<li>主键自增</li>
+<li>主键自增 </li>
 <li>主键长度尽量小一些，不要用uuid或者身份证号</li>
 <li>避免在业务操作时修改主键</li>
 </ol>
