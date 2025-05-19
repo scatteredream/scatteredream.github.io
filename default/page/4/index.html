@@ -3848,7 +3848,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-18 23:23:44" itemprop="dateModified" datetime="2025-05-18T23:23:44+08:00">2025-05-18</time>
+      <time title="修改时间：2025-05-19 10:04:02" itemprop="dateModified" datetime="2025-05-19T10:04:02+08:00">2025-05-19</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -3944,20 +3944,30 @@
 <h4 id="前缀索引"><a href="#前缀索引" class="headerlink" title="前缀索引"></a>前缀索引</h4><p>搜索文本时对一些长字符数据没有必要把他们全部都创建索引，而只是截取一部分</p>
 <p>算出他们的选择性数据，方法：对email截取不同的长度，去重count再除以总数count</p>
 <p>前缀索引，查询字符串先截取前缀，根据前缀进行辅助查询，查到主键id就回表查询拿到整行数据，拿到整行数据以后再进行核实，看字段后半部分是否匹配。一定需要回表查询。</p>
-<h4 id="索引失效"><a href="#索引失效" class="headerlink" title="索引失效"></a>索引失效</h4><ol>
-<li><strong>联合索引（最左匹配）</strong>：跳过某个，后边的全部失效，出现范围匹配，后边的失效</li>
-<li><strong>函数</strong>：不要对索引的字段用字符串，否则失效</li>
-<li><strong>字符串要括起来</strong>：否则失效</li>
-<li><strong>模糊</strong>：前面不能模糊，否则失效</li>
-<li><strong>OR</strong>：其中一个没索引，剩下的都失效</li>
-<li><strong>数据库自行判断：</strong>如果走全表查询比走索引还快，优化器会直接走全表索引</li>
+<h4 id="索引失效的几种情况"><a href="#索引失效的几种情况" class="headerlink" title="索引失效的几种情况"></a>索引失效的几种情况</h4><ol>
+<li><p><strong>不遵循最左匹配（联合索引）</strong>：跳过某个，或者出现范围匹配，后边的失效。</p>
+<ul>
+<li><strong>模糊匹配、范围匹配</strong>：跟上面一样，</li>
+</ul>
+</li>
+<li><p><strong>对索引使用函数或者表达式计算</strong>：计算机不会解方程，如果出现表达式的情况，它会用全部的索引值一个一个尝试。</p>
+<ul>
+<li><strong>索引发生隐式转换（字符串没有用引号括起来）</strong>：会字符串和数字比较，会把字符串转为数字。跟上面其实一样，使用 CAST 函数</li>
+</ul>
+</li>
+<li><p><strong>WHERE OR</strong>：OR 前索引列，但是 OR 后不是，会失效。这是因为 OR 的含义就是两个只要满足一个即可，因此只有一个条件列是索引列是没有意义的，只要有条件列不是索引列，就会进行全表扫描。</p>
+</li>
+<li><p><strong>数据库自行判断：</strong>如果走全表查询比走索引还快，优化器会直接走全表索引</p>
+</li>
 </ol>
 <h4 id="原则"><a href="#原则" class="headerlink" title="原则"></a>原则</h4><ul>
-<li>什么样的表要建立索引：数据量超过百万，且查询很频繁</li>
-<li>哪些字段建立索引：where group by order by  并且尽量是唯一的，区分度要高</li>
-<li>尽量使用联合索引，联合索引很多时候能够覆盖索引，避免回表查询</li>
-<li>控制索引数量</li>
+<li>什么样的表要建立索引：数据量超过百万，且查询很频繁。</li>
+<li>控制索引数量，索引尽量小，列多的建索引。</li>
+<li>哪些字段建立索引：where group by order by  并且尽量是唯一的，区分度要高。</li>
+<li>尽量使用联合索引，联合索引很多时候能够覆盖索引，避免回表查询。</li>
 <li>如果索引列不能存null，要用非空约束字段</li>
+<li>字符串比较大小：不建议。</li>
+<li>key_len理论上越短越好</li>
 </ul>
 <h2 id="SQL-优化"><a href="#SQL-优化" class="headerlink" title="SQL 优化"></a>SQL 优化</h2><h3 id="SQL-优化-插入"><a href="#SQL-优化-插入" class="headerlink" title="SQL 优化 - 插入"></a>SQL 优化 - 插入</h3><ol>
 <li>一条insert插入多条（insert）<ol>
@@ -3974,7 +3984,7 @@
 <li>主键长度尽量小一些，不要用uuid或者身份证号</li>
 <li>避免在业务操作时修改主键</li>
 </ol>
-<h3 id="SQL-优化-order-by"><a href="#SQL-优化-order-by" class="headerlink" title="SQL 优化 - order by"></a>SQL 优化 - order by</h3><ol>
+<h3 id="多个条件-OR-gt"><a href="#多个条件-OR-gt" class="headerlink" title="多个条件 OR -&gt;"></a>多个条件 OR -&gt;</h3><h3 id="SQL-优化-order-by"><a href="#SQL-优化-order-by" class="headerlink" title="SQL 优化 - order by"></a>SQL 优化 - order by</h3><ol>
 <li>多个条件，使用联合索引，最左前缀</li>
 <li>一升一降，需要额外创建独立的索引</li>
 <li>覆盖查询，不然仍回表</li>
