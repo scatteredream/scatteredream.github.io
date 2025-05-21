@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">81</span>
+          <span class="site-state-item-count">82</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -194,6 +194,1124 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/01/18/408-OS-%E8%99%9A%E6%8B%9F%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/01/18/408-OS-%E8%99%9A%E6%8B%9F%E5%8C%96/" class="post-title-link" itemprop="url">虚拟化</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-18 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-18T00:00:00+08:00">2025-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-05 11:42:43" itemprop="dateModified" datetime="2025-05-05T11:42:43+08:00">2025-05-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/OS/" itemprop="url" rel="index"><span itemprop="name">OS</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="CPU-Virtualization"><a href="#CPU-Virtualization" class="headerlink" title="CPU Virtualization"></a>CPU Virtualization</h1><h2 id="进程（process）"><a href="#进程（process）" class="headerlink" title="进程（process）"></a>进程（process）</h2><p><strong>操作系统</strong>：早期是一些函数库，然后发展出了保护的作用（内核态与用户态），之后是多道程序（多进程、多线程）</p>
+<p><strong>软件设计思维</strong>：分离机制与策略</p>
+<ul>
+<li>机制：如何进行上下文切换？</li>
+<li>策略：什么情况下，应该切换到谁？</li>
+</ul>
+<p><strong>进程</strong>：程序没有运行的时候，就是硬盘中静态的代码，程序开始运行了，就在内存中开辟属于自己的空间，进程可以看作是操作系统对程序运行的一种抽象。</p>
+<h3 id="进程创建"><a href="#进程创建" class="headerlink" title="进程创建"></a>进程创建</h3><ul>
+<li>内存地址空间，特定CPU寄存器的值</li>
+<li><strong>内存分配</strong>：程序代码、静态数据、运行时数据（包括堆栈和IO设置）</li>
+<li><strong>栈空间</strong>（Stack）：可以由<code>main</code>传参进行初始化，主要存放局部变量、函数参数和返回地址</li>
+<li><strong>用于IO的文件描述符</strong>（Descriptor）：默认开启<code>stdin</code> <code>stdout</code> <code>stderr</code>三个文件</li>
+<li><strong>堆空间</strong>（Heap）：用于在程序运行时动态地向OS申请一片内存(<code>malloc</code>)</li>
+<li>在进程创建之后，OS将CPU控制权给到程序，开始执行<code>main</code></li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241207204834626.png" alt="image-20241207204834626"></p>
+<h3 id="进程状态"><a href="#进程状态" class="headerlink" title="进程状态"></a>进程状态</h3><p>加载到内存的进程基本状态如下三种</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241207204852570.png" alt="image-20241207204852570"></p>
+<ul>
+<li><strong>运行中</strong>：运行中的进程，也可以被反向调度</li>
+<li><strong>待运行</strong>（就绪）：就绪的程序随时可以运行，等待调度</li>
+<li><strong>阻塞</strong>：程序运行到不需要CPU的部分（比如IO）就会到阻塞状态，等IO任务完成会变成就绪</li>
+<li>OS选择在进程发起IO时切换到别的进程，这样可以保持CPU繁忙，<strong>在IO结束时没有选择切换回去，这就是策略</strong></li>
+</ul>
+<h3 id="进程的数据结构"><a href="#进程的数据结构" class="headerlink" title="进程的数据结构"></a>进程的数据结构</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// the registers xv6 will save and restore</span></span><br><span class="line"><span class="comment">// to stop and subsequently restart a process</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">context</span> &#123;</span></span><br><span class="line">    <span class="type">int</span> eip;<span class="comment">//instruction ptr </span></span><br><span class="line">    <span class="type">int</span> esp;<span class="comment">//stack ptr</span></span><br><span class="line">    <span class="type">int</span> ebx;</span><br><span class="line">    <span class="type">int</span> ecx;</span><br><span class="line">    <span class="type">int</span> edx;</span><br><span class="line">    <span class="type">int</span> esi;</span><br><span class="line">    <span class="type">int</span> edi;</span><br><span class="line">    <span class="type">int</span> ebp;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// the different states a process can be in</span></span><br><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">proc_state</span> &#123;</span> UNUSED, EMBRYO, SLEEPING,</span><br><span class="line">RUNNABLE, RUNNING, ZOMBIE &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// the information xv6 tracks about each process</span></span><br><span class="line"><span class="comment">// including its register context and state</span></span><br><span class="line"><span class="comment">// PCB</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">proc</span> &#123;</span></span><br><span class="line">    <span class="type">char</span> *mem; <span class="comment">// Start of process memory</span></span><br><span class="line">    uint sz; <span class="comment">// Size of process memory</span></span><br><span class="line">    <span class="type">char</span> *kstack; <span class="comment">// Bottom of kernel stack for this process</span></span><br><span class="line">    <span class="class"><span class="keyword">enum</span> <span class="title">proc_state</span> <span class="title">state</span>;</span> <span class="comment">// Process state</span></span><br><span class="line">    <span class="type">int</span> pid; <span class="comment">// Process ID</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">parent</span>;</span> <span class="comment">// Parent process</span></span><br><span class="line">    <span class="type">void</span> *chan; <span class="comment">// If !zero, sleeping on chan</span></span><br><span class="line">    <span class="type">int</span> killed; <span class="comment">// If !zero, has been killed</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">ofile</span>[<span class="title">NOFILE</span>];</span> <span class="comment">// Open files</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">inode</span> *<span class="title">cwd</span>;</span> <span class="comment">// Current directory</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">context</span> <span class="title">context</span>;</span> <span class="comment">// Switch here to run process</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">trapframe</span> *<span class="title">tf</span>;</span> <span class="comment">// Trap frame for the current interrupt</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p> A process list contains information about all processes in the system. Each entry is found in what is sometimes called a process control block (<strong>PCB</strong>), which is really just a structure that contains information about a specific process. </p>
+</blockquote>
+<ul>
+<li><strong>上下文</strong>：指令指针、栈指针等都是CPU物理寄存器的内容，指令得以继续执行的关键，在恢复进程时很重要。</li>
+<li><strong>进程状态</strong></li>
+<li><strong>其他的静态信息</strong>：进程地址空间，父进程、中断信息、打开的文件等。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/202209241609976.png" alt="vfs"></p>
+<h3 id="进程API"><a href="#进程API" class="headerlink" title="进程API"></a>进程API</h3><h4 id="fork-wait-exec"><a href="#fork-wait-exec" class="headerlink" title="fork wait exec"></a>fork wait exec</h4><ul>
+<li><strong>fork</strong>：复制一个和父进程一样的子进程（子进程直接从fork返回然后继续执行）子进程的内存空间和父进程是独立的，并且变量的值大部分一样，</li>
+<li><strong>wait</strong>：子进程创建后，根据OS调度（schedule）决定先后顺序，wait可以使父进程等子进程执行完再开始运行</li>
+<li><strong>exec</strong>：当前进程不想运行和之前一样的代码，可以调用exec加参数运行其他代码，新的程序会替代原来进程的所有信息，因此exec后边的代码是不会被执行的。</li>
+</ul>
+<h4 id="shell"><a href="#shell" class="headerlink" title="shell"></a>shell</h4><ul>
+<li>shell的基本原理就是主进程fork wait 子进程这边exec 运行其他程序，运行完成主进程wait结束，继续进行其他操作</li>
+<li><strong>输出重定向</strong>（redirecting）：默认输出就是标准输出流，如果你想重定向到一个文件，应当关闭stdout然后重新打开一个你想要的文件描述符。</li>
+<li><strong>管道</strong>（pipe）：也类似与输出重定向，上一个的输出无缝作为下一个的输入</li>
+<li><strong>有用的cli工具</strong>：top(table of processes), ps(process status), man(manual)…</li>
+</ul>
+<h4 id="signals-and-users"><a href="#signals-and-users" class="headerlink" title="signals and users"></a>signals and users</h4><blockquote>
+<p>For example, control-c sends a SIGINT (interrupt) to the process (normally terminating it) and control-z sends a SIGTSTP (stop) signal thus pausing the process in mid-execution (you can resume it later with a command, e.g., the fg built-in command found in many shells).</p>
+<p>receive and process those signals within individual processes, and  send signals to individual processes as well as entire process groups.</p>
+</blockquote>
+<p><code>signal()</code>可以使进程能够监听到上述这些信号，暂停现有程序执行，然后对信号做出一定的响应</p>
+<blockquote>
+<p>Users generally can only control their own processes; it is the job of the operating system to parcel out resources (such as CPU, memory, and disk) to each user (and their processes) to meet overall system goals.</p>
+</blockquote>
+<p>用户等级决定他们是否有权利发出某些特定的信号</p>
+<hr>
+<h2 id="机制：受限-直接执行"><a href="#机制：受限-直接执行" class="headerlink" title="机制：受限 直接执行"></a>机制：受限 直接执行</h2><h3 id="Limited-Direct-Execution"><a href="#Limited-Direct-Execution" class="headerlink" title="Limited Direct Execution"></a>Limited Direct Execution</h3><p><strong>直接执行</strong>：直接在CPU上运行程序。</p>
+<p><strong>受限</strong>：一个进程要调用I/O，但是还不能让进程完全控制系统。</p>
+<p><strong>用户模式</strong>（user mode）：应用程序不能完全控制硬件资源，如果硬要发起IO请求，CPU会出现异常，OS将终止进程</p>
+<p><strong>内核模式</strong>（kernel mode）：操作系统可以完全掌控硬件。</p>
+<blockquote>
+<p>When changing protection levels from user to kernel mode, the kernel shouldn’t use the stack of the user process, because it may not be valid. The user process may be <strong>malicious</strong> or <strong>contain an error that causes the user %esp to contain an address that is not part of the process’s user memory</strong>.</p>
+</blockquote>
+<h4 id="syscall-amp-trap"><a href="#syscall-amp-trap" class="headerlink" title="syscall &amp; trap"></a>syscall &amp; trap</h4><p><strong>系统调用</strong>（system call）：允许内核小心地向用户暴露某些关键功能。执行<strong>trap</strong>指令，进入操作系统内核，将特权级别提升至内核模式，完成之后return from trap，返回值并将特权级别降低至用户模式。</p>
+<blockquote>
+<p>Typical user applications run in user mode, and use a system call to trap into the kernel to request operating system services.</p>
+</blockquote>
+<p>系统调用的参数放到一个指定的寄存器处，系统调用号也放到指定寄存器，需要仔细遵循约定来正确处理参数与返回值，高级语言通常屏蔽了底层硬件细节，因此需要使用汇编语言：</p>
+<ul>
+<li><strong>系统调用</strong>：用户程序通过陷阱指令请求内核服务（如文件操作、进程管理）。例如，在x86中：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov eax, 1   ; 系统调用号 (exit)</span><br><span class="line">mov ebx, 0   ; 参数 (退出码)</span><br><span class="line">int 0x80     ; 触发陷阱</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>中断处理</strong>：硬件设备通过中断向量触发陷阱，操作系统用汇编语言编写中断向量表。</li>
+<li><strong>异常处理</strong>：陷阱用于处理非法操作（如除零或非法内存访问）。</li>
+</ul>
+<p><strong>陷阱表</strong>（trap table）：用户态不能执行io等直接操控底层硬件，否则就是非法的。进入内核态以后也不能随便寻址执行程序，必须跳到指定地址去执行对应的程序，这个指定的程序地址是<strong>内核</strong>（kernel）在启动时通过<strong>陷阱表</strong>告诉硬件的。用户程序也不能够识别陷阱表的内容。</p>
+<blockquote>
+<p>The trap instruction saves register state carefully, changes the hardware status to kernel mode, and jumps into the OS to a pre-specified destination: the trap table.</p>
+<p>When the OS finishes servicing a system call, it returns to the user program via another special return-from-trap instruction, which reduces privilege and returns control to the instruction after the trap that jumped into the OS</p>
+</blockquote>
+<p>Limited Direct Execution Timeline：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241207194358704.png" alt="image-20241207194358704"></p>
+<ul>
+<li><p>要么是内核态要么是用户态，在用户进程开始执行之前（main）的准备工作肯定是由内核态完成，因此就要return from trap，切换到用户态。跳转到main函数</p>
+</li>
+<li><p>执行系统调用或者响应中断时，通过trap指令，cpu控制权腾给os，陷入内核态，执行的是与之前不同的程序，就需要保存执行的现场以便之后继续执行，将cpu寄存器上的内容先保存到<strong>内核栈（kernel stack）</strong>。</p>
+</li>
+<li><p>在系统调用结束之后把内核栈的内容弹出恢复到CPU寄存器上，切换回用户模式，继续执行之前的内容，最后main函数返回，同时通过exit()进行trap，进入内核态，做清理工作。</p>
+</li>
+</ul>
+<h3 id="Limited-Direct-Execution-Timer-Interrupt"><a href="#Limited-Direct-Execution-Timer-Interrupt" class="headerlink" title="Limited Direct Execution(Timer Interrupt)"></a>Limited Direct Execution(Timer Interrupt)</h3><p><strong>直接执行（Direct Execution）</strong>：用户进程占用CPU，OS作为一个程序并没有在运行。问题在于OS如何重新获得CPU的控制权，以便在操控程序运行取得主动权。</p>
+<p><strong>协作</strong>：OS只能等待被动的系统调用或者触发异常才会重新获得CPU控制权。</p>
+<p><strong>非协作</strong>：时钟硬件设备可以编程为若干毫秒产生一次中断信号，CPU 检测到时钟中断信号后，暂停当前正在运行的任务，跳转到内核中预定义的<strong>中断服务例程（ISR, Interrupt Service Routine）</strong>处理</p>
+<p>CPU必须在硬件层面实现能够保存用户程序运行的现场（trap的精髓）</p>
+<ul>
+<li><p><strong>操作系统处理时钟中断</strong>操作系统在时钟中断处理程序中执行以下任务：</p>
+<ul>
+<li><p>更新系统时间。</p>
+</li>
+<li><p>检查是否需要切换任务（触发<strong>任务调度</strong>）。</p>
+</li>
+<li><p>处理延迟或周期性任务（如超时处理、定时器事件等）。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241207200809875.png" alt="image-20241207200809875"></p>
+<p>如图 hardware部分 需要在响应时钟中断时，把进程A的运行现场（寄存器）保存到内核栈中，然后跳转到trap处理程序。</p>
+<h4 id="上下文切换（context-switch）"><a href="#上下文切换（context-switch）" class="headerlink" title="上下文切换（context switch）"></a>上下文切换（context switch）</h4><p>然后操作系统调用switch进行进程的切换A到B，因为一段时间内A都不会再运行，这时候就需要把A的寄存器内容保存到其进程空间（内存空间）</p>
+<h5 id="kernel-stack-vs-Process-Control-Block"><a href="#kernel-stack-vs-Process-Control-Block" class="headerlink" title="kernel stack  vs Process Control Block"></a><code>kernel stack</code>  vs <code>Process Control Block</code></h5><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/likui360/p/6224624.html">Linux 系统中堆栈的使用方法 - 扫地猿 - 博客园</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/188577062">浅谈Linux 中的进程栈、线程栈、内核栈、中断栈 - 知乎</a></p>
+<p>当进程在用户态运行时，使用的是用户栈，当进程陷入到内核态时，这些内核代码所使用的栈并不是原先进程用户空间中的栈，而是一个单独内核空间的栈，这个称作进程内核栈，内核栈保存进程在内核态运行的相关信息，一旦进程返回到用户态后，内核栈中保存的信息无效，会全部恢复，因此每次进程从用户态陷入内核的时候得到的内核栈都是空的。所以在进程陷入内核的时候，直接把内核栈的栈顶地址给堆栈指针寄存器就可以了。</p>
+<p>当位于用户空间的进程进行系统调用时，进程用户栈的地址会被存进内核栈中，CPU堆栈指针寄存器中的内容也会变为内核栈的地址。当系统调用执行完毕，进程从内核栈找到用户栈的地址，继续在用户空间中执行，此时CPU堆栈指针寄存器就变为了用户栈的地址。各进程独立的。进程运行时分用户态跟内核态，所以需要有内核栈和常说的堆栈段，寻址方式是相同的，都是查LDT和页表进行地址映射，但二者段描述符里的特权级不同，为了区分用户态和内核态。</p>
+<p>为什么每个进程都有一个内核栈，而不是所有进程共用一个。老的UNIX和Linux当时就是每个CPU只有一个内核栈，那个时候不会出现“执行到一半的时候上下文切换”，因为不允许用户态程序抢占正在执行系统调用的另一个用户态程序。后来每个进程一个内核栈了，就可以发生“执行到一半的时候上下文切换”了</p>
+<p>语言书里面讲的堆、栈大部分都是用户态的概念，用户态的堆、栈对应用户进程虚拟地址空间里的一个区域，栈向下增长，堆用malloc分配，向上增长。</p>
+<ul>
+<li>中断发生时，寄存器先保存到内核栈；如果需要切换进程，内核会将内核栈中的寄存器内容转存到进程结构中。</li>
+<li><strong>内核栈</strong>主要用于快速保存和恢复寄存器内容，适用于临时的上下文切换或中断处理。</li>
+<li><strong>进程结构</strong>适用于更复杂的进程调度和长时间的上下文切换，提供长期的状态保存。proc结构体中的context字段就是用来保存寄存器信息的（xv6）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><strong>方面</strong></th>
+<th><strong>内核栈</strong></th>
+<th><strong>进程结构（PCB）</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>保存时机</strong></td>
+<td>短暂事件（如中断、系统调用）</td>
+<td>进程调度时</td>
+</tr>
+<tr>
+<td><strong>存储位置</strong></td>
+<td>当前进程的内核栈</td>
+<td>PCB 或其他持久性数据结构</td>
+</tr>
+<tr>
+<td><strong>存储时间</strong></td>
+<td><strong>临时保存</strong>，内核处理结束后直接恢复</td>
+<td><strong>长期保存</strong>，直至进程切换回来</td>
+</tr>
+<tr>
+<td><strong>访问开销</strong></td>
+<td>较低，直接访问内核栈</td>
+<td>较高，涉及更多内存操作</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>快速上下文切换、临时中断处理</td>
+<td>进程调度或长时间上下文切换</td>
+</tr>
+<tr>
+<td><strong>局限性</strong></td>
+<td>不能长期存储</td>
+<td>开销大，需要额外的数据结构</td>
+</tr>
+<tr>
+<td>优点</td>
+<td>连续内存块，访问效率较高，内核处理完直接恢复</td>
+<td>寄存器信息可以跨多个调度周期存储</td>
+</tr>
+</tbody></table>
+<p>进程调度，需要把B的现场信息从进程空间中恢复到寄存器里，然后恢复到用户态，跳转到B的PC，执行B的内容。</p>
+<p><strong>并发</strong>：系统调用时触发中断。</p>
+<hr>
+<h2 id="策略：CPU-调度"><a href="#策略：CPU-调度" class="headerlink" title="策略：CPU 调度"></a>策略：CPU 调度</h2><h3 id="基本策略"><a href="#基本策略" class="headerlink" title="基本策略"></a>基本策略</h3><h4 id="批处理"><a href="#批处理" class="headerlink" title="批处理"></a>批处理</h4><p><strong>FIFO</strong>：先到先得，计算密集型会阻塞io密集型，降低效率</p>
+<p><strong>SJF</strong>：Shortest Job First 最短工作优先，<u>同时到达</u>，先进行最短的工作</p>
+<p><strong>STCF</strong>：Shortest Time-to-Complete First 最短完成时间优先，针对<u>随时到达</u>的情况，到达时比较里完成还有多少时间，首次出现了任务切换的概念。</p>
+<h4 id="交互式"><a href="#交互式" class="headerlink" title="交互式"></a>交互式</h4><p>以上能够逐步优化 T<del>周转</del> = T<del>完成</del> - T<del>到达</del>，但是对于T<del>响应</del> = T<del>首次运行</del> - T<del>到达</del> 不友好，因为完成时间最长的必须等其他任务完成，自己才能继续。</p>
+<p>交互式的任务对于响应时间很敏感。因此需要另外一种调度策略</p>
+<p><strong>RR</strong>：Round-Robin 轮转，运行一个任务到时间片就切换到下一个任务（context switch）</p>
+<ul>
+<li>上下文的切换需要时间，因此时间片的大小也应该选择恰当</li>
+</ul>
+<p><strong>Overlap</strong>：重叠，如果A任务有IO，当A因为IO而空出CPU时，CPU就应该去服务B</p>
+<p><strong>不可预知性</strong>：调度程序不知道到来的任务持续多长时间。</p>
+<h4 id="实时系统"><a href="#实时系统" class="headerlink" title="实时系统"></a>实时系统</h4><p>准时比准确更加重要</p>
+<h3 id="基于优先级且无需先验知识的调度：多级反馈队列-MLFQ"><a href="#基于优先级且无需先验知识的调度：多级反馈队列-MLFQ" class="headerlink" title="基于优先级且无需先验知识的调度：多级反馈队列 MLFQ"></a>基于优先级且无需先验知识的调度：多级反馈队列 MLFQ</h3><p>MLFQ：Multi-Level Feedback Queue，多级反馈队列</p>
+<ul>
+<li>设置不同的优先级，每个任务刚到达都是最高级</li>
+<li>级别低的任务必须先让级别高的执行完</li>
+<li>相同级别的任务轮转执行</li>
+<li>在同一个优先级执行时间达到阈值就降低优先级：防止高优先级一直占据CPU，如果采用每次执行的计时方法可能会有恶意占据CPU的情况发生</li>
+<li>每隔一段时间就重置所有任务的优先级为最高：防止低优先级变成饥饿状态</li>
+</ul>
+<h1 id="Memory-Virtualization"><a href="#Memory-Virtualization" class="headerlink" title="Memory Virtualization"></a>Memory Virtualization</h1><h2 id="每个程序员都应该知道的时延"><a href="#每个程序员都应该知道的时延" class="headerlink" title="每个程序员都应该知道的时延"></a>每个程序员都应该知道的时延</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/687474703a2f2f692e696d6775722e636f6d2f6b307431652e706e67" alt="img"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">L1 cache reference ......................... 0.5 ns</span><br><span class="line">Branch mispredict ............................ 5 ns</span><br><span class="line">L2 cache reference ........................... 7 ns</span><br><span class="line">Mutex lock/unlock ........................... 25 ns</span><br><span class="line">Main memory reference ...................... 100 ns             </span><br><span class="line">Compress 1 KB with Zippy ................. 3,000 ns  =       3 µs</span><br><span class="line">Send 2 KB over 1 Gbps network ........... 20,000 ns  =      20 µs</span><br><span class="line">SSD random read ........................ 150,000 ns  =     150 µs</span><br><span class="line">Read 1 MB sequentially from memory ..... 250,000 ns  =     250 µs</span><br><span class="line">Round trip within same datacenter ...... 500,000 ns  =     500 µs  =  0.5 ms</span><br><span class="line">Read 1 MB sequentially from SSD ...... 1,000,000 ns  =   1,000 µs  =    1 ms</span><br><span class="line">Disk seek ........................... 10,000,000 ns  =  10,000 µs  =   10 ms</span><br><span class="line">Read 1 MB sequentially from disk .... 20,000,000 ns  =  20,000 µs  =   20 ms</span><br><span class="line">Send packet CA-&gt;Netherlands-&gt;CA .... 150,000,000 ns  = 150,000 µs  =  150 ms</span><br></pre></td></tr></table></figure>
+
+<h2 id="地址空间、分段（segmentation）"><a href="#地址空间、分段（segmentation）" class="headerlink" title="地址空间、分段（segmentation）"></a>地址空间、分段（segmentation）</h2><p><img src="https://upload.wikimedia.org/wikipedia/commons/7/70/VirtualMem01.png" alt="img"></p>
+<p><strong>地址空间</strong>：程序认为自己独占了这片内存空间，以为自己是连续的内存空间。低位是代码，堆往上递增，栈往下反向增长。</p>
+<p>实际上是在物理内存中申请了一片连续的内存空间分配给进程，进程根据指令寻址的时候，操作系统将虚拟地址 <strong>重定位</strong> 到真正的物理地址。虚拟地址从0开始，因此虚拟地址实际上就是物理地址的偏移量。直接打印指针变量的值是虚拟地址而不是物理地址。</p>
+<h3 id="虚拟内存的作用"><a href="#虚拟内存的作用" class="headerlink" title="虚拟内存的作用"></a>虚拟内存的作用</h3><p><strong>隔离进程</strong>：物理内存通过虚拟地址空间访问，虚拟地址空间与进程一一对应。每个进程都认为自己拥有了整个物理内存，进程之间彼此隔离，一个进程中的代码无法更改正在由另一进程或操作系统使用的物理内存。</p>
+<p><strong>提升物理内存利用率</strong>：有了虚拟地址空间后，操作系统只需要将进程当前正在使用的部分数据或指令加载入物理内存。</p>
+<p><strong>简化内存管理</strong>：进程都有一个一致且私有的虚拟地址空间，程序员不用和真正的物理内存打交道，而是借助虚拟地址空间访问物理内存，从而简化了内存管理。</p>
+<p><strong>多个进程共享物理内存</strong>：进程在运行过程中，会加载许多操作系统的动态库。这些库对于每个进程而言都是公用的，它们在内存中实际只会加载一份，这部分称为共享内存。</p>
+<p><strong>提高内存使用安全性</strong>：控制进程对物理内存的访问，隔离不同进程的访问权限，提高系统的安全性。</p>
+<p><strong>提供更大的可使用内存空间</strong>：可以让程序拥有超过系统物理内存大小的可用内存空间。这是因为当物理内存不够用时，可以利用磁盘充当，将物理内存页（通常大小为 4 KB）保存到磁盘文件（会影响读写速度），数据或代码页会根据需要在物理内存与磁盘之间移动。</p>
+<hr>
+<p>著作权归JavaGuide(javaguide.cn)所有 基于MIT协议 原文链接：<a target="_blank" rel="noopener" href="https://javaguide.cn/cs-basics/operating-system/operating-system-basic-questions-02.html">https://javaguide.cn/cs-basics/operating-system/operating-system-basic-questions-02.html</a></p>
+<h3 id="重定位（relocation）"><a href="#重定位（relocation）" class="headerlink" title="重定位（relocation）"></a>重定位（relocation）</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210205158811.png" alt="image-20241210205158811"></p>
+<p><code>Virtual Address + Base = Physical Address</code> </p>
+<p><strong>静态重定位</strong>：用软件实现，直接将指令中的虚拟地址用计算的真实物理地址覆盖。</p>
+<ul>
+<li>缺点：不安全，不方便更改。</li>
+</ul>
+<p><strong>动态重定位</strong>：用硬件实现，也就是CPU中的==MMU==，里面两个最基本的寄存器：<strong>基址寄存器</strong>、<strong>界限寄存器</strong>。将指令中的虚拟地址和基址相加得出真实物理地址，然后取得从硬件层面取得对应地址的值。这一切都是用硬件进行的。</p>
+<ul>
+<li>安全性：用界限（bound）和虚拟地址比较，如果超过了界限，说明虚拟地址访问越界，抛出异常</li>
+<li>便于更改：改变寄存器的值即可实现基址的改变</li>
+<li>性能高：硬件实现性能好</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210205227715.png" alt="image-20241210205227715"></p>
+<h3 id="实现虚拟内存"><a href="#实现虚拟内存" class="headerlink" title="实现虚拟内存"></a>实现虚拟内存</h3><p><strong>实现虚拟内存机制的硬件支持：MMU</strong></p>
+<ul>
+<li><p>划分用户空间和内核空间</p>
+</li>
+<li><p>一对基址寄存器和界限寄存器，专门用来进行地址转换的电路</p>
+</li>
+<li><p>专门用来判断是否越界的电路，判断越界之后应当向CPU抛出异常</p>
+</li>
+<li><p>特权指令：操作系统应当能够设置上述寄存器的值</p>
+</li>
+<li><p>特权指令：操作系统应当告诉硬件发现异常应该执行哪些代码（Exception Handler）</p>
+</li>
+</ul>
+<p><strong>实现虚拟内存机制的软件支持：OS</strong></p>
+<ul>
+<li>内存管理：分配机制、释放机制、空闲空间的管理——free list</li>
+<li>切换上下文时正确设置对应的寄存器</li>
+<li>抛出异常（内存访问越界、非法指令）时执行特定的处理代码</li>
+</ul>
+<p><strong>地址空间的不足</strong>：内部碎片（inner fragment）栈和堆之间未使用的空间也分配给整个地址空间，浪费较大</p>
+<h3 id="分段"><a href="#分段" class="headerlink" title="分段"></a>分段</h3><h4 id="segmentation"><a href="#segmentation" class="headerlink" title="segmentation"></a>segmentation</h4><p><strong>段式管理</strong>：以段(—段连续的物理内存)的形式管理/分配物理内存。应用程序的虚拟地址空间被分为大小不等的段，段是有实际意义的，每个段定义了一组逻辑信息，例如有主程序段 MAIN、子程序段 X、数据段 D 及栈段 S 等。然后给每个段都配一对基址寄存器和界限寄存器。</p>
+<p>例：0-16KB的虚拟地址空间，虚拟地址14位，高2位为段号，低12位为最大4KB的段空间。虚拟地址 = 段号 + 偏移 </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT</span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset = VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])</span><br><span class="line">	RaiseException(PROTECTION_FAULT)<span class="comment">//抛出异常</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PhysAddr = Base[Segment] + Offset<span class="comment">//基址+偏移</span></span><br><span class="line">	Register = AccessMemory(PhysAddr)<span class="comment">//访存</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210205528802.png" alt="image-20241210205528802"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210205438635.png" alt="image-20241210205438635"></p>
+<table>
+<thead>
+<tr>
+<th>段名称</th>
+<th>段号</th>
+<th>基址寄存器</th>
+<th>界限寄存器</th>
+<th>是否正向增长</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>代码</td>
+<td>00</td>
+<td>26 KB</td>
+<td>2 KB</td>
+<td>1</td>
+</tr>
+<tr>
+<td>堆</td>
+<td>01</td>
+<td>28 KB</td>
+<td>2 KB</td>
+<td>1</td>
+</tr>
+<tr>
+<td>栈</td>
+<td>11</td>
+<td>18 KB</td>
+<td>2 KB</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<p>现在要判断虚拟地址15KB的真实地址：<code>11 11 00000 00000</code> 可见段号为 11，偏移 3 KB，栈空间反向增长，最大段空间为 4 KB，实际上就是计算15KB离全1有多远：3KB - 4KB = -1 KB,因此在基址寄存器减1KB即为实际物理地址。</p>
+<h5 id="用于保护的额外状态字"><a href="#用于保护的额外状态字" class="headerlink" title="用于保护的额外状态字"></a>用于保护的额外状态字</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241211001125226.png" alt="image-20241211001125226"></p>
+<h5 id="分段的问题"><a href="#分段的问题" class="headerlink" title="分段的问题"></a>分段的问题</h5><ul>
+<li><strong>外部碎片</strong>：每个分段的大小不一致，因此产生了大小不一致的碎片，无法使空间得到有效利用。</li>
+<li><strong>不支持稀疏的大堆</strong>：Another problem is that some segments could have a larger size and since this segment can’t be “broken” into smaller pieces, it must be fully allocated in memory. 分段大小是固定的，并不能将其拆成小段，申请了一段物理内存，寄存器的基址和界限已经确定好，这部分物理空间就不能再由其他的进程使用了，因此不支持按需分配。</li>
+<li>Segments of unequal size not suited as well for swapping.</li>
+</ul>
+<h5 id="段表：更细粒度的分段"><a href="#段表：更细粒度的分段" class="headerlink" title="段表：更细粒度的分段"></a>段表：更细粒度的分段</h5><p>细粒度分段需要进一步硬件支持，并且在内存中存储 段表 （segment table）</p>
+<p>分段机制下的虚拟地址由两部分组成：</p>
+<ul>
+<li><strong>段号</strong>：标识着该虚拟地址属于整个虚拟地址空间中的哪一个段。</li>
+<li><strong>段内偏移量</strong>：相对于该段起始地址的偏移量。</li>
+</ul>
+<p>具体的地址翻译过程如下：</p>
+<ol>
+<li>MMU 首先解析得到虚拟地址中的段号；</li>
+<li>通过段号去该应用程序的段表中取出对应的段信息（找到对应的段表项）；</li>
+<li>从段信息中取出该段的起始地址（物理地址）加上虚拟地址中的段内偏移量得到最终的物理地址。</li>
+</ol>
+<p><img src="https://miro.medium.com/v2/resize:fit:1313/1*82aSNHRAkNNinGuPpsl6TQ.png" alt="img">分段机制下的地址翻译过程</p>
+<p>段表中还存有诸如段长(可用于检查虚拟地址是否超出合法范围)、段类型（该段的类型，例如代码段、数据段等）等信息。</p>
+<p><strong>通过段号一定要找到对应的段表项吗？得到最终的物理地址后对应的物理内存一定存在吗？</strong></p>
+<p>不一定。段表项可能并不存在：</p>
+<ul>
+<li><strong>段表项被删除</strong>：软件错误、软件恶意行为等情况可能会导致段表项被删除。</li>
+<li><strong>段表项还未创建</strong>：如果系统内存不足或者无法分配到连续的物理内存块就会导致段表项无法被创建。</li>
+</ul>
+<h4 id="减少碎片"><a href="#减少碎片" class="headerlink" title="减少碎片"></a>减少碎片</h4><ul>
+<li><p><strong>内存紧缩</strong>（compact）：内存存储不下程序，会把暂时休息的第一个进程方法放入磁盘，过段时间移除进程b放入进程a，这样会让内存中出现空洞，所以要将进程整体往下移动。必须将运行中的进程中断，将所有分散的内存碎片压到连续的部分中，然后再将新的基址和界限移动到寄存器中，进程按照新的上下文继续执行。缺点是代价太高，性能不好</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240922142056246.png" alt="image-20240922142056246"></p>
+</li>
+<li><p><strong>改善空闲列表</strong>（free list）：分配内存的时候采取一定的策略，尽量减轻内存碎片的现象，但也无法根除碎片的出现</p>
+</li>
+</ul>
+<h2 id="空闲空间的管理"><a href="#空闲空间的管理" class="headerlink" title="空闲空间的管理"></a>空闲空间的管理</h2><p>维护一个空闲空间的列表（freelist）</p>
+<h3 id="机制：分割与合并"><a href="#机制：分割与合并" class="headerlink" title="机制：分割与合并"></a>机制：分割与合并</h3><p>splitting</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210222509968.png" alt="image-20241210222509968"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210222527700.png" alt="image-20241210222527700"></p>
+<p>coalescing</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210222438918.png" alt="image-20241210222438918"></p>
+<h3 id="内存-API"><a href="#内存-API" class="headerlink" title="内存 API"></a>内存 API</h3><h4 id="malloc"><a href="#malloc" class="headerlink" title="malloc"></a>malloc</h4><p><code>void* malloc(int size)</code> 申请大小为size的连续字节空间（虚拟意义上的连续），返回一个指向这个空间首部的指针</p>
+<p>除了用户申请的空间之外，在malloc时还会申请一个头部Header，size用来表示申请空间的大小，magic魔数用来验证完整性<a target="_blank" rel="noopener" href="https://www.cnblogs.com/whiteBear/p/16729327.html">延迟分配：提供内存利用率的三种机制 - 牛犁heart - 博客园</a></p>
+<ul>
+<li>malloc只是分配了虚拟内存，程序真正访问才会触发页错误给这些虚拟页分配物理页框（demand paging）</li>
+<li>在标准 C 库中，提供了 malloc / free 函数分配释放内存，这两个函数底层是由 brk，mmap，munmap 这些系统调用实现的。 (<em>详见Linux虚拟内存系统</em>) 不过跟直接调用还是有区别的。</li>
+</ul>
+<h4 id="free"><a href="#free" class="headerlink" title="free"></a>free</h4><p><code>void free(void* ptr)</code> 将指针ptr所指向的已分配空间释放掉，依据的信息是<strong>分配内存的Header部分</strong> ，因此malloc的size并不是真正的大小，还要分配头部<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210221647796.png" alt="image-20241210221647796"></p>
+<h3 id="嵌入-free-list-到内存中"><a href="#嵌入-free-list-到内存中" class="headerlink" title="嵌入 free list 到内存中"></a>嵌入 free list 到内存中</h3><p>free list 本身也需要存储在内存中，这里我们知道：空闲的块作为空闲节点有额外的简单数据结构（int size, node* next），已分配的块同样也有简单的数据结构（int size, int magic），因此堆实际上是一个空闲内存和已分配的内存的混合。</p>
+<ul>
+<li>未分配空间</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210222820688.png" alt="image-20241210222820688"></p>
+<ul>
+<li>连续分配了3个100字节的空间</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210223130088.png" alt="image-20241210223130088"></p>
+<ul>
+<li>中间出现了空隙，可以看到空闲列表的头节点（head）发生了变化，两个空闲的块通过链表连接起来</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210223253160.png" alt="image-20241210223253160"></p>
+<ul>
+<li>全部释放之后，出现了4个空闲的块，但是还没有合并（merge）</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210223340586.png" alt="image-20241210223340586"></p>
+<h3 id="策略：连续内存分配"><a href="#策略：连续内存分配" class="headerlink" title="策略：连续内存分配"></a>策略：连续内存分配</h3><h4 id="基本策略：空闲链表"><a href="#基本策略：空闲链表" class="headerlink" title="基本策略：空闲链表"></a>基本策略：空闲链表</h4><ul>
+<li><strong>Best Fit</strong>：遍历整个列表，找到跟分配块大小最接近的空闲块，尽量减少碎片大小。细小碎片多，开销大。</li>
+<li><strong>Worst Fit</strong>：遍历整个列表，找到跟分配块大小差距最大的，分割之后将剩余块加入空闲列表。碎片过量，开销大。</li>
+<li><strong>First Fit</strong>：第一次找到足够大的块就直接分配。会让开头部分有许多小的碎片，可以通过按地址排序，便于合并操作。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240922142709440.png" alt="image-20240922142709440"></p>
+<ul>
+<li><strong>Next Fit</strong>：每次查找都从上次结束的地方开始，剩下逻辑依然是首次匹配，可以减少开头部分过多的小碎片，将其分散到其他地方。</li>
+</ul>
+<p><strong>位图</strong>：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-ccf3e0ea94a135e7f8548f3e9ef42813_1440w.jpg" alt="img"></p>
+<h4 id="内存池（memory-pool）"><a href="#内存池（memory-pool）" class="headerlink" title="内存池（memory pool）"></a>内存池（memory pool）</h4><p>如果能将一大块内存分成多个小内存（称为内存池），不同的内存池又按照不同的「尺寸」分成大小相同的内存块（比如分别按照32, 64, 128……字节），同一内存池中的空闲内存块按照free list的方式连接。每次分配的时候，选择和申请的的内存在「尺寸」上最接近的内存池，比如申请60字节的内存，就直接从单个内存块大小为64字节的内存池的free list上分配。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-12148c36cd07924a26e0ce35b67f29eb_1440w.jpg" alt="img" style="zoom:150%;" />
+
+<p>需要结合系统实际的内存分配需求，对内存池的大小进行合理的划分。比如一个系统常用的是256字节以下的内存申请，那设置过多的256字节以上的内存池，就会造成内存资源的闲置和浪费。</p>
+<h4 id="其他策略"><a href="#其他策略" class="headerlink" title="其他策略"></a>其他策略</h4><p>Linux 发展出两种基于内存池的分配策略，<em>详见 Linux 实现</em></p>
+<ul>
+<li><strong>Buddy system</strong>: 将内存池划分为以2^n^为大小的类型，同一内存池中的空闲块大小相同，如果空闲块是相邻的则合并，将合并后的块加入更大的内存池中</li>
+<li><strong>SLAB</strong>: 伙伴系统是按页分配的，但内核经常会申请一些特定大小的内存，往往不到一页，如果仍然使用伙伴系统将造成很多内部碎片，SLAB为它们分配了内核对象缓存，专门的连续内存区，依然使用内存池的思路，但是池子变得比以前更小。</li>
+</ul>
+<h2 id="分页（paging）"><a href="#分页（paging）" class="headerlink" title="分页（paging）"></a>分页（paging）</h2><h3 id="虚拟——物理页号转换"><a href="#虚拟——物理页号转换" class="headerlink" title="虚拟——物理页号转换"></a>虚拟——物理页号转换</h3><h4 id="页帧、页帧号、虚拟页号"><a href="#页帧、页帧号、虚拟页号" class="headerlink" title="页帧、页帧号、虚拟页号"></a>页帧、页帧号、虚拟页号</h4><p><strong>分页机制</strong>：将虚拟的地址替换成物理地址，用大小相等的页代替大小不等的段。原来一个进程是代码段和数据段不等，分配的内存空间也不一样，现在将段继续拆分成大小相等的页表项，这样从根本上解决了外部碎片的问题。</p>
+<p><strong>页帧（Page Frame）</strong>：物理内存中存放数据的最小单位。当一个虚拟页被映射到物理页时，数据会存放在对应的<strong>页帧</strong>中。假设一个进程的虚拟地址空间中有一个虚拟页，虚拟地址 <code>0x1000</code> 对应的虚拟页页号是 <code>0x1</code>，偏移量为0。此时，操作系统通过页表将虚拟页 <code>0x1</code> 映射到物理内存中的一个页帧 <code>0x3</code>，即物理地址为 <code>0x3000</code>。那么，当该进程访问虚拟地址 <code>0x1000</code> 时，CPU 会通过页表将其转换为物理地址 <code>0x3000</code>，并在页帧 <code>0x3</code> 中访问数据。页帧大小固定为PageSize</p>
+<p><strong>虚拟地址（Virtual Address）= 虚拟页号（VPN, Virtual Page Number） + 偏移量（Offset）</strong></p>
+<p><strong>页表项（Page Table Entry）= 物理页号（PFN, Page Frame Number）+ 保留的功能位</strong></p>
+<p><strong>页表的物理地址</strong>：加载到<strong>页表基址寄存器（PTBR, Page Table Base Register）</strong>，一个<strong>页表项（PTE）</strong>分为<strong>物理页号（PFN）</strong>，有效位valid，读写权限位protection，内核模式位，脏位dirty，引用reference，存在位present等功能位。</p>
+<h4 id="从虚拟地址访存基本步骤"><a href="#从虚拟地址访存基本步骤" class="headerlink" title="从虚拟地址访存基本步骤"></a>从虚拟地址访存基本步骤</h4><ul>
+<li><p><code>VirtualAddress = VPN + Offset</code> </p>
+</li>
+<li><p><code>PTE Address(Physical) = VPN * PageSize + PTBR</code> PTE保存着PFN以及其他功能位</p>
+</li>
+<li><p><code>Physical Address = PFN * PageSize + Offset</code> </p>
+</li>
+<li><p>实际上VPN PFN Offset都是通过和MASK（作用和子网掩码相同）相与，然后PFN移位后和Offset相或。</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Extract the VPN from the virtual address</span></span><br><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; SHIFT</span><br><span class="line"><span class="comment">// Form the address of the page-table entry (PTE)</span></span><br><span class="line">PTEAddr = PTBR + (VPN * <span class="keyword">sizeof</span>(PTE))</span><br><span class="line"><span class="comment">// Fetch the PTE</span></span><br><span class="line">PTE = AccessMemory(PTEAddr)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Check if process can access the page</span></span><br><span class="line"><span class="keyword">if</span> (PTE.Valid == False)<span class="comment">// Valid bit = 0</span></span><br><span class="line">	RaiseException(SEGMENTATION_FAULT) <span class="comment">//illegal memory access</span></span><br><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (CanAccess(PTE.ProtectBits) == False)</span><br><span class="line">	RaiseException(PROTECTION_FAULT)</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="comment">// Access OK: form physical address and fetch it</span></span><br><span class="line">    offset = VirtualAddress &amp; OFFSET_MASK</span><br><span class="line">    PhysAddr = (PTE.PFN &lt;&lt; PFN_SHIFT) | offset</span><br><span class="line">    Register = AccessMemory(PhysAddr)</span><br></pre></td></tr></table></figure>
+
+<p><strong>一些功能位</strong></p>
+<ul>
+<li>Protection bit：权限位，保护位 r w x，如果违反了越权访问，就要陷入OS</li>
+<li>Valid bit：有效位，虚拟地址空间并不是全部都要分配，如果访问了还没有分配的（valid bit = 0）就是非法访问，将会抛出异常陷入OS</li>
+<li>Dirty bit：脏位，页面带入内存之后是否被修改过</li>
+<li>Present bit：存在位，表示内存页在内存中还是已经被换出</li>
+<li>Reference bit：参考位，追踪页面是否被访问</li>
+</ul>
+<h4 id="页表开销"><a href="#页表开销" class="headerlink" title="页表开销"></a>页表开销</h4><ul>
+<li><strong>内存开销</strong>：每个页表项需要4B，页大小（PageSize）是4KB，要虚拟出一个4GB的空间，就要有4GB/4KB * 4B =4MB 空间来存储。对每个进程操作系统都要有4MB的空间用于页表的储存，开销很大。页表是按照页号进行索引查找的，这就需要本身是一段连续的内存空间，页表就是一个大的数组，实际上页表在物理上也连续。</li>
+<li><strong>性能开销</strong>：对于每个内存引用，都要额外引入一次内存引用，效率不高,每一次访存都多了一步访问页表，性能显著下降</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1075436-20190809172852450-661010612.png" alt="img"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212120853391.png" alt="image-20241212120853391"></p>
+<h4 id="页表总结"><a href="#页表总结" class="headerlink" title="页表总结"></a>页表总结</h4><p><strong>Pros</strong>:</p>
+<ul>
+<li>No external fragments</li>
+<li>Flexible, good support for sparse address space</li>
+</ul>
+<p><strong>Cons</strong>:</p>
+<ul>
+<li>Physical Space costs (Page table)</li>
+<li>Speed Costs (extra memory access)</li>
+</ul>
+<h3 id="快表-TLB"><a href="#快表-TLB" class="headerlink" title="快表 TLB"></a>快表 TLB</h3><p><strong>如果想要快速的缓存，他就必须小，因为光速和其他物理限制会起作用</strong></p>
+<p><strong>TLB</strong>：因为有二八定律，所以MMU要记下经常使用的虚拟页号，将VPN与PFN的映射关系存在 <strong>TLB</strong> 快表中（<strong>Translation Lookaside Buffer</strong> aka. <strong>Address Translation Cache</strong>）</p>
+<h4 id="硬件实现-TLB-控制流"><a href="#硬件实现-TLB-控制流" class="headerlink" title="硬件实现 TLB 控制流"></a>硬件实现 TLB 控制流</h4><p>CISC 将tlb miss逻辑全权交给硬件负责，拿着虚拟页号 VPN 去 TLB 中查询</p>
+<ul>
+<li>TLB hit：直接访存(<code>AccessMemory</code>)</li>
+<li><strong>TLB miss：查页表，查到PFN后写入TLB（<code>TLB_Insert</code>），重新执行TLB查询操作（<code>RetryInstruction</code>）</strong>  </li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212122549686.png" alt="image-20241212122549686"></p>
+<p>硬件实现：需要PTBR（x86架构中为CR3寄存器），页表的确切格式是写死在硬件里的（x86中为多级页表）</p>
+<h4 id="软件实现-TLB-控制流"><a href="#软件实现-TLB-控制流" class="headerlink" title="软件实现 TLB 控制流"></a>软件实现 TLB 控制流</h4><p>RISC 将tlb miss看作一个异常，陷入OS，执行对应的处理程序</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212124132429.png" alt="image-20241212124132429"></p>
+<p><strong>软件实现的好处</strong>：可以随时更改，可扩展性强，页表的数据结构由操作系统自行决定，</p>
+<p><strong>注意的问题</strong>：</p>
+<ul>
+<li>TLBmissHandler和一般的trap不同，一般return from trap 会从陷入后的地方继续执行，而TLBmiss则会从<strong>重试</strong>陷入之前的程序，因此保存的上下文很重要，尤其是程序计数器</li>
+<li>TLBmissHandler也是代码，要访存，须谨防无限递归tlb miss的问题，可以专门把一块TLB的空间划给TLBmiss处理程序使用；或者也可以不使用虚拟内存，直接把代码物理地址告诉硬件（unmapped，陷阱表）</li>
+</ul>
+<h4 id="TLB-内容"><a href="#TLB-内容" class="headerlink" title="TLB 内容"></a>TLB 内容</h4><h5 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h5><p><code>VPN | PFN | other bits</code></p>
+<p>是一个全相联（fully-associative）的cache结构，硬件会并行地查找这些项，</p>
+<p><strong>other bits</strong>：</p>
+<ul>
+<li><p>protection：访问权限</p>
+</li>
+<li><p>valid：表示TLB是否记录着一个有效的<code>VPN-&gt;PFN</code>映射，PTE的有效位为0表示这是一个并未被应用申请过的非法地址</p>
+</li>
+<li><p>dirty：脏位</p>
+</li>
+<li><p>asid：access space id，地址空间id，用来标识不同进程的TLB条目<a target="_blank" rel="noopener" href="https://blog.csdn.net/Rong_Toa/article/details/110758233">Linux进程管理+内存管理：进程切换的TLB处理（ASID-address space ID、PCID-process context ID）_进程的asid-CSDN博客</a> </p>
+</li>
+</ul>
+<h5 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h5><p>TLB集成在CPU内部的MMU，因此一定会有上下文切换的问题，VPN一样的条目会导致数据错误</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212131757567.png" alt="image-20241212131757567"></p>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li>上下文切换的时候将所有 TLB 条目的<strong>有效位</strong>置0（flush），下一个进程可以随便覆盖</li>
+<li>使用ASID（类似于pid）记录这个TLB条目属于哪个进程</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212131846711.png" alt="image-20241212131846711"></p>
+<p><strong>PFN一样的条目</strong>：可能是共享代码页，这样可以减少额外分配物理页</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212131859962.png" alt="image-20241212131859962"></p>
+<h5 id="例：MIPS-TLB-Entry"><a href="#例：MIPS-TLB-Entry" class="headerlink" title="例：MIPS TLB Entry"></a>例：MIPS TLB Entry</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212134843225.png" alt="image-20241212134843225"></p>
+<p>0-18 VPN  19 Global 进程间共享  24-31 ASID 进程空间 </p>
+<h4 id="刷新、替换"><a href="#刷新、替换" class="headerlink" title="刷新、替换"></a>刷新、替换</h4><h5 id="TLB-flush"><a href="#TLB-flush" class="headerlink" title="TLB flush"></a>TLB flush</h5><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/66971714">TLB之flush操作[一] - 知乎</a> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/66994486">TLB之flush操作[二] - 知乎</a> <a target="_blank" rel="noopener" href="https://blog.csdn.net/Rong_Toa/article/details/110760995">Linux内存管理：TLB flush操作-CSDN博客</a> </p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Rong_Toa/article/details/110758233">Linux进程管理+内存管理：进程切换的TLB处理（ASID-address space ID、PCID-process context ID）_进程的asid-CSDN博客</a> </p>
+<p>在页表PTE的内容出现变化时，比如page fault时页面被换出，munmap()时映射被解除，就需要invalidate对应的TLB entry，有时这个操作也被称为flush（以下的讨论将统一称为flush）。</p>
+<p>当系统中各个cpu的TLB中的asid合起来不大于256个的时候，系统正常运行，一旦超过256的上限后，我们将全部TLB flush掉，并重新分配ASID，每达到256上限，都需要flush tlb并重新分配HW ASID。</p>
+<p>在多核系统中，虽然每个核心的MMU是独立的，但它们在访问<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=695131149&content_type=Answer&match_order=1&q=%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98&zhida_source=entity">共享内存</a>时需要进行协调。共享内存区域允许多个核心同时访问相同的物理内存，这对于核心间的通信或共享数据非常关键。MMU可以通过为不同的内存区域设置权限和属性，确保多个核心在访问这些共享区域时不会出现数据冲突或不一致的情况。这在多线程或多进程系统中，尤其在同步和内存一致性方面，显得尤为重要。</p>
+<h5 id="缓存更新策略"><a href="#缓存更新策略" class="headerlink" title="缓存更新策略"></a><a href="#eviction">缓存更新策略</a></h5><h2 id="优化分页"><a href="#优化分页" class="headerlink" title="优化分页"></a>优化分页</h2><h3 id="扩大页面大小（Bigger-Pages）"><a href="#扩大页面大小（Bigger-Pages）" class="headerlink" title="扩大页面大小（Bigger Pages）"></a>扩大页面大小（Bigger Pages）</h3><p>Linux</p>
+<ul>
+<li><p>对TLB更加友好，考虑到空间局部性，同一页能够访问更多数据，也就不用频繁地查页表了</p>
+</li>
+<li><p>增大页面大小，VPN<del>max</del>变小，每个虚拟页占空间4B，页表占用总空间减小；</p>
+</li>
+<li><p>但应用程序申请的并不一定是会充满整个页，所以会出现内部碎片（internal fragment）</p>
+</li>
+</ul>
+<h3 id="分段-分页（Hybrid-Approach）"><a href="#分段-分页（Hybrid-Approach）" class="headerlink" title="分段 + 分页（Hybrid Approach）"></a>分段 + 分页（Hybrid Approach）</h3><h4 id="线性页表的局限"><a href="#线性页表的局限" class="headerlink" title="线性页表的局限"></a>线性页表的局限</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212210406110.png" alt="image-20241212210406110"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212210703824.png" alt="image-20241212210703824"></p>
+<p>如图，虚拟空间是16KB，页面大小为1KB，因此页表共有16 entries，除去代码段，堆栈之间的空间是严重浪费的，就像分段会导致内部碎片一样，连续的线性页表也会导致内部碎片。</p>
+<h4 id="段页结合"><a href="#段页结合" class="headerlink" title="段页结合"></a>段页结合</h4><p>VAX/VMS</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212213305035-1734010396522-12.png" alt="image-20241212213305035"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/8904fb89ae0c49c4b0f2f7b5a0a7b099.png" alt="img"></p>
+<p>可以根据代码、堆、栈对页表进行分类，然后使用三个base-bound寄存器对，上下文切换时保存、恢复寄存器内容。更细粒度的分段可以使用段表。base存储段在物理内存的位置，bound表示段大小。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SN  = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SN_SHIFT</span><br><span class="line">VPN = (VirtualAddress &amp; VPN_MASK) &gt;&gt; VPN_SHIFT</span><br><span class="line">AddressOfPTE = Base[SN] + (VPN * <span class="keyword">sizeof</span>(PTE))</span><br></pre></td></tr></table></figure>
+
+<h4 id="缺陷"><a href="#缺陷" class="headerlink" title="缺陷"></a>缺陷</h4><ul>
+<li>与分段的缺陷一样，只不过是将真正的数据部分换成了页表</li>
+<li>不灵活，假设地址空间有一定的使用模式，分段则需要为整个堆段预留连续空间，即使中间部分未使用也无法释放。<ul>
+<li>a large but sparsely-used heap 仍然可能导致大量的页表浪费</li>
+</ul>
+</li>
+<li>由于界限寄存器的存在，每个段有多少页是不确定的，因此每个段的页表大小也不确定，导致寻找足够的连续自由空间比较复杂。虽然节省内存但是有外部碎片问题</li>
+</ul>
+<h3 id="多级页表（Multi-level-Page-Tables）"><a href="#多级页表（Multi-level-Page-Tables）" class="headerlink" title="多级页表（Multi-level Page Tables）"></a>多级页表（Multi-level Page Tables）</h3><p>x86 ARM Linux Windows</p>
+<p>减小页表占用的空间，分散成多个页表，<strong>每张页表大小==相同==<strong>，</strong>并且刚好能填满一整个内存页</strong>，消灭了外部碎片</p>
+<p><strong>如果整页的PTE都是无效的（未分配），则完全不分配该页面的页表。</strong></p>
+<ul>
+<li>PDE的有效位：此条目指向的页是否有页表？PTE的有效位：此条目是否是一个有效的PFN映射？</li>
+<li>树形结构，不用的可以不分配页表空间。支持稀疏空间：不用的就不分配物理内存页</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241212214704876.png" alt="image-20241212214704876"></p>
+<h4 id="页表目录-页表-内存"><a href="#页表目录-页表-内存" class="headerlink" title="页表目录-页表-内存"></a>页表目录-页表-内存</h4><p>CR3存的是页表目录（Page Directory）的基址，假设虚拟地址前4位是页表目录的编号，中间4位是页表（Page Table）编号，后12位为偏移。CR3找到了页表目录，根据前4位索引到PTE的PFN，根据中间4位找到页表中的PTE，PTE中存储着物理页的PFN。</p>
+<ul>
+<li><p>基本思想：基址 + 偏移 </p>
+</li>
+<li><p><code>VPN = PD_index | PT_index</code> </p>
+</li>
+<li><p><strong>页目录项</strong>地址: <code>PD_Entry_Addr = Page_Dir_Base + PD_index * sizeof(PD_Entry_Addr)</code> </p>
+</li>
+<li><p><strong>页表项</strong>地址：  <code>PT_Entry_Addr = PD_Entry.PFN &lt;&lt; SHIFT + PT_index * sizeof(PT_Entry_Addr)</code> </p>
+</li>
+<li><p>页面地址 ：<code>Page_Entry_Addr = PT_Entry.PFN &lt;&lt; SHIFT + Offset</code> </p>
+</li>
+</ul>
+<p>以16位虚拟地址为例：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240924221042539.png" alt="image-20240924221042539"></p>
+<ul>
+<li><strong>虚拟内存的要求</strong>：每一层级内部必须是连续的，因为分配物理内存空间只能一次性分配连续的一段</li>
+<li>单级页表要想实现页表只能一次性分配256个连续的entries。</li>
+<li>多级页表如果<strong>真的只有</strong>这3个地址所在的physical page被用到，那么只需要48 个entries就可以了</li>
+</ul>
+<p>在32位系统中，进程的虚拟地址空间为4GB，但某个进程实际使用的页只占其中的一小部分，其分布是稀疏的，因此非常适合使用多级页表这种稀疏的级联数组(<a href="https://link.zhihu.com/?target=https://en.wikipedia.org/wiki/Radix_tree">radix tree</a>)来表示。</p>
+<h4 id="fill-the-pages"><a href="#fill-the-pages" class="headerlink" title="fill the pages"></a>fill the pages</h4><h5 id="例：30位虚拟地址"><a href="#例：30位虚拟地址" class="headerlink" title="例：30位虚拟地址"></a>例：30位虚拟地址</h5><p>目标：每张表填满一整个内存页 Page Size = 2^7^ * 4 B = 512 B，二级页表不能刚好占满一页</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213134804005.png" alt="image-20241213134804005"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213135215659.png" alt="image-20241213135215659"></p>
+<h5 id="实际的32位和64位页表"><a href="#实际的32位和64位页表" class="headerlink" title="实际的32位和64位页表"></a>实际的32位和64位页表</h5><p>在32位处理器中，采用4KB的page大小，则虚拟地址中低12位为offest，剩下高20位给页表，<strong>分成两级</strong>，每个级别占10个bit（10+10）。为什么32位系统的页表每级占10位，每个页的大小被设定为<code>4KB</code>而不是2KB或者8KB？</p>
+<p>如果index为10位，则其可索引的范围是1024个entris，32位系统中，每级页表的每个entry的大小为4个字节，则每个页表的大小刚好是4KB。页表首地址也是要按页对齐的，如果占不满一个页，页中剩下的空间也就浪费了。80386引入<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=102569108&content_type=Article&match_order=1&q=%E5%88%86%E9%A1%B5%E6%9C%BA%E5%88%B6&zhida_source=entity">分页机制</a>的时候应该就考虑过把页设置为多大是最合适的，显然4KB的页大小对内存的利用是最充分的。1024 * 4 = 4 K</p>
+<p><img src="https://i.stack.imgur.com/R19zY.png" alt="memory management - Why 32-bit Windows can maximum have 16TB Page File ..."></p>
+<p>为什么64位系统的页表<strong>每级占9位</strong>呢？为了和硬件配合，基于i386编写的linux也采用4KB的页大小作为<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=102569108&content_type=Article&match_order=1&q=%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86&zhida_source=entity">内存管理</a>的基本单位。处理器进入64位时代后，其实可以不再使用4KB作为一个页帧的大小，但可能为了提供硬件的向前兼容性以及和操作系统的兼容性吧，大部分64位处理器依然使用4KB作为默认的页大小（ARMv8-A还支持16KB和64KB的页大小）。因为64位系统中，每级页表的每个entry的大小为8个字节，如果index为9位，则每个页表的大小也刚好是4KB。</p>
+<p>512 * 8 = 4K </p>
+<p><img src="https://i.sstatic.net/Bswtz.png" alt="img"></p>
+<h4 id="TLB-控制流"><a href="#TLB-控制流" class="headerlink" title="TLB 控制流"></a>TLB 控制流</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213141353216.png" alt="image-20241213141353216"></p>
+<p>依然是先查TLB，TLB没有再查页表，先用PDBR加偏移 算出PDE的物理地址得到PTE所在的PFN，找到PTE之后根据PTE里面的PFN加偏移算出真实的物理地址。</p>
+<h3 id="倒排页表（Inverted-Page-Table）"><a href="#倒排页表（Inverted-Page-Table）" class="headerlink" title="倒排页表（Inverted Page Table）"></a>倒排页表（Inverted Page Table）</h3><p>PowerPC</p>
+<p>页表的映射反过来，PFN-&gt;VPN，除了VPN，还有使用此页的进程标识。通常使用Hash散列表来加快搜索。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1006507-20161224105816979-1390337413.png" alt="img"></p>
+<h3 id="交换到磁盘（Swap）"><a href="#交换到磁盘（Swap）" class="headerlink" title="交换到磁盘（Swap）"></a>交换到磁盘（Swap）</h3><p>之前的页表都需要直接访问物理内存，页表本身并没有在程序的地址空间中，因此页表必须时时刻刻在物理内存中</p>
+<p>VAX/VMS 把页表纳入内核的虚拟内存，允许在内存压力较大时将页表的一部分交换到磁盘。</p>
+<h2 id="超越物理内存"><a href="#超越物理内存" class="headerlink" title="超越物理内存"></a>超越物理内存</h2><p>虚拟内存本质是虚的，实际数据可以存储在任何地方：<strong>寄存器（TLB）</strong>、<strong>物理内存（DRAM）</strong>，甚至是<strong>磁盘（HDD SSD）</strong>，因此虚拟内存大小跟物理内存大小并没有直接的关系，编程人员只需提供<code>Virtual Address</code>，由硬件和OS负责剩下的步骤，这就提升了程序的易用性，也提升了处理程序的多样性，考虑页表的数据结构，页表存储的位置等问题。</p>
+<h3 id="机制"><a href="#机制" class="headerlink" title="机制"></a>机制</h3><h4 id="交换空间"><a href="#交换空间" class="headerlink" title="交换空间"></a>交换空间</h4><p>硬盘需要腾出一片专门的空间用来存放物理内存的内容，因此也需要进行编址。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213145818889.png" alt="image-20241213145818889"></p>
+<blockquote>
+<p>The code pages from this binary are initially found on disk, and when the program runs, they are loaded into memory (either all at once when the program starts execution, or, as in modern systems, one page at a time when needed). However, if the system needs to <strong>make room in physical memory for other needs</strong>, it can safely re-use the memory space for these code pages, knowing that it can later swap them in again from the on-disk binary in the file system.</p>
+</blockquote>
+<p><strong>虚拟内存提供了一种将磁盘和物理内存结合起来的方式</strong>：</p>
+<ul>
+<li>代码页从磁盘加载到内存，过一段时间被换出，随后在需要的时候又被换入。</li>
+<li>操作系统将整个物理内存看作“缓存”。</li>
+<li>当内存不足时，系统会将不常用的内存页换出到磁盘（称为交换或分页）。</li>
+<li>反之，如果需要使用换出的页面，系统会从磁盘重新加载到内存。</li>
+</ul>
+<h4 id="页错误（page-fault）"><a href="#页错误（page-fault）" class="headerlink" title="页错误（page fault）"></a>页错误（page fault）</h4><p><strong>存在位（presentation bit）</strong>：用来标识一个页是否在物理内存中，如果不在，对此内存地址的访问就会触发page fault（实际上是page miss），陷入OS</p>
+<p><strong>Why OS</strong> <strong>Handles This?：</strong>TLB miss可以由硬件实现，但是Page Fault并不需要，因为Page Fault的处理性能瓶颈在硬盘：硬盘的读写速度比内存慢很多，硬件处理性能提升并不明显，并且硬件必须添加其他复杂的机制（写死在硬件里）</p>
+<p>硬盘IO完成，更新PTE的PFN和存在位（也可以同时写入TLB中）然后Retry Instruction，IO过程中进程处于<strong>阻塞状态（blocked state）</strong>，OS可以在这段时间内切换到其他进程以提高CPU利用率。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/121-1.png" alt="Lightbox"></p>
+<p>上述是硬性的页错误（虚拟内存地址不在物理内存中），还有一种软性页错误（虚拟内存地址在物理内存中），<em>详见VAX/VMS</em></p>
+<p><strong>控制流</strong>：</p>
+<ul>
+<li>错误的严重程度：<ol>
+<li><code>segmentation fault</code>（<code>valid bit = 0</code>, 没有分配） </li>
+<li><code>protection fault</code>（<code>protect bits</code>, 权限不够）</li>
+<li><code>page fault</code>（<code>present bit = 0</code>, 不在内存里）</li>
+</ol>
+</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213153405737.png" alt="image-20241213153405737"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213153341054.png" alt="image-20241213153341054"></p>
+<p><strong>Page-Fault Handler by OS</strong>：</p>
+<ul>
+<li>找空闲的物理内存，记录其PFN<ul>
+<li>找不到就使用<strong>淘汰策略</strong>，把现在的物理内存页换一部分到磁盘里，腾出空间</li>
+<li>如果找到了就进行磁盘 I/O，系统调用会<strong>休眠</strong>，直到 I/O 完成。</li>
+</ul>
+</li>
+<li>换入完成就更新页表的存在位和PFN</li>
+</ul>
+<h4 id="访存机制总结"><a href="#访存机制总结" class="headerlink" title="访存机制总结"></a>访存机制总结</h4><p>首先到 MMU 集成的 TLB 中查询，TLB 中存储的是虚拟地址页号（VPN）和物理地址页号（PFN）的映射关系，TLB 命中则直接访问物理页框；之后就是之前正常的 CPU 访存过程，与操作系统没有关系。TLB 未命中则去找 CPU 集成的 Table Walk Unit，TWU 中的 CR3 寄存器存储着当前页目录（Page Directory）的物理地址页号PFN，如果内存中的页表没有对应的内容，则触发页错误（Page Fault）去磁盘中寻找，页表命中则更新 TLB，重试指令。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/slide_1.jpg" alt="Virtual to Physical Address Translation Effective Address TLB Lookup Page  Table Walk Update TLBPage Fault OS Table Walk Protection Check Physical  Address. - ppt download"></p>
+<h3 id="Swap-页面置换策略"><a href="#Swap-页面置换策略" class="headerlink" title="Swap 页面置换策略"></a><span id="eviction">Swap 页面置换策略</span></h3><p>$$<br>AMAT=(P_\text{Hit} \cdot T_\text{Mem})+(P_\text{Miss} \cdot T_\text{Disk})<br>$$</p>
+<p>Tmem = 100ns(100个时钟周期) Tdisk = 10ms（10000个时钟周期） 对性能影响极大</p>
+<h4 id="基本策略-1"><a href="#基本策略-1" class="headerlink" title="基本策略"></a>基本策略</h4><p>将物理内存看作虚拟内存的缓存，置换策略实际上就是缓存淘汰策略</p>
+<p><strong>局部性原理</strong></p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000043722445">缓存算法：LRU、LFU、随机替换等常见算法简介 - 个人文章 - SegmentFault 思否</a> </p>
+<p>我们能不能既享受 CPU Cache 的速度，又享受内存、硬盘巨大的容量和低廉的价格呢？前辈们已经探索出了答案，那就是，存储器中数据的局部性原理（Principle of Locality）</p>
+<ul>
+<li><p>**时间局部性(temporal locality)**：如果一个数据被访问了，那么它在短时间内还会被再次访问。如 LRU 缓存机制，将频繁访问的数据保存在内存中。</p>
+</li>
+<li><p>**空间局部性(spatial locality)**：如果一个数据被访问了，那么和它相邻的数据也很快会被访问。如果数组的 CPU 预读功能。</p>
+</li>
+<li><p><strong>OPT 最优</strong>：事先知道缓存的访问顺序（不可能）但是可以作为一个比较指标。</p>
+</li>
+<li><p><strong>无状态策略</strong>：</p>
+<ul>
+<li><p>FIFO：先进先出</p>
+</li>
+<li><p>Random：随机</p>
+</li>
+</ul>
+</li>
+<li><p><strong>LRU</strong>(Recently)基于上次被访问时间，<strong>LFU</strong>(Frequently)基于被访问的频率</p>
+</li>
+</ul>
+<p>基本有LRU FIFO Random，时钟算法（近似LRU），SecondChance（完善的FIFO），2Q（LRU+FIFO）</p>
+<p>LFU：当使用 mmap() 访问文件缓存页面时，无法计数，实现较为复杂，不适合操作系统对虚拟内存的管理</p>
+<h4 id="性能比较"><a href="#性能比较" class="headerlink" title="性能比较"></a>性能比较</h4><h5 id="完全随机访问"><a href="#完全随机访问" class="headerlink" title="完全随机访问"></a>完全随机访问</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213175231404.png" alt="image-20241213175231404"></p>
+<h5 id="二八定律"><a href="#二八定律" class="headerlink" title="二八定律"></a>二八定律</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213175332544.png" alt="image-20241213175332544"></p>
+<h5 id="循环顺序访问"><a href="#循环顺序访问" class="headerlink" title="循环顺序访问"></a>循环顺序访问</h5><p>依次引用第0到第49页，LRU和FIFO，缓存在50以内，命中率为0</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213175411886.png" alt="image-20241213175411886"></p>
+<ul>
+<li><p>LRU，基于<strong>时间局部性</strong>的策略，<strong>预测性强</strong>：对于访问频繁的页表项保留效果好。</p>
+<ul>
+<li>循环访问 n+1 页，但TLB只有n页容量，第一次TLB空的，全部 miss，由于空间限制，最后第n+1页会覆盖第1页。下一个循环开始第1页又 miss，第1页覆盖第2页内容，连锁的 miss</li>
+</ul>
+</li>
+<li><p>Random，实现简单，避免出现极端情况下LRU命中率极低的情况，<strong>不可预测</strong>：无法优化特定程序的访问模式。</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>优点</th>
+<th>缺点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>LRU</strong></td>
+<td>高命中率，适应访问局部性</td>
+<td>实现复杂，硬件成本高</td>
+<td>对性能敏感的高端系统</td>
+</tr>
+<tr>
+<td><strong>随机</strong></td>
+<td>实现简单，硬件成本低，性能稳定</td>
+<td>命中率较低，忽略访问规律</td>
+<td>简单的嵌入式系统或硬件资源有限的场景</td>
+</tr>
+</tbody></table>
+<h4 id="LRU-实现"><a href="#LRU-实现" class="headerlink" title="LRU 实现"></a>LRU 实现</h4><ul>
+<li>可以对每一页添加时间字段，可以在页表中也可以专门在物理内存中的一片区域（redis就是这么做的），但代价高。</li>
+</ul>
+<p>添加一个 <strong>reference bit</strong> 使用位（用页表或者bitmap存储）当页被访问（读或写）时，由硬件（MMU）将其置1，操作系统负责将其置0，1代表最近用过了，0代表最近没用过</p>
+<h5 id="近似-LRU：时钟算法"><a href="#近似-LRU：时钟算法" class="headerlink" title="近似 LRU：时钟算法"></a>近似 LRU：时钟算法</h5><p>维护一个循环列表，里面放着所有页的使用情况，时钟指针指向其中的一页，当需要替换页，如果use bit=1，将其置0，然后移动到下一页，直到寻找到第一个use bit = 0的页，将其换出</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213184105746.png" alt="image-20241213184105746"></p>
+<h5 id="脏位"><a href="#脏位" class="headerlink" title="脏位"></a>脏位</h5><p>dirty bit的优先级大于use bit 也由MMU维护，硬件会在发生<strong>写操作</strong>时自动设置脏位，页面换出首先考虑的是未被访问过的干净页，然后是被访问过的干净页。</p>
+<ol>
+<li><strong>标记页面是否被修改过</strong><ul>
+<li>当一个页面被写入（例如进程对该页面的内容进行了修改），操作系统会将该页面的脏位置为 <code>1</code>。</li>
+<li>如果页面从加载到内存以来未被修改，脏位保持为 <code>0</code>。</li>
+</ul>
+</li>
+<li><strong>决定页面是否需要写回磁盘</strong><ul>
+<li>如果一个页面需要被换出（从内存移到磁盘），操作系统会检查其脏位：<ul>
+<li><strong>脏位为 1</strong>：表示页面内容已被修改，需要将修改后的内容写回磁盘（例如文件或交换区）。</li>
+<li><strong>脏位为 0</strong>：页面未被修改，可以直接丢弃内存中的内容，因为磁盘上已有最新副本。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>减少不必要的磁盘写入</strong><ul>
+<li>通过脏位的判断，可以避免无意义的磁盘写入操作，提高性能。例如，如果页面内容没有修改，就无需将内存中的数据写回磁盘。</li>
+</ul>
+</li>
+</ol>
+<h5 id="LRU-K"><a href="#LRU-K" class="headerlink" title="LRU-K"></a>LRU-K</h5><p>LRU-K中的K代表最近使用的次数，因此LRU可以认为是LRU-1。LRU-K的主要目的是为了解决LRU算法“缓存污染”的问题，其核心思想是将“最近使用过1次”的判断标准扩展为“最近使用过K次”。相比LRU，LRU-K需要多维护一个队列，用于记录所有缓存数据被访问的历史。只有当数据的访问次数达到K次的时候，才将数据放入缓存。当需要淘汰数据时，LRU-K会淘汰第K次访问时间距当前时间最大的数据。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/41aee01a98aa03f4c3d75ef4c2c7749a.png" alt="img" style="zoom:200%;" /> 
+
+<ol>
+<li>数据第一次被访问，加入到访问历史列表；</li>
+<li>如果数据在访问历史列表里后没有达到K次访问，则按照一定规则（FIFO，LRU）淘汰；</li>
+<li>当访问历史队列中的数据访问次数达到K次后，将数据索引从历史队列删除，将数据移到缓存队列中，并缓存此数据，缓存队列重新按照时间排序；</li>
+<li>缓存数据队列中被再次访问后，重新排序；</li>
+<li>需要淘汰数据时，淘汰缓存队列中排在末尾的数据，即：淘汰“倒数第K次访问离现在最久”的数据。</li>
+</ol>
+<p>LRU-K具有LRU的优点，同时能够避免LRU的缺点，实际应用中LRU-2是综合各种因素后最优的选择，LRU-3或者更大的K值命中率会高，但适应性差，需要大量的数据访问才能将历史访问记录清除掉。</p>
+<h3 id="其他-Swap-策略"><a href="#其他-Swap-策略" class="headerlink" title="其他 Swap 策略"></a>其他 Swap 策略</h3><p><strong>页面置换策略</strong>：<u>which</u> page to <u>swap out</u>?</p>
+<p><strong>页面选择策略</strong>：when to <u>swap in</u> which page? </p>
+<ul>
+<li>OS决定何时将页面载入内存，大多数页面是按需载入(demand paging)</li>
+<li>有时会提前载入(prefetching)马上可能要被访问的页面，比如连续的代码页</li>
+</ul>
+<p><strong>写入磁盘策略</strong>：when and how to <u>swap out</u>? or not?</p>
+<ul>
+<li>不一定是内存满了才会开始交换，OS预留部分空闲空间，设置HW和LW，当可用页少于LW，就swap out，直到可用页数达到HW，有一个守护进程 <code>swapd</code> 专门做这件事情。</li>
+<li>交换本身是IO操作，可以通过聚集/分组的方式将多个等待写入写出的页合并操作，提高硬盘效率，执行单次大的写操作比许多小的写操作有效。</li>
+<li>数据一致性：脏页需要被换出（刷盘, sync）</li>
+</ul>
+<p><strong>颠簸（thrashing）</strong>: 内存被超额请求，os需要不断进行页面的置换，此时可能会考虑终止一些进程(linux oom killer会杀死内存密集型，一般这些都是低优先级的，也有一定的风险)</p>
+<h2 id="完整的虚拟内存系统"><a href="#完整的虚拟内存系统" class="headerlink" title="完整的虚拟内存系统"></a>完整的虚拟内存系统</h2><h3 id="VAX-VMS-虚拟内存系统"><a href="#VAX-VMS-虚拟内存系统" class="headerlink" title="VAX/VMS 虚拟内存系统"></a>VAX/VMS 虚拟内存系统</h3><h4 id="地址空间"><a href="#地址空间" class="headerlink" title="地址空间"></a>地址空间</h4><h5 id="应用进程共享内核空间"><a href="#应用进程共享内核空间" class="headerlink" title="应用进程共享内核空间"></a>应用进程共享内核空间</h5><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213214150106.png" alt="image-20241213214150106" style="zoom:150%;" />
+
+<ul>
+<li>地址空间的下半部分称为进程空间，前半段是代码和向下增长的堆（P0），后半段是向上增长的堆（P1），<strong>各自拥有一个页表</strong>，减少了内部碎片。</li>
+<li>地址空间的上半段称为系统空间S，只使用其中一半</li>
+</ul>
+<p>内核段包含在用户空间中，是所有的进程共享的，这样使得内核与用户程序之间数据交互更加方便，OS可以轻松地解析用户程序传入的指针。通过给系统空间设置保护位来确保内核的安全。</p>
+<h5 id="优化页表"><a href="#优化页表" class="headerlink" title="优化页表"></a>优化页表</h5><ul>
+<li>分出来的两个段，各自有一个页表[段页式管理]，减少了内部碎片 </li>
+<li>进程的虚拟地址空间也包含了内核段，因此可以把用户<strong>页表纳入受保护的内核虚拟内存</strong>中，当存储压力巨大时可以将页表换出到磁盘，有一定的访问性能开销。</li>
+</ul>
+<h5 id="空指针"><a href="#空指针" class="headerlink" title="空指针"></a>空指针</h5><p>NULL是一个宏，实际上就是0，虚拟地址0有效位始终是0，因此试图访问这个有效位会出现段错误异常，陷入OS终止进程</p>
+<h4 id="惰性优化（Lazy）"><a href="#惰性优化（Lazy）" class="headerlink" title="惰性优化（Lazy）"></a>惰性优化（Lazy）</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/whiteBear/p/16729327.html">延迟分配：提供内存利用率的三种机制 - 牛犁heart - 博客园</a> </p>
+<h5 id="写入时复制-copy-on-write"><a href="#写入时复制-copy-on-write" class="headerlink" title="写入时复制 copy-on-write"></a>写入时复制 copy-on-write</h5><p>如果要将一个页面从一个地址空间复制到另一个地址空间，会获取相同的指针，指向相同的资源。这个资源或许是内存中的数据，又或许是硬盘中的文件，直到某个应用真正需要<strong>修改某一页</strong>时，操作系统才会（惰性地）<strong>复制一份该页的专用副本</strong>给该应用，填充数据而其他所见的最初资源仍然保持不变。</p>
+<p>COW的优点：<strong>如果应用没有修改该资源，就不会产生副本，因此多个应用只是在读取操作时可以共享同一份资源，从而节省内存空间。</strong> <strong>fork 会复制应用 A 的很多关键数据，但不会复制应用 A 对应的物理内存页面，而是要监测这些物理内存的读写，只有这样才能让应用 A 和应用 B 正常运行</strong></p>
+<ul>
+<li>fork但未写入</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1059417-20220925215845353-1129676397.png" alt="image"></p>
+<ul>
+<li>fork后写入</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1059417-20220925221038426-1637796167.png" alt="image"></p>
+<p>fork()需要复制整个地址空间的内容，如果fork之后还调用了exec，这些地址空间内容又会被马上覆盖，做无用功，cow避免了大量不必要的复制操作，仍然保留正确的语义。</p>
+<h5 id="按需调页-demand-paging"><a href="#按需调页-demand-paging" class="headerlink" title="按需调页 demand paging"></a>按需调页 demand paging</h5><ul>
+<li><p><strong>按需调页</strong>是一种<strong>动态内存分配技术</strong>，更是一种优化技术，它把<strong>物理内存页面的分配推迟到不能再推迟为止</strong>。之所以能实现，是因为应用程序开始运行时，并不会访问虚拟内存空间中的全部内容。</p>
+</li>
+<li><p>由于<strong>程序的局部性原理</strong>，使得应用程序在执行的每个阶段，真正使用的内存页面只有一小部分，对于暂时不用的物理内存页，就可以分配由其他应用程序使用。因此，在不改变物理内存页面数量的情况下，请求调页能够提高系统的吞吐量。</p>
+</li>
+</ul>
+<p>当页添加到地址空间时，会在页表做一个标记（保留的操作系统字段），当进程真正访问到这个虚拟页时，操作系统才会真正寻找物理页并将其置零，映射到地址空间，这样就避免了申请了但是从来不访问 导致浪费的情况。</p>
+<h4 id="SWAP-策略"><a href="#SWAP-策略" class="headerlink" title="SWAP 策略"></a>SWAP 策略</h4><h5 id="替换策略：Second-Chance-FIFO"><a href="#替换策略：Second-Chance-FIFO" class="headerlink" title="替换策略：Second Chance FIFO"></a>替换策略：Second Chance FIFO</h5><p>利用的是软性的页错误</p>
+<ul>
+<li>用RSS(Resident Set Size)限制每个进程可以保存在内存中的最大页数，超过RSS就要“First out”，防止自私进程</li>
+<li>引入两个全局的页面表，一个记录空闲干净页，另一个记录脏页</li>
+<li>First Out 被换出的页面根据脏位添加到 干净页列表 或 脏页列表 的<strong>末尾</strong> </li>
+<li>另一个进程需要空闲页，会先去干净页列表中取出<strong>第一个</strong>空闲页</li>
+<li>如果换出页面的进程触发了page fault，则会从表中重新回收页，避免磁盘I/O </li>
+</ul>
+<h5 id="批量换出：page-clustering"><a href="#批量换出：page-clustering" class="headerlink" title="批量换出：page clustering"></a>批量换出：page clustering</h5><p>把大批量的页从上述的全局脏页列表中分组聚集到一起，一起写入到磁盘中，使IO次数减少，单次IO写入量更大，提高性能</p>
+<h3 id="Linux-虚拟内存系统"><a href="#Linux-虚拟内存系统" class="headerlink" title="Linux 虚拟内存系统"></a>Linux 虚拟内存系统</h3><p><strong>Linux 系统主要采用了分页管理，但是由于 Intel 处理器的发展史，Linux 系统无法避免分段管理</strong>。于是 Linux 就把所有段的基地址设为 <code>0</code>，也就意味着所有程序的地址空间都是线性地址空间（虚拟地址），相当于屏蔽了 CPU 逻辑地址的概念，所以段只被用于访问控制和内存保护。虚拟空间分布可分为<strong>用户态</strong>和<strong>内核态</strong>两部分</p>
+<h4 id="地址空间-1"><a href="#地址空间-1" class="headerlink" title="地址空间"></a>地址空间</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-50e72a482d4b10604708f5e6a6c76435_r.jpg" alt="img"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213232325106.png" alt="image-20241213232325106"></p>
+<ul>
+<li>0-3GB是用户空间，其中用户态的分布：代码段(.ELF)、全局变量（初始化的数据段）、BSS（未初始化的数据段）、堆内存（Heap）、映射区（mmap）、函数栈（Stack）、初始化参数（argument, environment）</li>
+<li>最高1GB为内核空间，存放内核的代码以及其他受保护的数据；像VAX/VMS一样，每个用户的进程空间内有着相同的内核。</li>
+<li>64位的地址空间：低128T为用户空间，高128T为内核空间，中间未定义</li>
+</ul>
+<h5 id="逻辑内核空间（kmalloc）"><a href="#逻辑内核空间（kmalloc）" class="headerlink" title="逻辑内核空间（kmalloc）"></a>逻辑内核空间（kmalloc）</h5><ul>
+<li><p>内核代码需要调用<code>kmalloc</code>申请，内核栈、页表等数据结构存储在这里</p>
+</li>
+<li><p>只能在物理内存中，不能被换出到磁盘</p>
+</li>
+<li><p><strong>严格的一对一直接映射</strong>：<code>0xC0000000</code> to <code>0x00000000</code>, <code>0xC0000FFF</code> to <code>0x00000FFF</code></p>
+<ul>
+<li><p>不需要进行复杂地址转换，直接将其当成物理地址即可，因此也不需要页表结构</p>
+</li>
+<li><p>连续的虚拟地址在物理上也一定是连续的</p>
+</li>
+<li><p>适合DMA</p>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>This makes memory allocated in this part of the kernel’s address space suitable for operations which need contiguous physical memory to work correctly, such as I/O transfers to and from devices via <strong>direct memory access (DMA)</strong></p>
+</blockquote>
+<h5 id="虚拟内核空间（vmalloc）"><a href="#虚拟内核空间（vmalloc）" class="headerlink" title="虚拟内核空间（vmalloc）"></a>虚拟内核空间（vmalloc）</h5><ul>
+<li>内核代码需要调用<code>vmalloc</code>申请，returns 指向连续虚拟内存区域的指针</li>
+<li>不是直接映射，因此连续的虚拟地址在物理上并不一定连续</li>
+<li>容易分配(easy to allocate), 因此适合大块缓冲区，因为连续的大块物理内存显然不容易找到</li>
+</ul>
+<p>在32位Linux中，虚拟内核空间可以让内核空间大于1GB</p>
+<blockquote>
+<p>Kernel virtual addresses, and their disconnection from <strong>a strict one-to-one mapping to physical memory</strong>, make this possible. However, with the move to 64-bit Linux, the need is less urgent, because the kernel is not confined to only the last 1 GB of the virtual address space. （64位就没那么重要了）</p>
+</blockquote>
+<h4 id="内存分配"><a href="#内存分配" class="headerlink" title="内存分配"></a>内存分配</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/overview.png" style="zoom:150%;" />
+
+<h5 id="虚拟内存管理"><a href="#虚拟内存管理" class="headerlink" title="虚拟内存管理"></a>虚拟内存管理</h5><h6 id="malloc-1"><a href="#malloc-1" class="headerlink" title="malloc"></a>malloc</h6><ul>
+<li><p>在不同OS中，malloc的实现也不同，有 dlmalloc, jemalloc, tcmalloc等实现</p>
+</li>
+<li><p>Linux中，用户可以显式调用mmap或者malloc分配，malloc底层基于mmap（大于128K）或brk（小于128K）</p>
+</li>
+<li><p>这两种方式分配的都是虚拟内存，没有分配物理内存。在第一次访问已分配的虚拟地址空间的时候，发生缺页中断，操作系统负责分配物理内存，然后建立虚拟内存和物理内存之间的映射关系。</p>
+</li>
+<li><p>大部分不建议使用brk，brk和sbrk分配的堆空间类似于缓冲池，调用它相当于增大缓冲池。用malloc可以重用前面空闲的内存空间，每次malloc从缓冲池获得内存，如果缓冲池不够了，malloc才会调用brk或sbrk扩充缓冲池，直到达到缓冲池大小的上限，free则将应用程序使用的内存空间归还给缓冲池。而free mmap会直接释放，将空间给操作系统，无法复用，一定会触发缺页中断。</p>
+</li>
+</ul>
+<h6 id="brk"><a href="#brk" class="headerlink" title="brk"></a>brk</h6><p>brk 的实现方式是移动Program break，将数据段的最高地址指针 _edata(end of data) 往高地址推（分配的内存小于 128KB），sbrk是通过增量来控制的，原理类似。</p>
+<ul>
+<li><p>同一个程序bss的结束地址是固定的，而heap的起始地址在每次运行的时候都会改变 <strong>ASLR</strong>。</p>
+</li>
+<li><p>当<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Address_space_layout_randomization">ASLR</a>（Address Space Layout Randomization）关闭时，<code>start_brk</code>和brk同时指向<code>data/bss</code>段的结束位置（<a target="_blank" rel="noopener" href="http://lxr.free-electrons.com/source/include/linux/mm_types.h?v=3.8#L364">end_data</a>）。</p>
+</li>
+<li><p>当ASLR打开时，<code>start_brk</code>和brk同时指向<code>data/bss</code>段的结束位置（<code>end_data</code>）再加上一个随机的brk偏移。</p>
+</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/20032_0.png" alt="img" style="zoom:150%;" />
+
+<p>brk的问题：</p>
+<p>使用brk连续申请了10K, 20K, 30K内存，前两部分释放了，但是不会归还给操作系统，如果再次申请内存小于30K，就可以复用空闲区域，但是如果申请40K，就会出现内部碎片问题，只能继续新申请40K内存，导致大量内存碎片问题</p>
+<h6 id="mmap"><a href="#mmap" class="headerlink" title="mmap"></a>mmap</h6><p>在用户进程空间内的内存映射段找一块空闲的虚拟内存（分配的内存大于 128k））—匿名空间，具体使用可见: <em>Memory-mapped I/O</em> </p>
+<h5 id="物理内存管理"><a href="#物理内存管理" class="headerlink" title="物理内存管理"></a>物理内存管理</h5><h6 id="伙伴系统（Buddy-system）"><a href="#伙伴系统（Buddy-system）" class="headerlink" title="伙伴系统（Buddy system）"></a>伙伴系统（Buddy system）</h6><p>Buddy分配系统在普通内存池的基础上，允许两个<strong>大小相同且相邻</strong>的内存块合并，合并之后的内存块的「尺寸」增大，因而将被移动到另一个内存池的free list上。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210230312259.png" alt="image-20241210230312259"></p>
+<p>总空间为2^N^，按照递归二分法分配内存，直到块大小刚好满足要求（显然这会导致内部碎片）当一个块释放的时候，allocator会检验与他相同大小的相邻块（buddy）是否空闲，若是则将二者合并，直到合并全部空闲内存。</p>
+<p>优点：buddy的地址很容易确认，既然是相邻，说明首部地址只差一位，这个位决定了他们在整个数中的层次</p>
+<p>在 Linux 系统中，连续内存管理采用了 <strong>伙伴系统（Buddy System）算法</strong> 来实现，对于内部碎片的问题，采用了SLAB进行解决。</p>
+<p>它把所有的空闲页放到11个链表中，每个链表分别管理大小为1，2，4，8，16，32，64，128，256，512，1024个页的内存块。当系统需要分配内存时，就可以从buddy系统中获取。当分配内存时，会优先从需要分配的内存块链表上查找空闲内存块，当发现对应大小的内存块都已经被使用后，那么会从更大一级的内存块上分配一块内存，并且分成一半给我们使用，剩余的一半释放到对应大小的内存块链表上。</p>
+<p>想要分配一个8KB大小的内存，但是发现对应大小的内存已经没有了，那么伙伴系统会从16KB的链表中查找一个空闲内存块，分成两个8KB大小，把其中的一个8KB大小返回给申请者使用，剩下的8KB放到8KB对应的内存块链表中进行管理。更坏的一种情况是，系统发现16KB大小的连续内存页已经没有了，那么以此会向更高的32KB链表中查找，如果找到了空闲内存块，那么就把32KB分成一个16KB和两个8KB，16KB的内存块放到16KB的链表进行管理，两个8KB的内存块一个返回给申请者，另一个放到8KB大小的链表进行管理。</p>
+<p>当释放内存时，会扫描对应大小的内存块链表，查看是否存在地址能够连续在一起的内存块，如果发现有，那么就合并两个内存块放置到更大一级的内存块链表上，以此类推。比如我们释放8KB大小的内存，那么会从对应的链表扫描是否有能够合并的内存块，如果有另一个8KB大小的内存和我们使用的内存地址连续，那么就合并它们组成一个16KB大小的内存块，然后接着扫描16KB大小的内存块链表，继续查找合并的可能，以此类推下去。</p>
+<p>操作系统的内存管理通常是基于<strong>页（page）</strong>的概念，即操作系统将物理内存分为固定大小的页。页是内存管理的基本单位，这样可以统一管理和访问内存。页的大小通常是2的幂次方，例如4KB、8KB或16KB等。</p>
+<ul>
+<li><strong>操作系统需要高效地管理内存</strong>，而将内存管理的单位限定为页大小可以简化这一过程。每一页都有一个对应的页表项，操作系统只需要管理页而不是单个字节或更小的单位。这减少了管理开销。</li>
+</ul>
+<h6 id="分离空闲列表（SLAB-segregated-free-lists）"><a href="#分离空闲列表（SLAB-segregated-free-lists）" class="headerlink" title="分离空闲列表（SLAB, segregated free lists）"></a>分离空闲列表（SLAB, segregated free lists）</h6><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/slab-org.png" alt="slab org" style="zoom:150%;" />
+
+
+
+<p>为了方便管理，Linux中的buddy allocator以物理页框为最小粒度，而现实的应用中，操作系统作为一个一直在运行的程序，多是以<strong>内核objects</strong>（比如描述文件的”struct inode”）的大小来申请和释放内存的，这些内核objects的大小通常从几十字节到几百字节不等，远远小于一个page的大小。如果程序固定分配一个或者几个大小的的内存，那就专门给他分配一块内存用于分配这些固定大小空间，减少了大小上的差异，碎片自然也就少了</p>
+<p>在内核启动时，为诸如锁、文件inode之类频繁请求的内核object分配 <strong>Object cache</strong>，他们的对象缓存分离了特定大小的空闲列表，获得了性能上的提升，当cache将要耗尽时从通用的内存分配程序申请slab（总量是page size和object size的最小公倍数）例如，2.5KB objectsize, 4KB pagesize 就去申请5个页, 专门用来放这种object,一个页能放5个</p>
+<p>当cache中内核object的引用计数变为0，通用的内存分配程序会从专用的分配器中回收这些资源。同时还使空闲对象保持在预初始化的状态，避免频繁销毁、初始化的开销。</p>
+<p>Linux实现</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/understand-html037.png" alt="img" style="zoom:150%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-90fe0938cf0c8ab8836257ed587654d1_1440w.jpg" alt="img" style="zoom:150%;" />
+
+<p>每个<code>kmem_cache</code>都是链接在一起形成一个全局的双向链表，系统可以从Cache_chain开始扫描每个<code>kmem_cache</code>（相当于上面说的内存池, fixed size）</p>
+<p><code>slab</code>是内存池从系统申请内存的最小单位，在实现上一个<code>slab</code>有一个或多个连续的物理页组成（通常只有一页）单个<code>slab</code>可以在<code>slab</code>链表之间移动，例如如果一个<code>slabs_partial</code>中的slab被分配了对象后变满了，就要从<code>slabs_partial</code>中被删除，同时插入到<code>slabs_full</code>中去。</p>
+<h4 id="页表结构"><a href="#页表结构" class="headerlink" title="页表结构"></a>页表结构</h4><p>虚拟地址：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241214003409861.png" alt="image-20241214003409861"></p>
+<p>4KB的页大小对应12位offset，共四级页表，每级索引为9位，一个表条目占用4B空间，一张表正好占满一页</p>
+<h4 id="更大的页大小（huge-pages）"><a href="#更大的页大小（huge-pages）" class="headerlink" title="更大的页大小（huge pages）"></a>更大的页大小（huge pages）</h4><blockquote>
+<p>Specifically, recent designs support 2-MB and even 1-GB pages in hardware. Thus, over time, Linux has evolved to allow applications to utilize these <strong>huge pages</strong> (as they are called in the world of Linux).</p>
+</blockquote>
+<h5 id="提升-TLB-命中率"><a href="#提升-TLB-命中率" class="headerlink" title="提升 TLB 命中率"></a>提升 TLB 命中率</h5><p>一方面是减少了页表项数，更重要的是<strong>提升了TLB的命中率（hit rate）</strong>：</p>
+<ul>
+<li><strong>TLB的条目数(slots)是固定的，因为空间局部性，同一页放更多数据，将更多的物理内存空间纳入到TLB中</strong></li>
+<li>换个角度，如果发生TLBmiss，因为页表项数的减少，遍历速度就会加快</li>
+<li>与此同时，某些情况下也可以加快分配内存</li>
+</ul>
+<h5 id="如何申请"><a href="#如何申请" class="headerlink" title="如何申请"></a>如何申请</h5><p>一些对性能要求严格的应用如大型数据库应该使用更大的页大小，用来提高性能，必须通过<code>mmap</code>或者<code>shmget</code>进行显式申请，因此其他正常使用4KB页大小的程序不受影响。</p>
+<p>**透明大页(transparent huge pages)**：不需要应用程序修改源代码，OS 会自动根据情况决定是否分配大页。</p>
+<h5 id="缺陷-1"><a href="#缺陷-1" class="headerlink" title="缺陷"></a>缺陷</h5><blockquote>
+<p>Huge pages are not without their costs. The biggest potential cost is <strong>internal fragmentation</strong>, i.e., a page that is large but sparsely used. This form of waste can fill memory with large but little used pages. <strong>Swapping</strong>, if enabled, also does not work well with huge pages, sometimes greatly amplifying the amount of I/O a system does.</p>
+</blockquote>
+<ol>
+<li><strong>内部碎片</strong>：由于各种内存操作基本都要求按照page对齐，比如一个可执行文件映射到进程地址空间，根据文件大小的不同，平均算下来会浪费掉半个page size的物理内存，使用large page的话这个消耗就显得比较大了。</li>
+<li><strong>需要连续大块的物理内存</strong>：系统运行一段时间后，会很难再也大块的连续物理内存，这时分配large page将会变的很困难，所以通常需要在系统初始化的时候就划分出一段物理内存给large page用（类似于DMA的内存分配），这样就减少了一些灵活性。</li>
+<li><strong>swap开销大</strong>：动态large page（THP）在换出到外部的flash/disk和从flash/disk换入物理内存的过程会比normal size的page带来更大的开销（可参考<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/117239320">这篇文章</a>）。</li>
+</ol>
+<h4 id="Page-Cache-Disk-Cache"><a href="#Page-Cache-Disk-Cache" class="headerlink" title="Page Cache/Disk Cache"></a>Page Cache/Disk Cache</h4><p><a target="_blank" rel="noopener" href="https://www.mazhen.tech/p/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3-page-cache/">深入理解 Page Cache</a></p>
+<p><strong>Page Cache</strong> 是由内核管理的内存，位于 <a target="_blank" rel="noopener" href="https://www.kernel.org/doc/html/latest/filesystems/vfs.html">VFS(Virtual File System)</a> 层和具体文件系统层（例如ext4，ext3）之间。应用进程使用 <code>read</code>/<code>write</code> 等文件操作，通过系统调用进入到 <strong>VFS</strong> 层，根据 <strong>O_DIRECT</strong> 标志，可以使用 <strong>Page Cache</strong> 作为文件内容的缓存，也可以跳过 <strong>Page Cache</strong> 不使用内核提供的缓存功能</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/vzb3z8uo.png" alt="vzb3z8uo"></p>
+<blockquote>
+<p>aggressive caching subsystem to <strong>keep popular data items from persistent storage</strong> in memory</p>
+</blockquote>
+<ul>
+<li><p><strong>Buffered I/O</strong>: IO缓存 (<code>read()</code>, <code>write()</code>) [<code>dentry, inode cache</code>]</p>
+</li>
+<li><p><strong>Memory-mapped I/O</strong>: 内存映射 mmap()</p>
+<ul>
+<li><strong>File-backed 文件映射</strong>: 其可以将文件内容映射到用户空间，虚拟内存和磁盘文件中间通过 Page Cache 进行数据中转，因此可以像普通虚拟内存一样访问文件，这些虚拟内存<strong>在磁盘中有对应的文件</strong>，读取这部分内容就像是文件I/O一样</li>
+<li><strong>Anonymous Mapping 匿名映射</strong>: mmap以<code>MAP_ANONYMOUS</code>方式申请内存，这些虚拟内存在磁盘中<strong>没有确切的文件，持久化到swap space</strong>，全部初始化为0，</li>
+</ul>
+</li>
+<li><p>通过<code>page_cache_hashtable</code>搜索，加快访问速度。</p>
+</li>
+</ul>
+<h5 id="Memory-mapped-I-O"><a href="#Memory-mapped-I-O" class="headerlink" title="Memory-mapped I/O"></a>Memory-mapped I/O</h5><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/longerzone/article/details/12948925#">Linux 下的两个特殊的文件 – /dev/null 和 /dev/zero 简介及对比_linux空洞文件null-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/yangle4695/article/details/52139585">Linux 内存映射函数 mmap（）函数详解_mmap fb-CSDN博客</a>  </p>
+<ul>
+<li><code>void* mmap(void* start, size_t length, int prot, int flags, int fd, off_t offset);</code> </li>
+<li><code>int munmap(void* start, size_t length);</code> <ul>
+<li><code>prot:</code> 保护位 <code>PROT_EXEC</code>, <code>PROT_READ</code> , <code>PROT_WRITE</code> , <code>PROT_NONE</code></li>
+<li><code>flags:</code> <code>MAP_SHARED</code>共享模式 <code>MAP_PRIVATE</code>写时复制，不共享 <code>MAP_ANONYMOUS</code>匿名模式fd无效</li>
+<li><code>fd:</code> 文件描述符，如果是匿名模式可以置为<code>-1</code>，或者打开<code>/dev/zero</code>获取其fd</li>
+<li><code>offset:</code>文件映射的偏移量，通常设置为0，代表从文件最前方开始对应，offset必须是分页大小的整数倍。</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li><code>fopen()</code> 系统调用打开文件，并返回描述符 <code>fd</code>。</li>
+<li><code>mmap(start,...)</code>建立内存映射并返回映射首地址指针 <code>start</code>参数start可以是空指针，系统自动分配地址</li>
+<li>通过对<code>start</code> 对文件进行各种操作，首次访问start指向的内容会触发页错误(demand paging)</li>
+<li><code>munmap (start,...)</code> 关闭内存映射</li>
+<li><code>fclose(fd)</code> 系统调用关闭文件 <code>fd</code> </li>
+</ol>
+<img src="https://miro.medium.com/v2/resize:fit:1313/0*DgRx8tGpS1T0St_b.png" alt="img" style="zoom:150%;" />
+
+<p>通过对一个打开的FD调用<code>mmap()</code>，进程能够获得一个指向内存映射区的指针，内存映射区是一个独立区域，因此可以独立释放。通过这个指针就能够对文件进行操作。这里采用了demand paging——<strong>懒加载</strong>的策略，直到第一次访问触发页错误，才会真正把文件内容分配到物理页中。</p>
+<p>数据一致性：</p>
+<ul>
+<li><strong>files</strong>：程序通过 <code>mmap</code> 映射文件时，如果页面未修改（脏位为 <code>0</code>），无需将内存中的数据写回磁盘</li>
+<li><strong>Swap space</strong>：当内存不足时，未被修改的页面无需写回磁盘的 Swap space，节省时间和空间</li>
+</ul>
+<p>即使不显式调用<code>mmap</code>也会使用这个共享的文件映射区域，比如从可执行文件中加载的代码、进程之间共享的库代码</p>
+<p>使用<code>pmap</code>分析<code>tcsh</code>进程的虚拟内存映射情况如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Virtual Address  	Size  	Protection  Source</span><br><span class="line">0000000000400000 	372K  	r-x--       tcsh</span><br><span class="line">00000000019d5000 	1780K 	rw---       [anon ]</span><br><span class="line">00007f4e7cf06000 	1792K 	r-x--       libc-2.23.so</span><br><span class="line">00007f4e7d2d0000	36K   	r-x--       libcrypt-2.23.so</span><br><span class="line">00007f4e7d508000	148K  	r-x--       libtinfo.so.5.9</span><br><span class="line">00007f4e7d731000 	152K  	r-x--       ld-2.23.so</span><br><span class="line">00007f4e7d932000 	16K   	rw---       [stack ]</span><br></pre></td></tr></table></figure>
+
+<p>除了<code>tcsh</code>自己的代码，<code>libc, libcrypt, libtinfo</code> 这些共享库代码也被加载到tcsh的虚拟地址空间中，连接器<code>ld</code>的可执行代码也在其中。[anon]表示自己的heap堆空间，[stack]表示自己的stack栈空间</p>
+<p>和 <strong>shmem</strong> 的区别：</p>
+<p>System V 共享内存是持久的：除非被进程显式删除，否则它会保留在内存中并保持可用，直到系统关闭。 mmap 内存在应用程序的执行之间不是持久的（除非它由文件支持，<code>MAP_SHARED</code>）</p>
+<h5 id="Buffered-I-O"><a href="#Buffered-I-O" class="headerlink" title="Buffered I/O"></a>Buffered I/O</h5><p><strong>Buffered I/O</strong> 与 <strong>内存映射文件</strong> 的区别：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/202209241611674.png" alt="d"></p>
+<h6 id="读取机制"><a href="#读取机制" class="headerlink" title="读取机制"></a>读取机制</h6><ol>
+<li><p><code>int fd = open(file_path)</code></p>
+<ul>
+<li>fd是内核对打开的文件的编号，通过fd就可以操作文件</li>
+</ul>
+</li>
+<li><p><code>int c = read(fd, buf, 512)</code>  </p>
+<ul>
+<li>由内核负责将 fd 翻译成 inode+offset</li>
+<li>读取inode，如果page cache没有就从磁盘读，然后写入inode到Page cache中</li>
+<li>读取对应偏移的block，如果page cache没有就从磁盘读，然后写入block到Page cache中</li>
+<li>从内存中的 cached block 复制 512 B 到 buf 中</li>
+</ul>
+</li>
+</ol>
+<h6 id="写入机制"><a href="#写入机制" class="headerlink" title="写入机制"></a>写入机制</h6><p><strong>Write-back (default)</strong> </p>
+<p>write back 写回 只对缓存进行操作 read-allocate 先把数据读取到Cache中，再从Cache中读数据</p>
+<blockquote>
+<p>By default, kernel marks written pages dirty and flushes after a delay:</p>
+</blockquote>
+<ol>
+<li><p><code>int fd = open(&quot;myfile&quot;);</code> </p>
+</li>
+<li><p><code>write(fd, &quot;hello world&quot;, 11)</code></p>
+<ul>
+<li>内核将hello world字符串写入到 cached block 对应的 page cache 页中</li>
+<li>内核将被修改的页加入脏页列表中</li>
+<li>按照一定的策略进行刷盘</li>
+</ul>
+</li>
+</ol>
+<p>在系统发生宕机的情况下无法确保数据已经落盘，因此存在数据丢失的问题。不过，在程序挂了，例如被 kill -9，Page Cache 中的数据操作系统还是会确保落盘；</p>
+<p><strong>Write-through</strong></p>
+<p>直写，在更改page cache的<strong>同时</strong>刷盘(synchoronized)</p>
+<blockquote>
+<p><strong>O_SYNC</strong> flag converts file descriptor to write-through</p>
+</blockquote>
+<ul>
+<li><code>int fd = open(&quot;myfile&quot;, O_SYNC |...); </code></li>
+<li><code>write(fd, &quot;hello world&quot;, 11);</code> <ul>
+<li>This affects all accesses to the same disk blocks</li>
+</ul>
+</li>
+</ul>
+<p>以牺牲系统 I/O 吞吐量作为代价，向上层应用确保一旦写入，数据就已经落盘，不会丢失</p>
+<h5 id="脏页刷盘"><a href="#脏页刷盘" class="headerlink" title="脏页刷盘"></a>脏页刷盘</h5><p>Page cache 追踪脏页，保存一个脏文件inode链表，脏页需要写入到磁盘的文件或者swap space中，确保内存数据的持久化，可以由叫做<code>pdflush</code>的后台线程，唤醒方式有如下</p>
+<ul>
+<li><p><strong>定期</strong>唤起<code>pdflush</code>，确保不会有脏页驻留时间过长</p>
+</li>
+<li><p>在脏页比例达到<strong>阈值</strong>时，按照一定速率刷盘（1024）</p>
+</li>
+<li><p>内存可用空间低到一定<strong>阈值</strong>，刷脏页释放内存</p>
+</li>
+<li><p>响应特定的系统调用</p>
+<ul>
+<li><p><code>fsync(int fd)</code> 将fd的脏数据和所有脏元数据刷盘</p>
+</li>
+<li><p><code>fdatasync(int fd)</code> 将fd的脏数据和必要的脏元数据刷盘</p>
+</li>
+<li><p><code>sync()</code> 将全部脏页刷盘</p>
+</li>
+<li><p><code>O_SYNC</code> 文件打开方式要求同步写操作</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>应用</strong></p>
+<ul>
+<li><strong>文件映射</strong>：程序通过 <code>mmap</code> 映射文件时，如果页面未修改（脏位为 <code>0</code>），无需将内存中的数据写回磁盘。</li>
+<li><strong>交换区</strong>：当内存不足时，未被修改的页面无需写回交换区，节省时间和空间。</li>
+</ul>
+<h5 id="Direct-I-O"><a href="#Direct-I-O" class="headerlink" title="Direct I/O"></a>Direct I/O</h5><p>Buffered I/O要在磁盘和VFS之间加一层Page cache，对于写入操作，需要在cache中开辟新页，然后将其标记为脏。</p>
+<p>OS cache提供的这些预读取、顺序读取等特性，这些特性并不适用于所有的场景，比如数据库，数据库通常都有自己的一套缓存机制，就像mysql的innodb存储引擎，它有自己的缓存页，有自己的落盘机制，如果不使用directIO，这明显就会存在双重的cache，一个是OS设计的，一个是DB设计的，而通常，DB需要更加符合自己使用的cache机制，而非OS提供的通用化的缓存机制。直接写入不会将要写入的数据先从磁盘读到cache，而是直接将要写的数据写入磁盘。</p>
+<p>O_DIRECT 下的 I/O 操作是直达磁盘的，用户空间通过 DMA 的方式与磁盘以及网卡进行数据拷贝。</p>
+<h4 id="页面置换：2Q"><a href="#页面置换：2Q" class="headerlink" title="页面置换：2Q"></a>页面置换：2Q</h4><p>关键词：<strong>预读失效 + 缓存污染</strong> </p>
+<ul>
+<li><strong>预读失效：提前加载到内存，但是并没有访问</strong></li>
+<li><strong>缓存污染：加载到内存，但是只访问一次</strong></li>
+</ul>
+<p><strong>LRU</strong>：如果打开一个非常大的文件，LRU会把其他在内存中的文件都淘汰掉，但是写入这个文件到内存中并没有什么用，就和循环访问一样，文件之前的数据在被淘汰掉之前再也被访问。</p>
+<p><strong>Linux的2Q(Two queue)策略</strong></p>
+<p>该算法类似于LRU-2，不同点在于2Q将LRU-2算法中的访问历史队列（注意这不是缓存数据的）改为一个FIFO缓存队列，即：2Q算法有两个缓存队列，一个是FIFO队列，一个是LRU队列。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/73bc553b295b04f7a2bc634b6bd10ab9.png" alt="img" style="zoom:200%;" />
+
+<p>Linux对于2Q的实现，只淘汰FIFO队列里面的数据：</p>
+<p>Page cache（Buffered I/O或mmap）维护两个队列:</p>
+<p><code>inactive list(FIFO), active list(LRU)</code> </p>
+<ul>
+<li>第一次被访问，将页面加入<code>inactive list</code></li>
+<li>之后的访问，将页面升至<code>active list</code> </li>
+<li>需要进行替换时，<code>inactive list</code>进行FIFO</li>
+<li><code>active list</code>对定期 LRU 到<code>inactive list</code>，使<code>active list</code>占 Page cache 的2/3左右。</li>
+<li>循环访问大文件时，大文件的页面不会跑到<code>active list</code>中，因此原来<code>active list</code>的页面就不会被迫换出</li>
+</ul>
+<h4 id="其他策略-1"><a href="#其他策略-1" class="headerlink" title="其他策略"></a>其他策略</h4><ul>
+<li><code>fork()</code> 采用COW写时复制的策略，减少无效的复制</li>
+<li><code>swapd</code> 可以监控内存状况，内存占用过高（watermark）换出页面，释放到安全水平（异步）</li>
+<li><strong>swappiness</strong>：修改换出页面的积极性，0为不主动换出</li>
+<li><strong>关闭swap</strong>：服务器内存本身足够大，不需要换出操作，因为会降低效率</li>
+<li><strong>内存颠簸（thrashing）</strong> 虚拟内存申请，但是物理内存几乎占满，导致同时出现大量缺页错误，此时linux oom killer会杀死内存密集型，一般这些都是低优先级的，也有一定的风险)</li>
+</ul>
+<h3 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h3><p>现代操作系统最大的一个特点就是对安全的注重，仅仅使用内核</p>
+<h4 id="针对用户程序：缓冲区溢出攻击"><a href="#针对用户程序：缓冲区溢出攻击" class="headerlink" title="针对用户程序：缓冲区溢出攻击"></a>针对用户程序：缓冲区溢出攻击</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">some_function</span><span class="params">(<span class="type">char</span> *input)</span> &#123;</span><br><span class="line">    <span class="type">char</span> dest_buffer[<span class="number">100</span>];</span><br><span class="line">    <span class="built_in">strcpy</span>(dest_buffer, input); <span class="comment">// oops, unbounded copy!</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果输入超过缓冲区，input就会开始覆盖其他数据，攻击者可以利用缓冲区溢出注入他们的恶意代码，在页表中引入<code>NX</code>bit能够在一定程度上解决问题，但是黑客可以更改函数的执行栈，将函数的返回值指向恶意代码的地址。</p>
+<p>return-to-libc attack:==ROP==</p>
+<blockquote>
+<p>Thus, an attacker can overwrite the stack such that the <strong>return address in the currently executing function</strong> points to <strong>a desired malicious instruction (or series of instructions)</strong>, followed by a return instruction.</p>
+<p>By stringing together a large number of gadgets (i.e., ensuring each return jumps to the next gadget), the attacker can execute arbitrary code. Amazing!</p>
+</blockquote>
+<p>address space layout randomization:==ASLR==</p>
+<blockquote>
+<p>Instead of placing code, stack, and the heap <strong>at fixed locations</strong> within the virtual address space, the OS <strong>randomizes their placement</strong>, thus making it quite challenging to craft the intricate code sequence required to implement this class of attacks.</p>
+</blockquote>
+<p>ASLR可以确保客户的程序只崩溃不执行恶意代码，ASLR将brk、mmap、stack的开始段加一些随机数，</p>
+<p>由此衍生出了KASLR，内核的地址空间也可以随机生成</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//random.c</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="built_in">stack</span> = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%p\n&quot;</span>, &amp;<span class="built_in">stack</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* </span></span><br><span class="line"><span class="comment">    prompt&gt; ./random</span></span><br><span class="line"><span class="comment">    0x7ffd3e55d2b4</span></span><br><span class="line"><span class="comment">    prompt&gt; ./random</span></span><br><span class="line"><span class="comment">    0x7ffe1033b8f4</span></span><br><span class="line"><span class="comment">    prompt&gt; ./random</span></span><br><span class="line"><span class="comment">    0x7ffe45522e94</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="针对内核程序：Meltdown-amp-Spectre"><a href="#针对内核程序：Meltdown-amp-Spectre" class="headerlink" title="针对内核程序：Meltdown &amp; Spectre"></a>针对内核程序：Meltdown &amp; Spectre</h4><p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/23973128">CPU 的分支預測器是怎樣工作的？ - 知乎</a> </p>
+<p>利用了 CPU 预测执行的漏洞，分支预测将串行的程序变成了并行的，而前后数据依赖，不可避免地在硬件上留下了踪迹，造成了并发安全问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov rax byte[x]  ; 非法操作 将x的数据拷贝到rax</span><br><span class="line">shl rax 0xC  ; rax * 4096, 页对齐</span><br><span class="line">mov rbx qword [rbx + rax]  ; [rbx] 为用户空间的一个array，合法操作</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/32757727">解读 Meltdown &amp; Spectre CPU 漏洞 - 知乎</a> </p>
+<p>操作系统会事先标注好内核的内存地址范围，如果 x 在内核的这个地址范围内，并且 CPU 不是以内核模式运行的话，那么该指令会被 CPU 标注为非法，引起异常，异常处理程序会将 rax 清空为0，并且终结此程序，这样后续指令再来读 rax 的时候就只能读到0了。</p>
+<p>理论上讲，在执行第二条指令之前，rax应该已经被清零了。然而在实际的 CPU 运行中，为了达到更好的性能，第二条和第三条指令在异常处理生效之前都会被<strong>部分执行</strong>，直到异常处理时 rax 和 rbx 被清零。</p>
+<p>但问题的关键就在第三行指令：<strong>如果地址 rbx + rax 不在cache中的话，CPU 会自动将这一地址调入cache中，以便之后访问时获得更好的性能，然而异常处理并不会将这个cache flush掉。而这条 cache 的地址是和 rax 直接相关的，这样就相当于在 CPU 硬件中留下了和rax 相关的信息。</strong>  </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241214175132236.png" alt="image-20241214175132236"></p>
+<p>那么如何还原 rbx + rax 这个被cache的地址呢？这时候需要用到的原理就是利用cache的访问延时，即已经被cache的数据访问时间短，没有被cache的数据访问时间长。由于[rbx]这个array是在用户地址空间内的，可以自由操作，首先我们要确保整个 [rbx]这个array 都是没有被cache的，然后执行上述攻击代码，这时候 rbx + rax 这个地址就已经被cache了，接下来遍历整个[rbx] array，来测量访问时间，访问时间最短的那个 page 就可以确定为 rbx + rax。</p>
+<p>对于个人终端用户，利用Meltdown与Spectre漏洞，低权限用户可以访问内核的内容，泄露本地操作系统底层的信息、秘钥信息等，通过获取泄露的信息，可以绕过内核的隔离防护;如果配合其它漏洞，可以利用该漏洞泄露内核模块地址绕过KASLR等防护机制实现其他类型的攻击进行提权。另外，利用浏览器JIT特性预测执行特殊的JIT代码，从而读取整个浏览器内存中的数据，泄露用户帐号，密码，邮箱, cookie等隐私信息。</p>
+<p>因此，增强内核保护的一种途径是从每个用户进程中删除尽可能多的内核地址空间，并为大多数内核数据提供单独的内核页表（称为内核页表隔离，或 KPTI）[G+17]。因此，不是将内核的代码和数据结构映射到每个进程中，而是只保留最低限度的代码和数据结构；当切换到内核时，现在需要切换到内核页表。这样做可以提高安全性并避免一些攻击媒介，但代价是：性能。切换页表的成本很高。</p>
+<h2 id="内存虚拟化总结"><a href="#内存虚拟化总结" class="headerlink" title="内存虚拟化总结"></a>内存虚拟化总结</h2><ul>
+<li><p>虚拟地址的作用</p>
+</li>
+<li><p>虚拟地址的翻译（重定位）</p>
+<ul>
+<li>段式 base+bound, bound varies from each other</li>
+<li>页式 fixed bound</li>
+<li>段页式 </li>
+<li>多级页表 fill one page with one table, hi-level table points to low-level table</li>
+<li>TLB：翻译缓存</li>
+</ul>
+</li>
+<li><p>Swap：将物理内存看作虚拟内存的缓存</p>
+<ul>
+<li>机制：Page Fault &amp; Disk I/O </li>
+<li>策略：<ul>
+<li>是否需要SWAP？物理内存充足就没必要开启</li>
+<li>具体换<strong>出</strong>哪一页？LRU, FIFO, Random, Second Chance, LRU-K, 2Q, Clock</li>
+<li>何时换<strong>出</strong>？(被动watermark、主动swappiness&gt;0)</li>
+<li>一次 I/O 换<strong>出</strong>多少页？(clustering)</li>
+<li>何时换<strong>入</strong>？(lazy aka. demand paging)</li>
+<li>一次 I/O 只换<strong>入</strong>一页<strong>吗</strong>？(prefetching)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>内存分配:</p>
+<ul>
+<li>机制：空闲空间链表节点的分割与合并</li>
+<li>物理：Buddy, SLAB</li>
+<li>虚拟：mmap malloc brk</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -5304,563 +6422,6 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">所有结果: [2, 4, 6, 8, 10]</span><br></pre></td></tr></table></figure>
 
 <h3 id="虚拟线程"><a href="#虚拟线程" class="headerlink" title="虚拟线程"></a><a target="_blank" rel="noopener" href="https://javaguide.cn/java/concurrent/virtual-thread.html">虚拟线程</a></h3>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2024/11/20/juc-thread-in-one/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/11/20/juc-thread-in-one/" class="post-title-link" itemprop="url">java.lang.Thread</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2024-11-20 00:00:00" itemprop="dateCreated datePublished" datetime="2024-11-20T00:00:00+08:00">2024-11-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-05 11:16:31" itemprop="dateModified" datetime="2025-05-05T11:16:31+08:00">2025-05-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/juc/" itemprop="url" rel="index"><span itemprop="name">juc</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h1><h2 id="线程概念相关"><a href="#线程概念相关" class="headerlink" title="线程概念相关"></a>线程概念相关</h2><h3 id="Thread"><a href="#Thread" class="headerlink" title="Thread"></a>Thread</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241119185155274-1735313112574-111.png" alt="image-20241119185155274"></p>
-<p><strong>Parallel Unit 并行最小单位</strong></p>
-<ul>
-<li>拥有自己的上下文</li>
-<li>拥有调用堆栈</li>
-<li>有自己的 PC</li>
-<li>但是内存和同一个进程的其他线程共享（SHARED），发生竞态条件（RACE CONDITION）</li>
-</ul>
-<h4 id="Process"><a href="#Process" class="headerlink" title="Process"></a>Process</h4><p>操作系统对执行中程序的一种抽象</p>
-<p>进程是程序的一次执行过程，是系统运行程序的基本单位，因此进程是动态的。系统运行一个程序即是一个进程从创建，运行到消亡的过程。</p>
-<p>在 Java 中，当我们启动 main 函数时其实就是启动了一个 JVM 的进程，而 main 函数所在的线程就是这个进程中的一个线程，也称主线程。</p>
-<p>每个程序都有自己的进程，互不干扰。即使它们都是同一份代码，但各自播放的内容和进度都可以不同。进程（可以看成只有一个线程的进程）同时只能做一件事，如果将一个进程分成多个线程，这样就不会浪费时间空等了进程间是完全独立的，互不干扰。而线程则共享同一个进程的资源，所以线程间交换数据更方便，几乎没有通讯损耗。但进程间交换数据就麻烦多了，得通过一些通讯机制，比如管道、消息队列之类的（Inter-Process Communication）</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241119184759519.png" alt="image-20241119184759519"></p>
-<h4 id="Coroutine"><a href="#Coroutine" class="headerlink" title="Coroutine"></a>Coroutine</h4><p>线程在执行加载视频片段时，必须等待结果返回才能再次执行解码操作，如果引入多线程：加载本身是IO行为，CPU在等待结果返回期间几乎是在空等，浪费了CPU资源。当然，你可以让它休眠以释放 CPU 时间，但创建线程本身就有开销，线程切换同样有开销。</p>
-<p>相比之下，协程（Coroutine）非常轻量，创建和切换的开销极小——它并非操作系统层面的东西，就不涉及内核调度。一般是由编程语言来实现（比如 Python 的 asyncio 标准库），它属于用户态的东西。</p>
-<p>资源共享问题：线程的执行时机由操作系统调度，程序员无法控制，这正是多线程容易出现资源覆盖的主要原因。而协程的执行时机由程序自身控制，不受操作系统调度影响，因此可以完全避免这类问题。同一个线程内的多个协程共享同一个线程的 CPU 时间片资源，它们在 CPU 上的执行是有先后顺序的，不能并行执行。而线程是可以并行执行的</p>
-<p>协程（coroutine），其实是一种特殊的子程序（subroutine，比如普通函数）。普通函数一旦执行就会从头到尾运行，然后返回结果，中间不会暂停。而协程则可以在执行到一半时暂停。利用这一特性，我们可以在遇到 I/O 这类不消耗 CPU 资源的操作时，将其挂起，继续执行其他计算任务，充分利用 CPU 资源。等 I/O 操作结果返回时，再恢复执行。在一个线程内并发执行多个任务</p>
-<h3 id="为什么要有多线程？"><a href="#为什么要有多线程？" class="headerlink" title="为什么要有多线程？"></a>为什么要有多线程？</h3><p>先从总体上来说：</p>
-<ul>
-<li><strong>从计算机底层来说：</strong> 线程可以比作是轻量级的进程，是程序执行的最小单位,线程间的切换和调度的成本远远小于进程。另外，多核 CPU 时代意味着多个线程可以同时运行，这减少了线程上下文切换的开销。</li>
-<li><strong>从当代互联网发展趋势来说：</strong> 现在的系统动不动就要求百万级甚至千万级的并发量，而多线程并发编程正是开发高并发系统的基础，利用好多线程机制可以大大提高系统整体的并发能力以及性能。</li>
-</ul>
-<p>再深入到计算机底层来探讨：</p>
-<ul>
-<li><strong>单核时代</strong>：在单核时代多线程主要是为了提高单进程利用 CPU 和 IO 系统的效率。 假设只运行了一个 Java 进程的情况，当我们请求 IO 的时候，如果 Java 进程中只有一个线程，此线程被 IO 阻塞则整个进程被阻塞。CPU 和 IO 设备只有一个在运行，那么可以简单地说系统整体效率只有 50%。当使用多线程的时候，一个线程被 IO 阻塞，其他线程还可以继续使用 CPU。从而提高了 Java 进程利用系统资源的整体效率。</li>
-<li><strong>多核时代</strong>: 多核时代多线程主要是为了提高进程利用多核 CPU 的能力。举个例子：假如我们要计算一个复杂的任务，我们只用一个线程的话，不论系统有几个 CPU 核心，都只会有一个 CPU 核心被利用到。而创建多个线程，这些线程可以被映射到底层多个 CPU 核心上执行，在任务中的多个线程没有资源竞争的情况下，任务执行的效率会有显著性的提高，约等于（单核时执行时间/CPU 核心数）</li>
-</ul>
-<h3 id="多线程效率一定高吗？"><a href="#多线程效率一定高吗？" class="headerlink" title="多线程效率一定高吗？"></a>多线程效率一定高吗？</h3><h4 id="线程安全问题"><a href="#线程安全问题" class="headerlink" title="线程安全问题"></a>线程安全问题</h4><p>众所周知，CPU、内存、I/O 设备的速度是有极大差异的，为了合理利用 CPU 的高性能，平衡这三者的速度差异，计算机体系结构、操作系统、编译程序都做出了贡献，主要体现为:</p>
-<ul>
-<li>CPU 增加了 Cache，以均衡与内存的速度差异，导致 <code>可见性</code>问题</li>
-<li>操作系统增加了进程、线程，以分时复用 CPU，进而均衡 CPU 与 I/O 设备的速度差异，导致 <code>原子性</code>问题</li>
-<li>编译程序优化指令执行次序，使得 Cache 能够得到更加合理地利用，导致 <code>有序性</code>问题</li>
-</ul>
-<h4 id="单核-CPU-多线程"><a href="#单核-CPU-多线程" class="headerlink" title="单核 CPU 多线程"></a>单核 CPU 多线程</h4><p>对于 IO 密集型，效率明显提高，因为线程切换带来的收益可以抵消代价</p>
-<p>对于计算密集型，频繁的上下文切换开销很大</p>
-<h3 id="易混淆"><a href="#易混淆" class="headerlink" title="易混淆"></a>易混淆</h3><h4 id="并发-并行"><a href="#并发-并行" class="headerlink" title="并发/并行"></a>并发/并行</h4><ul>
-<li>运行的程序就是一个独立的进程</li>
-<li><strong>并发</strong>：CPU轮询执行每个线程，切换速度快，感觉线程在同时和执行，这就是<strong>并发</strong></li>
-<li><strong>并行</strong>：同一时刻有多个线程在被CPU调度执行</li>
-</ul>
-<h4 id="同步-异步"><a href="#同步-异步" class="headerlink" title="同步/异步"></a>同步/异步</h4><ul>
-<li><strong>同步</strong>：发出一个调用之后，在没有得到结果之前， 该调用就不可以返回，一直等待。</li>
-<li><strong>异步</strong>：调用在发出之后，不用等待返回结果，该调用直接返回。</li>
-</ul>
-<h2 id="Java-线程和-OS-线程"><a href="#Java-线程和-OS-线程" class="headerlink" title="Java 线程和 OS 线程"></a>Java 线程和 OS 线程</h2><p>JDK 1.2 之前，Java 线程是基于绿色线程（Green Threads）实现的，这是一种用户级线程（用户线程），也就是说 JVM 自己模拟了多线程的运行，而不依赖于操作系统。由于绿色线程和原生线程比起来在使用时有一些限制（比如绿色线程不能直接使用操作系统提供的功能如异步 I/O、只能在一个内核线程上运行无法利用多核），在 JDK 1.2 及以后，Java 线程改为基于原生线程（Native Threads）实现，也就是说 JVM 直接使用操作系统原生的内核级线程（内核线程）来实现 Java 线程，由操作系统内核进行线程的调度和管理。</p>
-<p>我们上面提到了用户线程和内核线程，考虑到很多读者不太了解二者的区别，这里简单介绍一下：</p>
-<ul>
-<li>用户线程：由用户空间程序管理和调度的线程，运行在用户空间（专门给应用程序使用）。</li>
-<li>内核线程：由操作系统内核管理和调度的线程，运行在内核空间（只有内核程序可以访问）。</li>
-</ul>
-<p>顺便简单总结一下用户线程和内核线程的区别和特点：用户线程创建和切换成本低，但不可以利用多核。内核态线程，创建和切换成本高，可以利用多核。</p>
-<p>一句话概括 Java 线程和操作系统线程的关系：<strong>现在的 Java 线程的本质其实就是操作系统的线程</strong>。</p>
-<p>线程模型是用户线程和内核线程之间的关联方式，常见的线程模型有这三种：</p>
-<ol>
-<li>一对一（一个用户线程对应一个内核线程）</li>
-<li>多对一（多个用户线程映射到一个内核线程）</li>
-<li>多对多（多个用户线程映射到多个内核线程）</li>
-</ol>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/three-types-of-thread-models.png" alt="常见的三种线程模型"></p>
-<p>在 Windows 和 Linux 等主流操作系统中，Java 线程采用的是一对一的线程模型，也就是一个 Java 线程对应一个系统内核线程。Solaris 系统是一个特例（Solaris 系统本身就支持多对多的线程模型），HotSpot VM 在 Solaris 上支持多对多和一对一。</p>
-<h2 id="线程创建、运行、中断"><a href="#线程创建、运行、中断" class="headerlink" title="线程创建、运行、中断"></a>线程创建、运行、中断</h2><h3 id="三种-Thread-构造器"><a href="#三种-Thread-构造器" class="headerlink" title="三种 Thread 构造器"></a>三种 Thread 构造器</h3><p><strong><mark>继承 Thread 抽象类<mark></strong></p>
-<ol>
-<li>创建<strong>子类</strong>继承Thread类，重写 run 方法</li>
-<li>创建子类对象<code>Thread t = new MyThread()</code></li>
-<li><code>t.start()</code> </li>
-</ol>
-<ul>
-<li>编码简单，不能继承其他类</li>
-<li>不要把主线程任务放在启动子线程之前</li>
-<li>必须调用start方法，调用run方法还是会顺序执行，先启动，启动后会自动调用</li>
-<li>不能返回执行结果</li>
-</ul>
-<p><strong><mark>实现 Runnable 接口 任务对象<mark></strong></p>
-<ol>
-<li>自己创建一个类实现Runnable接口，重写run方法</li>
-<li>创建任务对象<code>Runnable target = new MyRunnable()</code></li>
-<li>创建线程对象<code>new Thread(target)</code></li>
-<li>调用线程对象的start方法</li>
-</ol>
-<ul>
-<li>只是实现接口，可以继承其他的类，实现其他接口，扩展性强</li>
-<li>不能返回执行结果</li>
-</ul>
-<p>匿名内部类：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//create an annoymous inner class object</span></span><br><span class="line"><span class="type">Runnable</span> <span class="variable">target</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Runnable</span>()&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span>&#123;</span><br><span class="line">		...;</span><br><span class="line">        ...;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">new</span> <span class="title class_">Thread</span>(target).start();</span><br><span class="line"></span><br><span class="line"><span class="comment">//Lambda expression</span></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">Thread</span>( ()-&gt;&#123;</span><br><span class="line">    ...;</span><br><span class="line">    ...;</span><br><span class="line">&#125;).start();</span><br></pre></td></tr></table></figure>
-
-<p><strong><mark>实现 Callable 接口<mark></strong></p>
-<ol>
-<li>定义类实现<code>Callable&lt;&gt;</code>，重写call方法，封装要做的事情和返回的数据。<code>Callable</code>后边的泛型就是返回的数据类型</li>
-<li>创建<code>Callable</code>对象，把他封装成<code>FutureTask&lt;String&gt;(Callable&lt;String&gt; callable)</code> 对象，泛型要相同</li>
-<li><code>FutureTask</code>实现了<code>Runnable</code>接口，是任务对象</li>
-<li>在线程执行完毕之后，对<code>FutureTask</code>对象调用<code>get</code>方法获取线程执行结果。</li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Callable&lt;String&gt; callable = <span class="keyword">new</span> <span class="title class_">MyCallable</span>(<span class="number">10</span>); <span class="comment">//创建 Callable对象</span></span><br><span class="line"></span><br><span class="line">FutureTask&lt;String&gt; futureTask = <span class="keyword">new</span> <span class="title class_">FutureTask</span>&lt;&gt;(callable); <span class="comment">//用Callable对象 创建 任务对象</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">Thread</span>(futureTask).start(); <span class="comment">//用任务对象 创建 线程对象 并启动</span></span><br><span class="line"></span><br><span class="line">System.out.println(futureTask.get());<span class="comment">//获取返回值</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">*	如果执行到get()线程还未执行完毕</span></span><br><span class="line"><span class="comment">*	代码会暂停，等待执行完毕才获取结果</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>可以获取返回值，扩展性强</li>
-<li>编码复杂一些</li>
-</ul>
-<h3 id="thread-start"><a href="#thread-start" class="headerlink" title="thread.start()"></a><code>thread.start()</code></h3><p>new 一个 <code>Thread</code>，线程进入了新建状态。调用 <code>start()</code>方法，会启动一个线程并使线程进入了 Runnable 状态，当分配到时间片后就可以开始运行了。 <code>start()</code> 会执行线程的相应准备工作，然后自动执行 <code>run()</code> 方法的内容，这是真正的多线程工作。 但是，直接执行 <code>run()</code> 方法，会把 <code>run()</code> 方法当成一个 main 线程下的普通方法去执行，并不会在某个线程中执行它，所以这并不是多线程工作。</p>
-<p><strong>总结：调用 <code>start()</code> 方法方可启动线程并使线程进入就绪状态，直接执行 <code>run()</code> 方法的话不会以多线程的方式执行。</strong></p>
-<p>在别的平台，比如 C/C++ ，线程创建即运行</p>
-<h3 id="thread-interrupt"><a href="#thread-interrupt" class="headerlink" title="thread.interrupt()"></a><code>thread.interrupt()</code></h3><p>如果异常没有被捕获该线程将会停止执行。</p>
-<ol>
-<li>Java 通过 <strong><code>interrupt()</code></strong> 发出线程中断信号，<strong>不会强制停止线程</strong>，而是依靠线程自行检查并响应。</li>
-<li>使用 <strong><code>isInterrupted()</code></strong> 查询中断状态，或 <strong><code>interrupted()</code></strong> 查询并重置状态。</li>
-<li>在阻塞操作中，抛出 <strong><code>InterruptedException</code></strong> 时需恢复中断标志位并及时退出。</li>
-<li>遵循协作式终止原则，确保线程安全和资源正确释放。</li>
-</ol>
-<p><strong>推荐方式：</strong></p>
-<ul>
-<li>在关键任务中轮询中断状态。</li>
-<li>在阻塞状态下捕获异常并优雅退出线程。</li>
-</ul>
-<p><strong>如何处理中断</strong>？</p>
-<ol>
-<li><strong>响应中断标志位</strong></li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (!Thread.currentThread().isInterrupted()) &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;任务执行中...&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line">System.out.println(<span class="string">&quot;检测到中断，退出线程！&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<p><strong>2. 捕获异常并退出</strong></p>
-<p>在阻塞状态下（如 <code>sleep()</code>、<code>wait()</code>、<code>join()</code> 等方法），线程会抛出 <strong><code>InterruptedException</code><strong>，此时中断标志位会被</strong>自动清除</strong>。示例：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;线程被中断！&quot;</span>);</span><br><span class="line">    Thread.currentThread().interrupt(); <span class="comment">// 恢复中断标志位</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>为什么中断不能强制终止线程</strong>？</p>
-<p>Java 提倡线程的<strong>协作式终止</strong>，而不是<strong>强制终止</strong>（如 <code>Thread.stop()</code> 已被废弃）。原因包括：</p>
-<ol>
-<li><strong>强制终止会导致资源泄漏：</strong> 线程可能在持有锁或打开文件等资源时被突然终止，导致资源无法正常释放。</li>
-<li><strong>不安全的状态：</strong> 数据可能处于不一致状态，从而引发数据损坏。</li>
-<li><strong>可控性低：</strong> 开发者无法自行控制线程的退出逻辑。</li>
-</ol>
-<h2 id="线程生命周期"><a href="#线程生命周期" class="headerlink" title="线程生命周期"></a>线程生命周期</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240918105642868-1726751033487-52-1735555863361-53.png" alt="image-20240918105642868"></p>
-<h2 id="Thread-常用方法"><a href="#Thread-常用方法" class="headerlink" title="Thread 常用方法"></a>Thread 常用方法</h2><p>  <img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240917203637026-1726751033487-46.png" alt="image-20240917203637026"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240917203429253-1726751033487-47.png" alt="image-20240917203429253"></p>
-<ul>
-<li><strong><code>start()</code></strong>: 线程转为 Runnable 可运行状态，相当于 <code>pthread_create()</code></li>
-<li><strong><code>run()</code></strong>: 线程应该执行的方法，相当于 <code>pthread_create()</code> 传的函数指针</li>
-<li><strong><code>sleep(long millis)</code></strong>: 调用者睡眠一段时间</li>
-<li><strong><code>join()</code></strong>: 父线程等待子线程执行完毕再继续执行</li>
-<li><strong><code>interrupt()</code></strong>: 使线程中断</li>
-<li><code>currentThread()</code>: 获取当前执行的线程对象</li>
-<li><code>get/setName()</code>: 获取线程名称</li>
-<li><code>yield()</code>: 声明当前线程已经完成了生命周期中最重要的部分，可以切换给其它线程来执行。只是对线程调度器的一个建议，只是建议具有相同优先级的其它线程可以运行。只保证当前线程放弃CPU占用而不能保证使其它线程一定能占用CPU，执行yield()的线程有可能在进入到暂停状态后马上又被执行。</li>
-<li><code>setDaemon()</code>: 将一个线程设置为守护线程。当所有非守护线程结束时，程序也就终止，同时会杀死所有守护线程。main() 属于非守护线程。</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/640-1735555856683-51.png" alt="Java 线程状态变迁图"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240918105918176-1726751033487-54.png" alt="image-20240918105918176"></p>
-<h2 id="线程安全问题-1"><a href="#线程安全问题-1" class="headerlink" title="线程安全问题"></a>线程安全问题</h2><p>如果多个线程对同一个共享数据进行访问而不采取同步操作的话，那么操作的结果是不一致的。</p>
-<p>以下代码演示了 1000 个线程同时对 cnt 执行自增操作，操作结束之后它的值有可能小于 1000。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadUnsafeExample</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> <span class="variable">cnt</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">add</span><span class="params">()</span> &#123;</span><br><span class="line">        cnt++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">get</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> cnt;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">int</span> <span class="variable">threadSize</span> <span class="operator">=</span> <span class="number">1000</span>;</span><br><span class="line">    <span class="type">ThreadUnsafeExample</span> <span class="variable">example</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadUnsafeExample</span>();</span><br><span class="line">    <span class="keyword">final</span> <span class="type">CountDownLatch</span> <span class="variable">countDownLatch</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CountDownLatch</span>(threadSize);</span><br><span class="line">    <span class="type">ExecutorService</span> <span class="variable">executorService</span> <span class="operator">=</span> Executors.newCachedThreadPool();</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; threadSize; i++) &#123;</span><br><span class="line">        executorService.execute(() -&gt; &#123;</span><br><span class="line">            example.add();</span><br><span class="line">            countDownLatch.countDown();</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    countDownLatch.await();</span><br><span class="line">    executorService.shutdown();</span><br><span class="line">    System.out.println(example.get());</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// --- 997 // 结果总是小于1000</span></span><br></pre></td></tr></table></figure>
-
-<p>多个线程，同时修改同一个共享资源，可能出现业务安全问题 <a href="jetbrains://idea/navigate/reference?project=MyFirstProject&fqn=com.it.threadtest.BankSimulator">Banksim</a></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240917205938036-1726751033487-48.png" alt="image-20240917205938036"></p>
-<p>又是一个理论的问题，各式各样的答案有很多，我给出一个个人认为解释地最好的：如果你的代码 在多线程下执行和在单线程下执行永远都能获得一样的结果，那么你的代码就是线程安全的。 这个问题有值得一提的地方，就是线程安全也是有几个级别的：</p>
-<h3 id="不可变-Immutable"><a href="#不可变-Immutable" class="headerlink" title="不可变 Immutable"></a>不可变 Immutable</h3><p>final 关键字修饰的基本数据类型，枚举类型，Number 部分子类，如 Long 和 Double 等数值包装类型，BigInteger 和 BigDecimal 等大数据类型。但同为 Number 的原子类 AtomicInteger 和 AtomicLong 则是可变的。任何一个线程都改变不了它们的值，要改变除 非新创建一个，因此这些不可变对象不需要任何同步手段就可以直接在多线程环境下使用</p>
-<h3 id="绝对线程安全"><a href="#绝对线程安全" class="headerlink" title="绝对线程安全"></a>绝对线程安全</h3><p>不管运行时环境如何，调用者都不需要任何额外的同步措施。</p>
-<h3 id="相对线程安全"><a href="#相对线程安全" class="headerlink" title="相对线程安全"></a>相对线程安全</h3><p>相对线程安全需要保证对这个对象单独的操作是线程安全的，在调用的时候不需要做额外的保障措施。但是对于一些特定顺序的连续调用，就可能需要在调用端使用额外的同步手段来保证调用的正确性。也就是我们通常意义上所说的线程安全</p>
-<p>ConcurrentHashMap, Vector, HashTable, StringBuffer</p>
-<p>像 <strong>Vector</strong> 这种，add、remove方法都是原子 操作，不会被打断，但也仅限于此，如果有个线程在遍历某个Vector、有个线程同时在add这个 Vector，99%的情况下都会出现ConcurrentModificationException，也就是fail-fast机制。HashTable也同理。StringBuffer 自带缓冲区，线程安全，性能较低。</p>
-<p><mark>ConcurrentHashMap<mark> 的复合操作：<code>if(map.containsKey(x)) map.put(x,1);</code> 不能保证原子性，需要使用内置的原子操作方法，如 <code>putIfAbsent()</code>。另外批量操作也不一定线程安全</p>
-<h3 id="线程不安全"><a href="#线程不安全" class="headerlink" title="线程不安全"></a>线程不安全</h3><p>ArrayList、LinkedList、HashMap等都是线程非安全的类 StringBuilder也不安全。完全不安全</p>
-<h2 id="线程互斥同步-Mutex-Synchronization"><a href="#线程互斥同步-Mutex-Synchronization" class="headerlink" title="线程互斥同步(Mutex Synchronization)"></a>线程互斥同步(Mutex Synchronization)</h2><h3 id="悲观、乐观锁"><a href="#悲观、乐观锁" class="headerlink" title="悲观、乐观锁"></a>悲观、乐观锁</h3><p><strong>乐观锁</strong>：CAS算法，共享资源修改之后跟修改之前做对比，如果一样就确认修改，不一样就作废，重新进行修改</p>
-<p>主线程里调用子线程的join方法，表示主线程等待次线程执行完毕，再继续执行<a href="jetbrains://idea/navigate/reference?project=MyFirstProject&fqn=com.it.threadtest.GiftSender">赠送礼物案例</a> </p>
-<p><strong>悲观锁</strong>：直接把核心代码锁住，只要线程开始执行就加锁，线程安全,但并发性能差</p>
-<p>t1和t2两个子线程同时启动，调用start方法，t1，t2进入就绪状态，何时启动，启动顺序由调度器决定，启动以后，main,t1,t2各自执行互不影响，此时如果在子线程的start语句后调用子线程的join方法，t1.join表示主线程要在这一步暂停，直到t1执行完毕，但是t2不会受到任何影响，当t1执行完毕之后，再调用t2.join等待t2执行完毕，可能在t1执行完之前t2就完了，所以有时候t2不join也不会影响结果，但是最好还是加上</p>
-<p>Java 提供了两种锁机制来控制多个线程对共享资源的互斥访问，第一个是 JVM 实现的 synchronized，而另一个是 JDK 实现的 ReentrantLock。解决线程安全问题的方案，让多个线程先后依次访问共享资源</p>
-<h3 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a><code>synchronized</code></h3><h4 id="同步代码块"><a href="#同步代码块" class="headerlink" title="同步代码块"></a>同步代码块</h4><ul>
-<li>作用：把访问共享资源的核心代码上锁，保证线程安全</li>
-<li>原理：每次只允许一个线程加锁以后进入，执行完毕自动解锁，其他线程才能进来执行。</li>
-<li>同步锁必须是同一个锁对象。</li>
-</ul>
-<p>关键字 <code>synchronized</code> 后边括号里是锁对象，<mark>必须保证是同一个<mark>，最简单的方法就是唯一的 字符串常量池。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240917214332757-1726751033487-49.png" alt="image-20240917214332757"></p>
-<p>不同类或模块中不相关的代码会因为使用相同的字符串常量作为锁而相互干扰，你取钱关我什么事？我的账号我为什么不能取！搜易</p>
-<p><code>synchronized(this)</code> 实例方法，锁对象代表正在操作的共享资源</p>
-<p>静态方法：<code>synchronized(Account.class)</code> </p>
-<h4 id="同步方法"><a href="#同步方法" class="headerlink" title="同步方法"></a>同步方法</h4><p><code>public synchronized int steal()</code></p>
-<p>实例方法就是用this作为锁，静态方法的锁：类名.class</p>
-<p>web应用的业务层对象service通常是同一个（spring容器的单例）</p>
-<p>如果多个线程都要调用service对象的synchronized方法，此时线程A拿到了this对象开始执行方法，其他线程只能阻塞等待A执行完毕释放this对象锁才可继续执行。</p>
-<p>锁必须是不同的线程都能访问到的对象，比如字符串常量，比如this</p>
-<h3 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a><code>ReentrantLock</code></h3><p><code>final Lock lk = new ReentrantLock();</code> 声明在共享资源的成员变量，</p>
-<p><code>lk.lock()</code> <code>lk.unlock()</code></p>
-<ul>
-<li>final 关键字 不能修改锁</li>
-<li>加锁之后，执行核心代码的时候如果遇到异常，后面程序无法执行，就变成了死锁，所以用 <code>try-catch-finally</code></li>
-</ul>
-<h3 id="which-one"><a href="#which-one" class="headerlink" title="which one?"></a>which one?</h3><p><strong>比较</strong></p>
-<p><strong>1. 锁的实现</strong></p>
-<p>synchronized 是 JVM 实现的，而 ReentrantLock 是 JDK 实现的。</p>
-<p><strong>2. 性能</strong></p>
-<p>新版本 Java 对 synchronized 进行了很多优化，例如自旋锁等，synchronized 与 ReentrantLock 大致相同。</p>
-<p><strong>3. 等待可中断</strong></p>
-<p>当持有锁的线程长期不释放锁的时候，正在等待的线程可以选择放弃等待，改为处理其他事情。</p>
-<p>ReentrantLock 可中断，而 synchronized 不行。</p>
-<p><strong>4. 公平锁</strong></p>
-<p>公平锁是指多个线程在等待同一个锁时，必须按照申请锁的时间顺序来依次获得锁。</p>
-<p>synchronized 中的锁是非公平的，ReentrantLock 默认情况下也是非公平的，但是也可以是公平的。</p>
-<p><strong>5. 锁绑定多个条件</strong></p>
-<p>一个 ReentrantLock 可以同时绑定多个 Condition 对象。</p>
-<p><strong>使用选择</strong></p>
-<p>除非需要使用 ReentrantLock 的高级功能，否则优先使用 synchronized。这是因为 synchronized 是 JVM 实现的一种锁机制，JVM 原生地支持它，而 ReentrantLock 不是所有的 JDK 版本都支持。并且使用 synchronized 不用担心没有释放锁而导致死锁问题，因为 JVM 会确保锁的释放。</p>
-<h3 id="避免死锁"><a href="#避免死锁" class="headerlink" title="避免死锁"></a>避免死锁</h3><ul>
-<li><p>Hold and wait:  一个进程因请求资源而阻塞时，对以获得的资源保持不放。</p>
-<ul>
-<li>原子性抢锁, 把要抢的锁集中到一起,一块抢了</li>
-</ul>
-</li>
-<li><p>No preemption: 进程已获得的资源，在使用完毕之前，不能被强行抢走。</p>
-<ul>
-<li><code>a.lock()</code>-&gt;<code>if(!b.tryLock()) then a.unlock()</code> </li>
-<li>如果 b tryLock 失败就会被抢走。</li>
-<li>Issue: Livelock</li>
-</ul>
-</li>
-<li><p>Circular wait: </p>
-<ul>
-<li>fixed order</li>
-</ul>
-</li>
-<li><p>Mutual exclusion: </p>
-<ul>
-<li>Lock-free CAS</li>
-</ul>
-</li>
-</ul>
-<h2 id="线程通信-Inter-Thread-Communication"><a href="#线程通信-Inter-Thread-Communication" class="headerlink" title="线程通信(Inter-Thread Communication)"></a>线程通信(Inter-Thread Communication)</h2><p>可以通过共享变量的方式实现线程间的通讯和协作：volatile、while 轮询</p>
-<p>同时可以使用下面线程消息传递机制：</p>
-<h3 id="thread-join"><a href="#thread-join" class="headerlink" title="thread.join()"></a><code>thread.join()</code></h3><p><strong><mark>join()<mark></strong></p>
-<p>join 在线程中调用另一个线程的 join() 方法，会将当前线程挂起，而不是忙等待，直到目标线程结束。</p>
-<p>线程之间互相告知对方自己的状态，相互协调。<strong>避免无效资源争夺</strong> </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240917222622519-1726751033487-50.png" alt="image-20240917222622519"></p>
-<h3 id="object-wait"><a href="#object-wait" class="headerlink" title="object.wait()"></a><code>object.wait()</code></h3><p><strong><mark>wait() notify() notifyAll()<mark></strong></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240917224325687-1726751033487-51.png" alt="image-20240917224325687"></p>
-<p>调用 wait() 使得线程等待某个条件满足，线程在等待时会被挂起，当其他线程的运行使得这个条件满足时，其它线程会调用 notify() 或者 notifyAll() 来唤醒挂起的线程。它们都属于 Object 的一部分，而不属于 Thread。</p>
-<p>只能用在同步方法或者同步控制块中使用，否则会在运行时抛出 IllegalMonitorStateExeception。</p>
-<p>使用 wait() 挂起期间，线程会释放锁。这是因为，如果没有释放锁，那么其它线程就无法进入对象的同步方法或者同步控制块中，那么就无法执行 notify() 或者 notifyAll() 来唤醒挂起的线程，造成死锁。上述方法应该使用当前同步锁对象进行调用，只有锁知道当前占用自己的是哪个线程</p>
-<p>先notifyAll 后wait   </p>
-<p>先wait 后notifyAll 当前线程等待，notifyAll又再次唤醒了自己</p>
-<p>底层逻辑：如果没有通信机制，就会出现无效的资源争夺，我做好了包子，我就应该通知你们所有人，我的工作做完了，你们可以开始你们的工作了，不然我会一直占用桌子但是又做不了包子，你们想吃包子的也因为桌子被占用而吃不上，导致厨师和吃货之间没有必要的资源挤兑与争抢。</p>
-<h4 id="wait-与-sleep"><a href="#wait-与-sleep" class="headerlink" title="wait() 与 sleep()"></a><code>wait()</code> 与 <code>sleep()</code></h4><p><code>wait()</code> 是让获得对象锁的线程实现等待，会自动释放当前线程占有的对象锁。每个对象（<code>Object</code>）都拥有对象锁，既然要释放当前线程占有的对象锁并让其进入 WAITING 状态，自然是要操作对应的对象（<code>Object</code>）而非当前的线程（<code>Thread</code>）。</p>
-<p>类似的问题：<strong>为什么 <code>sleep()</code> 方法定义在 <code>Thread</code> 中？</strong> </p>
-<p>因为 <code>sleep()</code> 是让当前线程暂停执行，不涉及到对象类，也不需要获得对象锁。</p>
-<p><strong>区别</strong>：</p>
-<ul>
-<li><strong><code>sleep()</code> 方法没有释放锁，而 <code>wait()</code> 方法释放了锁</strong> 。</li>
-<li><code>wait()</code> 通常被用于线程间交互/通信，<code>sleep()</code>通常被用于暂停执行。</li>
-<li><code>wait()</code> 方法被调用后，线程不会自动苏醒，需要别的线程调用同一个对象上的 <code>notify()</code>或者 <code>notifyAll()</code> 方法。<code>sleep()</code>方法执行完成后，线程会自动苏醒，或者也可以使用 <code>wait(long timeout)</code> 超时后线程会自动苏醒。</li>
-<li><code>sleep()</code> 是 <code>Thread</code> 类的静态native方法，<code>wait()</code> 则是 <code>Object</code> 类的native方法。</li>
-</ul>
-<h3 id="condition-await"><a href="#condition-await" class="headerlink" title="condition.await()"></a><code>condition.await()</code></h3><p><mark><strong>await() signal() signalAll()</strong><mark></p>
-<p>java.util.concurrent 类库中提供了 Condition 类来实现线程之间的协调，可以在 Condition 上调用 await() 方法使线程等待，其它线程调用 signal() 或 signalAll() 方法唤醒等待的线程。相比于 wait() 这种等待方式，await() 可以指定等待的条件，因此更加灵活。</p>
-<p>使用 Lock 来获取一个 Condition 对象。</p>
-<h3 id="Producer-Consumer"><a href="#Producer-Consumer" class="headerlink" title="Producer/Consumer"></a>Producer/Consumer</h3><p><strong>生产者-消费者模式</strong>（Producer-Consumer Pattern）是一种常见的多线程设计模式，通常用于解决<strong>不同速率的线程之间如何协调工作</strong>的问题。它的主要目标是将“<strong>生产数据</strong>”和“<strong>消费数据</strong>”的任务解耦，使用一个共享的缓冲区（通常是队列）来协调生产者和消费者的工作。 </p>
-<p><mark>模式概述<mark></p>
-<ol>
-<li><strong>生产者（Producer）</strong>：负责生成数据，并将数据放入缓冲区或队列中。生产者线程的工作是“生产”，即产生新数据。</li>
-<li><strong>消费者（Consumer）</strong>：负责从缓冲区中获取数据并进行处理。消费者线程的工作是“消费”，即处理已经由生产者产生的数据。</li>
-<li><strong>共享缓冲区</strong>：生产者和消费者通过共享一个缓冲区（通常是一个线程安全的队列）进行数据传递。生产者将数据放入缓冲区，消费者从缓冲区中取出数据。</li>
-</ol>
-<p>在该模式下，生产者和消费者可以独立运行，而不需要直接相互依赖。两者通过共享缓冲区进行<strong>松耦合的通信</strong>。</p>
-<p><mark>关键问题<mark></p>
-<p>生产者和消费者的工作速率可能不同：</p>
-<ul>
-<li>如果生产者比消费者快，消费者可能一时无法处理所有的数据，导致缓冲区满。</li>
-<li>如果消费者比生产者快，消费者可能没有数据可消费，导致缓冲区空。</li>
-</ul>
-<p>因此，需要有一种机制来处理这两种情况：</p>
-<ul>
-<li><strong>缓冲区满时</strong>：生产者应该等待，直到有空间可以继续生产数据。</li>
-<li><strong>缓冲区空时</strong>：消费者应该等待，直到有数据可以消费。</li>
-</ul>
-<p>如果在生产者-消费者模式中没有合适的<strong>等待机制</strong>，而生产者和消费者直接对缓冲区进行操作，那么可能会出现以下问题：</p>
-<ol>
-<li><strong>缓冲区满时的情况</strong></li>
-</ol>
-<p>当缓冲区已经满了，<strong>生产者</strong>线程如果继续向缓冲区添加数据，而没有等待机制，可能会出现以下两种情况：</p>
-<ul>
-<li><strong>覆盖数据</strong>：如果没有检查缓冲区是否已满，生产者可能会继续向缓冲区写入数据，从而覆盖掉之前的数据，导致丢失尚未被消费者读取的数据。</li>
-<li><strong>抛出异常</strong>：在某些实现中，尝试向满的缓冲区写入数据可能会抛出异常，程序会因为未处理该异常而崩溃或出现不可预测的行为。</li>
-</ul>
-<p>示例：没有等待机制的生产者向满缓冲区添加数据</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">NoWaitBufferFull</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">CAPACITY</span> <span class="operator">=</span> <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span>[] buffer = <span class="keyword">new</span> <span class="title class_">int</span>[CAPACITY];</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 简单模拟生产者行为</span></span><br><span class="line">        <span class="type">Thread</span> <span class="variable">producer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (count == CAPACITY) &#123;</span><br><span class="line">                    <span class="comment">// 缓冲区已满，没有等待机制，可能出现问题</span></span><br><span class="line">                    System.out.println(<span class="string">&quot;Buffer is full! Data may be lost or overwritten.&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                buffer[count % CAPACITY] = count; <span class="comment">// 可能覆盖数据</span></span><br><span class="line">                count++;</span><br><span class="line">                System.out.println(<span class="string">&quot;Produced: &quot;</span> + count);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        producer.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>问题：</strong></p>
-<ul>
-<li>在没有等待机制的情况下，生产者线程一旦缓冲区满了，就会继续写入新数据，覆盖掉尚未被消费者读取的数据，从而丢失数据。</li>
-</ul>
-<ol start="2">
-<li><strong>缓冲区空时的情况</strong></li>
-</ol>
-<p>当缓冲区为空，<strong>消费者</strong>线程如果继续尝试从缓冲区读取数据，而没有等待机制，可能会出现以下问题：</p>
-<ul>
-<li><strong>读取无效数据</strong>：消费者从空的缓冲区读取到无效的或未初始化的数据，导致消费错误。</li>
-<li><strong>抛出异常</strong>：如果没有等待机制，当消费者试图从空的缓冲区获取数据时，可能会抛出空指针异常或数组越界异常，导致程序崩溃。</li>
-</ul>
-<p>示例：没有等待机制的消费者从空缓冲区读取数据</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">NoWaitBufferEmpty</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">CAPACITY</span> <span class="operator">=</span> <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span>[] buffer = <span class="keyword">new</span> <span class="title class_">int</span>[CAPACITY];</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 简单模拟消费者行为</span></span><br><span class="line">        <span class="type">Thread</span> <span class="variable">consumer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (count == <span class="number">0</span>) &#123;</span><br><span class="line">                    <span class="comment">// 缓冲区为空，没有等待机制，可能出现问题</span></span><br><span class="line">                    System.out.println(<span class="string">&quot;Buffer is empty! Consumer may read invalid data.&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="type">int</span> <span class="variable">data</span> <span class="operator">=</span> buffer[(count - <span class="number">1</span>) % CAPACITY]; <span class="comment">// 可能读取到无效数据</span></span><br><span class="line">                System.out.println(<span class="string">&quot;Consumed: &quot;</span> + data);</span><br><span class="line">                count--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        consumer.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>问题：</strong></p>
-<ul>
-<li>如果消费者在缓冲区为空时继续尝试读取，可能会读到无效的数据，或者抛出异常。</li>
-</ul>
-<ol start="3">
-<li><strong>竞态条件（Race Condition）</strong></li>
-</ol>
-<p>没有等待机制的生产者和消费者可能会产生竞争条件，导致<strong>数据一致性问题</strong>。</p>
-<ul>
-<li><strong>生产者和消费者竞争访问缓冲区</strong>：生产者在写入数据时，消费者同时读取缓冲区，可能导致消费者读取到部分更新的数据，或者读取到不完整的数据。</li>
-<li><strong>缓冲区状态不一致</strong>：由于生产者和消费者缺乏同步，缓冲区的状态可能变得不可预测，例如在消费者从空缓冲区读取数据时，生产者已经开始写入数据，导致状态错乱。</li>
-</ul>
-<p>正确的等待机制</p>
-<p>为了避免上述问题，生产者和消费者应该使用合适的<strong>等待和唤醒机制</strong>，例如：</p>
-<ul>
-<li><strong>使用阻塞队列（BlockingQueue）</strong>：自动处理缓冲区满和空的情况。</li>
-<li>**使用 <code>wait()</code> 和 <code>notify()</code>**：手动实现线程间的等待和通知。</li>
-</ul>
-<p>这些机制可以保证：</p>
-<ul>
-<li>当缓冲区满时，生产者会自动等待，直到消费者消费了一些数据并腾出空间。</li>
-<li>当缓冲区为空时，消费者会自动等待，直到生产者产生新的数据。</li>
-</ul>
-<p>总结</p>
-<p>如果没有等待机制：</p>
-<ul>
-<li><strong>缓冲区满时</strong>，生产者可能会覆盖数据或抛出异常。</li>
-<li><strong>缓冲区空时</strong>，消费者可能会读取到无效数据或抛出异常。</li>
-<li><strong>竞态条件</strong>会导致数据不一致和程序异常行为。</li>
-</ul>
-<p>等待机制可以确保生产者和消费者之间的正确同步，保证数据的完整性和线程安全性。</p>
-<p>示例代码：使用 `BlockingQueue</p>
-<p><code>BlockingQueue</code> 是 Java 并发包中的线程安全队列，当队列为空时，消费者会阻塞等待；当队列满时，生产者会阻塞等待。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.ArrayBlockingQueue;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.BlockingQueue;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProducerConsumerExample</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">CAPACITY</span> <span class="operator">=</span> <span class="number">5</span>; <span class="comment">// 缓冲区容量</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> BlockingQueue&lt;Integer&gt; queue = <span class="keyword">new</span> <span class="title class_">ArrayBlockingQueue</span>&lt;&gt;(CAPACITY);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 生产者线程</span></span><br><span class="line">        <span class="type">Thread</span> <span class="variable">producer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">value</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    System.out.println(<span class="string">&quot;Producing: &quot;</span> + value);</span><br><span class="line">                    queue.put(value); <span class="comment">// 队列满时生产者阻塞</span></span><br><span class="line">                    value++;</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>); <span class="comment">// 模拟生产耗时</span></span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    Thread.currentThread().interrupt();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 消费者线程</span></span><br><span class="line">        <span class="type">Thread</span> <span class="variable">consumer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="type">int</span> <span class="variable">value</span> <span class="operator">=</span> queue.take(); <span class="comment">// 队列空时消费者阻塞</span></span><br><span class="line">                    System.out.println(<span class="string">&quot;Consuming: &quot;</span> + value);</span><br><span class="line">                    Thread.sleep(<span class="number">1500</span>); <span class="comment">// 模拟消费耗时</span></span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    Thread.currentThread().interrupt();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        producer.start();</span><br><span class="line">        consumer.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>代码解释</p>
-<ul>
-<li>**<code>ArrayBlockingQueue</code>**：这是一个固定容量的阻塞队列，容量为 5。</li>
-<li><strong>生产者线程</strong>：生产一个整数，将其放入队列中。如果队列满了，<code>put()</code> 方法会阻塞，直到队列有空余位置。</li>
-<li><strong>消费者线程</strong>：从队列中取出一个整数进行消费。如果队列为空，<code>take()</code> 方法会阻塞，直到有数据可以消费。</li>
-<li>生产者每秒生产一个数据，消费者每 1.5 秒消费一个数据，因此队列会周期性地满和空。</li>
-</ul>
-<p>运行结果（部分）：</p>
-<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">Producing: 0</span></span><br><span class="line"><span class="section">Consuming: 0</span></span><br><span class="line"><span class="section">Producing: 1</span></span><br><span class="line"><span class="section">Producing: 2</span></span><br><span class="line"><span class="section">Consuming: 1</span></span><br><span class="line"><span class="section">Producing: 3</span></span><br><span class="line"><span class="section">Producing: 4</span></span><br><span class="line"><span class="section">Producing: 5</span></span><br><span class="line"><span class="section">Consuming: 2</span></span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>实现的核心优势：</p>
-<ul>
-<li><strong>线程安全</strong>：<code>BlockingQueue</code> 是线程安全的，它自动管理生产者和消费者之间的同步操作。</li>
-<li><strong>自动阻塞与唤醒</strong>：<code>BlockingQueue</code> 的 <code>put()</code> 和 <code>take()</code> 方法在队列满或空时自动阻塞生产者或消费者线程，不需要手动使用 <code>wait()</code> 和 <code>notify()</code> 。</li>
-<li><strong>简单的并发控制</strong>：相比于自己手动编写锁和条件变量，<code>BlockingQueue</code> 使得生产者-消费者模式的实现更加简洁和可靠。</li>
-</ul>
-<p>使用场景</p>
-<p>生产者-消费者模式广泛用于以下场景：</p>
-<ul>
-<li><strong>多线程任务处理</strong>：例如在消息队列中，生产者产生消息并存放到队列中，消费者从队列中读取并处理消息。</li>
-<li><strong>流式数据处理</strong>：例如网络服务器中，生产者线程从网络中读取数据，消费者线程对数据进行处理。</li>
-<li><strong>异步任务队列</strong>：后台线程不断产生任务，工作线程从任务队列中取出任务并执行。</li>
-</ul>
-<p>总结</p>
-<p>生产者-消费者模式通过解耦生产和消费的过程，提高了系统的<strong>并发性</strong>和<strong>响应速度</strong>，并通过使用共享的缓冲区，确保了线程之间的协调和通信。在 Java 中，通过 <code>BlockingQueue</code> 等并发工具，可以非常简便地实现这一模式。</p>
-<p>为了更好地理解生产者-消费者模式中缓冲区满、空以及等待机制的问题，可以通过几个生活中的例子来形象化解释。</p>
-<p><mark>案例1：餐厅的厨房和服务员<mark></p>
-<p><strong>背景</strong>：我们把餐厅的厨房比作生产者，把服务员比作消费者，而“出菜窗口”就是缓冲区。厨师不断做菜（生产者），然后把做好的菜放到窗口。服务员从窗口取菜并送到顾客桌上（消费者）。窗口有固定的空间（比如只能放5盘菜）。</p>
-<p>情况一：<strong>没有等待机制，缓冲区满</strong> </p>
-<p>假设窗口只能放5盘菜，但没有任何规则限制厨房什么时候该停止做菜。</p>
-<ul>
-<li><strong>缓冲区满的情况</strong>：当窗口已经放满了5盘菜时，厨师继续做菜并将新菜强行放到窗口，结果是已经在窗口的菜被挤掉了（覆盖数据），导致有些菜从来没有被服务员送出去（数据丢失）。</li>
-<li><strong>没有等待的后果</strong>：这样会让顾客拿不到部分菜，而厨师和服务员也浪费了时间。顾客会抱怨因为菜不够，服务员也因为混乱的出菜流程而忙得不可开交。</li>
-</ul>
-<p><strong>现实中的问题</strong>：如果生产者不等待缓冲区腾出空间继续生产，数据就可能会被覆盖，导致丢失。</p>
-<p>情况二：<strong>没有等待机制，缓冲区空</strong></p>
-<p>假设服务员到窗口取菜时，没有任何规则限制什么时候该停止等菜。</p>
-<ul>
-<li><strong>缓冲区为空的情况</strong>：当窗口里一盘菜也没有时，服务员会继续来回在窗口取菜，却发现没有菜可以送（读取无效数据）。服务员一次次白跑，最终浪费时间，不能及时给顾客送餐。</li>
-<li><strong>没有等待的后果</strong>：服务员会忙碌但却无法送餐，而顾客等待时间过长，抱怨连连。</li>
-</ul>
-<p><strong>现实中的问题</strong>：如果消费者在没有数据可取时不等待，那么它可能会白忙一场，甚至读取无效数据或造成错误。</p>
-<p>在这些生活案例中，缓冲区（窗口、传送带、货架）的满和空如果不通过合适的等待机制进行处理，会导致资源浪费、系统效率下降，甚至使整个系统无法正常工作。等待机制的引入可以确保：</p>
-<ul>
-<li>当缓冲区满时，生产者等待，避免覆盖数据。</li>
-<li>当缓冲区空时，消费者等待，避免无效操作或消费错误。</li>
-</ul>
-<p>通过这些例子可以更直观地理解，<strong>等待机制</strong>在多线程程序中的重要性就在于确保生产者和消费者合理协同，防止资源浪费或错误行为。</p>
-<h2 id="线程调度-scheduling"><a href="#线程调度-scheduling" class="headerlink" title="线程调度 scheduling"></a>线程调度 scheduling</h2><p>Java 的线程调度完全依赖于操作系统。操作系统根据线程优先级、时间片和调度算法来控制线程执行顺序和时间。JVM 负责将 Java 线程映射到操作系统线程，确保线程的创建、调度和同步机制正常工作。Java 提供的优先级和调度方法只是“建议”，最终执行权由操作系统决定。在大多数现代操作系统（如 Linux）中，线程优先级被忽略，使用时间片轮转调度所有线程。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/three-types-of-thread-models-1735555167554-48.png" alt="常见的三种线程模型"></p>
-<h3 id="基于内核线程"><a href="#基于内核线程" class="headerlink" title="基于内核线程"></a>基于内核线程</h3><p>Java 中的线程调度依赖于操作系统提供的<strong>原生线程（Native Thread）</strong>支持。具体来说：</p>
-<ol>
-<li><strong>Java 线程映射到操作系统线程：</strong><ul>
-<li>Java 使用 <strong>1:1 模型</strong>，即每个 Java 线程对应一个操作系统线程。</li>
-<li>线程的创建、管理和调度全部委托给底层操作系统的线程调度器（如 Windows 的 <strong>线程调度器</strong> 或 Linux 的 <strong>CFS调度器</strong>）。</li>
-</ul>
-</li>
-<li><strong>线程调度策略：</strong><br>操作系统调度器通常采用 <strong>时间片轮转（Round-Robin）</strong> 或 <strong>优先级调度（Priority Scheduling）</strong>策略，为线程分配 CPU 时间。<ul>
-<li>Java 线程也有优先级，但其实际执行顺序依赖于操作系统的实现。</li>
-</ul>
-</li>
-<li><strong>时间片和抢占式调度：</strong><ul>
-<li>Java 虚拟机（JVM）并不直接管理线程的时间片分配，而是由操作系统决定何时挂起或恢复线程。</li>
-<li>Java 线程默认是<strong>抢占式调度</strong>，即高优先级线程可能会抢占 CPU 资源，但操作系统仍有最终决定权。</li>
-</ul>
-</li>
-</ol>
-<p>Java 线程通过 JVM 的 <strong>线程库（Thread API）</strong> 调用底层 <strong>操作系统线程库（如 POSIX pthreads 或 Windows API）</strong>来实现线程调度。</p>
-<p>Java 线程是基于<strong>内核级线程（Kernel Thread）</strong>，因为：</p>
-<ul>
-<li>Java 线程依赖操作系统的内核调度器进行管理。</li>
-<li>内核线程直接由操作系统管理和调度，可以利用多核 CPU 并行执行多个线程。</li>
-<li>用户级线程（如早期的绿色线程）已经被淘汰，Java 不再支持用户级线程。</li>
-</ul>
-<p><strong>关键组件：</strong></p>
-<ol>
-<li><strong><code>java.lang.Thread</code>：</strong> Java 提供的线程抽象类，依赖 JVM 的原生接口。</li>
-<li><strong><code>Thread.start()</code>：</strong> 调用 JVM 本地方法 <code>start0()</code>，最终委托给操作系统创建线程。</li>
-<li><strong><code>Thread.yield()</code>：</strong> 提示线程调度器让出 CPU，但具体是否让出由操作系统决定。</li>
-<li><strong><code>Thread.sleep()</code>：</strong> 当前线程进入休眠状态，底层通过操作系统的 <strong>计时器</strong> 和 <strong>休眠 API</strong> 实现。</li>
-<li><strong><code>Thread.join()</code>：</strong> 等待其他线程执行完成，依赖于操作系统提供的线程同步机制。</li>
-</ol>
-<h3 id="OS-线程调度"><a href="#OS-线程调度" class="headerlink" title="OS 线程调度"></a>OS 线程调度</h3><p><strong>1) Windows：</strong></p>
-<ul>
-<li>使用 <strong>Windows API</strong> 管理线程调度。</li>
-<li>支持优先级和基于时间片的抢占式调度策略。</li>
-</ul>
-<p><strong>2) Linux/Unix：</strong></p>
-<ul>
-<li>使用 <strong>POSIX Threads (pthreads)</strong> 作为底层实现。</li>
-<li>基于 <strong>CFS（Completely Fair Scheduler）</strong> 调度器执行线程调度，按“公平性”分配 CPU 时间片。</li>
-</ul>
-<h2 id="线程池-Executor"><a href="#线程池-Executor" class="headerlink" title="线程池 Executor"></a>线程池 <code>Executor</code></h2><p>Executor 管理多个异步任务的执行，而无需程序员显式地管理线程的生命周期。这里的异步是指多个任务的执行互不干扰，不需要进行同步操作。</p>
-<ul>
-<li><p>可以复用线程的技术</p>
-</li>
-<li><p>如果不使用线程池，后台要用新的线程，创建新线程开销很大，请求过多就会严重影响系统性能</p>
-</li>
-<li><p>创建线程池</p>
-<ul>
-<li><p>ExecutorService的实现类ThreadPoolExecutor 自创建对象</p>
-</li>
-<li><p>Executors 工具类</p>
-</li>
-</ul>
-</li>
-<li><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240918001837124-1726751033487-53.png" alt="image-20240918001837124"></p>
-</li>
-</ul>
-<h3 id="构造-ThreadPoolExecutor"><a href="#构造-ThreadPoolExecutor" class="headerlink" title="构造 ThreadPoolExecutor"></a>构造 <code>ThreadPoolExecutor</code></h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">ThreadPoolExecutor</span><span class="params">(</span></span><br><span class="line"><span class="params">	<span class="type">int</span> corePoolSize,//核心线程数量</span></span><br><span class="line"><span class="params">	<span class="type">int</span> maximumPoolSize,//核心线程数量+临时线程数量</span></span><br><span class="line"><span class="params">	<span class="type">long</span> keepAliveTime,//临时线程存活时间</span></span><br><span class="line"><span class="params">	TimeUnit unit,  //临时线程存活时间的单位,是一个枚举<span class="keyword">enum</span></span></span><br><span class="line"><span class="params">	BlockingQueue&lt;Runnable&gt; workQueue,//线程池的任务队列</span></span><br><span class="line"><span class="params">	ThreadFactory threadFactory,//线程池的线程工厂,创建线程</span></span><br><span class="line"><span class="params">	RejectedExecutionHandler handler//任务拒绝策略, 线程全在忙,任务队列也满了,新任务来了怎么处理</span></span><br><span class="line"><span class="params">)</span></span><br></pre></td></tr></table></figure>
-
-<p><code>workQueue</code>: <code>new ArrayBlockingQueue&lt;&gt;(4)</code> 声明一个新的任务队列,容量为4</p>
-<p><code>threadFactory</code>: <code>Executors.defaultThreadFactory()</code></p>
-<p><code>handler</code>: <code>new ThreadPoolExecutor.AbortPolicy()</code> 丢弃任务抛出异常 默认策略</p>
-<p>​        <code>DiscardPolicy</code> 丢弃任务不抛异常     <code>DiscardOldestPolicy</code> 抛弃队列中等待最久任务</p>
-<p>​        <code>CallerRunsPolicy</code> 主线程调用<code>Runnable</code>任务的<code>run()</code>方法从而绕过线程池直接执行</p>
-<h3 id="处理-Runnable-任务"><a href="#处理-Runnable-任务" class="headerlink" title="处理 Runnable 任务"></a>处理 <code>Runnable</code> 任务</h3><p><code>void execute(Runnable command)</code>: 处理一个任务</p>
-<p><code>void shutdown()</code>: 停机, 但是等待所有任务完成</p>
-<p><code>List&lt;Runnable&gt; shutdownNow()</code>: 立即停机, 返回未完成任务的列表</p>
-<p>核心线程占满, 再排任务队列, 任务队列占满, 就加临时线程。</p>
-<h3 id="处理-Callable-任务"><a href="#处理-Callable-任务" class="headerlink" title="处理 Callable 任务"></a>处理 <code>Callable</code> 任务</h3><p><code>Future&lt;T&gt; submit(Callable&lt;T&gt; task)</code> 返回一个任务对象获取线程结果</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Future&lt;String&gt; f1 = pool.submit(<span class="keyword">new</span> <span class="title class_">MyCallable</span>(<span class="number">100</span>));</span><br><span class="line">Future&lt;String&gt; f2 = pool.submit(<span class="keyword">new</span> <span class="title class_">MyCallable</span>(<span class="number">200</span>));</span><br><span class="line">Future&lt;String&gt; f3 = pool.submit(<span class="keyword">new</span> <span class="title class_">MyCallable</span>(<span class="number">300</span>));</span><br><span class="line">Future&lt;String&gt; f4 = pool.submit(<span class="keyword">new</span> <span class="title class_">MyCallable</span>(<span class="number">400</span>));</span><br></pre></td></tr></table></figure>
-
-<h3 id="构造线程池：Executors-工具类"><a href="#构造线程池：Executors-工具类" class="headerlink" title="构造线程池：Executors 工具类"></a>构造线程池：Executors 工具类</h3><ul>
-<li><p><code>public static ExecutorService newFixedThreadPool(int nThreads)</code>: 创建固定线程数量的线程池，如果某个线程因为执行异常而结束，那么线程池会补充一个新线程替代它。任务队列可达 <code>Integer.MAX_VALUE</code> <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42447950/article/details/81435080">OOM</a>风险</p>
-</li>
-<li><p><code>public static ExecutorService newSingleThreadExecutor()</code>: 创建只有一个线程的线程池对象，如果该线程出现异常而结束，那么线程池会补充一个新线程。任务队列可达 <code>Integer.MAX_VALUE</code> <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42447950/article/details/81435080">OOM</a>风险</p>
-</li>
-<li><p><code>public static ExecutorService newCachedThreadPool()</code>: 线程数量随着任务增加而增加，如果线程任务执行完毕且空闲了60s则会被回收掉。线程数可达 <code>Integer.MAX_VALUE</code> <a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42447950/article/details/81435080">OOM</a>风险</p>
-</li>
-<li><p><code>public static ScheduledExecutorService newScheduledThreadPool(int corePoolsize)</code>: 创建一个线程池，可以实现在给定的延迟后运行任务或者定期执行任务。</p>
-</li>
-<li><p>底层都是ThreadPoolExecutor创建的线程池对象</p>
-</li>
-</ul>
-<p>计算密集型：核心线程数量 = CPU核数 + 1</p>
-<p>IO密集型：核心线程数量 = CPU核数*2</p>
-<p>Executors工具类可能在大型并发系统有危险，内存溢出</p>
-<h2 id="虚拟线程"><a href="#虚拟线程" class="headerlink" title="虚拟线程"></a>虚拟线程</h2><p><a target="_blank" rel="noopener" href="https://javaguide.cn/java/concurrent/virtual-thread.html">虚拟线程常见问题总结 | JavaGuide</a></p>
-
       
     </div>
 

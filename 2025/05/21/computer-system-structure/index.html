@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Arvo:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="性能、加速比、CPIAmdahl 定律 主要针对传统机器级的体系结构，加快系统中某部件的执行速度活动的性能提升（加速比）受限于该部件的重要性（比例） 不超过 1&#x2F;(1-可改进比例)  1&#x2F;(1-可改进比例)+可改进比例&#x2F;并行数量  CPU 性能指标：CPI计算 时钟周期（Time Per Cycle）、CPI（Cycles Per Instruction，取决于计算机组成和指令系统）、IC（Ins">
+<meta property="og:type" content="article">
+<meta property="og:title" content="计算机体系结构突击">
+<meta property="og:url" content="http://scatteredream.github.io/2025/05/21/computer-system-structure/index.html">
+<meta property="og:site_name" content="scatteredream&#39;s blog">
+<meta property="og:description" content="性能、加速比、CPIAmdahl 定律 主要针对传统机器级的体系结构，加快系统中某部件的执行速度活动的性能提升（加速比）受限于该部件的重要性（比例） 不超过 1&#x2F;(1-可改进比例)  1&#x2F;(1-可改进比例)+可改进比例&#x2F;并行数量  CPU 性能指标：CPI计算 时钟周期（Time Per Cycle）、CPI（Cycles Per Instruction，取决于计算机组成和指令系统）、IC（Ins">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521192319868.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521192419723.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521211823581.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521211957229.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521212817490.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222845268.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222858450.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222909212.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222921303.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222936896.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222944644.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222958536.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223007219.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223018048.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222057245.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521221844613.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521221909067.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521213839515.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521213855039.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521213908725.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223203358.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223228700.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223451357.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521215829463.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521215842673.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521215853347.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521215901791.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220447088.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220110734.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220225230.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220304904.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220340533.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521214559365.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521195708729.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521200908875.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521200757693.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521202254289.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521201332108.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521201521111.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521201531312.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521201541376.png">
+<meta property="article:published_time" content="2025-05-20T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-21T15:04:56.032Z">
+<meta property="article:author" content="碎梦">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521192319868.png">
+
+
+<link rel="canonical" href="http://scatteredream.github.io/2025/05/21/computer-system-structure/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2025/05/21/computer-system-structure/","path":"2025/05/21/computer-system-structure/","title":"计算机体系结构突击"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>计算机体系结构突击 | scatteredream's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">scatteredream's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E3%80%81%E5%8A%A0%E9%80%9F%E6%AF%94%E3%80%81CPI"><span class="nav-number">1.</span> <span class="nav-text">性能、加速比、CPI</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Amdahl-%E5%AE%9A%E5%BE%8B"><span class="nav-number">1.1.</span> <span class="nav-text">Amdahl 定律</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU-%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87%EF%BC%9ACPI%E8%AE%A1%E7%AE%97"><span class="nav-number">1.2.</span> <span class="nav-text">CPU 性能指标：CPI计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96"><span class="nav-number">1.3.</span> <span class="nav-text">编译优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Cache"><span class="nav-number">2.</span> <span class="nav-text">Cache</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%A0%E5%B0%84%E8%A7%84%E5%88%99"><span class="nav-number">2.1.</span> <span class="nav-text">映射规则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cache-%E6%80%A7%E8%83%BD%E4%BE%8B%E9%A2%98"><span class="nav-number">2.2.</span> <span class="nav-text">Cache 性能例题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98-5-1"><span class="nav-number">2.2.1.</span> <span class="nav-text">例题 5.1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98-5-2"><span class="nav-number">2.2.2.</span> <span class="nav-text">例题 5.2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98-5-3"><span class="nav-number">2.2.3.</span> <span class="nav-text">例题 5.3</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E7%AD%96%E7%95%A5"><span class="nav-number">2.3.</span> <span class="nav-text">写策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE%E3%80%81%E6%9B%BF%E6%8D%A2%E7%AE%97%E6%B3%95"><span class="nav-number">2.4.</span> <span class="nav-text">查找、替换算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93"><span class="nav-number">2.5.</span> <span class="nav-text">优化技术总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%8D%E4%BD%8E%E5%A4%B1%E6%95%88%E7%8E%87"><span class="nav-number">2.6.</span> <span class="nav-text">降低失效率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%8D%E4%BD%8E%E5%A4%B1%E6%95%88%E5%BC%80%E9%94%80"><span class="nav-number">2.7.</span> <span class="nav-text">降低失效开销</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B-%E4%BA%8C%E7%BA%A7cache"><span class="nav-number">2.7.1.</span> <span class="nav-text">例 二级cache</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B-%E4%B8%80%E6%AC%A1%E5%A4%B1%E6%95%88%E5%91%BD%E4%B8%AD%E5%92%8C%E7%BB%84%E7%9B%B8%E8%81%94"><span class="nav-number">2.7.2.</span> <span class="nav-text">例 一次失效命中和组相联</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%8F%E5%B0%91%E5%91%BD%E4%B8%AD%E6%97%B6%E9%97%B4"><span class="nav-number">2.8.</span> <span class="nav-text">减少命中时间</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">3.</span> <span class="nav-text">体系结构基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%AF%E8%AF%BA%E4%BE%9D%E6%9B%BC%E3%80%81%E5%AD%98%E5%82%A8%E7%A8%8B%E5%BA%8F%E8%AE%A1%E7%AE%97%E6%9C%BA"><span class="nav-number">3.1.</span> <span class="nav-text">冯诺依曼、存储程序计算机</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">3.2.</span> <span class="nav-text">计算机体系结构的概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%8F%E6%98%8E"><span class="nav-number">3.2.1.</span> <span class="nav-text">透明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AF%E4%BB%B6%E7%A7%BB%E6%A4%8D"><span class="nav-number">3.2.2.</span> <span class="nav-text">软件移植</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%88%86%E7%B1%BB"><span class="nav-number">4.</span> <span class="nav-text">并行分类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%9B%86%E7%BB%93%E6%9E%84"><span class="nav-number">5.</span> <span class="nav-text">指令集结构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CISC-RISC"><span class="nav-number">5.1.</span> <span class="nav-text">CISC&#x2F;RISC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E6%95%B0%E8%A1%A8%E7%A4%BA%E3%80%81%E6%93%8D%E4%BD%9C%E6%95%B0%E7%B1%BB%E5%9E%8B"><span class="nav-number">5.2.</span> <span class="nav-text">操作数表示、操作数类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%9B%86%E6%9E%B6%E6%9E%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">5.3.</span> <span class="nav-text">指令集架构类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E6%A0%BC%E5%BC%8F%EF%BC%9A%E5%93%88%E5%A4%AB%E6%9B%BC%E7%BC%96%E7%A0%81%E3%80%81%E6%89%A9%E5%B1%95%E7%BC%96%E7%A0%81"><span class="nav-number">5.4.</span> <span class="nav-text">指令格式：哈夫曼编码、扩展编码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%81%E6%B0%B4%E7%BA%BF%E3%80%81%E6%8C%87%E4%BB%A4%E7%BA%A7%E5%B9%B6%E8%A1%8C"><span class="nav-number">6.</span> <span class="nav-text">流水线、指令级并行</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="碎梦"
+      src="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+  <p class="site-author-name" itemprop="name">碎梦</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">82</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/21/computer-system-structure/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="计算机体系结构突击 | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          计算机体系结构突击
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-21 00:00:00 / 修改时间：23:04:56" itemprop="dateCreated datePublished" datetime="2025-05-21T00:00:00+08:00">2025-05-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%BB%84/" itemprop="url" rel="index"><span itemprop="name">计组</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="性能、加速比、CPI"><a href="#性能、加速比、CPI" class="headerlink" title="性能、加速比、CPI"></a>性能、加速比、CPI</h1><h2 id="Amdahl-定律"><a href="#Amdahl-定律" class="headerlink" title="Amdahl 定律"></a>Amdahl 定律</h2><ul>
+<li>主要针对传统机器级的体系结构，加快系统中某部件的执行速度活动的性能提升（加速比）受限于该部件的重要性（比例）</li>
+<li>不超过 1/(1-可改进比例) </li>
+<li><u>1/(1-可改进比例)+可改进比例/并行数量</u></li>
+</ul>
+<h2 id="CPU-性能指标：CPI计算"><a href="#CPU-性能指标：CPI计算" class="headerlink" title="CPU 性能指标：CPI计算"></a>CPU 性能指标：CPI计算</h2><ul>
+<li>时钟周期（Time Per Cycle）、CPI（Cycles Per Instruction，取决于计算机组成和指令系统）、IC（Instruction Count，指令系统的结构和编译技术）。</li>
+<li>CPI 计算：CPIi表示第i种指令有多少个时钟周期</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521192319868.png" alt="image-20250521192319868" style="zoom: 50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521192419723.png" alt="image-20250521192419723" style="zoom:50%;" />
+
+<ul>
+<li>执行时间和性能成反比</li>
+</ul>
+<h2 id="编译优化"><a href="#编译优化" class="headerlink" title="编译优化"></a>编译优化</h2><ul>
+<li>局部优化：<u>单个线性程序段（基本块）</u>内进行的优化。复杂度较低、速度快、适用范围广<ul>
+<li>常量传播、消除公共子表达式(Common Subexpression Elimination)、</li>
+<li>消除死代码、削弱强度（位运算）</li>
+<li><u>降低堆栈高度</u></li>
+</ul>
+</li>
+<li>全局优化：<u>跨越多个基本块或者函数</u>，基于控制流图进行跨分支分析，分析复杂，提升也明显。<ul>
+<li>若循环内不变则进行代码外提。</li>
+<li>常量传播、消除公共子表达式 CSE</li>
+<li>函数内联</li>
+</ul>
+</li>
+<li>汇编语言经过汇编器的翻译为机器语言</li>
+<li>翻译：源码一次性转成机器码，提前编译、生成独立可运行文件、依赖平台</li>
+<li>解释：源码被逐句翻译执行，动态解析</li>
+<li>混合：JIT编译，Java C#</li>
+</ul>
+<hr>
+<h1 id="Cache"><a href="#Cache" class="headerlink" title="Cache"></a>Cache</h1><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521211823581.png" alt="image-20250521211823581" style="zoom:50%;" />
+
+<ul>
+<li>映象规则： 调入块可以放在哪些位置</li>
+<li>查找算法： 如何在映象规则规定的候选位置查找</li>
+<li>替换算法： 规定的候选位置均被别的块占用怎么办</li>
+<li>写策略： 如何处理写操作</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521211957229.png" alt="image-20250521211957229" style="zoom:33%;" />
+
+<p>平均访问时间 = 命中访问时间T1 + 失效率 × 失效开销</p>
+<p>失效开销 = 从<strong>向下一级发出请求</strong>到<strong>把整个数据块调入</strong>经过的时间</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521212817490.png" alt="image-20250521212817490" style="zoom: 50%;" />
+
+<h2 id="映射规则"><a href="#映射规则" class="headerlink" title="映射规则"></a>映射规则</h2><p>全相联：主存中的任一块可以 被放置到Cache中的任意一个 位置。 </p>
+<ul>
+<li>对比：阅览室位置── 随便坐 </li>
+<li>特点：空间利用率最高，冲突概率最低，实现最复杂。</li>
+</ul>
+<p>直接映射：主存中的每一块只能被放置到 Cache中唯一的一个位置。</p>
+<ul>
+<li>对比：阅览室位置── 只有一个位置可以坐</li>
+<li>特点：空间利用率最低，冲突概率最高， 实现最简单。</li>
+<li>对于主存的第i 块，若它映象到Cache的第j 块，则: j＝i mod (M ) （M为Cache的块数，i是块地址）<ul>
+<li>如果cache有2的m次方块，块j实际上就是地址i的低m位</li>
+</ul>
+</li>
+</ul>
+<p>组相联：折衷</p>
+<ul>
+<li><p>若主存第i 块映象到第k 组，则: k＝i mod（G） （G为Cache的组数）</p>
+</li>
+<li><p>设G＝2的g次方，则当表示为二进制数时，k 实际上就是i 的低 g 位。低g位以及直接映象中的低m位通常称为<u>索引</u>。</p>
+</li>
+<li><p>n路组相联：每组n个块。绝大多数时候，n ≤ 4</p>
+</li>
+</ul>
+<h2 id="Cache-性能例题"><a href="#Cache-性能例题" class="headerlink" title="Cache 性能例题"></a>Cache 性能例题</h2><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222845268.png" alt="image-20250521222845268" style="zoom:50%;" />
+
+<h3 id="例题-5-1"><a href="#例题-5-1" class="headerlink" title="例题 5.1"></a>例题 5.1</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222858450.png" alt="image-20250521222858450" style="zoom: 50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222909212.png" alt=" " style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222921303.png" style="zoom:50%;" />
+
+<h3 id="例题-5-2"><a href="#例题-5-2" class="headerlink" title="例题 5.2"></a>例题 5.2</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222936896.png" alt="image-20250521222936896" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222944644.png" alt="image-20250521222944644" style="zoom:50%;" />
+
+<h3 id="例题-5-3"><a href="#例题-5-3" class="headerlink" title="例题 5.3"></a>例题 5.3</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222958536.png" alt="image-20250521222958536" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223007219.png" alt="image-20250521223007219" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223018048.png" alt="image-20250521223018048" style="zoom:50%;" />
+
+<h2 id="写策略"><a href="#写策略" class="headerlink" title="写策略"></a>写策略</h2><ul>
+<li>写直达法（也称为存直达法） 执行“写”操作时，不仅写入Cache，而且也写入 下一级存储器。<ul>
+<li>写失效时，直接写入下一级存储器而不调块。</li>
+<li>速度快，所使用的存储器带宽较低。</li>
+<li>采用写直达法时，若在进行“写”操作的 过程中CPU必须等待，直到“写”操作结 束，则称CPU写停顿。 减少写停顿的一种常用的优化技术是写缓冲器</li>
+<li><a href="#write-combine">写缓冲器合并</a></li>
+</ul>
+</li>
+<li>写回法（也称为拷回法） 执行“写”操作时，只写入Cache。仅当Cache中相 应的块被替换时，才写回主存。 (设置“修改位”)<ul>
+<li>写失效时，先把所写单元所在的块调入Cache， 再行写入。</li>
+<li>易于实现，一致性好。</li>
+</ul>
+</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222057245.png" alt="image-20250521222057245" style="zoom: 50%;" />
+
+<h2 id="查找、替换算法"><a href="#查找、替换算法" class="headerlink" title="查找、替换算法"></a>查找、替换算法</h2><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521221844613.png" alt="image-20250521221844613" style="zoom: 33%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521221909067.png" alt="image-20250521221909067" style="zoom: 33%;" />
+
+<h2 id="优化技术总结"><a href="#优化技术总结" class="headerlink" title="优化技术总结"></a>优化技术总结</h2><p>“＋”号：表示改进了相应指标。  “－”号：表示它使该指标变差。 空格：表示它对该指标无影响。 复杂度：0表示最容易，3表示最复杂。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521213839515.png" alt="image-20250521213839515" style="zoom: 33%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521213855039.png" alt="image-20250521213855039" style="zoom:33%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521213908725.png" alt="image-20250521213908725" style="zoom:33%;" />
+
+
+
+<h2 id="降低失效率"><a href="#降低失效率" class="headerlink" title="降低失效率"></a>降低失效率</h2><p>三种失效：冲突失效、强制失效、容量失效。（Conflict、Compulsory、Capacity）</p>
+<ul>
+<li>强制：当第一次访问一个块时，该块不在Cache中，需从 下一级存储器中调入Cache，这就是强制性失效。 (冷启动失效，首次访问失效）<ul>
+<li>解决：<u>增加块大小</u>、<u>硬件预取Prefetch</u></li>
+</ul>
+</li>
+<li>容量：如果程序执行时所需的块不能全部调入Cache中， 则当某些块被替换后，若又重新被访问，就会发 生失效。这种失效称为容量失效。<ul>
+<li>解决：<u>增加容量</u></li>
+</ul>
+</li>
+<li>冲突：在组相联或直接映象Cache中，若太多的块映 象到同一组(块)中，则会出现该组中某个块被别 的块替换(即使别的组或块有空闲位置)，然后又 被重新访问的情况。这就是发生了冲突失效。 (碰撞失效，干扰失效) <ul>
+<li>解决：<u>提高相联度</u>，理想情况是全相联。</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>大小为N的直接映象Cache的失效率约等于 大小为N/2的两路组相联Cache的失效率。</li>
+<li>大小为N的<u>伪相联</u>和两路组相联的失效率相当。在逻辑上把直接映象Cache的空间上下平分为两个区。对于任何一 次访问，伪相联Cache先按直接映象Cache的方式去处理。若命中， 则其访问过程与直接映象Cache的情况一样。若失效，则再到另一区 相应的位置去查找。若找到，则发生了伪命中，否则就只好访问下一 级存储器。</li>
+</ol>
+<p>**<u>硬件预取</u>**：</p>
+<p>预取：假设从预取缓冲器中找到所需指令需多花1个 时钟周期。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223203358.png" alt="image-20250521223203358" style="zoom: 33%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223228700.png" alt="image-20250521223228700" style="zoom:33%;" />
+
+<p><u>编译器预取</u>、<u>编译器优化</u>：内外循环交换。</p>
+<p>**<u>牺牲Cache</u>**：一种能减少冲突失效次数而又不影响时钟频 率的方法。 </p>
+<p>基本思想：在Cache和它从下一级存储器调数据的通路之间设置一个全相联的小Cache，称为“牺牲”Cache（Victim Cache）。用于存放被替换出去的块(称为牺牲者)，以备重用。 对于减小冲突失效很有效，特别是对于小容 量的直接映象数据Cache，作用尤其明显。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223451357.png" alt="image-20250521223451357" style="zoom:50%;" />
+
+<h2 id="降低失效开销"><a href="#降低失效开销" class="headerlink" title="降低失效开销"></a>降低失效开销</h2><p>“子块放置技术”</p>
+<ol>
+<li><p><u>两级Cache</u>：第一级小而快，第二级容量更大。</p>
+<ol>
+<li>平均访存时间＝命中时间T1＋失效率F1 × 失效开M1 </li>
+<li>失效开销M1＝命中时间T2＋失效率F2 × 失效开销M2</li>
+<li>局部失效率：F1, F2  全局失效率 = F1 × F2</li>
+<li>因此，平均访存时间 = T1 + F1 × T2 + F2 × M2</li>
+</ol>
+<p>当第二级Cache比第一级Cache大得多时， 两级Cache的全局失效率与容量和第二级 Cache 相同的单级Cache的失效率非常接近。</p>
+</li>
+</ol>
+<h3 id="例-二级cache"><a href="#例-二级cache" class="headerlink" title="例 二级cache"></a>例 二级cache</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521215829463.png" alt="image-20250521215829463" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521215842673.png" alt="image-20250521215842673" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521215853347.png" alt="image-20250521215853347" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521215901791.png" alt="image-20250521215901791" style="zoom:50%;" />
+
+<hr>
+<ol start="2">
+<li><strong>写缓冲合并</strong>，<span id="write-combine">提高写缓冲器的效率</span>。写直达Cache：依靠写缓冲来减少对下一级存储器写操作的时间。<ol>
+<li>如果写缓冲器为空，就把数据和相应地址写入该缓冲器。 从CPU的角度来看，该写操作就算是完成了。</li>
+<li>如果写缓冲器中已经有了待写入的数据，就要把这次的 写入地址与写缓冲器中已有的所有地址进行比较，看是 否有匹配的项。如果有地址匹配而对应的位置又是空闲 的，就把这次要写入的数据与该项合并。这就叫写缓冲合并。</li>
+<li>如果写缓冲器满且又没有能进行写合并的项，就必须等待。</li>
+</ol>
+</li>
+</ol>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220447088.png" alt="image-20250521220447088" style="zoom:33%;" />
+
+
+
+<ol start="3">
+<li><strong>读失效优先于写</strong>。在读失效时，所读单元的最新值有可能还在Cache的写缓冲器中，尚未写入 主存。<ol>
+<li> 推迟对读失效的处理 （缺点：读失效的开销增加）</li>
+<li>检查写缓冲器中的内容</li>
+</ol>
+</li>
+<li><strong>请求字处理</strong>。</li>
+</ol>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220110734.png" alt="image-20250521220110734" style="zoom:50%;" />
+
+<ol start="5">
+<li><strong>非阻塞Cache</strong>。Cache失效时仍允许CPU 进行其它的命中访问。即允许“失效下命中”。对于整数程序来说，重叠次数对性能提高影响不大，简 单的“一次失效下命中”就几乎可以得到所有的好处。最大的好处就是不影响<u>命中时间</u></li>
+</ol>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220225230.png" alt="image-20250521220225230" style="zoom:33%;" />
+
+<h3 id="例-一次失效命中和组相联"><a href="#例-一次失效命中和组相联" class="headerlink" title="例 一次失效命中和组相联"></a>例 一次失效命中和组相联</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220304904.png" alt="image-20250521220304904" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220340533.png" alt="image-20250521220340533" style="zoom:50%;" />
+
+
+
+<h2 id="减少命中时间"><a href="#减少命中时间" class="headerlink" title="减少命中时间"></a>减少命中时间</h2><p>命中时间直接影响到处理器的时钟频率。在当今的许多计算机中，往往是Cache的访问时间限制了处理器的时钟频率</p>
+<ol>
+<li><p>容量小、结构简单的Cache。</p>
+</li>
+<li><p>虚拟Cache：可以直接用虚拟地址进行访问的Cache。tag 存储器中存放的是虚拟地址，进行地址检测用的也是虚拟地址。</p>
+<ol>
+<li>传统：虚拟地址先通过 MMU 转换成物理地址，再访问物理cache，串行。</li>
+<li>在命中时不需要地址转换，省去了地址转换的 时间。即使失效，地址转换和访问Cache也是 并行进行的，其速度比物理Cache快很多。</li>
+</ol>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521214559365.png" alt="image-20250521214559365" style="zoom:33%;" /></li>
+<li><p>Cache访问流水化。提高时钟频率。并不能真正减少cache的命中时间，但可以提高访问Cache的带宽。访问Cache需要多个时钟周期才可以完成</p>
+</li>
+<li><p>踪迹 Cache。存放CPU所执行的动态指令序列，能够提高指令Cache的空间利用率， 地址映象机制复杂，相同的指令序列有可能被当作条件分支的不同选择而 重复存放</p>
+</li>
+</ol>
+<hr>
+<h1 id="体系结构基本概念"><a href="#体系结构基本概念" class="headerlink" title="体系结构基本概念"></a>体系结构基本概念</h1><h2 id="冯诺依曼、存储程序计算机"><a href="#冯诺依曼、存储程序计算机" class="headerlink" title="冯诺依曼、存储程序计算机"></a>冯诺依曼、存储程序计算机</h2><ul>
+<li>冯诺依曼：存储程序计算机 (运算器、存储器、IO、控制器)<ul>
+<li><u>以运算器为中心</u></li>
+<li><u>控制流由指令流产生</u>，分解程序指令，形成控制上述部件的控制流。</li>
+<li>存储程序的原理。<u>程序和数据在同一存储器</u><ul>
+<li>局部性原理，时间/空间局部性。</li>
+<li>信息按照边界存储：访存速度快</li>
+</ul>
+</li>
+<li><u>存储器是按照地址访问，线性编址的空间。</u><ul>
+<li>字节编址可以支持非数值型计算</li>
+</ul>
+</li>
+<li><u>操作码+地址码 = 指令</u></li>
+<li>数据使用<u>二进制编码</u>表示，采用<u>二进制</u>运算</li>
+<li>加工运算数据，形成了数据流</li>
+<li>取指、译码、取数、运算、写回</li>
+</ul>
+</li>
+</ul>
+<h2 id="计算机体系结构的概念"><a href="#计算机体系结构的概念" class="headerlink" title="计算机体系结构的概念"></a>计算机体系结构的概念</h2><ul>
+<li>计算机体系结构是**<u>程序员</u><strong>所看到的计算机的属性，即</strong><u>概念性结构</u><strong>与</strong><u>功能特性</u>**。</li>
+<li>计算机系统分层、程序员分层，所以<u>体系结构</u>也分层</li>
+<li><strong>体系结构概念的实质</strong>：计算机系统中软硬件界面的确定，其界面之上的是软件的功能，界面之下的是硬件和固件的功能。中间向两边，体系结构就是中间，“中间”：层次结构中的<u>软硬件的交界面</u>，目前一 般是在传统机器语言机器级与操作系统机器级之间、</li>
+<li>**<u>计算机系统/体系结构</u>**是系统的软硬件的界面</li>
+<li>**<u>计算机组成</u>**是系统结构的逻辑实现。</li>
+<li>**<u>计算机实现</u>**是组成的物理实现</li>
+<li>同一系统结构可以有不同的组成，同一组成可以有多种实现方式，指令集架构相同。只要是同一系统结构就是**<u>系列机</u><strong>，前提是一个厂家生产的。</strong><u>向后兼容</u>必须做到，力争<u>向上兼容</u>**</li>
+<li>软件实现的机器是<u>虚拟机</u></li>
+</ul>
+<h3 id="透明"><a href="#透明" class="headerlink" title="透明"></a>透明</h3><ul>
+<li>低层次的机器属性对于高层次机器的程序员是 <strong>透明的</strong><ul>
+<li>机器语言程序员看到的是编程的硬件组织。</li>
+<li>浮点数据表示、乘法指令对于高级语言是透明的，对汇编人员不透明</li>
+<li>数据总线宽度、微程序对机器、汇编语言透明，但是对硬件设计人员不透明</li>
+<li>指令缓冲器对于系统结构透明</li>
+</ul>
+</li>
+<li>应用、高级、汇编、OS、机器、微程序（逻辑程序员）、硬布线逻辑（硬件设计员）   OS 和机器之间就是系统结构</li>
+</ul>
+<h3 id="软件移植"><a href="#软件移植" class="headerlink" title="软件移植"></a>软件移植</h3><ul>
+<li>一个软件可以<u>不经过修改或者少量修改</u>就能在另一台机器上运行，<u>结果相同，时间区别</u>。</li>
+<li>使软件能在具有不同系统结构的机器之间 相互移植。 在一种系统结构上实现另一种系统结构。 从指令集的角度来看，就是要在一种机器上 实现另一种机器的指令集。</li>
+<li>三种方式：<ul>
+<li>**<u>统一高级语言</u>**。缺点：需要争取汇编和机器语言的统一</li>
+<li>**<u>模拟与仿真</u>**：用于<u>不同系统结构</u>的机器<ul>
+<li><strong>模拟</strong>：用软件的方法在一台现有的机器（ 称为宿主机）上实现另一台机器（称为虚 拟机）的指令集。 <u>机器模拟机器</u></li>
+<li><strong>仿真</strong>：用一台现有机器（宿主机）上的微 程序去解释实现另一台机器（目标机）的 指令集。<u>微程序仿真机器</u>，更快，要求系统结构差距不大。</li>
+<li>缺点：结构差异比较大，效率低下</li>
+</ul>
+</li>
+<li>**<u>系列机</u>**：用于<u>相同系统结构</u>的机器<ul>
+<li>缺点 汇编语言兼容的情况下系统结构发展有限</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="并行分类"><a href="#并行分类" class="headerlink" title="并行分类"></a>并行分类</h1><p><strong>并行概念</strong>：同一时刻/时间间隔内，完成两种或者两种以上的工作。（性质相同或者不相同）</p>
+<ul>
+<li>指令级并行</li>
+<li>线程级并行</li>
+<li>任务级/过程级并行：基本单元：进程、子程序</li>
+</ul>
+<p><strong>提升并行性</strong>：</p>
+<ul>
+<li><strong>时间重叠</strong>：时间片轮转【流水线处理机】</li>
+<li><strong>资源重复</strong>：重复设置硬件资源（GPU 阵列处理机 多操作部件）</li>
+<li><strong>资源共享</strong>：这是一种软件方法，它使多个任务按一定时间顺序轮流使用同 一套硬件设备。分时系统。</li>
+<li><strong>单处理机</strong>：时间重叠（部件功能专一）、资源重复（多体存储器、多操作部件、阵列处理机）、资源共享（虚拟机、分时系统）</li>
+</ul>
+<p><strong>Flynn 数据并行、指令并行</strong>：</p>
+<ul>
+<li><strong>SISD</strong>：单核CPU</li>
+<li><strong>MISD</strong>：少见</li>
+<li><strong>SIMD</strong>：GPU（阵列处理机）、向量处理机。指令操作级并行</li>
+<li><strong>MIMD</strong>：多处理机。<ul>
+<li>多机系统耦合度有<u>松、紧耦合</u>两大类。</li>
+<li>同构型多处理机、异构型多处理机、分布式系统。</li>
+<li>共享内存 SMP：多核CPU、SPARC。共享物理内存（受限于带宽，核心数有限）</li>
+<li>分布式内存 MPP：分布式计算、超算。每个处理器都有自己的本地内存，通过消息传递来进行通信（共享开销大、复杂）</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="指令集结构"><a href="#指令集结构" class="headerlink" title="指令集结构"></a>指令集结构</h1><h2 id="CISC-RISC"><a href="#CISC-RISC" class="headerlink" title="CISC/RISC"></a>CISC/RISC</h2><ul>
+<li><p><strong>RISC:</strong> </p>
+<ul>
+<li>指令长度固定，指令格式种类少，寻址方式少；</li>
+<li>只使用LOAD STORE访存，通用寄存器较多；</li>
+<li>流水线技术，一个时钟周期内完成一条指令；</li>
+<li>控制器运用组合逻辑。</li>
+<li>RISC利用VLSI芯片的面积，便于设计，降低成本，提高可靠性，但是不容易实现指令系统的兼容</li>
+</ul>
+</li>
+<li><p><strong>CISC:</strong> </p>
+<ul>
+<li>指令庞杂复杂，指令使用频度相差悬殊，长度不固定，种类多。不利于用先进的体系结构技术提高性能，研制成本巨大</li>
+<li>很多指令可以访存，CPU有专用寄存器</li>
+<li>大部分指令都需要多个时钟周期完成</li>
+<li>采用微程序控制。</li>
+<li>不利于 VLSI设计和单片集成，但是兼容性很强</li>
+</ul>
+</li>
+<li><p>值得注意的是，从指令系统兼容性看，CISC大多能实现软件兼容，即高档机包含了低档机的全部指令，并可加以扩充。但RISC简化了指令系统，指令条数少，格式也不同于老机器，因此大多数RISC机不能与老机器兼容。由于 RISC 具有更强的实用性，因此应该是未来处理器的发展方向。</p>
+</li>
+<li><p>但事实上，当今时代 x86 几乎一统江湖，且早期很多软件都是根据CISC 设计的，单纯的RISC将无法兼容。此外，现代CISC结构的CPU已经融合了很多RISC的成分，其性能差距已经越来越小。CISC可以提供更多的功能，这是程序设计所需要的。</p>
+</li>
+</ul>
+<p><strong>RISC</strong>：**<u>重叠寄存器窗口技术</u>** 可以减少 <u>CALL(过程调用) 和 RETURN(返回指令)</u> 的执行时间。通过设置大量寄存器，将其分为多个组和全局区，每个组分为高区、<u>本地</u>区、低区，相邻的高低区重叠，加速<u>参数(对应call)和结果(对应return)</u>的传递。</p>
+<p><strong>RISC-V</strong>: 寄存器寻址、立即数、偏移寻址、寄存器间接寻址</p>
+<ul>
+<li>R：寄存器寻址，数存在寄存器里</li>
+<li>I：立即数寻址，其中一个操作是立即数</li>
+<li>S：存储指令（将寄存器值存入内存），立即数用于地址偏移。</li>
+<li>U：将高20位立即数加载到寄存器的高位，用于构造大常数或地址。<ul>
+<li><strong>AUIPC</strong>（Add Upper Immediate to PC）：用于PC相对寻址（如跳转或全局数据访问）。</li>
+</ul>
+</li>
+<li>B：条件分支</li>
+<li>J：无条件跳转</li>
+</ul>
+<h2 id="操作数表示、操作数类型"><a href="#操作数表示、操作数类型" class="headerlink" title="操作数表示、操作数类型"></a>操作数表示、操作数类型</h2><ul>
+<li><p>操作数表示：**<u>计算机硬件能够直接识别、指令集可以直接调用</u>的数据类型**。一般是所有数据类型中最常用、相对比较简单、用硬件实现比较容易的几种。</p>
+<ul>
+<li>引入数据表示的原则：<strong>缩短运行时间</strong>、减少 CPU和主存的通信量、通<strong>用性和利用率</strong>如何？</li>
+<li>分为<u>定点、逻辑、浮点</u> 三种类型</li>
+<li><strong>如何确定数据表示（软硬件取舍折中问题）</strong></li>
+</ul>
+</li>
+<li><p>操作数类型： <strong><u>由软件进行处理和实现</u><strong>的各种数据类型。研究的是这些数据类型的</strong>逻辑结构和物理结构之间的关系</strong>并给出相应算法。</p>
+</li>
+<li><p><strong>操作数类型</strong>的表示：或者寻址类型</p>
+<ul>
+<li><strong><u>由操作码编码制定</u></strong><ul>
+<li>好：字段少、简单</li>
+<li>坏：指令条数增多，译码复杂</li>
+</ul>
+</li>
+<li>**<u>使用带标志符的数据类型</u>**（数据附上硬件解释的标记）<ul>
+<li>好：简化指令系统设计，便于开发，支持数据类型于系统实现无关</li>
+<li>坏：增加指令的字段数，操作数字段占用更多的位数。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="指令集架构类型"><a href="#指令集架构类型" class="headerlink" title="指令集架构类型"></a>指令集架构类型</h2><ul>
+<li>CPU 存放操作数的地方：<u>堆栈、累加器、通用寄存器</u></li>
+<li>大多数通用型指令寄存器架构可以分为：</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521195708729.png" alt="image-20250521195708729" style="zoom: 50%;" />
+
+<h2 id="指令格式：哈夫曼编码、扩展编码"><a href="#指令格式：哈夫曼编码、扩展编码" class="headerlink" title="指令格式：哈夫曼编码、扩展编码"></a>指令格式：哈夫曼编码、扩展编码</h2><p>指令格式的优化：如何用最短的位数来表示 指令的操作信息和地址信息。</p>
+<ul>
+<li><strong>哈夫曼编码</strong></li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521200908875.png" alt="image-20250521200908875" style="zoom: 50%;" />
+
+<ul>
+<li>信息熵: </li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521200757693.png" alt="image-20250521200757693" style="zoom:50%;" />
+
+<ul>
+<li>信息冗余量 = （平均码长 - 信息熵）/ 平均码长</li>
+<li>可以减少操作码的平均位数，但所获得的编码是变长的，不规整，不利于硬件处理。</li>
+<li><strong>扩展操作码</strong>：位于定长二进制编码和哈夫曼编码之间的一种编码 方案。 </li>
+<li>采用有限几种固定长度的码长，仍然采用高概率的用短码、低概率用长码的哈夫曼压缩思想，使操作码平均长度缩短。 </li>
+<li>接近全哈夫曼码的码长，具有定长码的规整性。</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521202254289.png" alt="image-20250521202254289" style="zoom:50%;" />
+
+<p>图中的 3/3/3 表示，分成三组，那么就可以有三种长度，按照频率从高到低，3*3。</p>
+<p>2/7同理，有两种长度，按照频率从高到低2+7。前面频率高的只需要两位就能区分了，因此是00和01 </p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521201332108.png" alt="image-20250521201332108" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521201521111.png" alt="image-20250521201521111" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521201531312.png" alt="image-20250521201531312" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521201541376.png" alt="image-20250521201541376" style="zoom:50%;" />
+
+
+
+<p><u>8位寄存器-寄存器型二地址指令3条</u></p>
+<ul>
+<li><strong>指令长度</strong>：8位（单字长）。</li>
+<li>字段分配：<ul>
+<li><strong>操作码（OP）</strong>：2位，用于区分3条指令。</li>
+<li><strong>源寄存器（R1）</strong>：3位，支持8个通用寄存器（23=8）。</li>
+<li><strong>目的寄存器（R2）</strong>：3位，与源寄存器编码方式相同。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">| OP (2) | R1 (3) | R2 (3) |</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>指令1</strong>：<code>00</code> → 如加法指令 <code>ADD R1, R2</code></li>
+<li><strong>指令2</strong>：<code>01</code> → 如减法指令 <code>SUB R1, R2</code></li>
+<li><strong>指令3</strong>：<code>10</code> → 如逻辑与指令 <code>AND R1, R2</code></li>
+</ul>
+<p><u>16位寄存器-寄存器变址寻址指令4条</u> </p>
+<ul>
+<li><strong>指令长度</strong>：16位（双字长）。</li>
+<li>字段分配：<strong>有效地址 = 变址寄存器内容 + 指令中给定的偏移量</strong><ul>
+<li><strong>操作码（OP）</strong>：4位，用于区分4条指令。</li>
+<li><strong>通用寄存器（R）</strong>：3位，支持8个通用寄存器。</li>
+<li><strong>变址寄存器（V）</strong>：1位，支持2个变址寄存器（21=2）。</li>
+<li><strong>偏移地址（Offset）</strong>：8位，满足变址范围 <strong>-127~+127</strong>（8位补码表示）。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">| OP (4) | R (3) | V (1) | Offset (8) |</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>指令1</strong>：<code>1100</code> → 如取数指令 <code>LDA R, [V+Offset]</code></li>
+<li><strong>指令2</strong>：<code>1101</code> → 如存数指令 <code>STA R, [V+Offset]</code></li>
+<li><strong>指令3</strong>：<code>1110</code> → 如跳转指令 <code>JMP R, [V+Offset]</code></li>
+<li><strong>指令4</strong>：<code>1111</code> → 如条件跳转指令 <code>JNZ R, [V+Offset]</code></li>
+</ul>
+<hr>
+<h1 id="流水线、指令级并行"><a href="#流水线、指令级并行" class="headerlink" title="流水线、指令级并行"></a>流水线、指令级并行</h1><p>数据相关<u>不一定</u>都能用定向技术解决</p>
+<p>数据相关：RAW、WAW、WAR。DLX流水线是<u>RAW</u></p>
+<p>多条向量指令之间不存在 <u>源向量寄存器冲突</u> 和 <u>功能部件冲突</u>，且只有 向量寄存器 的 <u>写后读相关</u>，那么可以通过<u>链接</u>技术实现这些指令的并行处理。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/18/git-usage/" rel="prev" title="git 使用总结">
+                  <i class="fa fa-angle-left"></i> git 使用总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">碎梦</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/scatteredream" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

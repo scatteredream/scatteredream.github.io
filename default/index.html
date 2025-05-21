@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">81</span>
+          <span class="site-state-item-count">82</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -194,6 +194,529 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/21/computer-system-structure/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/21/computer-system-structure/" class="post-title-link" itemprop="url">计算机体系结构突击</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-21 00:00:00 / 修改时间：23:04:56" itemprop="dateCreated datePublished" datetime="2025-05-21T00:00:00+08:00">2025-05-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%BB%84/" itemprop="url" rel="index"><span itemprop="name">计组</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="性能、加速比、CPI"><a href="#性能、加速比、CPI" class="headerlink" title="性能、加速比、CPI"></a>性能、加速比、CPI</h1><h2 id="Amdahl-定律"><a href="#Amdahl-定律" class="headerlink" title="Amdahl 定律"></a>Amdahl 定律</h2><ul>
+<li>主要针对传统机器级的体系结构，加快系统中某部件的执行速度活动的性能提升（加速比）受限于该部件的重要性（比例）</li>
+<li>不超过 1/(1-可改进比例) </li>
+<li><u>1/(1-可改进比例)+可改进比例/并行数量</u></li>
+</ul>
+<h2 id="CPU-性能指标：CPI计算"><a href="#CPU-性能指标：CPI计算" class="headerlink" title="CPU 性能指标：CPI计算"></a>CPU 性能指标：CPI计算</h2><ul>
+<li>时钟周期（Time Per Cycle）、CPI（Cycles Per Instruction，取决于计算机组成和指令系统）、IC（Instruction Count，指令系统的结构和编译技术）。</li>
+<li>CPI 计算：CPIi表示第i种指令有多少个时钟周期</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521192319868.png" alt="image-20250521192319868" style="zoom: 50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521192419723.png" alt="image-20250521192419723" style="zoom:50%;" />
+
+<ul>
+<li>执行时间和性能成反比</li>
+</ul>
+<h2 id="编译优化"><a href="#编译优化" class="headerlink" title="编译优化"></a>编译优化</h2><ul>
+<li>局部优化：<u>单个线性程序段（基本块）</u>内进行的优化。复杂度较低、速度快、适用范围广<ul>
+<li>常量传播、消除公共子表达式(Common Subexpression Elimination)、</li>
+<li>消除死代码、削弱强度（位运算）</li>
+<li><u>降低堆栈高度</u></li>
+</ul>
+</li>
+<li>全局优化：<u>跨越多个基本块或者函数</u>，基于控制流图进行跨分支分析，分析复杂，提升也明显。<ul>
+<li>若循环内不变则进行代码外提。</li>
+<li>常量传播、消除公共子表达式 CSE</li>
+<li>函数内联</li>
+</ul>
+</li>
+<li>汇编语言经过汇编器的翻译为机器语言</li>
+<li>翻译：源码一次性转成机器码，提前编译、生成独立可运行文件、依赖平台</li>
+<li>解释：源码被逐句翻译执行，动态解析</li>
+<li>混合：JIT编译，Java C#</li>
+</ul>
+<hr>
+<h1 id="Cache"><a href="#Cache" class="headerlink" title="Cache"></a>Cache</h1><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521211823581.png" alt="image-20250521211823581" style="zoom:50%;" />
+
+<ul>
+<li>映象规则： 调入块可以放在哪些位置</li>
+<li>查找算法： 如何在映象规则规定的候选位置查找</li>
+<li>替换算法： 规定的候选位置均被别的块占用怎么办</li>
+<li>写策略： 如何处理写操作</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521211957229.png" alt="image-20250521211957229" style="zoom:33%;" />
+
+<p>平均访问时间 = 命中访问时间T1 + 失效率 × 失效开销</p>
+<p>失效开销 = 从<strong>向下一级发出请求</strong>到<strong>把整个数据块调入</strong>经过的时间</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521212817490.png" alt="image-20250521212817490" style="zoom: 50%;" />
+
+<h2 id="映射规则"><a href="#映射规则" class="headerlink" title="映射规则"></a>映射规则</h2><p>全相联：主存中的任一块可以 被放置到Cache中的任意一个 位置。 </p>
+<ul>
+<li>对比：阅览室位置── 随便坐 </li>
+<li>特点：空间利用率最高，冲突概率最低，实现最复杂。</li>
+</ul>
+<p>直接映射：主存中的每一块只能被放置到 Cache中唯一的一个位置。</p>
+<ul>
+<li>对比：阅览室位置── 只有一个位置可以坐</li>
+<li>特点：空间利用率最低，冲突概率最高， 实现最简单。</li>
+<li>对于主存的第i 块，若它映象到Cache的第j 块，则: j＝i mod (M ) （M为Cache的块数，i是块地址）<ul>
+<li>如果cache有2的m次方块，块j实际上就是地址i的低m位</li>
+</ul>
+</li>
+</ul>
+<p>组相联：折衷</p>
+<ul>
+<li><p>若主存第i 块映象到第k 组，则: k＝i mod（G） （G为Cache的组数）</p>
+</li>
+<li><p>设G＝2的g次方，则当表示为二进制数时，k 实际上就是i 的低 g 位。低g位以及直接映象中的低m位通常称为<u>索引</u>。</p>
+</li>
+<li><p>n路组相联：每组n个块。绝大多数时候，n ≤ 4</p>
+</li>
+</ul>
+<h2 id="Cache-性能例题"><a href="#Cache-性能例题" class="headerlink" title="Cache 性能例题"></a>Cache 性能例题</h2><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222845268.png" alt="image-20250521222845268" style="zoom:50%;" />
+
+<h3 id="例题-5-1"><a href="#例题-5-1" class="headerlink" title="例题 5.1"></a>例题 5.1</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222858450.png" alt="image-20250521222858450" style="zoom: 50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222909212.png" alt=" " style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222921303.png" style="zoom:50%;" />
+
+<h3 id="例题-5-2"><a href="#例题-5-2" class="headerlink" title="例题 5.2"></a>例题 5.2</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222936896.png" alt="image-20250521222936896" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222944644.png" alt="image-20250521222944644" style="zoom:50%;" />
+
+<h3 id="例题-5-3"><a href="#例题-5-3" class="headerlink" title="例题 5.3"></a>例题 5.3</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222958536.png" alt="image-20250521222958536" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223007219.png" alt="image-20250521223007219" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223018048.png" alt="image-20250521223018048" style="zoom:50%;" />
+
+<h2 id="写策略"><a href="#写策略" class="headerlink" title="写策略"></a>写策略</h2><ul>
+<li>写直达法（也称为存直达法） 执行“写”操作时，不仅写入Cache，而且也写入 下一级存储器。<ul>
+<li>写失效时，直接写入下一级存储器而不调块。</li>
+<li>速度快，所使用的存储器带宽较低。</li>
+<li>采用写直达法时，若在进行“写”操作的 过程中CPU必须等待，直到“写”操作结 束，则称CPU写停顿。 减少写停顿的一种常用的优化技术是写缓冲器</li>
+<li><a href="#write-combine">写缓冲器合并</a></li>
+</ul>
+</li>
+<li>写回法（也称为拷回法） 执行“写”操作时，只写入Cache。仅当Cache中相 应的块被替换时，才写回主存。 (设置“修改位”)<ul>
+<li>写失效时，先把所写单元所在的块调入Cache， 再行写入。</li>
+<li>易于实现，一致性好。</li>
+</ul>
+</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521222057245.png" alt="image-20250521222057245" style="zoom: 50%;" />
+
+<h2 id="查找、替换算法"><a href="#查找、替换算法" class="headerlink" title="查找、替换算法"></a>查找、替换算法</h2><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521221844613.png" alt="image-20250521221844613" style="zoom: 33%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521221909067.png" alt="image-20250521221909067" style="zoom: 33%;" />
+
+<h2 id="优化技术总结"><a href="#优化技术总结" class="headerlink" title="优化技术总结"></a>优化技术总结</h2><p>“＋”号：表示改进了相应指标。  “－”号：表示它使该指标变差。 空格：表示它对该指标无影响。 复杂度：0表示最容易，3表示最复杂。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521213839515.png" alt="image-20250521213839515" style="zoom: 33%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521213855039.png" alt="image-20250521213855039" style="zoom:33%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521213908725.png" alt="image-20250521213908725" style="zoom:33%;" />
+
+
+
+<h2 id="降低失效率"><a href="#降低失效率" class="headerlink" title="降低失效率"></a>降低失效率</h2><p>三种失效：冲突失效、强制失效、容量失效。（Conflict、Compulsory、Capacity）</p>
+<ul>
+<li>强制：当第一次访问一个块时，该块不在Cache中，需从 下一级存储器中调入Cache，这就是强制性失效。 (冷启动失效，首次访问失效）<ul>
+<li>解决：<u>增加块大小</u>、<u>硬件预取Prefetch</u></li>
+</ul>
+</li>
+<li>容量：如果程序执行时所需的块不能全部调入Cache中， 则当某些块被替换后，若又重新被访问，就会发 生失效。这种失效称为容量失效。<ul>
+<li>解决：<u>增加容量</u></li>
+</ul>
+</li>
+<li>冲突：在组相联或直接映象Cache中，若太多的块映 象到同一组(块)中，则会出现该组中某个块被别 的块替换(即使别的组或块有空闲位置)，然后又 被重新访问的情况。这就是发生了冲突失效。 (碰撞失效，干扰失效) <ul>
+<li>解决：<u>提高相联度</u>，理想情况是全相联。</li>
+</ul>
+</li>
+</ul>
+<ol>
+<li>大小为N的直接映象Cache的失效率约等于 大小为N/2的两路组相联Cache的失效率。</li>
+<li>大小为N的<u>伪相联</u>和两路组相联的失效率相当。在逻辑上把直接映象Cache的空间上下平分为两个区。对于任何一 次访问，伪相联Cache先按直接映象Cache的方式去处理。若命中， 则其访问过程与直接映象Cache的情况一样。若失效，则再到另一区 相应的位置去查找。若找到，则发生了伪命中，否则就只好访问下一 级存储器。</li>
+</ol>
+<p>**<u>硬件预取</u>**：</p>
+<p>预取：假设从预取缓冲器中找到所需指令需多花1个 时钟周期。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223203358.png" alt="image-20250521223203358" style="zoom: 33%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223228700.png" alt="image-20250521223228700" style="zoom:33%;" />
+
+<p><u>编译器预取</u>、<u>编译器优化</u>：内外循环交换。</p>
+<p>**<u>牺牲Cache</u>**：一种能减少冲突失效次数而又不影响时钟频 率的方法。 </p>
+<p>基本思想：在Cache和它从下一级存储器调数据的通路之间设置一个全相联的小Cache，称为“牺牲”Cache（Victim Cache）。用于存放被替换出去的块(称为牺牲者)，以备重用。 对于减小冲突失效很有效，特别是对于小容 量的直接映象数据Cache，作用尤其明显。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521223451357.png" alt="image-20250521223451357" style="zoom:50%;" />
+
+<h2 id="降低失效开销"><a href="#降低失效开销" class="headerlink" title="降低失效开销"></a>降低失效开销</h2><p>“子块放置技术”</p>
+<ol>
+<li><p><u>两级Cache</u>：第一级小而快，第二级容量更大。</p>
+<ol>
+<li>平均访存时间＝命中时间T1＋失效率F1 × 失效开M1 </li>
+<li>失效开销M1＝命中时间T2＋失效率F2 × 失效开销M2</li>
+<li>局部失效率：F1, F2  全局失效率 = F1 × F2</li>
+<li>因此，平均访存时间 = T1 + F1 × T2 + F2 × M2</li>
+</ol>
+<p>当第二级Cache比第一级Cache大得多时， 两级Cache的全局失效率与容量和第二级 Cache 相同的单级Cache的失效率非常接近。</p>
+</li>
+</ol>
+<h3 id="例-二级cache"><a href="#例-二级cache" class="headerlink" title="例 二级cache"></a>例 二级cache</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521215829463.png" alt="image-20250521215829463" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521215842673.png" alt="image-20250521215842673" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521215853347.png" alt="image-20250521215853347" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521215901791.png" alt="image-20250521215901791" style="zoom:50%;" />
+
+<hr>
+<ol start="2">
+<li><strong>写缓冲合并</strong>，<span id="write-combine">提高写缓冲器的效率</span>。写直达Cache：依靠写缓冲来减少对下一级存储器写操作的时间。<ol>
+<li>如果写缓冲器为空，就把数据和相应地址写入该缓冲器。 从CPU的角度来看，该写操作就算是完成了。</li>
+<li>如果写缓冲器中已经有了待写入的数据，就要把这次的 写入地址与写缓冲器中已有的所有地址进行比较，看是 否有匹配的项。如果有地址匹配而对应的位置又是空闲 的，就把这次要写入的数据与该项合并。这就叫写缓冲合并。</li>
+<li>如果写缓冲器满且又没有能进行写合并的项，就必须等待。</li>
+</ol>
+</li>
+</ol>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220447088.png" alt="image-20250521220447088" style="zoom:33%;" />
+
+
+
+<ol start="3">
+<li><strong>读失效优先于写</strong>。在读失效时，所读单元的最新值有可能还在Cache的写缓冲器中，尚未写入 主存。<ol>
+<li> 推迟对读失效的处理 （缺点：读失效的开销增加）</li>
+<li>检查写缓冲器中的内容</li>
+</ol>
+</li>
+<li><strong>请求字处理</strong>。</li>
+</ol>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220110734.png" alt="image-20250521220110734" style="zoom:50%;" />
+
+<ol start="5">
+<li><strong>非阻塞Cache</strong>。Cache失效时仍允许CPU 进行其它的命中访问。即允许“失效下命中”。对于整数程序来说，重叠次数对性能提高影响不大，简 单的“一次失效下命中”就几乎可以得到所有的好处。最大的好处就是不影响<u>命中时间</u></li>
+</ol>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220225230.png" alt="image-20250521220225230" style="zoom:33%;" />
+
+<h3 id="例-一次失效命中和组相联"><a href="#例-一次失效命中和组相联" class="headerlink" title="例 一次失效命中和组相联"></a>例 一次失效命中和组相联</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220304904.png" alt="image-20250521220304904" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521220340533.png" alt="image-20250521220340533" style="zoom:50%;" />
+
+
+
+<h2 id="减少命中时间"><a href="#减少命中时间" class="headerlink" title="减少命中时间"></a>减少命中时间</h2><p>命中时间直接影响到处理器的时钟频率。在当今的许多计算机中，往往是Cache的访问时间限制了处理器的时钟频率</p>
+<ol>
+<li><p>容量小、结构简单的Cache。</p>
+</li>
+<li><p>虚拟Cache：可以直接用虚拟地址进行访问的Cache。tag 存储器中存放的是虚拟地址，进行地址检测用的也是虚拟地址。</p>
+<ol>
+<li>传统：虚拟地址先通过 MMU 转换成物理地址，再访问物理cache，串行。</li>
+<li>在命中时不需要地址转换，省去了地址转换的 时间。即使失效，地址转换和访问Cache也是 并行进行的，其速度比物理Cache快很多。</li>
+</ol>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521214559365.png" alt="image-20250521214559365" style="zoom:33%;" /></li>
+<li><p>Cache访问流水化。提高时钟频率。并不能真正减少cache的命中时间，但可以提高访问Cache的带宽。访问Cache需要多个时钟周期才可以完成</p>
+</li>
+<li><p>踪迹 Cache。存放CPU所执行的动态指令序列，能够提高指令Cache的空间利用率， 地址映象机制复杂，相同的指令序列有可能被当作条件分支的不同选择而 重复存放</p>
+</li>
+</ol>
+<hr>
+<h1 id="体系结构基本概念"><a href="#体系结构基本概念" class="headerlink" title="体系结构基本概念"></a>体系结构基本概念</h1><h2 id="冯诺依曼、存储程序计算机"><a href="#冯诺依曼、存储程序计算机" class="headerlink" title="冯诺依曼、存储程序计算机"></a>冯诺依曼、存储程序计算机</h2><ul>
+<li>冯诺依曼：存储程序计算机 (运算器、存储器、IO、控制器)<ul>
+<li><u>以运算器为中心</u></li>
+<li><u>控制流由指令流产生</u>，分解程序指令，形成控制上述部件的控制流。</li>
+<li>存储程序的原理。<u>程序和数据在同一存储器</u><ul>
+<li>局部性原理，时间/空间局部性。</li>
+<li>信息按照边界存储：访存速度快</li>
+</ul>
+</li>
+<li><u>存储器是按照地址访问，线性编址的空间。</u><ul>
+<li>字节编址可以支持非数值型计算</li>
+</ul>
+</li>
+<li><u>操作码+地址码 = 指令</u></li>
+<li>数据使用<u>二进制编码</u>表示，采用<u>二进制</u>运算</li>
+<li>加工运算数据，形成了数据流</li>
+<li>取指、译码、取数、运算、写回</li>
+</ul>
+</li>
+</ul>
+<h2 id="计算机体系结构的概念"><a href="#计算机体系结构的概念" class="headerlink" title="计算机体系结构的概念"></a>计算机体系结构的概念</h2><ul>
+<li>计算机体系结构是**<u>程序员</u><strong>所看到的计算机的属性，即</strong><u>概念性结构</u><strong>与</strong><u>功能特性</u>**。</li>
+<li>计算机系统分层、程序员分层，所以<u>体系结构</u>也分层</li>
+<li><strong>体系结构概念的实质</strong>：计算机系统中软硬件界面的确定，其界面之上的是软件的功能，界面之下的是硬件和固件的功能。中间向两边，体系结构就是中间，“中间”：层次结构中的<u>软硬件的交界面</u>，目前一 般是在传统机器语言机器级与操作系统机器级之间、</li>
+<li>**<u>计算机系统/体系结构</u>**是系统的软硬件的界面</li>
+<li>**<u>计算机组成</u>**是系统结构的逻辑实现。</li>
+<li>**<u>计算机实现</u>**是组成的物理实现</li>
+<li>同一系统结构可以有不同的组成，同一组成可以有多种实现方式，指令集架构相同。只要是同一系统结构就是**<u>系列机</u><strong>，前提是一个厂家生产的。</strong><u>向后兼容</u>必须做到，力争<u>向上兼容</u>**</li>
+<li>软件实现的机器是<u>虚拟机</u></li>
+</ul>
+<h3 id="透明"><a href="#透明" class="headerlink" title="透明"></a>透明</h3><ul>
+<li>低层次的机器属性对于高层次机器的程序员是 <strong>透明的</strong><ul>
+<li>机器语言程序员看到的是编程的硬件组织。</li>
+<li>浮点数据表示、乘法指令对于高级语言是透明的，对汇编人员不透明</li>
+<li>数据总线宽度、微程序对机器、汇编语言透明，但是对硬件设计人员不透明</li>
+<li>指令缓冲器对于系统结构透明</li>
+</ul>
+</li>
+<li>应用、高级、汇编、OS、机器、微程序（逻辑程序员）、硬布线逻辑（硬件设计员）   OS 和机器之间就是系统结构</li>
+</ul>
+<h3 id="软件移植"><a href="#软件移植" class="headerlink" title="软件移植"></a>软件移植</h3><ul>
+<li>一个软件可以<u>不经过修改或者少量修改</u>就能在另一台机器上运行，<u>结果相同，时间区别</u>。</li>
+<li>使软件能在具有不同系统结构的机器之间 相互移植。 在一种系统结构上实现另一种系统结构。 从指令集的角度来看，就是要在一种机器上 实现另一种机器的指令集。</li>
+<li>三种方式：<ul>
+<li>**<u>统一高级语言</u>**。缺点：需要争取汇编和机器语言的统一</li>
+<li>**<u>模拟与仿真</u>**：用于<u>不同系统结构</u>的机器<ul>
+<li><strong>模拟</strong>：用软件的方法在一台现有的机器（ 称为宿主机）上实现另一台机器（称为虚 拟机）的指令集。 <u>机器模拟机器</u></li>
+<li><strong>仿真</strong>：用一台现有机器（宿主机）上的微 程序去解释实现另一台机器（目标机）的 指令集。<u>微程序仿真机器</u>，更快，要求系统结构差距不大。</li>
+<li>缺点：结构差异比较大，效率低下</li>
+</ul>
+</li>
+<li>**<u>系列机</u>**：用于<u>相同系统结构</u>的机器<ul>
+<li>缺点 汇编语言兼容的情况下系统结构发展有限</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="并行分类"><a href="#并行分类" class="headerlink" title="并行分类"></a>并行分类</h1><p><strong>并行概念</strong>：同一时刻/时间间隔内，完成两种或者两种以上的工作。（性质相同或者不相同）</p>
+<ul>
+<li>指令级并行</li>
+<li>线程级并行</li>
+<li>任务级/过程级并行：基本单元：进程、子程序</li>
+</ul>
+<p><strong>提升并行性</strong>：</p>
+<ul>
+<li><strong>时间重叠</strong>：时间片轮转【流水线处理机】</li>
+<li><strong>资源重复</strong>：重复设置硬件资源（GPU 阵列处理机 多操作部件）</li>
+<li><strong>资源共享</strong>：这是一种软件方法，它使多个任务按一定时间顺序轮流使用同 一套硬件设备。分时系统。</li>
+<li><strong>单处理机</strong>：时间重叠（部件功能专一）、资源重复（多体存储器、多操作部件、阵列处理机）、资源共享（虚拟机、分时系统）</li>
+</ul>
+<p><strong>Flynn 数据并行、指令并行</strong>：</p>
+<ul>
+<li><strong>SISD</strong>：单核CPU</li>
+<li><strong>MISD</strong>：少见</li>
+<li><strong>SIMD</strong>：GPU（阵列处理机）、向量处理机。指令操作级并行</li>
+<li><strong>MIMD</strong>：多处理机。<ul>
+<li>多机系统耦合度有<u>松、紧耦合</u>两大类。</li>
+<li>同构型多处理机、异构型多处理机、分布式系统。</li>
+<li>共享内存 SMP：多核CPU、SPARC。共享物理内存（受限于带宽，核心数有限）</li>
+<li>分布式内存 MPP：分布式计算、超算。每个处理器都有自己的本地内存，通过消息传递来进行通信（共享开销大、复杂）</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1 id="指令集结构"><a href="#指令集结构" class="headerlink" title="指令集结构"></a>指令集结构</h1><h2 id="CISC-RISC"><a href="#CISC-RISC" class="headerlink" title="CISC/RISC"></a>CISC/RISC</h2><ul>
+<li><p><strong>RISC:</strong> </p>
+<ul>
+<li>指令长度固定，指令格式种类少，寻址方式少；</li>
+<li>只使用LOAD STORE访存，通用寄存器较多；</li>
+<li>流水线技术，一个时钟周期内完成一条指令；</li>
+<li>控制器运用组合逻辑。</li>
+<li>RISC利用VLSI芯片的面积，便于设计，降低成本，提高可靠性，但是不容易实现指令系统的兼容</li>
+</ul>
+</li>
+<li><p><strong>CISC:</strong> </p>
+<ul>
+<li>指令庞杂复杂，指令使用频度相差悬殊，长度不固定，种类多。不利于用先进的体系结构技术提高性能，研制成本巨大</li>
+<li>很多指令可以访存，CPU有专用寄存器</li>
+<li>大部分指令都需要多个时钟周期完成</li>
+<li>采用微程序控制。</li>
+<li>不利于 VLSI设计和单片集成，但是兼容性很强</li>
+</ul>
+</li>
+<li><p>值得注意的是，从指令系统兼容性看，CISC大多能实现软件兼容，即高档机包含了低档机的全部指令，并可加以扩充。但RISC简化了指令系统，指令条数少，格式也不同于老机器，因此大多数RISC机不能与老机器兼容。由于 RISC 具有更强的实用性，因此应该是未来处理器的发展方向。</p>
+</li>
+<li><p>但事实上，当今时代 x86 几乎一统江湖，且早期很多软件都是根据CISC 设计的，单纯的RISC将无法兼容。此外，现代CISC结构的CPU已经融合了很多RISC的成分，其性能差距已经越来越小。CISC可以提供更多的功能，这是程序设计所需要的。</p>
+</li>
+</ul>
+<p><strong>RISC</strong>：**<u>重叠寄存器窗口技术</u>** 可以减少 <u>CALL(过程调用) 和 RETURN(返回指令)</u> 的执行时间。通过设置大量寄存器，将其分为多个组和全局区，每个组分为高区、<u>本地</u>区、低区，相邻的高低区重叠，加速<u>参数(对应call)和结果(对应return)</u>的传递。</p>
+<p><strong>RISC-V</strong>: 寄存器寻址、立即数、偏移寻址、寄存器间接寻址</p>
+<ul>
+<li>R：寄存器寻址，数存在寄存器里</li>
+<li>I：立即数寻址，其中一个操作是立即数</li>
+<li>S：存储指令（将寄存器值存入内存），立即数用于地址偏移。</li>
+<li>U：将高20位立即数加载到寄存器的高位，用于构造大常数或地址。<ul>
+<li><strong>AUIPC</strong>（Add Upper Immediate to PC）：用于PC相对寻址（如跳转或全局数据访问）。</li>
+</ul>
+</li>
+<li>B：条件分支</li>
+<li>J：无条件跳转</li>
+</ul>
+<h2 id="操作数表示、操作数类型"><a href="#操作数表示、操作数类型" class="headerlink" title="操作数表示、操作数类型"></a>操作数表示、操作数类型</h2><ul>
+<li><p>操作数表示：**<u>计算机硬件能够直接识别、指令集可以直接调用</u>的数据类型**。一般是所有数据类型中最常用、相对比较简单、用硬件实现比较容易的几种。</p>
+<ul>
+<li>引入数据表示的原则：<strong>缩短运行时间</strong>、减少 CPU和主存的通信量、通<strong>用性和利用率</strong>如何？</li>
+<li>分为<u>定点、逻辑、浮点</u> 三种类型</li>
+<li><strong>如何确定数据表示（软硬件取舍折中问题）</strong></li>
+</ul>
+</li>
+<li><p>操作数类型： <strong><u>由软件进行处理和实现</u><strong>的各种数据类型。研究的是这些数据类型的</strong>逻辑结构和物理结构之间的关系</strong>并给出相应算法。</p>
+</li>
+<li><p><strong>操作数类型</strong>的表示：或者寻址类型</p>
+<ul>
+<li><strong><u>由操作码编码制定</u></strong><ul>
+<li>好：字段少、简单</li>
+<li>坏：指令条数增多，译码复杂</li>
+</ul>
+</li>
+<li>**<u>使用带标志符的数据类型</u>**（数据附上硬件解释的标记）<ul>
+<li>好：简化指令系统设计，便于开发，支持数据类型于系统实现无关</li>
+<li>坏：增加指令的字段数，操作数字段占用更多的位数。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="指令集架构类型"><a href="#指令集架构类型" class="headerlink" title="指令集架构类型"></a>指令集架构类型</h2><ul>
+<li>CPU 存放操作数的地方：<u>堆栈、累加器、通用寄存器</u></li>
+<li>大多数通用型指令寄存器架构可以分为：</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521195708729.png" alt="image-20250521195708729" style="zoom: 50%;" />
+
+<h2 id="指令格式：哈夫曼编码、扩展编码"><a href="#指令格式：哈夫曼编码、扩展编码" class="headerlink" title="指令格式：哈夫曼编码、扩展编码"></a>指令格式：哈夫曼编码、扩展编码</h2><p>指令格式的优化：如何用最短的位数来表示 指令的操作信息和地址信息。</p>
+<ul>
+<li><strong>哈夫曼编码</strong></li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521200908875.png" alt="image-20250521200908875" style="zoom: 50%;" />
+
+<ul>
+<li>信息熵: </li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521200757693.png" alt="image-20250521200757693" style="zoom:50%;" />
+
+<ul>
+<li>信息冗余量 = （平均码长 - 信息熵）/ 平均码长</li>
+<li>可以减少操作码的平均位数，但所获得的编码是变长的，不规整，不利于硬件处理。</li>
+<li><strong>扩展操作码</strong>：位于定长二进制编码和哈夫曼编码之间的一种编码 方案。 </li>
+<li>采用有限几种固定长度的码长，仍然采用高概率的用短码、低概率用长码的哈夫曼压缩思想，使操作码平均长度缩短。 </li>
+<li>接近全哈夫曼码的码长，具有定长码的规整性。</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521202254289.png" alt="image-20250521202254289" style="zoom:50%;" />
+
+<p>图中的 3/3/3 表示，分成三组，那么就可以有三种长度，按照频率从高到低，3*3。</p>
+<p>2/7同理，有两种长度，按照频率从高到低2+7。前面频率高的只需要两位就能区分了，因此是00和01 </p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521201332108.png" alt="image-20250521201332108" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521201521111.png" alt="image-20250521201521111" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521201531312.png" alt="image-20250521201531312" style="zoom:50%;" />
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250521201541376.png" alt="image-20250521201541376" style="zoom:50%;" />
+
+
+
+<p><u>8位寄存器-寄存器型二地址指令3条</u></p>
+<ul>
+<li><strong>指令长度</strong>：8位（单字长）。</li>
+<li>字段分配：<ul>
+<li><strong>操作码（OP）</strong>：2位，用于区分3条指令。</li>
+<li><strong>源寄存器（R1）</strong>：3位，支持8个通用寄存器（23=8）。</li>
+<li><strong>目的寄存器（R2）</strong>：3位，与源寄存器编码方式相同。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">| OP (2) | R1 (3) | R2 (3) |</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>指令1</strong>：<code>00</code> → 如加法指令 <code>ADD R1, R2</code></li>
+<li><strong>指令2</strong>：<code>01</code> → 如减法指令 <code>SUB R1, R2</code></li>
+<li><strong>指令3</strong>：<code>10</code> → 如逻辑与指令 <code>AND R1, R2</code></li>
+</ul>
+<p><u>16位寄存器-寄存器变址寻址指令4条</u> </p>
+<ul>
+<li><strong>指令长度</strong>：16位（双字长）。</li>
+<li>字段分配：<strong>有效地址 = 变址寄存器内容 + 指令中给定的偏移量</strong><ul>
+<li><strong>操作码（OP）</strong>：4位，用于区分4条指令。</li>
+<li><strong>通用寄存器（R）</strong>：3位，支持8个通用寄存器。</li>
+<li><strong>变址寄存器（V）</strong>：1位，支持2个变址寄存器（21=2）。</li>
+<li><strong>偏移地址（Offset）</strong>：8位，满足变址范围 <strong>-127~+127</strong>（8位补码表示）。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">| OP (4) | R (3) | V (1) | Offset (8) |</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>指令1</strong>：<code>1100</code> → 如取数指令 <code>LDA R, [V+Offset]</code></li>
+<li><strong>指令2</strong>：<code>1101</code> → 如存数指令 <code>STA R, [V+Offset]</code></li>
+<li><strong>指令3</strong>：<code>1110</code> → 如跳转指令 <code>JMP R, [V+Offset]</code></li>
+<li><strong>指令4</strong>：<code>1111</code> → 如条件跳转指令 <code>JNZ R, [V+Offset]</code></li>
+</ul>
+<hr>
+<h1 id="流水线、指令级并行"><a href="#流水线、指令级并行" class="headerlink" title="流水线、指令级并行"></a>流水线、指令级并行</h1><p>数据相关<u>不一定</u>都能用定向技术解决</p>
+<p>数据相关：RAW、WAW、WAR。DLX流水线是<u>RAW</u></p>
+<p>多条向量指令之间不存在 <u>源向量寄存器冲突</u> 和 <u>功能部件冲突</u>，且只有 向量寄存器 的 <u>写后读相关</u>，那么可以通过<u>链接</u>技术实现这些指令的并行处理。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2791,197 +3314,6 @@
 </ul>
 <p>独立途径集合：</p>
 <img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509222254965.png" alt="image-20250509222254965" style="zoom: 25%;" />
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/07/math-distribute-math-graph/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/07/math-distribute-math-graph/" class="post-title-link" itemprop="url">离散数学：图、树</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-07 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-07T00:00:00+08:00">2025-05-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-08 13:20:45" itemprop="dateModified" datetime="2025-05-08T13:20:45+08:00">2025-05-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/math/" itemprop="url" rel="index"><span itemprop="name">math</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="图的基本概念"><a href="#图的基本概念" class="headerlink" title="图的基本概念"></a>图的基本概念</h1><h2 id="概念介绍"><a href="#概念介绍" class="headerlink" title="概念介绍"></a>概念介绍</h2><p>平凡图：只有一个定点，没有任何边。</p>
-<h3 id="无向图"><a href="#无向图" class="headerlink" title="无向图"></a>无向图</h3><img src="C:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20250506203413162.png" alt="image-20250506203413162" style="zoom:33%;" />
-
-<p>v4 悬挂节点 只有一个边e4</p>
-<p>e4 悬挂边</p>
-<h3 id="有向图"><a href="#有向图" class="headerlink" title="有向图"></a>有向图</h3><p>平行边必须起点终点都相同，引入了出入度的概念</p>
-<img src="C:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20250506203740347.png" alt="image-20250506203740347" style="zoom:33%;" />
-
-<h3 id="握手定理（节点个数和边的关系）"><a href="#握手定理（节点个数和边的关系）" class="headerlink" title="握手定理（节点个数和边的关系）"></a><span id="shakehands">握手定理（节点个数和边的关系）</span></h3><ol>
-<li>节点数n，边数e，所有n个节点的入度出度之和 =  2e（偶数）（计算题）</li>
-<li>推论：任何图中，<strong>度数为奇数的节点个数必为偶数</strong>（判定是否能作为图的节点的度数序列）</li>
-<li>推论：有向图中，<strong>所有节点的出度之和=所有节点的入度之和=e</strong></li>
-</ol>
-<blockquote>
-<p>n 阶 无向简单图： 有n个节点，不含平行边，不含环</p>
-<p>PS：如果n阶无向简单图中，有p个n-1度的节点，说明其他节点的度数最小就是p，不可能存在比p小的度数（7阶简单图，6,6,5,4,3,3,1）</p>
-</blockquote>
-<h2 id="通路、回路、连通"><a href="#通路、回路、连通" class="headerlink" title="通路、回路、连通"></a>通路、回路、连通</h2><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250506214035534.png" alt="image-20250506214035534" style="zoom:33%;" />
-
-<p><strong>基本通路</strong>：点不重复、边也不重</p>
-<p><strong>简单通路</strong>：边不重复</p>
-<p><strong>回路</strong>：起点等于终点的通路</p>
-<p><mark>连通图</mark>：</p>
-<ul>
-<li>无向连通图G：任意两节点之间都有一条通路，则G为 <strong>无向连通图</strong> </li>
-<li>有向连通图G(V,E)：任意两节点uv，u到v存在通路则u到v可达，否则称u到v不可达。推之，可有相互可达的推论，一个节点到自己总是可达的<ul>
-<li>G中任意两个节点，至少从一个节点到另一个节点是可达的，则G <strong>单向连通</strong></li>
-<li>G中任意两个节点之间均为互相可达，则G <strong>强连通</strong></li>
-<li>G中在略去方向之后得到的无向图连通，则G <strong>弱连通</strong> </li>
-<li>任意一种连通都可以叫做 有向连通图</li>
-</ul>
-</li>
-</ul>
-<h3 id="邻接矩阵计算通路数目"><a href="#邻接矩阵计算通路数目" class="headerlink" title="邻接矩阵计算通路数目"></a><strong>邻接矩阵</strong>计算通路数目</h3><p><strong>邻接矩阵A</strong>：顶点作为坐标轴，数字就填直接连接的边数目。</p>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250506221454171.png" alt="image-20250506221454171" style="zoom:33%;" />
-
-<ul>
-<li>A: Aij 就是vi到vj长度为1的通路条数。</li>
-<li>A的n次：Aij 就是vi到vj长度为n的通路条数。</li>
-<li>起点终点一样的通路就是回路</li>
-</ul>
-<h3 id="可达矩阵"><a href="#可达矩阵" class="headerlink" title="可达矩阵"></a>可达矩阵</h3><p><strong>可达矩阵P</strong>：数字填写两顶点之间是否可达，若可达则1，反之0</p>
-<p>是否可达：先看A4，A4里面只要是正的那就是可达，如果出现了0，就翻回去看看A3 A2 A1，如果全是0，那么才是不可达的</p>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250506221951938.png" alt="image-20250506221951938" style="zoom:33%;" />
-
-<h3 id="关联矩阵"><a href="#关联矩阵" class="headerlink" title="关联矩阵"></a>关联矩阵</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507205539160.png" alt="image-20250507205539160" style="zoom:33%;" />
-
-<h1 id="欧拉图、哈密顿图"><a href="#欧拉图、哈密顿图" class="headerlink" title="欧拉图、哈密顿图"></a>欧拉图、哈密顿图</h1><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><h3 id="欧拉图"><a href="#欧拉图" class="headerlink" title="欧拉图"></a>欧拉图</h3><p>欧拉通路：通过G中<strong>所有边</strong> <strong>一次且仅一次</strong>的<strong>通路</strong> </p>
-<p>欧拉回路：欧拉通路（起点和中点相同）</p>
-<p><strong>欧拉图</strong>：有欧拉回路的图</p>
-<p><strong>半欧拉图</strong>：只有有欧拉通路的图</p>
-<p>推论：<em><strong>欧拉图度数均为偶数，半欧拉图有且只有两个奇度节点</strong></em></p>
-<ul>
-<li><p>无向连通图是欧拉图：所有节点<strong>度数均为偶数</strong> </p>
-</li>
-<li><p>无向连通图是半欧拉图：只有两个奇度节点</p>
-</li>
-<li><p>有向连通图是欧拉图：每个节点的入度=出度（度数为偶数）</p>
-</li>
-<li><p>有向连通图是半欧拉图：只有两个奇度节点，其中一个节点的入度比出度大1，另一个的出度比入度大1。其余每个节点的入度=出度</p>
-</li>
-</ul>
-<h3 id="哈密顿图（设计题）"><a href="#哈密顿图（设计题）" class="headerlink" title="哈密顿图（设计题）"></a>哈密顿图（设计题）</h3><p>哈密顿回路：G中一条包含所有节点一次且进一次的回路。图G为哈密顿图</p>
-<p>哈密顿通路：G中一条包含所有节点一次且进一次的通路。只有这个，图G为半哈密顿图</p>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250506225240817.png" alt="image-20250506225240817" style="zoom: 33%;" />
-
-<h2 id="最短路问题（Dijkstra-标号法）"><a href="#最短路问题（Dijkstra-标号法）" class="headerlink" title="最短路问题（Dijkstra 标号法）"></a>最短路问题（Dijkstra 标号法）</h2><h1 id="树"><a href="#树" class="headerlink" title="树"></a>树</h1><h2 id="树的定义"><a href="#树的定义" class="headerlink" title="树的定义"></a>树的定义</h2><p>任意两顶点之间存在唯一路径</p>
-<p>G无回路/连通 且节点数=边数+1</p>
- <img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507191139682.png" alt="image-20250507191139682" style="zoom:33%;" />
-
-<p>N阶非平凡的无向树至少有两片树叶</p>
-<h3 id="握手定理"><a href="#握手定理" class="headerlink" title="握手定理"></a><a href="#shakehands">握手定理</a></h3><ul>
-<li><p><strong>节点数 = 边数 + 1</strong>      </p>
-</li>
-<li><p>度数 = 边数 * 2</p>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507191458705.png" alt="image-20250507191458705" style="zoom:33%;" /></li>
-</ul>
-<h2 id="最小生成树（求连通图的最小权的生成树）"><a href="#最小生成树（求连通图的最小权的生成树）" class="headerlink" title="最小生成树（求连通图的最小权的生成树）"></a>最小生成树（求连通图的最小权的生成树）</h2><p>连通图G中的所有生成树中，带权最小的生成树 就是最小生成树。最后形成树，顶点比边多一条</p>
-<h3 id="避圈法（添加的时候不要形成圈）"><a href="#避圈法（添加的时候不要形成圈）" class="headerlink" title="避圈法（添加的时候不要形成圈）"></a>避圈法（添加的时候不要形成圈）</h3><p>边按照权从小到大排列，逐次连线，注意不要形成圈</p>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507192348804.png" alt="image-20250507192348804" style="zoom:33%;" />
-
-<h3 id="破圈法（见圈就破）"><a href="#破圈法（见圈就破）" class="headerlink" title="破圈法（见圈就破）"></a>破圈法（见圈就破）</h3><p>找圈，去掉其中权最大的那条边</p>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507192619854.png" alt="image-20250507192619854" style="zoom:33%;" />
-
-<h2 id="根树"><a href="#根树" class="headerlink" title="根树"></a>根树</h2><p>有向树：如果有向图的基是一个无向树，那么这个有向图就是有向树</p>
-<p><strong>根树</strong>：一个顶点入度为0，其余的入度为1的有向树。这个顶点是树根</p>
-<p>层数：根到顶点的长度</p>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507210303018.png" alt="image-20250507210303018" style="zoom:33%;" />
-
-<p>v1 是树的树根，v1到v2是一条有向边。v1 是v5可达，那么v1就是v5祖先，反过来v5是v1后代。最多分几叉就是几叉树</p>
-<h3 id="最优二元树（哈夫曼树）"><a href="#最优二元树（哈夫曼树）" class="headerlink" title="最优二元树（哈夫曼树）"></a>最优二元树（哈夫曼树）</h3><p>求带权 3,4,5,8,9 的最优二元树（除了树叶，其他所有的分支节点的度数都为2 ）3,4,5,8,9 </p>
-<p>首先，34合并为7。第二步，57合并为12。第三部，89合并为17。最后一步，12 17合并为29</p>
-<h2 id="其他树概念"><a href="#其他树概念" class="headerlink" title="其他树概念"></a>其他树概念</h2><p><strong>完全二叉树</strong>：边数=2x-2 x为叶子数</p>
-<h1 id="平面图"><a href="#平面图" class="headerlink" title="平面图"></a>平面图</h1><p>设计电路，线路不能交叉。除了顶点之外的任意两条边都不相交。 </p>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507193654854.png" alt="image-20250507193654854" style="zoom:33%;" />
-
-<h2 id="平面图满足欧拉公式"><a href="#平面图满足欧拉公式" class="headerlink" title="平面图满足欧拉公式"></a>平面图满足欧拉公式</h2><p>次数：面的边界所包含的边数</p>
-<p>平面图所有面的次数之和 = 2e （边数的2倍）一条边提供两个次数</p>
-<ul>
-<li><mark>欧拉公式</mark>：G为任意<mark>连通平面图</mark>，n个顶点，m条边，r个面。那么， $n-m+r=2$</li>
-<li>推广：G为任意<mark>平面图</mark>，有k个连通分支（k&gt;=2）。那么， $n-m+r=k+1$</li>
-</ul>
-<h2 id="对偶图"><a href="#对偶图" class="headerlink" title="对偶图"></a>对偶图</h2><p>G是简单图，每个面指定一个新的节点，只要是两面的一条公共边就让节点连一条边与其相交。新的点和边组成的图就是图G的对偶图。</p>
-<p>对偶图的边数m’和原来相同，<mark>顶点数n’和原来的面数r相同</mark></p>
-<p>结论：<mark>平面图</mark>的对偶图一定是平面图，一定满足<mark>欧拉公式</mark></p>
-<p>边e是环，对应到对偶图里面就是桥，反之一样。</p>
-<h1 id="着色"><a href="#着色" class="headerlink" title="着色"></a>着色</h1><h2 id="二部图"><a href="#二部图" class="headerlink" title="二部图"></a>二部图</h2><p>判定定理：</p>
 
       
     </div>
