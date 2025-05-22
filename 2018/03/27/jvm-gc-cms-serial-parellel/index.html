@@ -22,7 +22,7 @@
     <meta name="description" content="JVM Memory Management关于 JVM 内存管理或者说垃圾收集，大家可能看过很多的文章了，笔者准备给大家总结下。这算是系列的第一篇，接下来一段时间会持续更新。 本文主要是翻译《Memory Management in the Java HotSpot Virtual Machine》白皮书的前四章内容，这是 2006 的老文章了，当年发布这篇文章的还是 Sun Microsyste">
 <meta property="og:type" content="article">
 <meta property="og:title" content="HotSpot JVM 内存管理">
-<meta property="og:url" content="http://scatteredream.github.io/2018/03/27/jvm-gc-serial-parellel-cms/index.html">
+<meta property="og:url" content="http://scatteredream.github.io/2018/03/27/jvm-gc-cms-serial-parellel/index.html">
 <meta property="og:site_name" content="scatteredream&#39;s blog">
 <meta property="og:description" content="JVM Memory Management关于 JVM 内存管理或者说垃圾收集，大家可能看过很多的文章了，笔者准备给大家总结下。这算是系列的第一篇，接下来一段时间会持续更新。 本文主要是翻译《Memory Management in the Java HotSpot Virtual Machine》白皮书的前四章内容，这是 2006 的老文章了，当年发布这篇文章的还是 Sun Microsyste">
 <meta property="og:locale" content="zh_CN">
@@ -46,10 +46,10 @@
 <meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/serial-garbage-collector.png">
 
 
-<link rel="canonical" href="http://scatteredream.github.io/2018/03/27/jvm-gc-serial-parellel-cms/">
+<link rel="canonical" href="http://scatteredream.github.io/2018/03/27/jvm-gc-cms-serial-parellel/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2018/03/27/jvm-gc-serial-parellel-cms/","path":"2018/03/27/jvm-gc-serial-parellel-cms/","title":"HotSpot JVM 内存管理"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2018/03/27/jvm-gc-cms-serial-parellel/","path":"2018/03/27/jvm-gc-cms-serial-parellel/","title":"HotSpot JVM 内存管理"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>HotSpot JVM 内存管理 | scatteredream's blog</title>
@@ -223,7 +223,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2018/03/27/jvm-gc-serial-parellel-cms/">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2018/03/27/jvm-gc-cms-serial-parellel/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">

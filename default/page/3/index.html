@@ -5270,7 +5270,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-18 10:43:05" itemprop="dateModified" datetime="2025-05-18T10:43:05+08:00">2025-05-18</time>
+      <time title="修改时间：2025-05-22 22:18:43" itemprop="dateModified" datetime="2025-05-22T22:18:43+08:00">2025-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -5476,7 +5476,7 @@
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/413889872">并发编程：乱序执行的那些事儿 - 知乎</a>  <a target="_blank" rel="noopener" href="https://www.cnblogs.com/maycap/p/15690751.html">图解CPU为何要乱序执行 - last_coding - 博客园</a>  </p>
 <h5 id="指令级并行重排-乱序执行-ILP"><a href="#指令级并行重排-乱序执行-ILP" class="headerlink" title="指令级并行重排/乱序执行(ILP)"></a>指令级并行重排/乱序执行(ILP)</h5><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2586739-20211214234820966-1713761498.png" alt="img" style="zoom: 80%;" />
 
-<p>RISC 架构的特点就是指令长度相等，执行时间恒定(通常为一个时钟周期)，因此处理器设计起来就很简单，可以通过深长的流水线达到很高的频率，IBM 的 Power6 就可以轻松地达到 4.7GHz 的起步频率。和 RISC 相反，CISC 指令的长度不固定，执行时间也不固定，因此 Intel 的 RISC/CISC 混合处理器架构就要通过 Instruction Fetch &amp; Decode 将 x86 指令翻译为 μops，从而获得 RISC 架构的长处，提升内部执行效率。x86 指令大部分简单指令可以一对一翻译为 μops，复杂的可能 1 ~ 4 条 μops。解码器是按位数取指的，在经过译码，因此每次可能产生多条 μops。</p>
+<p>RISC 架构的特点就是指令长度相等，执行时间恒定(通常为一个时钟周期)，因此处理器设计起来就很简单，可以通过深长的流水线达到很高的频率，IBM 的 Power6 就可以轻松地达到 4.7GHz 的起步频率。和 RISC 相反，CISC 指令的长度不固定，执行时间也不固定，因此 Intel 的 RISC/CISC 混合处理器架构就要通过 IFheID 将 x86 指令翻译为 μops，从而获得 RISC 架构的长处，提升内部执行效率。x86 指令大部分简单指令可以一对一翻译为 μops，复杂的可能 1 ~ 4 条 μops。解码器是按位数取指的，在经过译码，因此每次可能产生多条 μops。</p>
 <p>计算机执行符合局部性原理，这里不仅指同个指令可能重复执行，也指内存访问。而内存访问显然是比较慢的，<strong>对多条指令重新排序，把访存相关的指令放到一起，显然是可以提升效率的。</strong></p>
 <h5 id="内存系统重排"><a href="#内存系统重排" class="headerlink" title="内存系统重排"></a>内存系统重排</h5><p>另外，内存系统也会有“重排序”，但又不是真正意义上的重排序。在 JMM 里表现为主内存和线程的本地内存可能不一致，进而导致程序在多线程下执行可能出现问题。</p>
 <h2 id="Java-内存模型"><a href="#Java-内存模型" class="headerlink" title="Java 内存模型"></a><mark>Java 内存模型<mark></h2><p>并发编程环境下，像 CPU 多级缓存和指令重排这类设计可能会导致程序运行出现一些问题。就比如说我们上面提到的指令重排序就可能会让多线程程序的执行出现问题。</p>
@@ -5524,10 +5524,16 @@
 <img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20220731084604667.png" alt="happens-before 与 JMM 的关系" style="zoom:67%;" />
 
 <p>程序员在 happens-before 提供的内存可见性基础上编程，JMM 的实现：根据编译器和处理器的重排序规则，如果出现了重排序，除非没有影响执行结果，否则就禁止重排序：为了在不改变程序执行结果的前提下，尽可能地提高程序执行的并行度。实现细节对于程序员是透明的，只要保证程序执行时语义不改变即可。</p>
-<h2 id="volatile-关键字"><a href="#volatile-关键字" class="headerlink" title="volatile 关键字"></a><mark><code>volatile</code> 关键字<mark></h2><ol>
-<li><p><code>volatile</code> 关键字并非 Java 语言特有，在 C 语言里也有，其最原始的意义就是禁用 CPU 缓存。如果我们将一个变量使用 <code>volatile</code> 修饰，这就告诉编译器这个变量是共享且不稳定的，每次使用它都到主存中进行读取。（可见性）</p>
+<h2 id="volatile-关键字"><a href="#volatile-关键字" class="headerlink" title="volatile 关键字"></a><mark>volatile 关键字</mark></h2><ol>
+<li><p><strong>可见性</strong>：<code>volatile</code> 关键字并非 Java 语言特有，在 C 语言里也有，其最原始的意义就是禁用 CPU 缓存。如果我们将一个变量使用 <code>volatile</code> 修饰，这就告诉编译器这个变量是共享且不稳定的。</p>
+<ul>
+<li><p>当一个线程写入一个 <code>volatile</code> 变量时，<strong>JMM 会强制把这个值刷新到主内存</strong>；</p>
 </li>
-<li><p>在 Java 中，<code>volatile</code> 关键字除了可以保证变量的可见性，还有一个重要的作用就是<strong>防止 JVM 的指令重排序</strong>。 如果我们将变量声明为 <strong><code>volatile</code></strong> ，在对这个变量进行读写操作的时候，会通过插入特定的 <strong>内存屏障</strong> 的方式来禁止指令重排序。（有序性）（Unsafe 类的内存屏障方法也可以实现 volatile 相同的效果）</p>
+<li><p>当另一个线程读取这个 <code>volatile</code> 变量时，<strong>JMM 会强制它从主内存中重新读取值</strong>；</p>
+</li>
+</ul>
+</li>
+<li><p><strong>有序性</strong>：在 Java 中，<code>volatile</code> 关键字除了可以保证变量的可见性，还有一个重要的作用就是<strong>防止 JVM 的指令重排序</strong>。 如果我们将变量声明为 <strong><code>volatile</code></strong> ，在对这个变量进行读写操作的时候，会通过插入特定的 <strong>内存屏障</strong> 的方式来禁止指令重排序。（Unsafe 类的内存屏障方法也可以实现 volatile 相同的效果）</p>
 </li>
 <li><p><code>volatile</code> 无法保证原子性。</p>
 </li>
@@ -5543,7 +5549,7 @@
 <p>对 <code>unique</code> 的读操作: <code>if (unique == null)</code> </p>
 <p><code>volatile</code> 使 <strong>写操作的第 3 步</strong> 一定对读操作可见；</p>
 <p>但是指令重排仍然会导致一些问题，在多线程环境下会导致一个线程获得还没有初始化的实例。例如，线程 T1 执行了 1 和 3，此时 T2 调用 <code>getunique</code>() 后发现 <code>unique</code> 不为空，因此返回 <code>unique</code>，但此时 <code>unique</code> 还未被初始化。<code>volatile</code> 能够禁止这种重排。</p>
-<h2 id="synchronized-关键字"><a href="#synchronized-关键字" class="headerlink" title="synchronized 关键字"></a><mark><code>synchronized</code> 关键字<mark></h2><p><code>synchronized</code> 是 Java 中的一个关键字，也叫做对象锁，翻译成中文是同步的意思，主要解决的是多个线程之间访问资源的同步性，可以保证被它修饰的方法或者代码块在任意时刻只能有一个线程执行。它是 Java 内置的同步机制，在 JVM 中实现，隐式获取、自动释放。</p>
+<h2 id="synchronized-关键字"><a href="#synchronized-关键字" class="headerlink" title="synchronized 关键字"></a><mark>synchronized 关键字</mark></h2><p><code>synchronized</code> 是 Java 中的一个关键字，也叫做对象锁，翻译成中文是同步的意思，主要解决的是多个线程之间访问资源的同步性，可以保证被它修饰的方法或者代码块在任意时刻只能有一个线程执行。它是 Java 内置的同步机制，在 JVM 中实现，隐式获取、自动释放。</p>
 <p>在 Java 早期版本中，<code>synchronized</code> 属于 <strong>重量级锁</strong>，效率低下。这是因为监视器锁（Monitor）是依赖于底层的操作系统的互斥锁 <code>mutex</code> 和条件变量 <code>cond</code> 来实现的，Java 的线程是映射到操作系统的原生线程之上的。如果要挂起或者唤醒一个线程，都需要操作系统帮忙完成，而操作系统实现线程之间的切换时需要从用户态转换到内核态，这个状态之间的转换需要相对比较长的时间，时间成本相对较高。</p>
 <p>在 Java 6 之后， <code>synchronized</code> 引入了大量的优化如<strong>自旋锁</strong>、适应性自旋锁、<strong>锁消除</strong>、<strong>锁粗化</strong>、<del>-偏向锁-</del>、<strong>轻量级锁</strong>等技术来减少锁操作的开销，这些优化让 <code>synchronized</code> 锁的效率提升了很多。因此， <code>synchronized</code> 还是可以在实际项目中使用的，像 JDK 源码、很多开源框架都大量使用了 <code>synchronized</code> 。</p>
 <blockquote>
@@ -5669,7 +5675,7 @@
 <h2 id="并发安全总结"><a href="#并发安全总结" class="headerlink" title="并发安全总结"></a>并发安全总结</h2><p>原子性：atomic、锁</p>
 <p>可见性：synchronized volatile final</p>
 <p>有序性：锁、volatile、happens before原则</p>
-<h2 id="ThreadLocal-lt-T-gt"><a href="#ThreadLocal-lt-T-gt" class="headerlink" title="ThreadLocal&lt;T&gt;"></a><mark><code>ThreadLocal&lt;T&gt;</code><mark></h2><p><code>ThreadLocal</code> 主要用于以下场景：</p>
+<h2 id="ThreadLocal-lt-T-gt"><a href="#ThreadLocal-lt-T-gt" class="headerlink" title="ThreadLocal&lt;T&gt;"></a><mark>ThreadLocal&lt;T&gt;</mark></h2><p><code>ThreadLocal</code> 主要用于以下场景：</p>
 <ol>
 <li><strong>线程安全的变量管理：</strong> 比如事务管理、用户会话等。</li>
 <li><strong>避免同步锁：</strong> 替代传统的锁机制，提高并发性能。</li>
