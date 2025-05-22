@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">82</span>
+          <span class="site-state-item-count">83</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1382,7 +1382,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-20 20:58:58" itemprop="dateModified" datetime="2025-05-20T20:58:58+08:00">2025-05-20</time>
+      <time title="修改时间：2025-05-22 21:05:33" itemprop="dateModified" datetime="2025-05-22T21:05:33+08:00">2025-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1405,16 +1405,16 @@
     
     <div class="post-body" itemprop="articleBody">
           <h1 id="redis-review-optimization"><a href="#redis-review-optimization" class="headerlink" title="redis-review optimization"></a>redis-review optimization</h1><p>配置环境： Nginx + SpringBoot + RabbitMQ + Redis</p>
-<h2 id="简单介绍"><a href="#简单介绍" class="headerlink" title="简单介绍"></a>简单介绍</h2><p>同城口碑主要采用的是 B2B2C（平台连接商家和消费者）的业务模式，是一个前后端分离的单体项目，但是为分布式和集群做了提前的适配，类似大众点评，实现了<strong>登录认证</strong>、<strong>查看商家</strong>、秒杀券抢购、<strong>关注</strong>、<strong>发布点赞推送帖子</strong>（实现了时间线timeline上的动态分页查询）、<strong>签到</strong>、附近商户等功能，业务可以帮助商家引流，增加曝光度，也可以为用户提供查看提供附近消费场所。主要是用来配合学习Redis在项目中的应用。</p>
-<p>登录功能：使用 redis token + 拦截器。</p>
+<h2 id="简单介绍"><a href="#简单介绍" class="headerlink" title="简单介绍"></a>简单介绍</h2><p>同城口碑主要采用的是 B2B2C（平台连接商家和消费者）的业务模式，是一个前后端分离的单体项目，但是为分布式和集群做了提前的适配，类似大众点评，实现了<strong>登录认证</strong>、<strong>查看商家</strong>、秒杀券抢购、<strong>关注（共同关注）</strong>、<strong>发布点赞推送帖子</strong>（实现了时间线timeline上的动态分页查询）、<strong>签到</strong>、附近商户等功能，业务可以帮助商家引流，增加曝光度。也可以为用户提供查看提供附近消费场所 geo。主要是用来配合学习Redis在项目中的应用。</p>
+<p><mark>登录功能</mark>：使用 redis token + 拦截器。</p>
 <p><a href="#cache">商户缓存</a>：进入主页，先从Redis中读出商户分类信息，若Redis中为空则向MySQL中读取，并写入Redis中。主页店铺分类信息为常用信息，应使用Redis避免频繁读取数据库，然后就是缓存的使用。</p>
-<blockquote>
-<p>令牌桶算法最初来源于计算机网络。在网络传输数据时，为了防止网络拥塞，需限制流出网络的流量，使流量以比较均匀的速度向外发送。令牌桶算法就实现了这个功能，可控制发送到网络上数据的数目，并允许突发数据的发送。大小固定的令牌桶可自行以恒定的速率源源不断地产生令牌。如果令牌不被消耗，或者被消耗的速度小于产生的速度，令牌就会不断地增多，直到把桶填满。后面再产生的令牌就会从桶中溢出。最后桶中可以保存的最大令牌数永远不会超过桶的大小。</p>
-</blockquote>
 <p><a href="#seckill"><mark>秒杀</mark></a>：异步下单，先运行Lua脚本，判断库存够不够，判断是否下过单，若未下过单，才能扣减Redis库存，脚本运行成功，有购买资格。则生成一个全局Id作为订单id，生成订单信息，把订单发送到消息队列，失败后回滚redis，前端轮询订单状态接口。</p>
 <p><a href="#like"><mark>帖子点赞</mark></a>：用户浏览博客时，可以对博客进行点赞，点赞过的用户id，写入，Redis缓存中（zset：博客id，用户ID，时间）博客页并展示点赞次数和点赞列表头像，展示点赞列表时，注意点赞列表按时间排序，点赞时间早的排在前面，SQL语句应拼接order By field (id = 1,2,3,4,5) 。</p>
 <p><a href="#timeline"><mark>帖子推送、时间线、分页查询</mark></a>：推模式，看看谁关注我了，发到这些关注关注者的收件箱（收件箱就是Redis里面的一个Zset，value有blogId，score就设置成当前的时间戳）SQL语句应拼接order By field (id = 1,2,3,4,5) 根据blogId进行查询。</p>
 <p><a href="#bitmap"><mark>签到</mark></a>：使用bitMap，打卡取1，为打卡取0，从第0位开始，n日的打卡数据在n-1位。把当月签到数据和1做与运算，得到最近一天是否打卡，为0则直接返回，为1则把签到数据右移一位和1做与运算，循环，直到与运算结果为0，循环次数为连续签到天数。</p>
+<hr>
+<blockquote>
+</blockquote>
 <h2 id="redis-key-设计"><a href="#redis-key-设计" class="headerlink" title="redis key 设计"></a>redis key 设计</h2><p>STRING </p>
 <ul>
 <li><code>sign:&#123;userId&#125;:202411</code> 2024年11月的userId的签到信息 （bitmap）</li>
@@ -1502,7 +1502,7 @@
 <p><strong>原来</strong>：tomcat 的 HttpSession 是集中的，如果要扩展的话同步是一个大问题，并且可能过多占用服务器的内存。</p>
 <p><strong>改进</strong>：<mark>Redis Token</mark>是分布式的，天生不存在同步问题。</p>
 <ul>
-<li><strong>Redis</strong>：使用 Hash 数据结构—— KEY: token:xxxxxxxx, VALUE: UserDTO的字段信息</li>
+<li><strong>Redis</strong>：<u>使用 Hash 数据结构—— KEY: token:xxxxxxxx, VALUE: UserDTO的字段信息</u></li>
 <li><strong>拦截器</strong>：配置到需要拦截器的地方（个人中心等位置）根据请求头里的 token 查到对应的UserDTO，将其放入<mark>ThreadLocal</mark>，放行，同时也会刷新 token 有效期。<mark>核心方法：preHandle + afterCompletion</mark><ul>
 <li>ThreadLocal 使用：<code>get()</code>,<code>set()</code> 在finally块调用<code>remove()</code> 用途 Spring 数据库连接、事务管理</li>
 <li>内存泄露：每个线程有个 Map，键是 tl（弱引用），值是对应的值（强引用），如果线程没有销毁，但是 tl 销毁了，就容易泄露内存。</li>
@@ -1667,8 +1667,60 @@
 <h3 id="Result-封装"><a href="#Result-封装" class="headerlink" title="Result 封装"></a>Result 封装</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Result</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Boolean success;</span><br><span class="line">    <span class="keyword">private</span> String errorMsg;</span><br><span class="line">    <span class="keyword">private</span> Object data;</span><br><span class="line">    <span class="keyword">private</span> Long total;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">ok</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="literal">true</span>, <span class="literal">null</span>, <span class="literal">null</span>, <span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">ok</span><span class="params">(Object data)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="literal">true</span>, <span class="literal">null</span>, data, <span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">ok</span><span class="params">(List&lt;?&gt; data, Long total)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="literal">true</span>, <span class="literal">null</span>, data, total);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">fail</span><span class="params">(String errorMsg)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="literal">false</span>, errorMsg, <span class="literal">null</span>, <span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="秒杀抢购"><a href="#秒杀抢购" class="headerlink" title="秒杀抢购"></a><span id="seckill">秒杀抢购</span></h2><p>• 使用乐观锁避免秒杀券超卖，同时提高并发。通过控制事务的粒度以及动态代理保证事务的有效性。使用 Lua 脚本解决秒杀券更新的原子性问题。 Redisson 分布式 锁解决集群环境下一人一单可能导致的并发安全问题。在 3000 并发测试中成功拦截 100%的重复请求</p>
-<p>使用令牌桶限流防止突发流量：</p>
-<p>异步下单，先运行Lua脚本，判断库存够不够，判断是否下过单，若未下过单，才能扣减Redis库存，脚本运行成功，有购买资格。则生成一个全局Id作为订单id，生成订单信息，把订单保存到消息队列,redis回滚。</p>
+<h3 id="令牌桶限流"><a href="#令牌桶限流" class="headerlink" title="令牌桶限流"></a>令牌桶限流</h3><ul>
+<li><strong>令牌生成机制</strong>：系统按固定速率（如 100 个 / 秒）向桶中放入令牌，桶有最大容量（如 1000 个令牌），满后不再生成。</li>
+<li><strong>流量处理逻辑</strong>：每个请求需要消耗一个令牌才能被处理，无令牌时请求被拒绝或排队。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><strong>维度</strong></th>
+<th><strong>漏桶算法</strong></th>
+<th><strong>令牌桶算法</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>控制目标</strong></td>
+<td>限制流出速率（固定值）</td>
+<td>控制平均速率，允许突发</td>
+</tr>
+<tr>
+<td><strong>突发处理</strong></td>
+<td>无法处理，超出部分直接丢弃</td>
+<td>可利用预存令牌处理突发</td>
+</tr>
+<tr>
+<td><strong>桶的作用</strong></td>
+<td>存储待处理流量（溢出丢弃）</td>
+<td>存储令牌（控制流量合法性）</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>对速率严格限制的场景（如带宽限速）</td>
+<td>允许流量突发的场景（如 API 限流）</td>
+</tr>
+</tbody></table>
+<p>使用令牌桶限流防止突发流量：异步下单，先运行Lua脚本，判断库存够不够，判断是否下过单，若未下过单，才能扣减Redis库存，脚本运行成功，有购买资格。则生成一个全局Id作为订单id，生成订单信息，把订单保存到消息队列,redis回滚。</p>
+<blockquote>
+<p>令牌桶算法最初来源于计算机网络。在网络传输数据时，为了防止网络拥塞，需限制流出网络的流量，使流量以比较均匀的速度向外发送。令牌桶算法就实现了这个功能，可控制发送到网络上数据的数目，并允许突发数据的发送。大小固定的令牌桶可自行以恒定的速率源源不断地产生令牌。如果令牌不被消耗，或者被消耗的速度小于产生的速度，令牌就会不断地增多，直到把桶填满。后面再产生的令牌就会从桶中溢出。最后桶中可以保存的最大令牌数永远不会超过桶的大小。</p>
+<p><strong>阻塞式获取令牌</strong>：请求进来后，若令牌桶里没有足够的令牌，就在这里阻塞住，等待令牌的发放。</p>
+<p><strong>非阻塞式获取令牌</strong>：请求进来后，若令牌桶里没有足够的令牌，会尝试等待设置好的时间（这里写了1000ms），其会自动判断在1000ms后，这个请求能不能拿到令牌，如果不能拿到，直接返回抢购失败。如果timeout设置为0，则等于阻塞时获取令牌。</p>
+</blockquote>
+<img src="https://ucc.alicdn.com/kavrxpwgkb2oo_20240819_446c67dc76af4b589ca0bf818ddd07c5.webp" alt="img" style="zoom: 67%;" />
+
+<blockquote>
+<p>漏桶算法的“恒定出水速率”决定了它无法应对瞬时突发请求，一旦超出桶容量，流量就被丢弃。</p>
+<ul>
+<li><p><strong>水桶模型</strong>：将流量视为 “水”，流入一个固定容量的桶中，桶底部有一个恒定速率的 “漏洞” 向外流出。</p>
+</li>
+<li><p><strong>控制逻辑</strong>：无论流入流量如何变化，流出速率始终保持恒定（等于漏洞的速率），桶满后多余流量会被丢弃。</p>
+</li>
+<li><p><strong>流入无缓冲空间</strong>：假设业务突然产生大量流量（如电商大促瞬间的请求），漏桶仅能按固定速率处理，超出桶容量的流量会被直接丢弃，无法临时 “存储” 突发量。</p>
+</li>
+</ul>
+</blockquote>
+<img src="https://ucc.alicdn.com/kavrxpwgkb2oo_20240819_40512d45f4894383bf56ced91e8a2f62.webp?x-oss-process=image%2Fresize%2Cw_1400%2Cm_lfit%2Fformat%2Cwebp" alt="img" style="zoom: 75%;" />
+
 <h3 id="乐观锁-防止超卖"><a href="#乐观锁-防止超卖" class="headerlink" title="乐观锁 防止超卖"></a>乐观锁 防止超卖</h3><p><strong>做完&gt;0库存判断之后：</strong></p>
 <ul>
 <li>原来：不检查直接扣【超卖】</li>
@@ -1683,10 +1735,10 @@
 <p>（使用spring自带的事务，将其放到一个事务里 <code>@Transactional</code>，注意事务有效性）</p>
 </li>
 <li><p>抢优惠券没有及时处理怎么办?</p>
-<p>（通知用户已经抢了，延迟推送结果）</p>
+<p>（通知用户已经抢了，延迟推送结果，轮询订单状态查询接口）</p>
 </li>
 <li><p>抢优惠券处理完了如何通知用户？</p>
-<p>（没有通知，实际的业务还是基于DB的，使用券的时候db里没有就是没有，db处理完了自然就能用了）</p>
+<p>（前端轮询，状态变了自己会查到，也可以采用其他服务器推送模式，如SSE、WebSocket、第三方（firebase））</p>
 </li>
 <li><p>秒杀场景下扣减库存太慢了怎么办？</p>
 <p>（数据库集群，分库分表，索引优化，Redis热key，大key，Redis缓存过小）</p>
@@ -1768,7 +1820,8 @@
 <li><p>重试机制：生产者发送消息的时候设置好消息头的 <code>retryCount = 0</code>，消费者检测 <code>retryCount &lt;= 3</code>才消费。如果订单保存失败则抛异常，此时拒绝消息并重新入队，达到三次重试就将这条消息转发到延时队列中去。这样，配置延时队列的死信队列为我们的正常队列，等到消息的 ttl 到了就 Reject消息，消息就重新回到了“死信队列”，也就是消费者对应的对列中，确保了消息不丢失。</p>
 </li>
 </ul>
-<h4 id="数据库操作失败（Redis已经预扣）"><a href="#数据库操作失败（Redis已经预扣）" class="headerlink" title="数据库操作失败（Redis已经预扣）"></a>数据库操作失败（Redis已经预扣）</h4><p>lua脚本对库存（string）执行了减1操作，对集合（set）进行了add操作</p>
+<h4 id="数据库操作失败：回滚"><a href="#数据库操作失败：回滚" class="headerlink" title="数据库操作失败：回滚"></a>数据库操作失败：回滚</h4><p>• 使用乐观锁避免秒杀券超卖，同时提高并发。通过控制事务的粒度以及动态代理保证事务的有效性。使用 Lua 脚本解决秒杀券更新的原子性问题。 Redisson 分布式 锁解决集群环境下一人一单可能导致的并发安全问题。在 3000 并发测试中成功拦截 100%的重复请求</p>
+<p>lua脚本对库存（string）执行了减1操作，对集合（set）进行了add操作</p>
 <ol>
 <li>指数退避重试机制（订单id唯一保证幂等性）</li>
 <li><strong>补偿机制：最终一致性兜底</strong>。如果重试到达一定次数就变成死信，死信监听器接受消息之后出发redis回滚对库存加1，对集合进行remove的操作。</li>
@@ -1820,7 +1873,7 @@
 <td>中</td>
 </tr>
 </tbody></table>
-<h3 id="用户体感反馈"><a href="#用户体感反馈" class="headerlink" title="用户体感反馈"></a>用户体感反馈</h3><ol>
+<h3 id="用户体感反馈：前端轮询接口查询订单状态"><a href="#用户体感反馈：前端轮询接口查询订单状态" class="headerlink" title="用户体感反馈：前端轮询接口查询订单状态"></a>用户体感反馈：前端轮询接口查询订单状态</h3><ol>
 <li>活动开始/结束，token，参数非法</li>
 <li>判断资格，成功则返回“抢购成功，请耐心等待结果”避免用户重复点击。</li>
 <li>入队阶段：网络异常/MQ不可用，回滚 Redis，告知用户系统繁忙</li>
@@ -1831,11 +1884,17 @@
 <p>这样的话，用户可能马上就要开始投诉了！太不人性化了，我们不能只为了开发方便，舍弃了用户体验！</p>
 <p>所以我们要改进一下，如何改进呢？其实很简单：</p>
 <ul>
-<li>让前端在提交订单后，显示一个“排队中”。</li>
-<li>同时，前端隔三秒请求一次 (检查用户和商品是否已经有订单) 的接口，如果得到订单已经处理完成的消息，页面跳转抢购成功。就是在后端单开一个查询 redis 里面订单的 set 里面存不存在这个用户。</li>
+<li>让前端在提交订单后，显示一个“排队中”（这里返回订单会包含orderid）。</li>
+<li>同时，前端隔三秒请求一次 (检查用户和商品是否已经有订单) 的接口，如果得到订单已经处理完成的消息，页面跳转抢购成功。就是在后端单开一个查询接口，这里面放一个map，存储orderid到orderStatus的映射。<ul>
+<li>获取状态：pending就返回pending，success/failed就返回 remove()</li>
+<li>提交订单之后，设定状态为pending</li>
+<li>如果mq监听器成功落库，则设定状态为success</li>
+<li>如果mq监听器落库失败，则设定状态为failed，并且将失败订单落库，然后回滚redis</li>
+</ul>
+</li>
 </ul>
 <h2 id="点赞、排行榜"><a href="#点赞、排行榜" class="headerlink" title="点赞、排行榜"></a><span id="like">点赞、排行榜</span></h2><p><strong>使用 ZSet 与 MySQL 的自定义排序实现点赞及排行榜，使用 Set 作为共同关注的解决方案。</strong> </p>
-<p>使用Zset存储每个blog的点赞者。 保证按照点赞时间排序，并且点赞人不会重复。</p>
+<p>使用Zset存储每个blog的点赞者id。 保证按照点赞时间（score）排序，并且点赞人不会重复。</p>
 <p>Set 存储 用户关注的人，set 之间可以有intersect交集操作。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  idStr 是前5个点赞的用户的 id，由于MySQL查询的结果顺序不定，因此需要 手动使用 ORDER BY FIELD 指定 ID 字段 按照 idStr 的顺序</span></span><br><span class="line">List&lt;UserDTO&gt; userDTOS = userService.query()</span><br><span class="line">        .in(<span class="string">&quot;id&quot;</span>, ids).last(<span class="string">&quot;ORDER BY FIELD(id,&quot;</span> + idStr + <span class="string">&quot;)&quot;</span>).list()</span><br><span class="line">        .stream()</span><br><span class="line">        .map(user -&gt; BeanUtil.copyProperties(user, UserDTO.class))</span><br><span class="line">        .collect(Collectors.toList());</span><br></pre></td></tr></table></figure>
 
