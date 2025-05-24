@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Arvo:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Spring 循环依赖获取单例对象 优先查询一级缓存（singletonObjects） 一级缓存也叫单例池，存储的是完全初始化的单例 Bean（例如已注入所有依赖且完成代理增强的对象）。 作用：直接获取可用 Bean，避免重复创建。 优先级最高：如果找到直接返回，不触发后续缓存查询。   未找到则查询二级缓存（earlySingletonObjects） 二级缓存存储的是已实例化但未完成初始化的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="spring 循环依赖">
+<meta property="og:url" content="http://scatteredream.github.io/2025/05/25/spring-circle-ref/index.html">
+<meta property="og:site_name" content="scatteredream&#39;s blog">
+<meta property="og:description" content="Spring 循环依赖获取单例对象 优先查询一级缓存（singletonObjects） 一级缓存也叫单例池，存储的是完全初始化的单例 Bean（例如已注入所有依赖且完成代理增强的对象）。 作用：直接获取可用 Bean，避免重复创建。 优先级最高：如果找到直接返回，不触发后续缓存查询。   未找到则查询二级缓存（earlySingletonObjects） 二级缓存存储的是已实例化但未完成初始化的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-24T23:06:13.797Z">
+<meta property="article:author" content="碎梦">
+<meta property="article:tag" content="源码">
+<meta property="article:tag" content="动态代理">
+<meta property="article:tag" content="spring">
+<meta property="article:tag" content="bean">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://scatteredream.github.io/2025/05/25/spring-circle-ref/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2025/05/25/spring-circle-ref/","path":"2025/05/25/spring-circle-ref/","title":"spring 循环依赖"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>spring 循环依赖 | scatteredream's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">scatteredream's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96"><span class="nav-number">1.</span> <span class="nav-text">Spring 循环依赖</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%8D%95%E4%BE%8B%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.1.</span> <span class="nav-text">获取单例对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E5%8F%AA%E6%9C%89%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98%EF%BC%8C%E5%B0%B1%E5%8F%AF%E4%BB%A5%E8%A7%A3%E5%86%B3%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">如果只有二级缓存，就可以解决问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98%E7%9A%84%E4%B8%8D%E8%B6%B3"><span class="nav-number">1.2.1.</span> <span class="nav-text">二级缓存的不足</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E6%B5%81%E7%A8%8B"><span class="nav-number">1.3.</span> <span class="nav-text">源码流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A0%E6%B3%95%E8%A7%A3%E5%86%B3%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%BC%95%E7%94%A8"><span class="nav-number">1.4.</span> <span class="nav-text">无法解决的循环引用</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="碎梦"
+      src="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+  <p class="site-author-name" itemprop="name">碎梦</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">84</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">126</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/25/spring-circle-ref/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="spring 循环依赖 | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          spring 循环依赖
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-25 00:00:00 / 修改时间：07:06:13" itemprop="dateCreated datePublished" datetime="2025-05-25T00:00:00+08:00">2025-05-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Spring-循环依赖"><a href="#Spring-循环依赖" class="headerlink" title="Spring 循环依赖"></a>Spring 循环依赖</h1><h2 id="获取单例对象"><a href="#获取单例对象" class="headerlink" title="获取单例对象"></a>获取单例对象</h2><ol>
+<li><strong>优先查询一级缓存（<code>singletonObjects</code>）</strong><ul>
+<li>一级缓存也叫单例池，存储的是<strong>完全初始化</strong>的单例 Bean（例如已注入所有依赖且完成代理增强的对象）。</li>
+<li><strong>作用</strong>：直接获取可用 Bean，避免重复创建。</li>
+<li>优先级最高：如果找到直接返回，不触发后续缓存查询。</li>
+</ul>
+</li>
+<li><strong>未找到则查询二级缓存（<code>earlySingletonObjects</code>）</strong><ul>
+<li>二级缓存存储的是<strong>已实例化但未完成初始化</strong>的 Bean（半成品）。</li>
+<li><strong>作用</strong>：在循环依赖中临时暴露早期引用（例如 A 依赖 B 时，B 可能正在创建中，需引用 A 的半成品）。</li>
+<li>注意：若二级缓存中存在目标 Bean，则直接返回，但此时 Bean 可能尚未完成属性注入或代理。</li>
+</ul>
+</li>
+<li><strong>最后查询三级缓存（<code>singletonFactories</code>）</strong><ul>
+<li>三级缓存是 beanName 到 对象工厂（<code>ObjectFactory</code>）的映射，对象工厂是个函数式接口，这个接口用于动态生成 Bean 的早期引用或代理对象。</li>
+<li>触发条件：仅当一、二级缓存均未找到时，调用工厂生成 Bean 实例，之后将其提升至二级缓存。</li>
+<li><strong>关键作用</strong>：支持 AOP 代理的延迟生成（例如解决代理对象的循环依赖）。</li>
+</ul>
+</li>
+</ol>
+<h2 id="如果只有二级缓存，就可以解决问题"><a href="#如果只有二级缓存，就可以解决问题" class="headerlink" title="如果只有二级缓存，就可以解决问题"></a>如果只有二级缓存，就可以解决问题</h2><ul>
+<li><code>getBean(a)</code>，实例化对象 A 以后放入二级缓存（裸对象），然后 A 开始属性注入</li>
+<li>遇到一个属性 B，先从一级缓存里面拿发现没有，瞄一眼二级缓存里面也没有，于是开始 <code>getBean(b)</code>：</li>
+<li>实例化对象B以后将其放入二级缓存（裸对象），B 开始属性注入，发现 A 不在一级缓存，但是从二级缓存里面拿到了 A 的裸对象注入 B，此时 B 算初始化完成，把 B 从二级缓存里面删掉，放到一级缓存里面，至此 B 创建完成。</li>
+<li>最后 A 用于注入的方法就能返回一个从缓存里面拿到的 B 对象，A 的注入也就完成了。</li>
+</ul>
+<h3 id="二级缓存的不足"><a href="#二级缓存的不足" class="headerlink" title="二级缓存的不足"></a>二级缓存的不足</h3><p>但是二级缓存的问题是，A是代理，有B，B有需要注入A，首先A创建出实例，随后A就走到了populateBean这一步</p>
+<p>然后去拿B，B创建，又想来获取A了，此时A那边属于是一个刚创建实例的状态，并未走到生成代理对象那一步，因此直接注入就会出问题，所以应该注册一个回调函数，把A的实例注册进去，函数的返回值是A的对象（实例/代理实例），所以就产生了三级缓存。三级缓存的 <code>ObjectFactory</code> 主要是用于提供一个钩子，这个接口的方法返回的就是bean对象，不同之处在于可以在返回裸对象前，给其套上一层代理再返回。如果只有二级缓存，就没有机会返回代理对象。</p>
+<h2 id="源码流程"><a href="#源码流程" class="headerlink" title="源码流程"></a>源码流程</h2><blockquote>
+<p><code>DefaultSingletonBeanRegistry#getSingleton(name,true)</code> DCL双重校验锁。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="keyword">protected</span> Object <span class="title function_">getSingleton</span><span class="params">(String beanName, <span class="type">boolean</span> allowEarlyReference)</span> &#123;</span><br><span class="line">    <span class="comment">// 快速从一二级缓存检查已有的单例</span></span><br><span class="line">    <span class="type">Object</span> <span class="variable">singletonObject</span> <span class="operator">=</span> <span class="built_in">this</span>.singletonObjects.get(beanName);</span><br><span class="line">    <span class="keyword">if</span> (singletonObject == <span class="literal">null</span> &amp;&amp; isSingletonCurrentlyInCreation(beanName)) &#123;</span><br><span class="line">        singletonObject = <span class="built_in">this</span>.earlySingletonObjects.get(beanName);</span><br><span class="line">        <span class="keyword">if</span> (singletonObject == <span class="literal">null</span> &amp;&amp; allowEarlyReference) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (<span class="built_in">this</span>.singletonObjects) &#123;</span><br><span class="line">                <span class="comment">// 加锁，从三级缓存创建单例对象</span></span><br><span class="line">                singletonObject = <span class="built_in">this</span>.singletonObjects.get(beanName);</span><br><span class="line">                <span class="keyword">if</span> (singletonObject == <span class="literal">null</span>) &#123;</span><br><span class="line">                    singletonObject = <span class="built_in">this</span>.earlySingletonObjects.get(beanName);</span><br><span class="line">                    <span class="keyword">if</span> (singletonObject == <span class="literal">null</span>) &#123;</span><br><span class="line">                        ObjectFactory&lt;?&gt; singletonFactory = <span class="built_in">this</span>.singletonFactories.get(beanName);</span><br><span class="line">                        <span class="keyword">if</span> (singletonFactory != <span class="literal">null</span>) &#123;</span><br><span class="line">                            singletonObject = singletonFactory.getObject();</span><br><span class="line">                            <span class="built_in">this</span>.earlySingletonObjects.put(beanName, singletonObject);</span><br><span class="line">                            <span class="built_in">this</span>.singletonFactories.remove(beanName);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> singletonObject;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<blockquote>
+<p>流程正式开始</p>
+<p><code>DefaultListableBeanFactory#preInstantiateSingletons()</code> 用于对解析到的<code> beanNames</code> 一一进行 <code>getBean(beanName)</code></p>
+<p><code>AbstractBeanFactory#doGetBean(name···)</code> </p>
+</blockquote>
+<ol>
+<li><code>getSingleton(name,true)</code> 获取不到再往下走</li>
+<li>类似双亲委派，找 parent，parent 找不到再自行寻找</li>
+<li>自行寻找：(dependsOn) 然后 <code>getSingleton(name, singletonFactory)</code></li>
+<li><code>getSingleton(name, singletonFactory)</code>: 先一级缓存找，找不到就真正开始<mark>创建工作</mark>：<ul>
+<li>首先将其加到 CreationSet 表明其正在创建。</li>
+<li><code>singletonFactory</code>实际上就是一个<code>ObjectFactory</code>，这个函数式接口实现方法通过<code>createBean(name···)</code>获取对象。</li>
+<li>创建完成将其从 CreationSet 中移除，保证其只存在于一级缓存单例池中。最后返回创建好的 bean</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p><code>AbstractAutowireCapableBeanFactory#doCreateBean(name,mbd,args)</code> </p>
+</blockquote>
+<ol>
+<li><p><code>createBeanInstance()</code>：创建出裸对象，此时未注入依赖。（实际上返回的是 BeanWrapper，有更完善的功能，本质还是对象实例）</p>
+<ul>
+<li>当且仅当<u>单例+允许循环依赖+这个bean在 CreationSet 中</u>，才加三级缓存<code>addSingletonFactory</code>，一定要保证一级和二级缓存里面没有，然后把ObjectFactory加到三级缓存里面。所以单例 bean 加入了三级缓存：lambda：<code>getEarlyBeanReference()</code>返回创建的裸/代理对象 <code>singletonObject</code></li>
+</ul>
+</li>
+<li><p><code>populateBean()</code>：进行字段、方法注入。做一些<code> postProcessAfterInstantiation</code> 实例化之后初始化之前的工作。然后就是 <code>autowireByName/Name</code>，本质上就是通过 <code>getBean(name···)</code>获取实例。</p>
+<ul>
+<li>依赖注入就是这里遇到的问题，如果代理对象出现循环依赖，那么其生成应该是初始化之后，所以此阶段断然不能提供出代理对象，因此加入三级缓存提前暴露出一个引用，。</li>
+</ul>
+</li>
+<li><p><code>initializeBean()</code>：</p>
+<ul>
+<li><p>调用 <code>BeanPostProcessor#postProcessBeforeInitialization</code>。</p>
+</li>
+<li><p>调用初始化方法。(PostConstruct-initMethod-afterPropertiesSet)</p>
+</li>
+<li><p>调用 <code>BeanPostProcessor#postProcessAfterInitialization</code>（<strong>一般到这里才生成代理对象</strong>）。</p>
+</li>
+</ul>
+</li>
+<li><p>完成上述工作之后，如果当前是存在于三级缓存，则调用下方的 <code>getSingleton(name,true)</code> ： true 代表允许早期引用（主要解决循环依赖）</p>
+</li>
+</ol>
+<blockquote>
+<p>代理：<code>AbstractAutoProxyCreator</code></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这个方法是用于三级缓存生成对象的时候将bean放到earlyBeanReferences里面，</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">getEarlyBeanReference</span><span class="params">(Object bean, String beanName)</span> &#123;</span><br><span class="line">    <span class="type">Object</span> <span class="variable">cacheKey</span> <span class="operator">=</span> <span class="built_in">this</span>.getCacheKey(bean.getClass(), beanName);</span><br><span class="line">    <span class="built_in">this</span>.earlyBeanReferences.put(cacheKey, bean);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.wrapIfNecessary(bean, beanName, cacheKey);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">postProcessAfterInitialization</span><span class="params">(<span class="meta">@Nullable</span> Object bean, String beanName)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (bean != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">cacheKey</span> <span class="operator">=</span> <span class="built_in">this</span>.getCacheKey(bean.getClass(), beanName);</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span>.earlyBeanReferences.remove(cacheKey) != bean) &#123;</span><br><span class="line">            <span class="comment">// wrap 包装成代理的核心方法</span></span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.wrapIfNecessary(bean, beanName, cacheKey);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> bean;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="无法解决的循环引用"><a href="#无法解决的循环引用" class="headerlink" title="无法解决的循环引用"></a>无法解决的循环引用</h2><p>如果是 AB互相依赖，A只有含参构造，那么注入B完成之前就无法创建一个A实例出来，自然也没法加到缓存里面，A尝试注入B，B那边尝试注入A彻底卡死。</p>
+<p>但是 从B开始又可以了，然而对于普通的bean来说，注册顺序并不是一个可控的状态，所以尽量避免含参构造的bean之间互相依赖</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%BA%90%E7%A0%81/" rel="tag"># 源码</a>
+              <a href="/tags/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" rel="tag"># 动态代理</a>
+              <a href="/tags/spring/" rel="tag"># spring</a>
+              <a href="/tags/bean/" rel="tag"># bean</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/21/computer-system-structure/" rel="prev" title="计算机体系结构突击">
+                  <i class="fa fa-angle-left"></i> 计算机体系结构突击
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">碎梦</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/scatteredream" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

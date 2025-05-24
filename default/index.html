@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">83</span>
+          <span class="site-state-item-count">84</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -194,6 +194,168 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/25/spring-circle-ref/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/25/spring-circle-ref/" class="post-title-link" itemprop="url">spring 循环依赖</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-25 00:00:00 / 修改时间：07:06:13" itemprop="dateCreated datePublished" datetime="2025-05-25T00:00:00+08:00">2025-05-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Spring-循环依赖"><a href="#Spring-循环依赖" class="headerlink" title="Spring 循环依赖"></a>Spring 循环依赖</h1><h2 id="获取单例对象"><a href="#获取单例对象" class="headerlink" title="获取单例对象"></a>获取单例对象</h2><ol>
+<li><strong>优先查询一级缓存（<code>singletonObjects</code>）</strong><ul>
+<li>一级缓存也叫单例池，存储的是<strong>完全初始化</strong>的单例 Bean（例如已注入所有依赖且完成代理增强的对象）。</li>
+<li><strong>作用</strong>：直接获取可用 Bean，避免重复创建。</li>
+<li>优先级最高：如果找到直接返回，不触发后续缓存查询。</li>
+</ul>
+</li>
+<li><strong>未找到则查询二级缓存（<code>earlySingletonObjects</code>）</strong><ul>
+<li>二级缓存存储的是<strong>已实例化但未完成初始化</strong>的 Bean（半成品）。</li>
+<li><strong>作用</strong>：在循环依赖中临时暴露早期引用（例如 A 依赖 B 时，B 可能正在创建中，需引用 A 的半成品）。</li>
+<li>注意：若二级缓存中存在目标 Bean，则直接返回，但此时 Bean 可能尚未完成属性注入或代理。</li>
+</ul>
+</li>
+<li><strong>最后查询三级缓存（<code>singletonFactories</code>）</strong><ul>
+<li>三级缓存是 beanName 到 对象工厂（<code>ObjectFactory</code>）的映射，对象工厂是个函数式接口，这个接口用于动态生成 Bean 的早期引用或代理对象。</li>
+<li>触发条件：仅当一、二级缓存均未找到时，调用工厂生成 Bean 实例，之后将其提升至二级缓存。</li>
+<li><strong>关键作用</strong>：支持 AOP 代理的延迟生成（例如解决代理对象的循环依赖）。</li>
+</ul>
+</li>
+</ol>
+<h2 id="如果只有二级缓存，就可以解决问题"><a href="#如果只有二级缓存，就可以解决问题" class="headerlink" title="如果只有二级缓存，就可以解决问题"></a>如果只有二级缓存，就可以解决问题</h2><ul>
+<li><code>getBean(a)</code>，实例化对象 A 以后放入二级缓存（裸对象），然后 A 开始属性注入</li>
+<li>遇到一个属性 B，先从一级缓存里面拿发现没有，瞄一眼二级缓存里面也没有，于是开始 <code>getBean(b)</code>：</li>
+<li>实例化对象B以后将其放入二级缓存（裸对象），B 开始属性注入，发现 A 不在一级缓存，但是从二级缓存里面拿到了 A 的裸对象注入 B，此时 B 算初始化完成，把 B 从二级缓存里面删掉，放到一级缓存里面，至此 B 创建完成。</li>
+<li>最后 A 用于注入的方法就能返回一个从缓存里面拿到的 B 对象，A 的注入也就完成了。</li>
+</ul>
+<h3 id="二级缓存的不足"><a href="#二级缓存的不足" class="headerlink" title="二级缓存的不足"></a>二级缓存的不足</h3><p>但是二级缓存的问题是，A是代理，有B，B有需要注入A，首先A创建出实例，随后A就走到了populateBean这一步</p>
+<p>然后去拿B，B创建，又想来获取A了，此时A那边属于是一个刚创建实例的状态，并未走到生成代理对象那一步，因此直接注入就会出问题，所以应该注册一个回调函数，把A的实例注册进去，函数的返回值是A的对象（实例/代理实例），所以就产生了三级缓存。三级缓存的 <code>ObjectFactory</code> 主要是用于提供一个钩子，这个接口的方法返回的就是bean对象，不同之处在于可以在返回裸对象前，给其套上一层代理再返回。如果只有二级缓存，就没有机会返回代理对象。</p>
+<h2 id="源码流程"><a href="#源码流程" class="headerlink" title="源码流程"></a>源码流程</h2><blockquote>
+<p><code>DefaultSingletonBeanRegistry#getSingleton(name,true)</code> DCL双重校验锁。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="keyword">protected</span> Object <span class="title function_">getSingleton</span><span class="params">(String beanName, <span class="type">boolean</span> allowEarlyReference)</span> &#123;</span><br><span class="line">    <span class="comment">// 快速从一二级缓存检查已有的单例</span></span><br><span class="line">    <span class="type">Object</span> <span class="variable">singletonObject</span> <span class="operator">=</span> <span class="built_in">this</span>.singletonObjects.get(beanName);</span><br><span class="line">    <span class="keyword">if</span> (singletonObject == <span class="literal">null</span> &amp;&amp; isSingletonCurrentlyInCreation(beanName)) &#123;</span><br><span class="line">        singletonObject = <span class="built_in">this</span>.earlySingletonObjects.get(beanName);</span><br><span class="line">        <span class="keyword">if</span> (singletonObject == <span class="literal">null</span> &amp;&amp; allowEarlyReference) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (<span class="built_in">this</span>.singletonObjects) &#123;</span><br><span class="line">                <span class="comment">// 加锁，从三级缓存创建单例对象</span></span><br><span class="line">                singletonObject = <span class="built_in">this</span>.singletonObjects.get(beanName);</span><br><span class="line">                <span class="keyword">if</span> (singletonObject == <span class="literal">null</span>) &#123;</span><br><span class="line">                    singletonObject = <span class="built_in">this</span>.earlySingletonObjects.get(beanName);</span><br><span class="line">                    <span class="keyword">if</span> (singletonObject == <span class="literal">null</span>) &#123;</span><br><span class="line">                        ObjectFactory&lt;?&gt; singletonFactory = <span class="built_in">this</span>.singletonFactories.get(beanName);</span><br><span class="line">                        <span class="keyword">if</span> (singletonFactory != <span class="literal">null</span>) &#123;</span><br><span class="line">                            singletonObject = singletonFactory.getObject();</span><br><span class="line">                            <span class="built_in">this</span>.earlySingletonObjects.put(beanName, singletonObject);</span><br><span class="line">                            <span class="built_in">this</span>.singletonFactories.remove(beanName);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> singletonObject;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<blockquote>
+<p>流程正式开始</p>
+<p><code>DefaultListableBeanFactory#preInstantiateSingletons()</code> 用于对解析到的<code> beanNames</code> 一一进行 <code>getBean(beanName)</code></p>
+<p><code>AbstractBeanFactory#doGetBean(name···)</code> </p>
+</blockquote>
+<ol>
+<li><code>getSingleton(name,true)</code> 获取不到再往下走</li>
+<li>类似双亲委派，找 parent，parent 找不到再自行寻找</li>
+<li>自行寻找：(dependsOn) 然后 <code>getSingleton(name, singletonFactory)</code></li>
+<li><code>getSingleton(name, singletonFactory)</code>: 先一级缓存找，找不到就真正开始<mark>创建工作</mark>：<ul>
+<li>首先将其加到 CreationSet 表明其正在创建。</li>
+<li><code>singletonFactory</code>实际上就是一个<code>ObjectFactory</code>，这个函数式接口实现方法通过<code>createBean(name···)</code>获取对象。</li>
+<li>创建完成将其从 CreationSet 中移除，保证其只存在于一级缓存单例池中。最后返回创建好的 bean</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p><code>AbstractAutowireCapableBeanFactory#doCreateBean(name,mbd,args)</code> </p>
+</blockquote>
+<ol>
+<li><p><code>createBeanInstance()</code>：创建出裸对象，此时未注入依赖。（实际上返回的是 BeanWrapper，有更完善的功能，本质还是对象实例）</p>
+<ul>
+<li>当且仅当<u>单例+允许循环依赖+这个bean在 CreationSet 中</u>，才加三级缓存<code>addSingletonFactory</code>，一定要保证一级和二级缓存里面没有，然后把ObjectFactory加到三级缓存里面。所以单例 bean 加入了三级缓存：lambda：<code>getEarlyBeanReference()</code>返回创建的裸/代理对象 <code>singletonObject</code></li>
+</ul>
+</li>
+<li><p><code>populateBean()</code>：进行字段、方法注入。做一些<code> postProcessAfterInstantiation</code> 实例化之后初始化之前的工作。然后就是 <code>autowireByName/Name</code>，本质上就是通过 <code>getBean(name···)</code>获取实例。</p>
+<ul>
+<li>依赖注入就是这里遇到的问题，如果代理对象出现循环依赖，那么其生成应该是初始化之后，所以此阶段断然不能提供出代理对象，因此加入三级缓存提前暴露出一个引用，。</li>
+</ul>
+</li>
+<li><p><code>initializeBean()</code>：</p>
+<ul>
+<li><p>调用 <code>BeanPostProcessor#postProcessBeforeInitialization</code>。</p>
+</li>
+<li><p>调用初始化方法。(PostConstruct-initMethod-afterPropertiesSet)</p>
+</li>
+<li><p>调用 <code>BeanPostProcessor#postProcessAfterInitialization</code>（<strong>一般到这里才生成代理对象</strong>）。</p>
+</li>
+</ul>
+</li>
+<li><p>完成上述工作之后，如果当前是存在于三级缓存，则调用下方的 <code>getSingleton(name,true)</code> ： true 代表允许早期引用（主要解决循环依赖）</p>
+</li>
+</ol>
+<blockquote>
+<p>代理：<code>AbstractAutoProxyCreator</code></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这个方法是用于三级缓存生成对象的时候将bean放到earlyBeanReferences里面，</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">getEarlyBeanReference</span><span class="params">(Object bean, String beanName)</span> &#123;</span><br><span class="line">    <span class="type">Object</span> <span class="variable">cacheKey</span> <span class="operator">=</span> <span class="built_in">this</span>.getCacheKey(bean.getClass(), beanName);</span><br><span class="line">    <span class="built_in">this</span>.earlyBeanReferences.put(cacheKey, bean);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.wrapIfNecessary(bean, beanName, cacheKey);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">postProcessAfterInitialization</span><span class="params">(<span class="meta">@Nullable</span> Object bean, String beanName)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (bean != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">cacheKey</span> <span class="operator">=</span> <span class="built_in">this</span>.getCacheKey(bean.getClass(), beanName);</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span>.earlyBeanReferences.remove(cacheKey) != bean) &#123;</span><br><span class="line">            <span class="comment">// wrap 包装成代理的核心方法</span></span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.wrapIfNecessary(bean, beanName, cacheKey);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> bean;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="无法解决的循环引用"><a href="#无法解决的循环引用" class="headerlink" title="无法解决的循环引用"></a>无法解决的循环引用</h2><p>如果是 AB互相依赖，A只有含参构造，那么注入B完成之前就无法创建一个A实例出来，自然也没法加到缓存里面，A尝试注入B，B那边尝试注入A彻底卡死。</p>
+<p>但是 从B开始又可以了，然而对于普通的bean来说，注册顺序并不是一个可控的状态，所以尽量避免含参构造的bean之间互相依赖</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -3166,199 +3328,6 @@
 <p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/time_wait_recv_syn.html#%E5%85%88%E8%AF%B4%E7%BB%93%E8%AE%BA">在 TIME_WAIT 状态的 TCP 连接，收到 SYN 后会发生什么？ | 小林coding</a></p>
 <p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/tcp_tw_reuse_close.html">tcp_tw_reuse 为什么默认是关闭的？ | 小林coding</a></p>
 <p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/3_tcp/quic.html">如何基于 UDP 协议实现可靠传输？ | 小林coding</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/09/software-engineering/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/09/software-engineering/" class="post-title-link" itemprop="url">软件工程期末复习</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2025-05-09 00:00:00 / 修改时间：22:24:07" itemprop="dateCreated datePublished" datetime="2025-05-09T00:00:00+08:00">2025-05-09</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><strong>软件危机的原因</strong>：一方面是与软件本身的特点有关，另一方面是由软件开发和维护的方法不正确有关。</p>
-<p><strong>软件危机包含两方面问题</strong>：</p>
-<ul>
-<li>如何开发软件，以满足不断增长，日趋复杂的需求；</li>
-<li>如何维护数量不断膨胀的软件产品。</li>
-</ul>
-<h1 id="过程与活动"><a href="#过程与活动" class="headerlink" title="过程与活动"></a>过程与活动</h1><p><strong>过程</strong>：<mark>问题定义、可行性研究、需求分析、设计、实施、测试、部署</mark></p>
-<p>可行性研究：成本/效益</p>
-<h2 id="过程模型"><a href="#过程模型" class="headerlink" title="过程模型"></a>过程模型</h2><p><strong>过程模型</strong>：线性、瀑布、V、环形。。。（不推荐）</p>
-<h2 id="过程模型推荐"><a href="#过程模型推荐" class="headerlink" title="过程模型推荐"></a>过程模型推荐</h2><p>XP: 小型团队、需求变化频繁、开发周期短的项目（尤其适合互联网软件）</p>
-<p>螺旋： 大型、复杂、风险高、需求不明确的项目</p>
-<h3 id="RUP-统一过程模型"><a href="#RUP-统一过程模型" class="headerlink" title="RUP 统一过程模型"></a>RUP 统一过程模型</h3><ul>
-<li><strong>面向对象、用例驱动</strong>：以用例为中心，符合面向对象开发思想</li>
-<li><strong>可迭代、可增量</strong>：每个迭代都能交付可运行的软件</li>
-<li><strong>风险驱动</strong>：在早期识别并降低风险</li>
-<li><strong>文档规范、过程标准化</strong>：有明确的阶段、里程碑和文档产物</li>
-<li><strong>可视化建模</strong>：强调UML建模，方便沟通与分析</li>
-</ul>
-<p> <strong>适合：</strong> 大中型、复杂项目，需求复杂、风险高的项目</p>
-<h3 id="增量模型"><a href="#增量模型" class="headerlink" title="增量模型"></a>增量模型</h3><ul>
-<li><strong>可分阶段交付</strong>：每个增量都是一个子系统，能早交付部分功能</li>
-<li><strong>降低风险</strong>：问题可在后续增量中修复</li>
-<li><strong>用户反馈快</strong>：用户能早体验到产品并反馈</li>
-<li><strong>适应需求变化</strong>：后续增量可以增加新需求</li>
-</ul>
-<p><strong>适合：</strong> 需求较清楚，但无法一次开发完成的项目；资金、时间有限，想逐步发布的项目</p>
-<h1 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h1><p>需求分析：做什么、不做什么、做到什么程度。</p>
-<p>分为功能性、非功能性需求两类。</p>
-<h2 id="传统分析"><a href="#传统分析" class="headerlink" title="传统分析"></a>传统分析</h2><ul>
-<li><p>数据流程图：分为总体（系统与环境的关系）、零级（描述主要功能）、细节三个层次。</p>
-</li>
-<li><p>行为建模：状态转换图 Petri 网</p>
-</li>
-</ul>
-<h2 id="面向对象分析"><a href="#面向对象分析" class="headerlink" title="面向对象分析"></a>面向对象分析</h2><h3 id="用例图（用例建模）"><a href="#用例图（用例建模）" class="headerlink" title="用例图（用例建模）"></a>用例图（用例建模）</h3><img src="https://img2023.cnblogs.com/blog/2518308/202305/2518308-20230508183405083-694565082.png" alt="img" style="zoom:50%;" />
-
-<ul>
-<li>参与者之间只有泛化（继承）关系</li>
-<li>用例之间有泛化、包含include、扩展extend关系</li>
-</ul>
-<h3 id="类图（对象-关系建模）"><a href="#类图（对象-关系建模）" class="headerlink" title="类图（对象-关系建模）"></a>类图（对象-关系建模）</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508190511869-1015084285.png" alt="img" style="zoom:50%;" />
-
-<ul>
-<li>实体类类图：类间有泛化（继承）、关联（聚合组合）、依赖。类和接口之间有实现。</li>
-</ul>
-<hr>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508183323424-1524786895.png" alt="img" style="zoom:50%;" />
-
-<ul>
-<li>参与类（分析类）类图：<ul>
-<li>边界类：系统及其参与者边界，xx界面类</li>
-<li>控制类：系统控制逻辑，xxHandler</li>
-<li>实体类：系统使用信息。</li>
-</ul>
-</li>
-</ul>
-<h3 id="活动图（对象-行为建模）"><a href="#活动图（对象-行为建模）" class="headerlink" title="活动图（对象-行为建模）"></a>活动图（对象-行为建模）</h3><h4 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509220108193.png" alt="image-20250509220108193" style="zoom:50%;" />
-
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508190542460-1232279932.png" alt="img" style="zoom:50%;" />
-
-<h4 id="活动图"><a href="#活动图" class="headerlink" title="活动图"></a>活动图</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-2219e76c264b835778365af494a2c887_1440w.jpg" alt="img" style="zoom: 80%;" />
-
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2518308-20230508183431532-1286422022.png" alt="img" style="zoom:50%;" />
-
-
-
-<h1 id="设计方法"><a href="#设计方法" class="headerlink" title="设计方法"></a>设计方法</h1><h2 id="总体设计（概要、架构设计）"><a href="#总体设计（概要、架构设计）" class="headerlink" title="总体设计（概要、架构设计）"></a>总体设计（概要、架构设计）</h2><p>不应该陷入片面性，追踪分析模型，选择合适技术，可集成，可复用，有韧性，交互人性化。</p>
-<p>软件架构应该反应整体组织结构和基本特征，体现层次结构、模块相互作用、全局重要的数据变量和数据结构、接口</p>
-<h2 id="详细设计"><a href="#详细设计" class="headerlink" title="详细设计"></a>详细设计</h2><p>在软件构架的基础上进一步确定如何实现目 标系统，具体包括系统的模块（如类及其方 法）逻辑的详细设计、系统数据结构的设计、 系统数据库结构的设计、系统人-机接口的 设计等</p>
-<h3 id="分治"><a href="#分治" class="headerlink" title="分治"></a>分治</h3><ul>
-<li>分治概念：将一个大的系统分解为一系列小 模块的过程和方法，是软件工程最重要的思 想之一</li>
-<li>架构设计将系统分解为一组子系统或模 块，以及子系统或模块之间的接口。</li>
-<li>详细设计子系统或模块被再次细分为子 模块 • 传统软件工程中的过程、函数 • 面向对象软件工程中的包、类、接口和方法等</li>
-</ul>
-<h4 id="最小成本邻域"><a href="#最小成本邻域" class="headerlink" title="最小成本邻域"></a>最小成本邻域</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221307387.png" alt="image-20250509221307387" style="zoom:50%;" />
-
-<p>软件开发成本随模块数量增加变小，但将模块组装起来的集成成本将随模块数量增加变大， 软件总成本为两个成本之和。模块成本和集成成本两个曲线的交汇点M代表了最低软件总成本，应尽量使系统划分的模块数量在M点所在的邻域内，即最小成本邻域</p>
-<h2 id="设计模式七大原则"><a href="#设计模式七大原则" class="headerlink" title="设计模式七大原则"></a>设计模式七大原则</h2><p><strong>设计模式原则</strong>：指导我们如何写出“低耦合、高内聚、可扩展、易维护”的代码。</p>
-<ul>
-<li>SRP 单一职责：一个类只有一个职责。</li>
-<li>ISP 接口隔离：接口应该专精一类功能。</li>
-<li>OCP 开闭：对扩展开放，对修改关闭。SPI</li>
-<li>LSP 里氏替换：子类应该可以替换父类对象，完全可以将其看做一个父类</li>
-<li>DIP 依赖倒转：依赖接口/抽象，而不是实现类。JDBC</li>
-<li>迪米特法则：一个对象应该尽可能少了解别的对象，减少耦合。</li>
-<li>CRP 组合复用：组合优于继承，Car中用组合的形式引入Engine，避免继承地狱导致功能冗余。不过组合冗余代码较多，难以利用多态，也是需要注意的。</li>
-</ul>
-<h1 id="软件实施、测试"><a href="#软件实施、测试" class="headerlink" title="软件实施、测试"></a>软件实施、测试</h1><h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>测试：是选择适当的测试用例执行被测 程序的过程，其目的在于发现程序错误。有单元测试、集成测试、系统测试、alpha、beta、验收测试。掌握单元测试、集成测试、回 归测试基本概念，能根据实际情况设计集成测试的模块测试 顺序，并分析各种测试的优劣 以及分析模块测试次数。</p>
-<p><strong>测试用例</strong>：为特定目标开发的测试输入、 执行条件和预期结果的集合</p>
-<h3 id="白盒测试"><a href="#白盒测试" class="headerlink" title="白盒测试"></a>白盒测试</h3><p>导出测试用例是依据模块的编码，即<u>模块的内部逻辑对测试者是可见的</u>。掌握白盒测试方法，能根据实际项目情况采用<mark>基本途径测试、条件测试、循环测试</mark>等技术设计合适的测试用例。</p>
-<h3 id="黑盒测试"><a href="#黑盒测试" class="headerlink" title="黑盒测试"></a>黑盒测试</h3><p>在接口级别进行的测试，<u>不考虑程序内部逻辑</u>。掌握黑盒测试方法，能根据实际项目情况采用<mark>等价类划分、边界值分析</mark>等技术设计合适的测试用例。</p>
-<h4 id="等价类划分"><a href="#等价类划分" class="headerlink" title="等价类划分"></a>等价类划分</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221813185.png" alt="image-20250509221813185" style="zoom:50%;" />
-
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221826463.png" alt="image-20250509221826463" style="zoom:50%;" />
-
-<h4 id="边界值分析"><a href="#边界值分析" class="headerlink" title="边界值分析"></a>边界值分析</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221844900.png" alt="image-20250509221844900" style="zoom:50%;" />
-
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509221853890.png" alt="image-20250509221853890" style="zoom:50%;" />
-
-<img src="https://img2023.cnblogs.com/blog/2518308/202305/2518308-20230508183505415-100945804.png" alt="img" style="zoom:50%;" />
-
-<p>测试用例：</p>
-<ul>
-<li>等价类划分：员工每年请假次数为[0, 10]，因此可以形成3个等价类：&lt;0、1~10、&gt;10</li>
-<li>边界值分析：基于上述等价类划分结果，采用边界值分析法生成的测试用例共有7个：-1、0、1、5、9、10、11</li>
-</ul>
-<p>可验证的验收标准：</p>
-<ul>
-<li><p>系统需界面友好</p>
-<ul>
-<li>员工无需培训即可使用</li>
-<li>经理经过2小时培训即可使用</li>
-<li>部长经过2小时培训即可使用</li>
-</ul>
-</li>
-<li><p>较高可靠性</p>
-<ul>
-<li>在使用系统的前三个月内，系统从未发生过崩溃（数据不可恢复）或死机现象</li>
-<li>在随机的3个工作日内，系统可靠性指标都大于0.95%</li>
-</ul>
-</li>
-</ul>
-<p>独立途径集合：</p>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250509222254965.png" alt="image-20250509222254965" style="zoom: 25%;" />
 
       
     </div>
