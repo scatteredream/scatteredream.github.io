@@ -19,19 +19,20 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="redis-review optimization配置环境： Nginx + SpringBoot + RabbitMQ + Redis 简单介绍同城口碑主要采用的是 B2B2C（平台连接商家和消费者）的业务模式，是一个前后端分离的单体项目，但是为分布式和集群做了提前的适配，类似大众点评，实现了登录认证、查看商家、秒杀券抢购、关注（共同关注）、发布点赞推送帖子（实现了时间线timeline上的动态">
+    <meta name="description" content="intro配置环境： Nginx + SpringBoot + RabbitMQ + Redis 同城口碑主要采用的是 B2B2C（平台连接商家和消费者）的业务模式，是一个前后端分离的单体项目，但是为分布式和集群做了提前的适配，类似大众点评，实现了登录认证、查看商家、秒杀券抢购、关注（共同关注）、发布点赞推送帖子（实现了时间线timeline上的动态分页查询）、签到、附近商户等功能，业务可以帮助商">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis-review 项目优化">
 <meta property="og:url" content="http://scatteredream.github.io/2024/10/20/redis-review-optimization/index.html">
 <meta property="og:site_name" content="scatteredream&#39;s blog">
-<meta property="og:description" content="redis-review optimization配置环境： Nginx + SpringBoot + RabbitMQ + Redis 简单介绍同城口碑主要采用的是 B2B2C（平台连接商家和消费者）的业务模式，是一个前后端分离的单体项目，但是为分布式和集群做了提前的适配，类似大众点评，实现了登录认证、查看商家、秒杀券抢购、关注（共同关注）、发布点赞推送帖子（实现了时间线timeline上的动态">
+<meta property="og:description" content="intro配置环境： Nginx + SpringBoot + RabbitMQ + Redis 同城口碑主要采用的是 B2B2C（平台连接商家和消费者）的业务模式，是一个前后端分离的单体项目，但是为分布式和集群做了提前的适配，类似大众点评，实现了登录认证、查看商家、秒杀券抢购、关注（共同关注）、发布点赞推送帖子（实现了时间线timeline上的动态分页查询）、签到、附近商户等功能，业务可以帮助商">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/6347a20e8598ff81de4fc4f7_QVjhYNKEHaJ3ZumpY0xicg19Tqoj0vHOVEHklTYHI65E9oG-t9sg0hZcokmdJI26_VDNkbnynbNvvF0Rl6Crx8cqq_Ffq129xsPbykCGqE8LLwPkKDaJ2zUQNJ0H55otwnNMi8IDEPE8ki4nPULl1RY6VLhh2DrsuuRs2fx0tNr9UyBOq0RAg0SLOg.png">
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653320764547.png">
 <meta property="og:image" content="https://ucc.alicdn.com/kavrxpwgkb2oo_20240819_446c67dc76af4b589ca0bf818ddd07c5.webp">
 <meta property="og:image" content="https://ucc.alicdn.com/kavrxpwgkb2oo_20240819_40512d45f4894383bf56ced91e8a2f62.webp?x-oss-process=image%2Fresize%2Cw_1400%2Cm_lfit%2Fformat%2Cwebp">
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250522214813369.png">
 <meta property="article:published_time" content="2024-10-19T16:00:00.000Z">
-<meta property="article:modified_time" content="2025-05-24T00:48:33.500Z">
+<meta property="article:modified_time" content="2025-05-25T12:50:19.314Z">
 <meta property="article:author" content="碎梦">
 <meta property="article:tag" content="缓存">
 <meta property="article:tag" content="redis">
@@ -41,7 +42,7 @@
 <meta property="article:tag" content="threadlocal">
 <meta property="article:tag" content="mq">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653320764547.png">
+<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/6347a20e8598ff81de4fc4f7_QVjhYNKEHaJ3ZumpY0xicg19Tqoj0vHOVEHklTYHI65E9oG-t9sg0hZcokmdJI26_VDNkbnynbNvvF0Rl6Crx8cqq_Ffq129xsPbykCGqE8LLwPkKDaJ2zUQNJ0H55otwnNMi8IDEPE8ki4nPULl1RY6VLhh2DrsuuRs2fx0tNr9UyBOq0RAg0SLOg.png">
 
 
 <link rel="canonical" href="http://scatteredream.github.io/2024/10/20/redis-review-optimization/">
@@ -168,7 +169,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#redis-review-optimization"><span class="nav-number">1.</span> <span class="nav-text">redis-review optimization</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">简单介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E9%94%AE%E5%80%BC%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.2.</span> <span class="nav-text">Redis 键值设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A7%E7%94%9F%E7%83%AD-%E5%A4%A7key%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.2.1.</span> <span class="nav-text">产生热&#x2F;大key的原因</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E7%8E%B0%E5%A4%A7key%EF%BC%88%E2%80%93bigkeys-amp-scan%EF%BC%89"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">发现大key（–bigkeys &amp; scan）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E7%8E%B0%E7%83%ADkey"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">发现热key</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7Key%E5%A4%84%E7%90%86%E6%96%B9%E6%A1%88%EF%BC%88%E6%8B%86%E5%88%86%E3%80%81%E5%88%A0%E9%99%A4%E3%80%81%E5%BC%82%E6%AD%A5%E3%80%81%E5%8E%8B%E7%BC%A9%EF%BC%89"><span class="nav-number">1.2.2.</span> <span class="nav-text">大Key处理方案（拆分、删除、异步、压缩）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%86%E5%88%86%E4%B8%8E%E5%88%86%E7%89%87%EF%BC%88%E6%B0%B4%E5%B9%B3-%E5%9E%82%E7%9B%B4%EF%BC%89"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">拆分与分片（水平&#x2F;垂直）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%86%E5%88%86%E5%90%8E%E7%9A%84%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">拆分后的注意事项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%96%B9%E5%BC%8F"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">其他方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Key-%E7%9A%84%E6%95%B0%E7%9B%AE%E8%BF%87%E5%A4%9A%EF%BC%88%E7%9B%B4%E6%8E%A5%E8%BD%AChash-%E5%93%88%E5%B8%8C%E6%98%A0%E5%B0%84%E5%88%B0%E4%B8%8D%E5%90%8C%E7%9A%84hash%E6%A1%B6%EF%BC%89"><span class="nav-number">1.2.3.</span> <span class="nav-text">Key 的数目过多（直接转hash&#x2F;哈希映射到不同的hash桶）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%ADKey%E5%A4%84%E7%90%86%E6%96%B9%E6%A1%88%EF%BC%88%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98%E3%80%81%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E3%80%81%E9%80%BB%E8%BE%91%E8%BF%87%E6%9C%9F%EF%BC%89"><span class="nav-number">1.2.4.</span> <span class="nav-text">热Key处理方案（多级缓存、读写分离、逻辑过期）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis%E5%88%86%E7%89%87%E4%B8%8E%E9%9B%86%E7%BE%A4"><span class="nav-number">1.2.5.</span> <span class="nav-text">Redis分片与集群</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8%E8%AE%BE%E8%AE%A1"><span class="nav-number">1.3.</span> <span class="nav-text">数据库表设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B0%B4%E5%B9%B3%E5%88%86%E8%A1%A8"><span class="nav-number">1.3.1.</span> <span class="nav-text">水平分表</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E5%89%96%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">项目剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Login-Redis-Token"><span class="nav-number">2.1.</span> <span class="nav-text">Login (Redis Token)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%99%BB%E5%BD%95%E9%99%90%E6%B5%81"><span class="nav-number">2.1.1.</span> <span class="nav-text">滑动窗口登录限流</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98"><span class="nav-number">2.2.</span> <span class="nav-text">缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">2.3.</span> <span class="nav-text">全局异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RestControllerAdvice-%E5%92%8C-ExceptionHandler"><span class="nav-number">2.3.1.</span> <span class="nav-text">@RestControllerAdvice 和 @ExceptionHandler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Result-%E5%B0%81%E8%A3%85"><span class="nav-number">2.3.2.</span> <span class="nav-text">Result 封装</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%92%E6%9D%80%E6%8A%A2%E8%B4%AD"><span class="nav-number">2.4.</span> <span class="nav-text">秒杀抢购</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A4%E7%89%8C%E6%A1%B6%E9%99%90%E6%B5%81"><span class="nav-number">2.4.1.</span> <span class="nav-text">令牌桶限流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%90%E8%A7%82%E9%94%81-%E9%98%B2%E6%AD%A2%E8%B6%85%E5%8D%96"><span class="nav-number">2.4.2.</span> <span class="nav-text">乐观锁 防止超卖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%BA%BA%E4%B8%80%E5%8D%95%EF%BC%88%E8%AE%A2%E5%8D%95%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%B9%82%E7%AD%89%E6%80%A7%EF%BC%89"><span class="nav-number">2.4.3.</span> <span class="nav-text">一人一单（订单接口的幂等性）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E6%9C%BA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">2.4.3.1.</span> <span class="nav-text">单机解决方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">2.4.3.2.</span> <span class="nav-text">分布式锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RabbitMQ-%E5%BC%82%E6%AD%A5%E7%A7%92%E6%9D%80"><span class="nav-number">2.4.4.</span> <span class="nav-text">RabbitMQ 异步秒杀</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Lua"><span class="nav-number">2.4.4.1.</span> <span class="nav-text">Lua</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MQ"><span class="nav-number">2.4.4.2.</span> <span class="nav-text">MQ</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E6%93%8D%E4%BD%9C%E5%A4%B1%E8%B4%A5%EF%BC%9A%E5%9B%9E%E6%BB%9A"><span class="nav-number">2.4.4.3.</span> <span class="nav-text">数据库操作失败：回滚</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E5%A0%86%E7%A7%AF"><span class="nav-number">2.4.4.4.</span> <span class="nav-text">请求堆积</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E4%BD%93%E6%84%9F%E5%8F%8D%E9%A6%88%EF%BC%9A%E5%89%8D%E7%AB%AF%E8%BD%AE%E8%AF%A2%E6%8E%A5%E5%8F%A3%E6%9F%A5%E8%AF%A2%E8%AE%A2%E5%8D%95%E7%8A%B6%E6%80%81"><span class="nav-number">2.4.5.</span> <span class="nav-text">用户体感反馈：前端轮询接口查询订单状态</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%82%B9%E8%B5%9E%E3%80%81%E6%8E%92%E8%A1%8C%E6%A6%9C"><span class="nav-number">2.5.</span> <span class="nav-text">点赞、排行榜</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2-%E6%97%B6%E9%97%B4%E7%BA%BF"><span class="nav-number">2.6.</span> <span class="nav-text">分页查询 时间线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Bitmap-%E7%AD%BE%E5%88%B0"><span class="nav-number">2.7.</span> <span class="nav-text">使用 Bitmap 签到</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E2%89%A0%E6%B5%81%E9%87%8F%E5%89%8A%E5%B3%B0"><span class="nav-number">3.</span> <span class="nav-text">分布式锁≠流量削峰</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CAP"><span class="nav-number">4.</span> <span class="nav-text">CAP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E4%B8%AA%E6%A0%B8%E5%BF%83"><span class="nav-number">4.1.</span> <span class="nav-text">三个核心</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%80%9C%E4%B8%8D%E5%8F%AF%E5%85%BC%E5%BE%97%E2%80%9D-%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">4.2.</span> <span class="nav-text">“不可兼得” 的含义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8"><span class="nav-number">4.3.</span> <span class="nav-text">实际应用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E8%B0%83%E4%BC%98"><span class="nav-number">5.</span> <span class="nav-text">线程池调优</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#intro"><span class="nav-number">1.</span> <span class="nav-text">intro</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.</span> <span class="nav-text">数据存储设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-%E9%94%AE%E5%80%BC%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.1.</span> <span class="nav-text">Redis 键值设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A7%E7%94%9F%E7%83%AD-%E5%A4%A7key%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">2.1.1.</span> <span class="nav-text">产生热&#x2F;大key的原因</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E7%8E%B0%E5%A4%A7key%EF%BC%88%E2%80%93bigkeys-amp-scan%EF%BC%89"><span class="nav-number">2.1.1.1.</span> <span class="nav-text">发现大key（–bigkeys &amp; scan）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E7%8E%B0%E7%83%ADkey"><span class="nav-number">2.1.1.2.</span> <span class="nav-text">发现热key</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7Key%E5%A4%84%E7%90%86%E6%96%B9%E6%A1%88%EF%BC%88%E6%8B%86%E5%88%86%E3%80%81%E5%88%A0%E9%99%A4%E3%80%81%E5%BC%82%E6%AD%A5%E3%80%81%E5%8E%8B%E7%BC%A9%EF%BC%89"><span class="nav-number">2.1.2.</span> <span class="nav-text">大Key处理方案（拆分、删除、异步、压缩）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%86%E5%88%86%E4%B8%8E%E5%88%86%E7%89%87%EF%BC%88%E6%B0%B4%E5%B9%B3-%E5%9E%82%E7%9B%B4%EF%BC%89"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">拆分与分片（水平&#x2F;垂直）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8B%86%E5%88%86%E5%90%8E%E7%9A%84%E5%BC%80%E9%94%80"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">拆分后的开销</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%96%B9%E5%BC%8F"><span class="nav-number">2.1.2.3.</span> <span class="nav-text">其他方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%83%ADKey%E5%A4%84%E7%90%86%E6%96%B9%E6%A1%88%EF%BC%88%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98%E3%80%81%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E3%80%81%E9%80%BB%E8%BE%91%E8%BF%87%E6%9C%9F%EF%BC%89"><span class="nav-number">2.1.3.</span> <span class="nav-text">热Key处理方案（多级缓存、读写分离、逻辑过期）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Key-%E6%95%B0%E8%BF%87%E5%A4%9A"><span class="nav-number">2.1.4.</span> <span class="nav-text">Key 数过多</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Redis%E5%88%86%E7%89%87%E4%B8%8E%E9%9B%86%E7%BE%A4"><span class="nav-number">2.1.5.</span> <span class="nav-text">Redis分片与集群</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.2.</span> <span class="nav-text">数据库表设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E5%94%AF%E4%B8%80%E8%AE%A2%E5%8D%95id%E2%80%94%E2%80%94%E9%9B%AA%E8%8A%B1%E7%AE%97%E6%B3%95"><span class="nav-number">2.2.1.</span> <span class="nav-text">分布式唯一订单id——雪花算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#UUID"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">UUID</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B0%B4%E5%B9%B3%E5%88%86%E8%A1%A8%EF%BC%88Sharding%EF%BC%89"><span class="nav-number">2.2.2.</span> <span class="nav-text">水平分表（Sharding）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Sharding-vs-Partitioning"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">Sharding vs Partitioning</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E8%A1%A8%E5%B8%A6%E6%9D%A5%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">分表带来的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%84%E5%88%99%E5%88%86%E7%89%87%E7%AD%96%E7%95%A5"><span class="nav-number">2.2.2.3.</span> <span class="nav-text">规则分片策略</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%86%E7%89%87%E9%94%AE%E9%80%89%E6%8B%A9"><span class="nav-number">2.2.2.3.1.</span> <span class="nav-text">分片键选择</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%86%E7%89%87%E7%AE%97%E6%B3%95"><span class="nav-number">2.2.2.3.2.</span> <span class="nav-text">分片算法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9D%9E%E5%88%86%E8%A1%A8%E9%94%AE"><span class="nav-number">2.2.2.3.3.</span> <span class="nav-text">非分表键</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-number">2.2.2.4.</span> <span class="nav-text">中间件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%AD%96%E7%95%A5%EF%BC%88Redis%E7%BC%93%E5%AD%98%E8%B7%AF%E7%94%B1%E3%80%81%E7%83%AD%E6%95%B0%E6%8D%AE-%E5%9E%82%E7%9B%B4%E5%88%86%E8%A1%A8%EF%BC%89"><span class="nav-number">2.2.3.</span> <span class="nav-text">其他策略（Redis缓存路由、热数据 | 垂直分表）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%BF%81%E7%A7%BB"><span class="nav-number">2.2.4.</span> <span class="nav-text">数据迁移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%B7%E7%83%AD%E5%88%86%E7%A6%BB"><span class="nav-number">2.2.5.</span> <span class="nav-text">冷热分离</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E5%89%96%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">项目剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Login-Redis-Token"><span class="nav-number">3.1.</span> <span class="nav-text">Login (Redis Token)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%99%BB%E5%BD%95%E9%99%90%E6%B5%81"><span class="nav-number">3.1.1.</span> <span class="nav-text">滑动窗口登录限流</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98"><span class="nav-number">3.2.</span> <span class="nav-text">缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">3.3.</span> <span class="nav-text">全局异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RestControllerAdvice-%E5%92%8C-ExceptionHandler"><span class="nav-number">3.3.1.</span> <span class="nav-text">@RestControllerAdvice 和 @ExceptionHandler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Result-%E5%B0%81%E8%A3%85"><span class="nav-number">3.3.2.</span> <span class="nav-text">Result 封装</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A7%92%E6%9D%80%E6%8A%A2%E8%B4%AD"><span class="nav-number">3.4.</span> <span class="nav-text">秒杀抢购</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A4%E7%89%8C%E6%A1%B6%E9%99%90%E6%B5%81"><span class="nav-number">3.4.1.</span> <span class="nav-text">令牌桶限流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%90%E8%A7%82%E9%94%81-%E9%98%B2%E6%AD%A2%E8%B6%85%E5%8D%96"><span class="nav-number">3.4.2.</span> <span class="nav-text">乐观锁 防止超卖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%BA%BA%E4%B8%80%E5%8D%95%EF%BC%88%E8%AE%A2%E5%8D%95%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%B9%82%E7%AD%89%E6%80%A7%EF%BC%89"><span class="nav-number">3.4.3.</span> <span class="nav-text">一人一单（订单接口的幂等性）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E6%9C%BA%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">3.4.3.1.</span> <span class="nav-text">单机解决方案</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">3.4.3.2.</span> <span class="nav-text">分布式锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RabbitMQ-%E5%BC%82%E6%AD%A5%E7%A7%92%E6%9D%80"><span class="nav-number">3.4.4.</span> <span class="nav-text">RabbitMQ 异步秒杀</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Lua"><span class="nav-number">3.4.4.1.</span> <span class="nav-text">Lua</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#MQ"><span class="nav-number">3.4.4.2.</span> <span class="nav-text">MQ</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E6%93%8D%E4%BD%9C%E5%A4%B1%E8%B4%A5%EF%BC%9A%E5%9B%9E%E6%BB%9A"><span class="nav-number">3.4.4.3.</span> <span class="nav-text">数据库操作失败：回滚</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E5%A0%86%E7%A7%AF"><span class="nav-number">3.4.4.4.</span> <span class="nav-text">请求堆积</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E4%BD%93%E6%84%9F%E5%8F%8D%E9%A6%88%EF%BC%9A%E5%89%8D%E7%AB%AF%E8%BD%AE%E8%AF%A2%E6%8E%A5%E5%8F%A3%E6%9F%A5%E8%AF%A2%E8%AE%A2%E5%8D%95%E7%8A%B6%E6%80%81"><span class="nav-number">3.4.5.</span> <span class="nav-text">用户体感反馈：前端轮询接口查询订单状态</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%82%B9%E8%B5%9E%E3%80%81%E6%8E%92%E8%A1%8C%E6%A6%9C"><span class="nav-number">3.5.</span> <span class="nav-text">点赞、排行榜</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2-%E6%97%B6%E9%97%B4%E7%BA%BF"><span class="nav-number">3.6.</span> <span class="nav-text">分页查询 时间线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Bitmap-%E7%AD%BE%E5%88%B0"><span class="nav-number">3.7.</span> <span class="nav-text">使用 Bitmap 签到</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E2%89%A0%E6%B5%81%E9%87%8F%E5%89%8A%E5%B3%B0"><span class="nav-number">4.</span> <span class="nav-text">分布式锁≠流量削峰</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CAP"><span class="nav-number">5.</span> <span class="nav-text">CAP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E4%B8%AA%E6%A0%B8%E5%BF%83"><span class="nav-number">5.1.</span> <span class="nav-text">三个核心</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%80%9C%E4%B8%8D%E5%8F%AF%E5%85%BC%E5%BE%97%E2%80%9D-%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-number">5.2.</span> <span class="nav-text">“不可兼得” 的含义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8"><span class="nav-number">5.3.</span> <span class="nav-text">实际应用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E8%B0%83%E4%BC%98"><span class="nav-number">6.</span> <span class="nav-text">线程池调优</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -257,7 +258,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-24 08:48:33" itemprop="dateModified" datetime="2025-05-24T08:48:33+08:00">2025-05-24</time>
+      <time title="修改时间：2025-05-25 20:50:19" itemprop="dateModified" datetime="2025-05-25T20:50:19+08:00">2025-05-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -278,16 +279,39 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h1 id="redis-review-optimization"><a href="#redis-review-optimization" class="headerlink" title="redis-review optimization"></a>redis-review optimization</h1><p>配置环境： Nginx + SpringBoot + RabbitMQ + Redis</p>
-<h2 id="简单介绍"><a href="#简单介绍" class="headerlink" title="简单介绍"></a>简单介绍</h2><p>同城口碑主要采用的是 B2B2C（平台连接商家和消费者）的业务模式，是一个前后端分离的单体项目，但是为分布式和集群做了提前的适配，类似大众点评，实现了<strong>登录认证</strong>、<strong>查看商家</strong>、秒杀券抢购、<strong>关注（共同关注）</strong>、<strong>发布点赞推送帖子</strong>（实现了时间线timeline上的动态分页查询）、<strong>签到</strong>、附近商户等功能，业务可以帮助商家引流，增加曝光度。主要是为了学习redis的使用</p>
-<p>也可以为用户提供查看提供附近消费场所 geo。主要是用来配合学习Redis在项目中的应用。</p>
+    <div class="post-body" itemprop="articleBody"><h1 id="intro"><a href="#intro" class="headerlink" title="intro"></a>intro</h1><p>配置环境： Nginx + SpringBoot + RabbitMQ + Redis</p>
+<p>同城口碑主要采用的是 B2B2C（平台连接商家和消费者）的业务模式，是一个前后端分离的单体项目，但是为分布式和集群做了提前的适配，类似大众点评，实现了<strong>登录认证</strong>、<strong>查看商家</strong>、秒杀券抢购、<strong>关注（共同关注）</strong>、<strong>发布点赞推送帖子</strong>（实现了时间线timeline上的动态分页查询）、<strong>签到</strong>、附近商户等功能，业务可以帮助商家引流，增加曝光度。主要是为了学习redis的使用。也可以为用户提供查看提供附近消费场所 geo。主要是用来配合学习Redis在项目中的应用。</p>
+<blockquote>
+<p><strong>为什么选择RabbitMQ？</strong></p>
+<p>消息堆积：一般就是nack太多或者是消费的太慢了，可以增加消费者数量，或者改成多线程消费。或者新开一个队列，将堆积的这些消息专门给消费者消费</p>
+<ul>
+<li>吞吐量虽然不如 kafka rocketMQ</li>
+<li>但是基于erlang语言进行开发，并发能力很好，时效性是μs级别</li>
+<li>基于主从架构实现的高可用，可靠性通过confirm、manual-ack、持久化实现</li>
+<li>与Redis消息队列相比支持持久化，性能更好</li>
+<li>订单处理：需要可靠的消息队列</li>
+</ul>
+<p>RocketMQ：复杂业务消息传递</p>
+<ul>
+<li>基于java</li>
+<li>高可用，0丢失</li>
+<li>事务消息、用户推送、分布式事务消息</li>
+</ul>
+<p>Kafka{Event Stream}：</p>
+<ul>
+<li>大数据，压缩数据</li>
+<li>负载均衡</li>
+<li>严格控制数据</li>
+<li>易用性不如MQ</li>
+</ul>
+</blockquote>
 <p><mark>登录功能</mark>：使用 redis token + 拦截器，<u>登录滑动窗口限流</u>。</p>
 <p><a href="#cache">商户缓存</a>：进入主页，先从Redis中读出商户分类信息，若Redis中为空则向MySQL中读取，并写入Redis中。主页店铺分类信息为常用信息，应使用Redis避免频繁读取数据库，然后就是缓存的使用。</p>
 <p><a href="#seckill"><mark>秒杀</mark></a>：先用令牌桶进行限流，放行之后异步下单，先运行Lua脚本：先判断库存够不够，再判断是否下过单，若未下过单，才能扣减redis库存和sadd成员，判定具备购买资格。生成一个全局id作为订单id，把订单信息发送到MQ，如果失败则回滚redis，前端轮询订单的status。</p>
 <p><a href="#like"><mark>帖子点赞</mark></a>：用户浏览博客时，可以对博客进行点赞，点赞过的用户id，写入到Redis缓存中（zset：用户IDmember，点赞时间score）博客页并展示点赞次数和点赞列表头像，展示点赞列表时，注意点赞列表（id）按时间（score）排序，早的排在前面，SQL语句应拼接order By field (id = 1,2,3,4,5) 。</p>
 <p><a href="#timeline"><mark>帖子推送、时间线、分页查询</mark></a>：推模式，看看谁关注我了，发到这些关注关注者的收件箱（收件箱就是Redis里面的一个Zset，value有blogId，score就设置成当前的时间戳）SQL语句应拼接order By field (id = 1,2,3,4,5) 根据blogId进行查询。</p>
 <p><a href="#bitmap"><mark>签到</mark></a>：使用bitMap，打卡取1，为打卡取0，从第0位开始，n日的打卡数据在n-1位。把当月签到数据和1做与运算，得到最近一天是否打卡，为0则直接返回，为1则把签到数据右移一位和1做与运算，循环，直到与运算结果为0，循环次数为连续签到天数。</p>
-<h2 id="Redis-键值设计"><a href="#Redis-键值设计" class="headerlink" title="Redis 键值设计"></a>Redis 键值设计</h2><blockquote>
+<h1 id="数据存储设计"><a href="#数据存储设计" class="headerlink" title="数据存储设计"></a>数据存储设计</h1><h2 id="Redis-键值设计"><a href="#Redis-键值设计" class="headerlink" title="Redis 键值设计"></a>Redis 键值设计</h2><blockquote>
 <p>KEY：44B以内，embstr编码，内存连续。否则转换成raw，内存空间不连续，碎片化，访问性能不如前者</p>
 </blockquote>
 <p>STRING </p>
@@ -369,8 +393,8 @@
 <li>ZSET可以按照SCORE范围划分</li>
 <li>LIST 有顺序要求，尽量直接按数量拆分，或者如果是日志信息可以按时间划分。</li>
 </ul>
-<h4 id="拆分后的注意事项"><a href="#拆分后的注意事项" class="headerlink" title="拆分后的注意事项"></a>拆分后的注意事项</h4><ul>
-<li><strong>查询逻辑调整</strong>：拆分后需合并多个子 Key 的结果（如 <code>MGET</code>、<code>SUNION</code>）。</li>
+<h4 id="拆分后的开销"><a href="#拆分后的开销" class="headerlink" title="拆分后的开销"></a>拆分后的开销</h4><ul>
+<li><strong>查询逻辑调整</strong>：拆分后需<u>合并</u>多个子 Key 的结果（如 <code>MGET</code>、<code>SUNION</code>）。</li>
 <li><strong>索引维护</strong>：对按范围拆分的 Key（如 ZSet 按时间分片），需记录分片规则。</li>
 <li><strong>监控与清理</strong>：定期检查拆分后的 Key 大小，避免二次膨胀。</li>
 </ul>
@@ -412,7 +436,18 @@
 </ol>
 </li>
 </ol>
-<h3 id="Key-的数目过多（直接转hash-哈希映射到不同的hash桶）"><a href="#Key-的数目过多（直接转hash-哈希映射到不同的hash桶）" class="headerlink" title="Key 的数目过多（直接转hash/哈希映射到不同的hash桶）"></a>Key 的数目过多（直接转hash/哈希映射到不同的hash桶）</h3><p>一个是key本身的占用，再一个是集群模式服务端需要建立slot2key的映射，其指针也会占用空间</p>
+<h3 id="热Key处理方案（多级缓存、读写分离、逻辑过期）"><a href="#热Key处理方案（多级缓存、读写分离、逻辑过期）" class="headerlink" title="热Key处理方案（多级缓存、读写分离、逻辑过期）"></a>热Key处理方案（多级缓存、读写分离、逻辑过期）</h3><ol>
+<li><p><strong>多级缓存</strong><br>• <strong>本地缓存</strong>：结合Guava Cache或Caffeine，将热key缓存在应用服务器本地，减少Redis压力。<br>• <strong>分布式缓存冗余</strong>：复制热key到多个Redis实例（如<code>key:1</code>, <code>key:2</code>），通过随机访问分散压力。</p>
+</li>
+<li><p><strong>读写分离与分片</strong><br>• 使用Redis Cluster或Codis分片，分散热key压力。<br>• 读写分离：通过从节点处理读请求，主节点处理写请求。</p>
+</li>
+<li><p><strong>缓存续期与互斥锁</strong><br>• <strong>逻辑过期</strong>：Value中存储过期时间，异步更新缓存，避免物理过期后大量请求穿透到DB。<br>• <strong>互斥锁（Mutex Lock）</strong>：缓存失效时，仅允许一个线程重建数据，其他线程等待或返回降级结果。</p>
+</li>
+<li><p><strong>监控与识别</strong><br>• 使用Redis监控工具（如<code>redis-cli --hotkeys</code>、<code>MONITOR</code>命令）或APM系统（如Prometheus）识别高频访问的key。<br>• 业务侧预判热点（如秒杀商品ID、热门话题），提前介入优化。</p>
+</li>
+</ol>
+<h3 id="Key-数过多"><a href="#Key-数过多" class="headerlink" title="Key 数过多"></a>Key 数过多</h3><p>（直接转hash/哈希映射到不同的hash桶）</p>
+<p>一个是key本身的占用，再一个是集群模式服务端需要建立slot2key的映射，其指针也会占用空间</p>
 <ol>
 <li><p>key 本身就有<mark>很强的相关性</mark>：相关的key合成一个hash</p>
 <ol>
@@ -425,7 +460,7 @@
 <li>预估 key 的总数为 2亿，按照一个hash存储 100个field来算，需要 2亿 / 100 = 200W 个桶 (200W 个key占用的空间很少，2亿可能有将近 20G )</li>
 <li>原先比如有三个key （userId） ：  123456789  , 987654321， 678912345</li>
 <li>现在按照 2M 个 固定桶划分，先计算出桶的序号  hash(123456789)  % 2M</li>
-<li>`set (realKey, value) -&gt; hset(bucketKey，realKey， value)``</li>
+<li><code>set (realKey, value) -&gt; hset(bucketKey，realKey， value)</code></li>
 <li>``get (realKey)  -&gt; hget(bucketKey， realKey)  `</li>
 </ol>
 </li>
@@ -435,16 +470,6 @@
 <li>key2: hset (userid-bucket-2, 987654321, value)</li>
 <li>key3: hset (userid-bucket-2, 678912345, value)</li>
 </ul>
-<h3 id="热Key处理方案（多级缓存、读写分离、逻辑过期）"><a href="#热Key处理方案（多级缓存、读写分离、逻辑过期）" class="headerlink" title="热Key处理方案（多级缓存、读写分离、逻辑过期）"></a>热Key处理方案（多级缓存、读写分离、逻辑过期）</h3><ol>
-<li><p><strong>多级缓存</strong><br>• <strong>本地缓存</strong>：结合Guava Cache或Caffeine，将热key缓存在应用服务器本地，减少Redis压力。<br>• <strong>分布式缓存冗余</strong>：复制热key到多个Redis实例（如<code>key:1</code>, <code>key:2</code>），通过随机访问分散压力。</p>
-</li>
-<li><p><strong>读写分离与分片</strong><br>• 使用Redis Cluster或Codis分片，分散热key压力。<br>• 读写分离：通过从节点处理读请求，主节点处理写请求。</p>
-</li>
-<li><p><strong>缓存续期与互斥锁</strong><br>• <strong>逻辑过期</strong>：Value中存储过期时间，异步更新缓存，避免物理过期后大量请求穿透到DB。<br>• <strong>互斥锁（Mutex Lock）</strong>：缓存失效时，仅允许一个线程重建数据，其他线程等待或返回降级结果。</p>
-</li>
-<li><p><strong>监控与识别</strong><br>• 使用Redis监控工具（如<code>redis-cli --hotkeys</code>、<code>MONITOR</code>命令）或APM系统（如Prometheus）识别高频访问的key。<br>• 业务侧预判热点（如秒杀商品ID、热门话题），提前介入优化。</p>
-</li>
-</ol>
 <h3 id="Redis分片与集群"><a href="#Redis分片与集群" class="headerlink" title="Redis分片与集群"></a>Redis分片与集群</h3><ol>
 <li><p><strong>Redis Cluster</strong><br>• 自动分片（16384 slots），支持水平扩展和高可用。<br>• 通过<code>CRC16(key) % 16384</code>计算slot，分散数据。</p>
 </li>
@@ -456,15 +481,105 @@
 <h2 id="数据库表设计"><a href="#数据库表设计" class="headerlink" title="数据库表设计"></a>数据库表设计</h2><p>blog blog评论 关注的人(x在t时间关注了y) 用户表 </p>
 <p>商铺 商铺类别</p>
 <p>券 秒杀券 秒杀券订单</p>
-<h3 id="水平分表"><a href="#水平分表" class="headerlink" title="水平分表"></a>水平分表</h3><ul>
-<li>所要分的表与其他表关联度不是很大，如果它经常被做连接查询，而且它的主键在别的表经常以外键形式存在，那么就不建议直接水平分表，可以先考虑垂直分表把数据量大的部分独立出去再做水平切分。</li>
+<h3 id="分布式唯一订单id——雪花算法"><a href="#分布式唯一订单id——雪花算法" class="headerlink" title="分布式唯一订单id——雪花算法"></a>分布式唯一订单id——雪花算法</h3><p>雪花算法：1位是占位符 中间41位是时间戳（支持69年） 接着10位是机器ID，最后 12位是序列id，</p>
+<p>每次生成 id 需要 now 和 lastTimeStamp 做比较，如果超了就说明是另外的毫秒了序列id归零，如果没超说明还在同一毫秒内，序列id自增，last = now，可以看出一毫秒一台机器可以生成4096个不同的序列id。</p>
+<p><strong>优点</strong>：生成速度比较快、生成的 ID 有序递增、比较灵活（可以对 Snowflake 算法进行简单的改造比如加入业务 ID）</p>
+<p><strong>缺点</strong>：需要解决重复 ID 问题（ID 生成依赖时间，在获取时间的时候，可能会出现时间回拨的问题，也就是服务器上的时间突然倒退到之前的时间，进而导致会产生重复 ID）、依赖机器 ID 对分布式环境不友好（当需要自动启停或增减机器时，固定的机器 ID 可能不够灵活）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">((now - twEpoch) &lt;&lt; <span class="number">22</span>) | (datacenterId &lt;&lt; <span class="number">17</span>) | (workerId &lt;&lt; <span class="number">12</span>) | sequence;</span><br></pre></td></tr></table></figure>
+
+<h4 id="UUID"><a href="#UUID" class="headerlink" title="UUID"></a>UUID</h4><p><strong>优点</strong>：生成速度通常比较快、简单易用</p>
+<p><strong>缺点</strong>：<u>存储消耗空间大（32 个字符串，128 位）</u>、 <u>无序（非自增）</u>、不安全（基于 MAC 地址生成 UUID 的算法会造成 MAC 地址泄露)、没有具体业务含义、需要解决重复 ID 问题（当机器时间不对的情况下，可能导致会产生重复 ID）</p>
+<h3 id="水平分表（Sharding）"><a href="#水平分表（Sharding）" class="headerlink" title="水平分表（Sharding）"></a>水平分表（Sharding）</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/TateBrwonJava/article/details/114527859">几种水平分表方案与具体实践_水平分表的几种方式-CSDN博客</a> </p>
+<ul>
+<li>首先保证<u>全局唯一ID</u>与查询优化： <ul>
+<li>分布式ID生成（雪花算法、Redis自增ID）避免主键冲突。</li>
+<li>冗余字段或索引表：通过异步维护冗余字段（如商户ID+订单ID）支持多维度查询。</li>
 </ul>
-<ol>
-<li><strong>水平分表</strong>：<br>• <strong>规则分片</strong>：按哈希（如<code>user_id % 100</code>）、范围（如时间戳）或一致性哈希拆分数据。<br>• <strong>中间件</strong>：使用ShardingSphere、Vitess等工具自动路由查询。</li>
-<li><u>全局唯一ID</u>与查询优化：<br>• 分布式ID生成（雪花算法、Redis自增ID）避免主键冲突。<br>• 冗余字段或索引表：通过异步维护冗余字段（如商户ID+订单ID）支持多维度查询。</li>
-<li><strong>结合Redis</strong>：<br>• 缓存分表路由信息（如<code>user_shard:1000 -&gt; shard_2</code>），加速查询。<br>• 热数据缓存：将分表后的热数据单独缓存，降低DB压力。</li>
-<li><strong>垂直分表</strong>  （不推荐）<br>• 将大表按列拆分（如用户基础信息表<code>user_base</code>与扩展信息表<code>user_extend</code>），减少单行数据量。</li>
+</li>
+</ul>
+<blockquote>
+<p>现在很多公司都是用的类似于 TiDB 这种分布式关系型数据库，不需要我们手动进行分库分表（数据库层面已经帮我们做了），也不需要解决手动分库分表引入的各种问题，直接一步到位，内置很多实用的功能（如无感扩容和缩容、冷热存储分离）！如果公司条件允许的话，个人也是比较推荐这种方式！</p>
+<p>如果必须要手动分库分表的话，ShardingSphere 是首选！ShardingSphere 的功能完善，除了支持读写分离和分库分表，还提供分布式事务、数据库治理等功能。另外，ShardingSphere 的生态体系完善，社区活跃，文档完善，更新和发布比较频繁。</p>
+</blockquote>
+<h4 id="Sharding-vs-Partitioning"><a href="#Sharding-vs-Partitioning" class="headerlink" title="Sharding vs Partitioning"></a>Sharding vs Partitioning</h4><table>
+<thead>
+<tr>
+<th align="left">Dimension</th>
+<th align="left">Sharding</th>
+<th align="left">Partitioning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">存储位置</td>
+<td align="left">不同机器</td>
+<td align="left">同一机器</td>
+</tr>
+<tr>
+<td align="left">可扩展性</td>
+<td align="left">High (Scale Out)</td>
+<td align="left">Limited (Scale UP)</td>
+</tr>
+<tr>
+<td align="left">可用性</td>
+<td align="left">High</td>
+<td align="left">跟单机类似</td>
+</tr>
+<tr>
+<td align="left">并发查询性能</td>
+<td align="left">取决于机器数目</td>
+<td align="left">取决于机器的CPU</td>
+</tr>
+<tr>
+<td align="left">查询时间</td>
+<td align="left">低，除非某台机器过载</td>
+<td align="left">中低，主要局限于CPU</td>
+</tr>
+</tbody></table>
+<p>Partitioning 可以分为 水平 和 垂直，水平就是按行拆，垂直就是按列拆（主要是可以按照业务划分冷热数据列），而 Sharding 就是水平 Partitioning 的分布式版本。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/6347a20e8598ff81de4fc4f7_QVjhYNKEHaJ3ZumpY0xicg19Tqoj0vHOVEHklTYHI65E9oG-t9sg0hZcokmdJI26_VDNkbnynbNvvF0Rl6Crx8cqq_Ffq129xsPbykCGqE8LLwPkKDaJ2zUQNJ0H55otwnNMi8IDEPE8ki4nPULl1RY6VLhh2DrsuuRs2fx0tNr9UyBOq0RAg0SLOg.png" alt="Image"></p>
+<h4 id="分表带来的问题"><a href="#分表带来的问题" class="headerlink" title="分表带来的问题"></a>分表带来的问题</h4><ol>
+<li>join 无法进行，需要手动封装、聚合数据</li>
+<li>数据库自带的事务失效，要有分布式事务（ShardingSphere支持）</li>
+<li>分布式id</li>
+<li><strong>跨库聚合查询</strong>：分库分表会导致常规聚合查询操作，如 group by，order by 等变得异常复杂。这是因为这些操作需要在多个分片上进行数据汇总和排序，而不是在单个数据库上进行。为了实现这些操作，需要编写复杂的业务代码，或者使用中间件来协调分片间的通信和数据传输。这样会增加开发和维护的成本，以及影响查询的性能和可扩展性。</li>
 </ol>
+<h4 id="规则分片策略"><a href="#规则分片策略" class="headerlink" title="规则分片策略"></a>规则分片策略</h4><blockquote>
+<p>分片策略：包含分片键（将数据库表水平拆分的字段）以及分片算法</p>
+</blockquote>
+<h5 id="分片键选择"><a href="#分片键选择" class="headerlink" title="分片键选择"></a>分片键选择</h5><p>减少单次查询涉及的分片数量，分割尽量均匀，值稳定也很重要，需要支持动态扩展避免重新分片。</p>
+<ol>
+<li><span id="fanwei"><strong>主键</strong></span>：按照时间将订单水平分表，分成 <code>order2020_2023</code> <code>order2024_2027</code>，使用雪花算法id获取年份作为分片键，然后交由中间件进行路由查询。</li>
+<li><strong>其他字段（以地区为例）</strong>：同理，比如按照地区分表，每次查询的时候可以带上地区，交给中间件进行路由查询</li>
+<li>复合键</li>
+<li>不存在于数据库：可能来自上下文，需要在业务层强制路由</li>
+<li><span id="roundRobin">单纯拆分数据（不推荐）：直接拆成三个表，均匀</span></li>
+</ol>
+<h5 id="分片算法"><a href="#分片算法" class="headerlink" title="分片算法"></a>分片算法</h5><ul>
+<li>RoundRobin：id对表数取余，对应方法<a href="#roundRobin">4</a>，数据很均匀，但是一旦节点变动，重新分片的开销也很大<ul>
+<li>hash</li>
+<li>一致性哈希，不过一般用于es、redis，主要适用于字段比较随机，不进行范围查询的数据，节点经常弹性扩展</li>
+</ul>
+</li>
+<li>范围法：按照字段处于的范围分，容易定位，对应方法 <a href="#fanwei">1,2</a></li>
+</ul>
+<p>分片键缺失：全数据量查询</p>
+<h5 id="非分表键"><a href="#非分表键" class="headerlink" title="非分表键"></a>非分表键</h5><p>针对有些情况没有分表key的情况也是比较普遍的，比方说一个c端与b端之间的平台类项目，往往在选择分表key的时候会出现顾守不顾尾的情况。这个时候总要牺牲一端的用户体验。比方说针对userid对order表分表，那么c端用户查询确实是便利了，但是b端用户就很难找到这个userid，这个时候我们一般有几种处理方法：</p>
+<ul>
+<li>改写sql走union查询：这种方式问题比较大，一方面是由于union效率比较低，做排序分页等查询问题也比较大，另一方面如果使用mybatis-plus之类的工具，使用拦截器插件进行开发分表功能的话，如果我们进行查询的时候参数拼接重写会有参数无法注入的问题。具体来说比方说select * from a where id = 1.那么分表之后的查询变成了(select * from a_1 where id = 1) union (select * from a_2 where id = 1);但在mp框架里会出现参数集为1，待重写阶段的sql为select * from a_1 where id = ?，这样的在一句sql里面出现了两个问号，但是没法填充。当然如果对mp源码理解比较深的话，可以把参数重写。即扩充一倍即可。</li>
+<li>双写：另外搞一个主库或者主表，比较简单,每次插入更新的时候都做两次，主表的话加个事务问题不大，如果加个主库的话，则要注意保证一致性，可以考虑消息队列或者binlog之类的处理方法。</li>
+<li>更改业务逻辑，这种方法一般不太可能，也有特殊情况。</li>
+</ul>
+<h4 id="中间件"><a href="#中间件" class="headerlink" title="中间件"></a>中间件</h4><p>使用ShardingSphere（分库分表、分布式事务）、MyCat（代理层，SQL 路由、读写分离）等工具自动路由查询，侵入性较低。也可以使用 MP 拦截器自行开发分页插件。</p>
+<h3 id="其他策略（Redis缓存路由、热数据-垂直分表）"><a href="#其他策略（Redis缓存路由、热数据-垂直分表）" class="headerlink" title="其他策略（Redis缓存路由、热数据 | 垂直分表）"></a>其他策略（Redis缓存路由、热数据 | 垂直分表）</h3><ol>
+<li><strong>结合Redis</strong>：<br>• 缓存分表路由信息（如<code>user_shard:1000 -&gt; shard_2</code>），加速查询。<br>• 热数据缓存：将分表后的热数据单独缓存，降低DB压力。</li>
+<li><strong>垂直分表</strong>  （一般不推荐）<br>• 不要过度分表或分库，要从实际需求出发，可以是已经碰到的情况下，也可以是预估出不分表不行的情况<br>• 所要分的表与其他表关联度不是很大，如果它经常被做连接查询，而且它的主键在别的表经常以外键形式存在，那么就不建议直接水平分表，可以先考虑垂直分表把数据量大的部分独立出去再做水平切分。将大表按列拆分（如用户基础信息表<code>user_base</code>与扩展信息表<code>user_extend</code>），减少单行数据量。</li>
+</ol>
+<h3 id="数据迁移"><a href="#数据迁移" class="headerlink" title="数据迁移"></a>数据迁移</h3><ol>
+<li>停机，写脚本逐条迁移</li>
+<li>不停机（双写）：每条对老库的增删改都要写入新库（不存在则插入）自己需要写脚本让那些没有被改的数据同步到的新库，不断进行比对，直到相同为止。工具可以借助 canal</li>
+</ol>
+<h3 id="冷热分离"><a href="#冷热分离" class="headerlink" title="冷热分离"></a>冷热分离</h3><p>任务调度：可以利用 xxl-job 或者其他分布式任务调度平台定时去扫描数据库，找出满足冷数据条件的数据，然后批量地将其复制到冷库中，并从热库中删除。这种方法修改的代码非常少，非常适合按照时间区分冷热数据的场景。</p>
+<p>监听 binlog ：将满足冷数据条件的数据从 binlog 中提取出来，然后复制到冷库中，并从热库中删除。这种方法可以不用修改代码，但不适合按照时间维度区分冷热数据的场景。</p>
 <h1 id="项目剖析"><a href="#项目剖析" class="headerlink" title="项目剖析"></a>项目剖析</h1><h2 id="Login-Redis-Token"><a href="#Login-Redis-Token" class="headerlink" title="Login (Redis Token)"></a>Login (Redis Token)</h2><ol>
 <li><p>短信登录的短信怎么发送的?</p>
 <p>（使用hutool生成的随机六位数验证码）</p>
@@ -523,9 +638,9 @@
 <li>保证吞吐量：开个新线程进行异步的延迟双删。</li>
 </ul>
 </li>
-<li><strong>如果缓存删除失败怎么办</strong>？（异步重试）<ul>
+<li><strong>如果缓存删除失败怎么办</strong>？（异步重试，维持缓存和数据库的一致性）<ul>
 <li>单机可用线程池重试，分布式用MQ</li>
-<li>MQ的解决办法：启动一个订阅程序去订阅数据库的binlog，获得需要操作的数据。在应用程序中，另起一段程序，获得这个订阅程序传来的信息，进行删除缓存操作。<ol>
+<li>MQ的解决办法：启动canal去订阅数据库的binlog，获得需要操作的数据。在应用程序中，另起一段程序，获得这个订阅程序传来的信息，进行删除缓存操作。<a href="https://scatteredream.github.io/2024/08/14/redis-cluster-canal/#%E7%BC%93%E5%AD%98%E5%90%8C%E6%AD%A5%EF%BC%9ACanal">canal</a><ol>
 <li>更新数据库数据</li>
 <li>数据库会将操作信息写入binlog日志当中</li>
 <li>订阅程序提取出所需要的数据以及key</li>
@@ -816,6 +931,8 @@
 <li><strong>补偿机制：最终一致性兜底</strong>。如果重试到达一定次数就变成死信，死信监听器接受消息之后出发redis回滚对库存加1，对集合进行remove的操作。</li>
 </ol>
 <h4 id="请求堆积"><a href="#请求堆积" class="headerlink" title="请求堆积"></a>请求堆积</h4><p>MQ消息堆积：使用 CallerRunsPolicy()</p>
+<p>一般就是nack太多或者是消费的太慢了，可以增加消费者数量，或者改成多线程消费</p>
+<p>或者新开一个队列，将堆积的这些消息专门给消费者消费</p>
 <table>
 <thead>
 <tr>
