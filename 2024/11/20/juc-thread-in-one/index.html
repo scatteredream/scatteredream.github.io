@@ -41,7 +41,7 @@
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/three-types-of-thread-models-1735555167554-48.png">
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240918001837124-1726751033487-53.png">
 <meta property="article:published_time" content="2024-11-19T16:00:00.000Z">
-<meta property="article:modified_time" content="2025-05-05T03:16:31.890Z">
+<meta property="article:modified_time" content="2025-05-26T15:14:02.326Z">
 <meta property="article:author" content="碎梦">
 <meta property="article:tag" content="并发">
 <meta name="twitter:card" content="summary">
@@ -187,7 +187,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">84</span>
+          <span class="site-state-item-count">86</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -261,7 +261,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-05 11:16:31" itemprop="dateModified" datetime="2025-05-05T11:16:31+08:00">2025-05-05</time>
+      <time title="修改时间：2025-05-26 23:14:02" itemprop="dateModified" datetime="2025-05-26T23:14:02+08:00">2025-05-26</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -485,27 +485,29 @@
 <p><strong>使用选择</strong></p>
 <p>除非需要使用 ReentrantLock 的高级功能，否则优先使用 synchronized。这是因为 synchronized 是 JVM 实现的一种锁机制，JVM 原生地支持它，而 ReentrantLock 不是所有的 JDK 版本都支持。并且使用 synchronized 不用担心没有释放锁而导致死锁问题，因为 JVM 会确保锁的释放。</p>
 <h3 id="避免死锁"><a href="#避免死锁" class="headerlink" title="避免死锁"></a>避免死锁</h3><ul>
-<li><p>Hold and wait:  一个进程因请求资源而阻塞时，对以获得的资源保持不放。</p>
+<li><p>Hold and wait（持有并等待）:  一个进程因请求资源而阻塞时，对以获得的资源保持不放。</p>
 <ul>
-<li>原子性抢锁, 把要抢的锁集中到一起,一块抢了</li>
+<li>原子性抢锁，把要抢的锁集中到一起，一块抢了</li>
 </ul>
 </li>
-<li><p>No preemption: 进程已获得的资源，在使用完毕之前，不能被强行抢走。</p>
+<li><p>No preemption: 进程已获得的资源，在使用完毕之前，不能被强行抢走。（那就只能自己释放）</p>
 <ul>
 <li><code>a.lock()</code>-&gt;<code>if(!b.tryLock()) then a.unlock()</code> </li>
 <li>如果 b tryLock 失败就会被抢走。</li>
-<li>Issue: Livelock</li>
+<li>Issue: Livelock，拒绝方</li>
 </ul>
 </li>
-<li><p>Circular wait: </p>
+<li><p>Circular wait: 循环等待</p>
 <ul>
-<li>fixed order</li>
+<li>严格规定抢锁的顺序，fixed order</li>
 </ul>
 </li>
-<li><p>Mutual exclusion: </p>
+<li><p>Mutual exclusion: 互斥</p>
 <ul>
 <li>Lock-free CAS</li>
 </ul>
+</li>
+<li><p>无关的业务不要使用相同的锁</p>
 </li>
 </ul>
 <h2 id="线程通信-Inter-Thread-Communication"><a href="#线程通信-Inter-Thread-Communication" class="headerlink" title="线程通信(Inter-Thread Communication)"></a>线程通信(Inter-Thread Communication)</h2><p>可以通过共享变量的方式实现线程间的通讯和协作：volatile、while 轮询</p>

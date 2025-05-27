@@ -18918,27 +18918,29 @@ return 0;
 <p><strong>使用选择</strong></p>
 <p>除非需要使用 ReentrantLock 的高级功能，否则优先使用 synchronized。这是因为 synchronized 是 JVM 实现的一种锁机制，JVM 原生地支持它，而 ReentrantLock 不是所有的 JDK 版本都支持。并且使用 synchronized 不用担心没有释放锁而导致死锁问题，因为 JVM 会确保锁的释放。</p>
 <h3 id="避免死锁"><a href="#避免死锁" class="headerlink" title="避免死锁"></a>避免死锁</h3><ul>
-<li><p>Hold and wait:  一个进程因请求资源而阻塞时，对以获得的资源保持不放。</p>
+<li><p>Hold and wait（持有并等待）:  一个进程因请求资源而阻塞时，对以获得的资源保持不放。</p>
 <ul>
-<li>原子性抢锁, 把要抢的锁集中到一起,一块抢了</li>
+<li>原子性抢锁，把要抢的锁集中到一起，一块抢了</li>
 </ul>
 </li>
-<li><p>No preemption: 进程已获得的资源，在使用完毕之前，不能被强行抢走。</p>
+<li><p>No preemption: 进程已获得的资源，在使用完毕之前，不能被强行抢走。（那就只能自己释放）</p>
 <ul>
 <li><code>a.lock()</code>-&gt;<code>if(!b.tryLock()) then a.unlock()</code> </li>
 <li>如果 b tryLock 失败就会被抢走。</li>
-<li>Issue: Livelock</li>
+<li>Issue: Livelock，拒绝方</li>
 </ul>
 </li>
-<li><p>Circular wait: </p>
+<li><p>Circular wait: 循环等待</p>
 <ul>
-<li>fixed order</li>
+<li>严格规定抢锁的顺序，fixed order</li>
 </ul>
 </li>
-<li><p>Mutual exclusion: </p>
+<li><p>Mutual exclusion: 互斥</p>
 <ul>
 <li>Lock-free CAS</li>
 </ul>
+</li>
+<li><p>无关的业务不要使用相同的锁</p>
 </li>
 </ul>
 <h2 id="线程通信-Inter-Thread-Communication"><a href="#线程通信-Inter-Thread-Communication" class="headerlink" title="线程通信(Inter-Thread Communication)"></a>线程通信(Inter-Thread Communication)</h2><p>可以通过共享变量的方式实现线程间的通讯和协作：volatile、while 轮询</p>
@@ -22970,13 +22972,14 @@ return 0;
 </ul>
 </li>
 <li><strong>延迟双删：删完之后，隔段时间再尝试删一次。</strong><ul>
-<li>读写分离：A 对主库写，B读从库的旧数据，因此只需要延迟双删多加一个主从同步的时间基础上加几百ms。</li>
-<li>保证吞吐量：开个新线程进行异步的延迟双删。</li>
+<li>休眠时间：覆盖这个并发的读请求回写的时间（回写窗口） + 几百毫秒</li>
+<li>读写分离：A 对主库写，B读从库的旧数据，因此只需要在一个主从同步的时间基础上加几百ms。</li>
+<li>保证吞吐量：开个新线程进行异步的延迟双删。ScheduledExecutor.schedule()</li>
 </ul>
 </li>
 <li><strong>如果缓存删除失败怎么办</strong>？（异步重试，维持缓存和数据库的一致性）<ul>
 <li>单机可用线程池重试，分布式用MQ</li>
-<li>MQ的解决办法：启动canal去订阅数据库的binlog，获得需要操作的数据。在应用程序中，另起一段程序，获得这个订阅程序传来的信息，进行删除缓存操作。<a href="https://scatteredream.github.io/2024/08/14/redis-cluster-canal/#%E7%BC%93%E5%AD%98%E5%90%8C%E6%AD%A5%EF%BC%9ACanal">canal</a><ol>
+<li>MQ的解决办法：启动canal去订阅数据库的binlog，获得需要操作的数据。在应用程序中，另起一段程序，获得这个订阅程序传来的信息，收到了进行删除缓存操作。<a href="https://scatteredream.github.io/2024/08/14/redis-cluster-canal/#%E7%BC%93%E5%AD%98%E5%90%8C%E6%AD%A5%EF%BC%9ACanal">canal</a> <ol>
 <li>更新数据库数据</li>
 <li>数据库会将操作信息写入binlog日志当中</li>
 <li>订阅程序提取出所需要的数据以及key</li>
@@ -23142,7 +23145,7 @@ return 0;
 </blockquote>
 <figure class="highlight lua"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- redis 使用hash来实现</span></span><br><span class="line"><span class="comment">-- 1. capacity 容量</span></span><br><span class="line"><span class="comment">-- 2. tokens 桶内现有令牌数量</span></span><br><span class="line"><span class="comment">-- 3. rate 添加速率</span></span><br><span class="line"><span class="comment">-- 4. timestamp 时间戳，用于懒加载</span></span><br><span class="line"><span class="comment">-- 调用redis指令TIME的结果 TIME</span></span><br><span class="line">tokens = <span class="built_in">math</span>.<span class="built_in">floor</span>(capacity,(TIME-timestamp)*rate);</span><br><span class="line"><span class="comment">-- 然后减去tokens</span></span><br></pre></td></tr></table></figure>
 
-<img src="https://ucc.alicdn.com/kavrxpwgkb2oo_20240819_446c67dc76af4b589ca0bf818ddd07c5.webp" alt="img" style="zoom: 67%;" />
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/kavrxpwgkb2oo_20240819_446c67dc76af4b589ca0bf818ddd07c5.webp" alt="img" style="zoom: 67%;" />
 
 <blockquote>
 <p>漏桶算法的“恒定出水速率”决定了它无法应对瞬时突发请求，一旦超出桶容量，流量就被丢弃。</p>
@@ -23266,9 +23269,8 @@ return 0;
 <li>指数退避重试机制（订单id唯一保证幂等性）</li>
 <li><strong>补偿机制：最终一致性兜底</strong>。如果重试到达一定次数就变成死信，死信监听器接受消息之后出发redis回滚对库存加1，对集合进行remove的操作。</li>
 </ol>
-<h4 id="请求堆积"><a href="#请求堆积" class="headerlink" title="请求堆积"></a>请求堆积</h4><p>MQ消息堆积：使用 CallerRunsPolicy()</p>
-<p>一般就是nack太多或者是消费的太慢了，可以增加消费者数量，或者改成多线程消费</p>
-<p>或者新开一个队列，将堆积的这些消息专门给消费者消费</p>
+<p>回滚的幂等性：可以加一个类似于分布式锁的操作，<code>SETNX rollback:&lt;id&gt; true</code> 成功才继续，如果 <code>rollback:&lt;id&gt;</code> 已存在，说明已经补偿过一次，就直接跳过。（TTL：回滚窗口+一段时间的安全期）</p>
+<h4 id="请求堆积"><a href="#请求堆积" class="headerlink" title="请求堆积"></a>请求堆积</h4><p>MQ消息堆积：使用 CallerRunsPolicy()，一般就是nack太多或者是消费的太慢了，可以增加消费者数量，或者改成多线程消费，或者新开一个队列，将堆积的这些消息专门给消费者消费</p>
 <table>
 <thead>
 <tr>
@@ -33317,5 +33319,28 @@ return 0;
         <tag>spring</tag>
         <tag>bean</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>5.23 Lazada 一面</title>
+    <url>/2025/05/23/review-5-23-lazada%E4%B8%80%E9%9D%A2/</url>
+    <content><![CDATA[<p>项目：<br>Spring循环依赖怎么解决？三级缓存（部分解决）问为什么不是二级？（二级也够了，三级主要解决代理对象问题）<br>Spring AOP，如果出现代理失效怎么办？（注入自己或者开启代理暴露通过aopcontext调用）<br>数据库用的什么隔离级别？答的mysql默认的RR，因为mysql的mvcc快照读机制并发能力也很强。但是面试官说他们都是用的RC读已提交。。。<br>数据库死锁遇到过吗？软件开发的时候怎么避免死锁？<br>几十亿行的数据量怎么分表？答得不好。（数据行水平拆分到不同节点应该是采用分布式生成唯一id，比如雪花算法）<br>消息队列你为什么选rabbitmq？答的是原来用的redis stream不支持持久化，rabbitmq还是amqp易于操作。面试官说我们现在都用kafka/rocketmq，rabbitmq弱爆了<br>rpc项目用的底层通信协议？tcp怎么处理粘包半包？<br>Redis 大key 热key怎么处理？你这个排行榜用zset，zset如果数据量大的话怎么办？答的很差劲。估计问完面试官就觉得差不多了，我也觉得差不多了</p>
+<p>无手撕，后面问了本科期间有没有科研成果，建议是鼓励实习，不过毕竟研究生还是有优势。然后就是反问。</p>
+<p>总的来说还是自己太菜了，人家结合项目问八股，项目里没有大数据量，顶多就是对那几十条redis和几千条数据库进行一个高并发读，没有实践经验根本答不出来，只能硬生生套八股</p>
+<p>挂</p>
+]]></content>
+      <categories>
+        <category>review</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>5.26 pcg 暑期</title>
+    <url>/2025/05/26/review-5-26-27-%E8%85%BE%E8%AE%AFpcg/</url>
+    <content><![CDATA[<p>内容平台，基础架构部门，一共半个多小时，问的比较简单：<br>项目问了一下缓存穿透和布隆过滤器，然后问了问事务，讲了十分钟左右吧</p>
+<p>剩下十五分钟手撕回文链表跟爬楼梯</p>
+<p>然后就是反问，一问是用的go，怪不得不问八股，面试官说整体还不错</p>
+]]></content>
+      <categories>
+        <category>review</category>
+      </categories>
   </entry>
 </search>
