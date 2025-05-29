@@ -14825,81 +14825,6 @@ return 0;
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240919214219300.png" alt="image-20240919214219300"></p>
 <h2 id="解析注解"><a href="#解析注解" class="headerlink" title="解析注解"></a>解析注解</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240919214508991.png" alt="image-20240919214508991"></p>
 <h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><p>模拟框架 解析注解，然后执行 模拟<a href="jetbrains://idea/navigate/reference?project=MyFirstProject&fqn=org.JavaSE.AdvancedTest.Annotation.JUnitSimulator">JUnitSimulator(Toolbox 引用)</a>识别并执行有特定注解的方法</p>
-<h1 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h1><p>加载类，允许用编程的方式，解剖类中的各种成分（万物皆对象）比如ide中创建一个对象，对象引用后加一个点就能显示可以调用的方法，说明这个类实现的方法已经提前加载好了。</p>
-<p>反射（Reflection）是计算机编程中的一种机制，允许程序在运行时动态地检查、修改或调用其自身的结构或行为。它打破了传统静态代码的编译时绑定限制，使程序能够获取类、方法、属性等元信息，并动态操作它们。</p>
-<h2 id="加载方法"><a href="#加载方法" class="headerlink" title="加载方法"></a>加载方法</h2><ol>
-<li><p>加载类，获取 <code>Class</code> 对象</p>
-<ul>
-<li><code>Class c = 类名.class</code> </li>
-<li><code>Class.forName(全名)</code>  </li>
-<li><code>Class c = 对象.getClass()</code> </li>
-<li><code>getName() 全名带包名 getSimpleName() 简名</code></li>
-<li><code>getMethod() getConstructor() getField()</code> </li>
-</ul>
-</li>
-<li><p>获取类的构造器 <code>Constructor</code> 对象，主调是 <code>Class 对象</code></p>
-<ul>
-<li><code>getConstructors</code> 只有 public <strong>返回数组</strong></li>
-<li><code>getDeclaredConstructors</code> 存在就能拿到</li>
-<li><code>getConstructor(形参的类型对象)</code> 只有public 拿一个</li>
-<li><code>getDeclaredConstructor(形参的类型对象)</code> 存在就能拿到 拿1个</li>
-</ul>
-<ul>
-<li>下面的主调是构造器对象</li>
-<li><code>getParameterCount</code>几个参数</li>
-<li><code>newInstance(...参数)</code> 返回<code>object</code> 强转为对象，如果私有构造器会报错</li>
-<li><code>setAccessible(true)</code> 暴力反射，禁止检查访问权限</li>
-</ul>
-</li>
-<li><p>获取类的成员变量 <code>Field</code> 对象</p>
-<ul>
-<li><code>getFields</code> <code>getDeclaredFields</code> </li>
-<li><code>getField(name)</code> <code>getDeclaredField(name)</code></li>
-<li>下面主调是<code>Field</code>对象</li>
-<li><code>set(对象, 值)</code> <code>get(对象)</code> 赋值 取值</li>
-<li><code>setAccessible</code> 暴力反射</li>
-</ul>
-</li>
-<li><p>获取类的成员方法 <code>Method</code> 对象</p>
-<ul>
-<li><code>getMethods</code> <code>getDeclaredMethods</code></li>
-<li><code>getMethod(name, String.class, int.class) </code>返回值</li>
-<li>下面主调是<code>method</code></li>
-<li><code>getName getParameterConut getReturnType</code></li>
-<li><code>invoke(对象, 参数)</code> 返回object 强转为返回值类型</li>
-<li><code>setAccesible</code></li>
-</ul>
-</li>
-</ol>
-<h2 id="作用、应用场景"><a href="#作用、应用场景" class="headerlink" title="作用、应用场景"></a>作用、应用场景</h2><ul>
-<li>得到类的全部成分</li>
-<li>做框架、解耦代码、提高通用性</li>
-<li>支持注解处理、AOP</li>
-<li>IDE代码分析、断点调试依赖反射</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920001226903.png" alt="image-20240920001226903"></p>
-<p>接收任意对象，接到对象，用反射获取class对象，获取全部成员变量，遍历他们，把他们的属性写出到文件中</p>
-<p>劣势：</p>
-<ul>
-<li>破坏封装性+反射代码需更高权限，可能引发安全漏洞（如通过反射调用<code>System.exit</code>）</li>
-<li>性能开销大，反射调用涉及动态解析类型和方法，比直接调用慢数倍</li>
-<li>代码可读性差，逻辑通常冗长且难以静态分析，增加维护成本。</li>
-<li>编译时检查失效：错误（如方法名拼写错误）在运行时才暴露，增加调试难度。</li>
-</ul>
-<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>框架的核心技术，一个类有很多方法，需要加载资源，而代理可以代替类执行这些操作。</p>
-<p>Spring AOP技术使用了JDK动态代理和CGLIB动态代理两种方式，在不改变原始方法的前提下对功能进行增强。</p>
-<h2 id="JDK-动态代理——反射"><a href="#JDK-动态代理——反射" class="headerlink" title="JDK 动态代理——反射"></a>JDK 动态代理——反射</h2><ul>
-<li>JDK原生的实现方式，需要被代理的目标类必须实现接口。因为这个技术要求<strong>代理对象和目标对象实现同样的接口</strong>（兄弟两个拜把子模式），目标对象和代理对象是平等地位的。</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920112517946.jpg" alt="image-20240920112517946"></p>
-<p>对于一个UserServiceImpl，要生成它的代理对象，为了能创建一个跟UserServiceImpl拥有同名方法的代理Proxy，<mark>这个类必须实现一个接口UserService，并且拥有Impl的全部方法<mark>，然后把Impl传给生成代理的方法。</p>
-<p>接口能将原来的实现对象的方 法抽象化（或者部分抽象） 方便代理进行重写，代理重写完具体的执行逻辑，返回的还是这个接口的实现对象，相当于是把原来的实现对象包装了一下，完美地把对象的职责转移到了代理身上，业务对象。减少代码冗余和多余的资源调用</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023232822938.png" alt="image-20241023232822938"></p>
-<h2 id="CGLIB-动态代理"><a href="#CGLIB-动态代理" class="headerlink" title="CGLIB 动态代理"></a>CGLIB 动态代理</h2><p>通过<strong>继承被代理的目标类</strong>（认干爹模式）实现代理，所以不需要目标类实现接口。</p>
-<p><strong>CGLIB 通过动态生成一个需要被代理类的子类（即被代理类作为父类），该子类重写被代理类的所有不是 final 修饰的方法，并在子类中采用方法拦截的技术拦截父类所有的方法调用，进而织入横切逻辑，</strong> 目标对象是代理对象的父类。</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>cglib<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>cglib-nodeps<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>3.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023232711967.png" alt="image-20241023232711967"></p>
 <h1 id="Hutool-Usage"><a href="#Hutool-Usage" class="headerlink" title="Hutool Usage"></a>Hutool Usage</h1><h2 id="BeanUtil"><a href="#BeanUtil" class="headerlink" title="BeanUtil"></a>BeanUtil</h2><h3 id="bean和Map转换"><a href="#bean和Map转换" class="headerlink" title="bean和Map转换"></a>bean和Map转换</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Map&lt;String,Object&gt;BeanUtil.beanToMap(userDTO, <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;(),</span><br><span class="line">                 CopyOptions.create().setFieldValueEditor((fieldName,fieldValue)-&gt;fieldValue.toString()));</span><br><span class="line"></span><br><span class="line">BeanUtil.fillBeanWithMap(map, <span class="keyword">new</span> <span class="title class_">UserDTO</span>(),<span class="literal">false</span>);</span><br></pre></td></tr></table></figure>
 
 <h2 id="JSONUtil"><a href="#JSONUtil" class="headerlink" title="JSONUtil"></a>JSONUtil</h2><h3 id="JSON和对象互转"><a href="#JSON和对象互转" class="headerlink" title="JSON和对象互转"></a>JSON和对象互转</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">jsonStr</span> <span class="operator">=</span> JSONUtil.toJsonStr(shop);</span><br><span class="line"></span><br><span class="line">shop = JSONUtil.toBean(jsonStr,Shop.class);</span><br></pre></td></tr></table></figure>
@@ -22970,7 +22895,8 @@ return 0;
 <li>查看 ZSet 当前元素个数（即：当前时间窗口内的请求数）</li>
 <li>是否达到阈值limit？未达到则添加一个新元素（member=UUID，score=now）允许放行请求，达到拒绝</li>
 </ol>
-<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a><span id="cache">缓存</span></h2><p>使用 Redis 作为商户信息缓存，避免大量请求直接打到数据库引发宕机，采取<mark>主动更新、旁路缓存</mark>的方法保证数<br>据库与 Redis 之间的缓存一致性问题。使用<mark>布隆过滤器</mark>解决商户信息的缓存穿透问题，使用 <strong>Redis 集群</strong>等方式减<br>小缓存雪崩的概率，使用<mark>逻辑过期</mark>解决缓存击穿。</p>
+<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a><span id="cache">缓存</span></h2><p>在我们实际的业务场景中，一定有很多需要做数据缓存的场景，比如售卖商品的页面，包括了许多并发访问量很大的数据，它们可以称作是是“热点”数据，这些数据有一个特点，<strong>就是更新频率低，读取频率高</strong>，这些数据应该尽量被缓存，从而减少请求打到数据库上的机会，减轻数据库的压力。</p>
+<p>使用 Redis 作为商户信息缓存，避免大量请求直接打到数据库引发宕机，采取<mark>主动更新、旁路缓存</mark>的方法保证数据库与 Redis 之间的缓存一致性问题。使用<mark>布隆过滤器</mark>解决商户信息的缓存穿透问题，使用 <strong>Redis 集群</strong>等方式减<br>小缓存雪崩的概率，使用<mark>逻辑过期</mark>解决缓存击穿。</p>
 <p><strong>内存更新</strong>：</p>
 <ul>
 <li>内存淘汰机制和TTL（对于低一致性场景）</li>
@@ -22982,6 +22908,12 @@ return 0;
 <li>读写穿透：封装了旁路缓存功能，其工作由cache层的服务自动完成，但是redis并不支持写入db</li>
 <li>异步缓存写入：只操作cache，其他线程异步写到db。一般是写密集允许短暂的数据不一致</li>
 </ul>
+<blockquote>
+<p>分布式系统里要么通过2PC或是Paxos协议保证一致性，要么就是拼命的降低并发时脏数据的概率</p>
+<p>缓存系统适用的场景就是非强一致性的场景，所以它属于CAP中的AP，BASE理论。</p>
+<p>异构数据库本来就没办法强一致，<strong>只是尽可能减少时间窗口，达到最终一致性</strong>。</p>
+<p>还有别忘了设置过期时间，这是个兜底方案</p>
+</blockquote>
 <p><strong>Cache Aside</strong>：</p>
 <ul>
 <li>选择删除cache，<em>更新导致的无效写比较多（更新多次但只有最后一次被查询），并且线程安全问题难以解决：<strong>要求数据库和缓存写入都要成功</strong>，此时有可能A更新到v1，线程B突然插进来把缓存更新到v2，最后A把脏数据v1更新到缓存，如果缓存更新涉及多表的查询就更加难以维护。</em> <strong>cache删除和db更新放入一个事务</strong></li>
@@ -23250,7 +23182,8 @@ return 0;
 <li>为什么不使用线程池或者异步编排。如果访问的人很多，那么线程池中的线程可能一下子就被消耗完了，而且你使用上述方案，最大的特点在于，你觉得时效性会非常重要，但是你想想是吗？并不是，比如我只要确定他能做这件事，然后我后边慢慢做就可以了，我并不需要他一口气做完这件事，所以我们应当采用的是课程中，类似消息队列的方式来完成我们的需求，而不是使用线程池或者是异步编排的方式来完成这个需求。</li>
 </ul>
 <h4 id="Lua"><a href="#Lua" class="headerlink" title="Lua"></a>Lua</h4><p><strong>Lua 脚本</strong>：把库存和一人一单做好判断，符合就直接返回成功。构建好订单发给rabbitMQ。</p>
-<p>为了支持集群和维持原子性，lua脚本内操作的键必须在同一个哈希插槽内，因此需要使用前缀 + {voucherid}进行拼接，这样的两个键一定能在同一个哈西插槽内 HASHTAG</p>
+<p>为了支持集群和维持原子性，lua脚本内操作的键必须在同一个哈希插槽内，因此需要使用前缀 + {voucherid}进行拼接，这样的两个键一定能在同一个哈西插槽内 HASHTAG。</p>
+<p>一人一单的 set 存储太多用户会出现性能问题，生产环境里需要做出分片等优化，或者采用 zset</p>
 <h4 id="MQ"><a href="#MQ" class="headerlink" title="MQ"></a>MQ</h4><p>MQ 这边本身支持 concurrency，不过用默认的 1 就好，我们手动配置好线程池的参数，然后提交给线程池。</p>
 <p>异步：时效性不是那么重要，因此使用 MQ 慢慢消化即可。</p>
 <p>单机——轻量级异步任务编排：如并行调用多个本地接口、合并结果、链式处理。</p>
@@ -23470,7 +23403,22 @@ return 0;
 </ul>
 </li>
 </ul>
-<h1 id="线程池调优"><a href="#线程池调优" class="headerlink" title="线程池调优"></a><a href="https://scatteredream.github.io/2024/11/30/juc-in-one/#connectpool">线程池调优</a></h1>]]></content>
+<h1 id="线程池调优"><a href="#线程池调优" class="headerlink" title="线程池调优"></a><a href="https://scatteredream.github.io/2024/11/30/juc-in-one/#connectpool">线程池调优</a></h1><h1 id="压力测试"><a href="#压力测试" class="headerlink" title="压力测试"></a>压力测试</h1><p>首先设置为10000个并发请求的情况下，运行JMeter，结果首先出现了大量的报错，10000个请求中98%的请求都直接失败了。SpringBoot内置的Tomcat最大并发数默认值为200，对于10000的并发，单机服务实在是力不从心。当然，你可以修改这里的并发数设置（<code>server.tomcat.max_threads</code>），但是你的小机器仍然可能会扛不住。</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">server.tomcat.max-threads</span>=<span class="string">10000</span></span><br><span class="line"><span class="attr">server.tomcat.max-connections</span>=<span class="string">10000</span></span><br></pre></td></tr></table></figure>
+
+<p>不使用缓存的情况下，吞吐量为668个请求每秒：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1599136383601-image.png" alt="img"></p>
+<p>使用缓存的情况下，吞吐量为2177个请求每秒：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1599136392397-image.png" alt="img"></p>
+<hr>
+<p>在1c4g1m带宽的云数据库上，<strong>设置商品数量5000个，同时并发访问10000次</strong>。数据库直接被打挂</p>
+<p>我们改成1000个线程并发，商品库存为500个，<strong>使用常规的非异步下单接口</strong>，吞吐量37.3：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/5718317-b90a65d09f68c8f7.png" alt="image"></p>
+<p>对比1000个线程并发，<strong>使用异步订单接口</strong>：吞吐量 600</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/5718317-f5f703025a2fe0f0.png" alt="image"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/5718317-440730e106c71864.png" alt="image"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/5718317-440730e106c71864.png" alt="image"></p>
+]]></content>
       <categories>
         <category>项目</category>
       </categories>
@@ -25873,6 +25821,112 @@ return 0;
 <li>准确性高，目前大多数性能压测都是使用jmh</li>
 <li>缺点就是代码入侵</li>
 </ul>
+<h1 id="差异化"><a href="#差异化" class="headerlink" title="差异化"></a>差异化</h1><p>在自定义 RPC 框架时，与 Dubbo 这样的成熟框架实现差异化需要从设计理念、功能特性、适用场景等多个维度进行创新。以下是一些可能的差异化方向，分为核心优化、扩展场景和新兴技术整合三类：</p>
+<h2 id="核心架构与性能优化"><a href="#核心架构与性能优化" class="headerlink" title="核心架构与性能优化"></a><strong>核心架构与性能优化</strong></h2><ol>
+<li><p><strong>更轻量的设计</strong></p>
+<ul>
+<li><strong>去中心化架构</strong>：Dubbo 依赖注册中心（如 Zookeeper、Nacos），可设计为无注册中心的点对点通信（如基于 DNS 或静态配置），降低运维复杂度。</li>
+<li><strong>零依赖核心</strong>：剥离非必要模块（如监控、配置中心），核心库仅保留序列化、网络通信和容错，适合嵌入式场景（如 IoT 设备）。</li>
+<li><strong>GraalVM 原生镜像支持</strong>：编译为原生二进制，启动速度提升 10 倍以上，内存占用降低 50%（对比 Dubbo 的 JVM 模式）。</li>
+</ul>
+</li>
+<li><p><strong>极致性能优化</strong></p>
+<ul>
+<li><strong>基于 Rust/Go 重写通信层</strong>：网络库（类似 Netty）用 Rust 实现，减少 GC 停顿，单机 QPS 提升 30%-50%（参考 Apache Dubbo Rust 的实验数据）。</li>
+<li><strong>无锁化设计</strong>：请求路由、线程模型避免锁竞争（如单线程事件循环 + 协程调度）。</li>
+<li><strong>内存池化技术</strong>：复用序列化缓冲区，减少堆内存分配（类似 gRPC 的 Arena 分配器）。</li>
+</ul>
+</li>
+<li><p><strong>协议与序列化创新</strong></p>
+<ul>
+<li><strong>自定义二进制协议</strong>：对比 Dubbo 的默认 Hessian2/JSON，可支持 FlatBuffers/Cap’n Proto 等零拷贝序列化，延迟降低 20%-40%。</li>
+<li><strong>多协议混合路由</strong>：根据请求特征动态选择协议（如大文件走 HTTP/2，高频小包走自定义二进制协议）。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="垂直场景深度适配"><a href="#垂直场景深度适配" class="headerlink" title="垂直场景深度适配"></a><strong>垂直场景深度适配</strong></h2><ol>
+<li><p><strong>边缘计算与弱网络</strong></p>
+<ul>
+<li><strong>断网自治模式</strong>：服务节点离线时自动切换为本地存根（如基于 SQLite 缓存），适合移动端/边缘设备。</li>
+<li><strong>低带宽优化</strong>：差分序列化（仅传输变化字段），压缩算法动态选择（Zstd/Brotli）。</li>
+</ul>
+</li>
+<li><p><strong>大规模服务治理</strong></p>
+<ul>
+<li><strong>流量染色与单元化</strong>：基于请求标签的精细路由（如按用户 ID 分片），避免 Dubbo 的全局负载均衡短板。</li>
+<li><strong>无损发布</strong>：连接级灰度（长连接保持旧版本流量，新连接路由到新版本），避免 Dubbo 重启导致的流量闪断。</li>
+</ul>
+</li>
+<li><p><strong>云原生深度集成</strong></p>
+<ul>
+<li><strong>Kubernetes Native</strong>：直接基于 Service Account 做服务发现，替代独立的注册中心。</li>
+<li><strong>Serverless 适配</strong>：冷启动优化（预热请求池）、按调用计费（动态伸缩实例）。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="开发体验与可观测性"><a href="#开发体验与可观测性" class="headerlink" title="开发体验与可观测性"></a><strong>开发体验与可观测性</strong></h2><ol>
+<li><p><strong>开发者友好设计</strong></p>
+<ul>
+<li><strong>DSL 定义接口</strong>：类似 Kotlin 的 suspend RPC 函数，生成客户端代码，避免手动定义 Stub。</li>
+<li><strong>交互式调试</strong>：内置请求重放、Mock 服务器（类似 Postman for RPC）。</li>
+</ul>
+</li>
+<li><p><strong>深度可观测性</strong></p>
+<ul>
+<li><strong>分布式链路追踪</strong>：内置 OpenTelemetry 支持，自动关联 RPC 调用与数据库访问。</li>
+<li><strong>实时拓扑图</strong>：动态展示服务依赖关系（类似 Dubbo Admin，但增加流量热力图）。</li>
+</ul>
+</li>
+<li><p><strong>多语言生态</strong></p>
+<ul>
+<li><strong>WebAssembly 运行时</strong>：客户端逻辑用 WASM 编写，跨语言一致性（对比 Dubbo 的多语言 SDK 维护成本）。</li>
+<li><strong>IDE 插件</strong>：IntelliJ/VSCode 插件直接生成接口 Mock 数据。</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="差异化对比表示例"><a href="#差异化对比表示例" class="headerlink" title="差异化对比表示例"></a><strong>差异化对比表示例</strong></h2><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Dubbo 3.x</th>
+<th>自定义 RPC 框架差异化点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>服务发现</strong></td>
+<td>依赖 Nacos/Zookeeper</td>
+<td>基于 Kubernetes Endpoints 或无中心 DNS</td>
+</tr>
+<tr>
+<td><strong>协议扩展</strong></td>
+<td>支持 Triple (gRPC)/Dubbo2</td>
+<td>动态协议选择 + 自定义零拷贝协议</td>
+</tr>
+<tr>
+<td><strong>冷启动速度</strong></td>
+<td>1-3s (JVM)</td>
+<td>&lt;100ms (GraalVM Native)</td>
+</tr>
+<tr>
+<td><strong>移动端支持</strong></td>
+<td>无官方优化</td>
+<td>差分序列化 + 断网自治模式</td>
+</tr>
+<tr>
+<td><strong>调试工具</strong></td>
+<td>依赖第三方工具</td>
+<td>内置请求重放与 IDE 集成</td>
+</tr>
+</tbody></table>
+<h2 id="实施建议"><a href="#实施建议" class="headerlink" title="实施建议"></a><strong>实施建议</strong></h2><ol>
+<li><strong>优先聚焦痛点场景</strong>：例如选择 Dubbo 在 IoT 领域资源占用高的短板，针对性优化。</li>
+<li><strong>兼容性设计</strong>：提供 Dubbo 协议适配层，降低迁移成本。</li>
+<li><strong>开源社区策略</strong>：差异化功能作为扩展插件（如 WASM 运行时），吸引特定场景用户。</li>
+</ol>
+<p>通过以上方向，可以在不直接挑战 Dubbo 通用性的前提下，在特定领域（如边缘计算、极致性能、云原生深度集成）建立优势。关键是根据目标用户的实际需求做减法（如移除复杂治理功能）或创新（如内置新型序列化）。</p>
 ]]></content>
       <categories>
         <category>项目</category>
@@ -28554,12 +28608,26 @@ return 0;
 <li>可以做数据的异构同步，如 Canal。实现数据多端一致性或实时搜索</li>
 </ol>
 <h4 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h4><h5 id="STATEMENT"><a href="#STATEMENT" class="headerlink" title="STATEMENT"></a>STATEMENT</h5><p>记录SQL语句，如果有动态函数会恢复不准确，这里就属于逻辑日志</p>
+<p>每一条会修改数据的sql都会记录到master的binlog中，<strong>slave在复制的时候sql进程会解析成和原来master端执行相同的sql再执行。</strong></p>
+<blockquote>
+<p>优点：在statement模式下首先就是解决了row模式的缺点，不需要记录每一行数据的变化减少了binlog日志量，节省了I/O以及存储资源，提高性能。因为他只需要记录在master上所执行的语句的细节以及执行语句的上下文信息。</p>
+<p>缺点：在statement模式下，由于他是记录的执行语句，所以，为了让这些语句在slave端也能正确执行，那么他还必须记录每条语句在执行的时候的一些相关信息，也就是上下文信息，以保证所有语句在slave端被执行的时候能够得到和在master端执行时候相同的结果。另外就是，由于mysql现在发展比较快，很多的新功能不断的加入，使mysql的复制遇到了不小的挑战，自然复制的时候涉及到越复杂的内容，bug也就越容易出现。在statement中，目前已经发现不少情况会造成Mysql的复制出现问题，主要是修改数据的时候使用了某些特定的函数或者功能的时候会出现，比如：sleep()函数在有些版本中就不能被正确复制，在存储过程中使用了last_insert_id()函数，可能会使slave和master上得到不一致的id等等。由于row是基于每一行来记录的变化，所以不会出现，类似的问题。</p>
+</blockquote>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029171133144.png" alt="image-20241029171133144"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029191323110.png" alt="image-20241029191323110"></p>
 <h5 id="ROW"><a href="#ROW" class="headerlink" title="ROW"></a>ROW</h5><p>记录行数据修改之前和之后的数据</p>
+<p>Binlog日志中仅记录哪一条记录被修改了，修改成什么样了，会非常清楚的记录下每一行数据修改的细节，<strong>Master修改了哪些行，slave也直接修改对应行的数据</strong></p>
+<blockquote>
+<p>优点：row的日志内容会非常清楚的记录下每一行数据修改的细节，非常容易理解。而且不会出现某些特定情况下的存储过程和function，以及trigger的调用和出发无法被正确复制问题。</p>
+<p>缺点：在row模式下，所有的执行的语句当记录到日志中的时候，都将以每行记录的修改来记录，这样可能会产生大量的日志内容。</p>
+</blockquote>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029171203288.png" alt="image-20241029171203288"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029191145845.png" alt="image-20241029191145845"></p>
-<h5 id="MIXED"><a href="#MIXED" class="headerlink" title="MIXED"></a>MIXED</h5><h4 id="写入过程"><a href="#写入过程" class="headerlink" title="写入过程"></a>写入过程</h4><p>事务开始以后的执行过程都写到内存中的binlog cache，事务提交后会write写入 page cache，仍然在内存中，需要通过刷盘操作fsync才能持久化到磁盘。</p>
+<h5 id="MIXED"><a href="#MIXED" class="headerlink" title="MIXED"></a>MIXED</h5><p>从官方文档中看到，之前的 MySQL 一直都只有基于 statement 的复制模式，直到 5.1.5 版本的 MySQL 才开始支持 row 复制。从 5.0 开始，MySQL 的复制已经解决了大量老版本中出现的无法正确复制的问题。但是由于存储过程的出现，给 MySQL Replication 又带来了更大的新挑战。</p>
+<p>另外，看到官方文档说，从 5.1.8 版本开始，MySQL 提供了除 Statement 和 Row 之外的第三种复制模式：Mixed，实际上就是前两种模式的结合。</p>
+<p><strong>在 Mixed 模式下，MySQL 会根据执行的每一条具体的 SQL 语句来区分对待记录的日志形式，也就是在 statement 和 row 之间选择一种。</strong></p>
+<p>新版本中的 statment 还是和以前一样，仅仅记录执行的语句。而新版本的 MySQL 中对 row 模式也被做了优化，并不是所有的修改都会以 row 模式来记录，比如遇到表结构变更的时候就会以 statement 模式来记录，如果 SQL 语句确实就是 update 或者 delete 等修改数据的语句，那么还是会记录所有行的变更。</p>
+<h4 id="写入过程"><a href="#写入过程" class="headerlink" title="写入过程"></a>写入过程</h4><p>事务开始以后的执行过程都写到内存中的binlog cache，事务提交后会write写入 page cache，仍然在内存中，需要通过刷盘操作fsync才能持久化到磁盘。</p>
 <ul>
 <li><code>sync_binlog</code> = <code>1(default)</code> 表示每次提交事务都要在写入page cache的同时刷盘，性能较低但安全；</li>
 <li><code>sync_binlog</code> = <code>0</code> 表示每次提交事务以后只写入page cache，刷盘时机交给系统确定，性能高但是不安全，会导致宕机以后page cache的binlog全部丢失；</li>
@@ -31907,43 +31975,49 @@ return 0;
 <li>2）MySQL slave 将 master 的 binary log events拷贝到它的中继日志(relay log)</li>
 <li>3）MySQL slave 重放 relay log 中事件，将数据变更反映它自己的数据</li>
 </ul>
-<p>而Canal就是把自己伪装成MySQL的一个slave节点，从而监听master的binary log变化。再把得到的变化信息通知给Canal的客户端，进而完成对其它数据库的同步。</p>
+<hr>
+<ul>
+<li>Canal就是把自己伪装成MySQL的一个slave节点，从而监听master的binary log变化。再把得到的变化信息通知给Canal的客户端，进而完成对其它数据库的同步。</li>
+<li>Canal用途很广，比如数据库实时备份、索引构建和实时维护(拆分异构索引、倒排索引等)、业务 cache 缓存刷新。</li>
+<li>Canal可以推送至非常多数据源，并支持推送到消息队列，方便多语言使用</li>
+</ul>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20210821115948395.png" alt="image-20210821115948395"></p>
+<h2 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h2><h3 id="问题：Binlog解析错误-重复解析-DML解析为QUERY"><a href="#问题：Binlog解析错误-重复解析-DML解析为QUERY" class="headerlink" title="问题：Binlog解析错误 重复解析/DML解析为QUERY"></a>问题：Binlog解析错误 重复解析/DML解析为QUERY</h3><p>这个问题主要由以下几种典型情况：</p>
+<ul>
+<li>INSERT/UPDATE/DELETE被解析为Query或DDL语句</li>
+<li>Binlog重复解析，即一个操作又有QUERY消息，又有对应的INSERT/UPDATE/DELETE消息。</li>
+</ul>
+<p>原因分析：</p>
+<ol>
+<li>binlog格式为非row模式，通过show variables like ‘binlog_format’可以查看. 针对statement/mixed模式，DML语句都会是以SQL语句存在 <a href="https://scatteredream.github.io/2024/10/04/mysql-maintain/#%E7%B1%BB%E5%9E%8B">binlog 类型 | scatteredream’s blog</a> </li>
+<li>mysql5.6+之后，在binlog为row模式下，针对DML语句通过一个开关(binlog-rows-query-log-events=true, show variables里也可以看到该变量)，记录DML的原始SQL，对应binlog事件为RowsQueryLogEvent，同时也有对应的row记录. ps. canal可以通过properties设置来过滤：canal.instance.filter.query.dml = true</li>
+</ol>
+<h3 id="问题：Filter失效"><a href="#问题：Filter失效" class="headerlink" title="问题：Filter失效"></a>问题：Filter失效</h3><p>Canal提供了filter可以过滤掉不需要监听的表（黑名单），或者指定需要监听的表（白名单）。</p>
+<p>我们通常在canal-server端的conf/example/instance.properties文件中进行设置：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># table regex</span></span><br><span class="line">canal.instance.<span class="built_in">filter</span>.regex=.*\\..*</span><br><span class="line"><span class="comment"># table black regex</span></span><br><span class="line">canal.instance.<span class="built_in">filter</span>.black.regex=</span><br></pre></td></tr></table></figure>
+
+<p>设置规则方式为：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">mysql 数据解析关注的表，Perl正则表达式.</span><br><span class="line">多个正则之间以逗号(,)分隔，转义符需要双斜杠(\\) </span><br><span class="line">常见例子：</span><br><span class="line"><span class="bullet">1.</span>  所有表：.*   or  .<span class="emphasis">*\\..*</span></span><br><span class="line"><span class="bullet">2.</span>  canal schema下所有表： canal\\..*</span><br><span class="line"><span class="bullet">3.</span>  canal下的以canal打头的表：canal\\.canal.*</span><br><span class="line"><span class="bullet">4.</span>  canal schema下的一张表：canal.test1</span><br><span class="line"><span class="bullet">5.</span>  多个规则组合使用：canal\\..<span class="emphasis">*,mysql.test1,mysql.test2 (逗号分隔)</span></span><br></pre></td></tr></table></figure>
+
+<p>也可以在客户端与canal进行连接时，用客户端的<code>connector.subscribe(&quot;xxxxxxx&quot;);</code>来覆盖服务端初始化时的设置。</p>
+<p>Canal官方可能是收到的filter设置不成功的反馈有点多了，在canal1.1.3+版本之后,会在日志里记录最后使用的filter条件，可以对比使用的filter看看是否和自己期望的是一致：</p>
+<figure class="highlight lua"><table><tr><td class="code"><pre><span class="line">c.a.o.canal.parse.inbound.mysql.dbsync.LogEventConvert - <span class="comment">--&gt; init table filter : ^.*\..*$</span></span><br><span class="line">c.a.o.canal.parse.inbound.mysql.dbsync.LogEventConvert - <span class="comment">--&gt; init table black filter :</span></span><br></pre></td></tr></table></figure>
+
+<p>可能原因一：客户端调用subscribe(“xxx”)，如果失效，首先看下自己在客户端是不是调用过<code>connector.subscribe(&quot;xxxxxxx&quot;);</code>覆盖了服务端初始化时的设置。</p>
+<p>可能原因二：Binlog非ROW模式</p>
+<blockquote>
+<p>过滤条件只针对row模式的数据有效(ps. mixed/statement因为不解析sql，所以无法准确提取tableName进行过滤)</p>
+</blockquote>
+<p>我上面截图中那种收到两条消息的情况，第一条消息就是一个QURTY，并且没法确定表名，所以没法开启过滤。</p>
+<h3 id="消息堆积、滞后"><a href="#消息堆积、滞后" class="headerlink" title="消息堆积、滞后"></a>消息堆积、滞后</h3><p><a href="https://www.cnblogs.com/rude3knife/p/13577743.html">蛮三刀酱</a> </p>
+<blockquote>
+<p><strong>一个可行的解决办法是，将消息拉取后，写入消息队列（如RabbitMQ/Kafka），用消息队列来堆积消息处理，来保证大量消息堆积后不会导致canal卡死，并且可以支持数据持久化。</strong></p>
+<p><strong>我自己对Canal这样做的的猜测：Canal应该想是让专业的工具做专业的事，Canal就只是一个读取Binlog的中间件，并不是专业的消息队列，消息应该让专业的消息队列来处理。</strong></p>
+</blockquote>
 <h2 id="监听-Canal"><a href="#监听-Canal" class="headerlink" title="监听 Canal"></a>监听 Canal</h2><p>Canal提供了各种语言的客户端，当Canal监听到binlog变化时，会通知Canal的客户端。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20210821120049024.png" alt="image-20210821120049024"></p>
 <p>我们可以利用Canal提供的Java客户端，监听Canal通知消息。当收到变化的消息时，完成对缓存的更新。</p>
-<p>不过这里我们会使用GitHub上的第三方开源的canal-starter客户端。地址：<a href="https://github.com/NormanGyllenhaal/canal-client">https://github.com/NormanGyllenhaal/canal-client</a></p>
-<p>与SpringBoot完美整合，自动装配，比官方客户端要简单好用很多。</p>
-<blockquote>
-<p>引入依赖</p>
-</blockquote>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>top.javatool<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>canal-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.1-RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>编写配置</p>
-</blockquote>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">canal:</span></span><br><span class="line">  <span class="attr">destination:</span> <span class="string">heima</span> <span class="comment"># canal的集群名字，要与安装canal时设置的名称一致</span></span><br><span class="line">  <span class="attr">server:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span><span class="string">:11111</span> <span class="comment"># canal服务地址</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>修改Item实体类</p>
-</blockquote>
-<p>通过@Id、@Column、等注解完成Item与数据库表字段的映射：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.heima.item.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.annotation.IdType;</span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.annotation.TableField;</span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.annotation.TableId;</span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.annotation.TableName;</span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.annotation.Id;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.annotation.Transient;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.persistence.Column;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@TableName(&quot;tb_item&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Item</span> &#123;</span><br><span class="line">    <span class="meta">@TableId(type = IdType.AUTO)</span></span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">private</span> Long id;<span class="comment">//商品id</span></span><br><span class="line">    <span class="meta">@Column(name = &quot;name&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String name;<span class="comment">//商品名称</span></span><br><span class="line">    <span class="keyword">private</span> String title;<span class="comment">//商品标题</span></span><br><span class="line">    <span class="keyword">private</span> Long price;<span class="comment">//价格（分）</span></span><br><span class="line">    <span class="keyword">private</span> String image;<span class="comment">//商品图片</span></span><br><span class="line">    <span class="keyword">private</span> String category;<span class="comment">//分类名称</span></span><br><span class="line">    <span class="keyword">private</span> String brand;<span class="comment">//品牌名称</span></span><br><span class="line">    <span class="keyword">private</span> String spec;<span class="comment">//规格</span></span><br><span class="line">    <span class="keyword">private</span> Integer status;<span class="comment">//商品状态 1-正常，2-下架</span></span><br><span class="line">    <span class="keyword">private</span> Date createTime;<span class="comment">//创建时间</span></span><br><span class="line">    <span class="keyword">private</span> Date updateTime;<span class="comment">//更新时间</span></span><br><span class="line">    <span class="meta">@TableField(exist = false)</span></span><br><span class="line">    <span class="meta">@Transient</span></span><br><span class="line">    <span class="keyword">private</span> Integer stock;</span><br><span class="line">    <span class="meta">@TableField(exist = false)</span></span><br><span class="line">    <span class="meta">@Transient</span></span><br><span class="line">    <span class="keyword">private</span> Integer sold;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="编写监听器"><a href="#编写监听器" class="headerlink" title="编写监听器"></a>编写监听器</h3><p>通过实现<code>EntryHandler&lt;T&gt;</code>接口编写监听器，监听Canal消息。注意两点：</p>
-<ul>
-<li>实现类通过<code>@CanalTable(&quot;tb_item&quot;)</code>指定监听的表信息</li>
-<li>EntryHandler的泛型是与表对应的实体类</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.heima.item.canal;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.github.benmanes.caffeine.cache.Cache;</span><br><span class="line"><span class="keyword">import</span> com.heima.item.config.RedisHandler;</span><br><span class="line"><span class="keyword">import</span> com.heima.item.pojo.Item;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="keyword">import</span> top.javatool.canal.client.annotation.CanalTable;</span><br><span class="line"><span class="keyword">import</span> top.javatool.canal.client.handler.EntryHandler;</span><br><span class="line"></span><br><span class="line"><span class="meta">@CanalTable(&quot;tb_item&quot;)</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ItemHandler</span> <span class="keyword">implements</span> <span class="title class_">EntryHandler</span>&lt;Item&gt; &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> RedisHandler redisHandler;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> Cache&lt;Long, Item&gt; itemCache;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert</span><span class="params">(Item item)</span> &#123;</span><br><span class="line">        <span class="comment">// 写数据到JVM进程缓存</span></span><br><span class="line">        itemCache.put(item.getId(), item);</span><br><span class="line">        <span class="comment">// 写数据到redis</span></span><br><span class="line">        redisHandler.saveItem(item);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">update</span><span class="params">(Item before, Item after)</span> &#123;</span><br><span class="line">        <span class="comment">// 写数据到JVM进程缓存</span></span><br><span class="line">        itemCache.put(after.getId(), after);</span><br><span class="line">        <span class="comment">// 写数据到redis</span></span><br><span class="line">        redisHandler.saveItem(after);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete</span><span class="params">(Item item)</span> &#123;</span><br><span class="line">        <span class="comment">// 删除数据到JVM进程缓存</span></span><br><span class="line">        itemCache.invalidate(item.getId());</span><br><span class="line">        <span class="comment">// 删除数据到redis</span></span><br><span class="line">        redisHandler.deleteItemById(item.getId());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>在这里对Redis的操作都封装到了RedisHandler这个对象中，是我们之前做缓存预热时编写的一个类，内容如下：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.heima.item.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.core.JsonProcessingException;</span><br><span class="line"><span class="keyword">import</span> com.fasterxml.jackson.databind.ObjectMapper;</span><br><span class="line"><span class="keyword">import</span> com.heima.item.pojo.Item;</span><br><span class="line"><span class="keyword">import</span> com.heima.item.pojo.ItemStock;</span><br><span class="line"><span class="keyword">import</span> com.heima.item.service.IItemService;</span><br><span class="line"><span class="keyword">import</span> com.heima.item.service.IItemStockService;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.InitializingBean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.core.StringRedisTemplate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RedisHandler</span> <span class="keyword">implements</span> <span class="title class_">InitializingBean</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> StringRedisTemplate redisTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> IItemService itemService;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> IItemStockService stockService;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">ObjectMapper</span> <span class="variable">MAPPER</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectMapper</span>();</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">afterPropertiesSet</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">// 初始化缓存</span></span><br><span class="line">        <span class="comment">// 1.查询商品信息</span></span><br><span class="line">        List&lt;Item&gt; itemList = itemService.list();</span><br><span class="line">        <span class="comment">// 2.放入缓存</span></span><br><span class="line">        <span class="keyword">for</span> (Item item : itemList) &#123;</span><br><span class="line">            <span class="comment">// 2.1.item序列化为JSON</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">json</span> <span class="operator">=</span> MAPPER.writeValueAsString(item);</span><br><span class="line">            <span class="comment">// 2.2.存入redis</span></span><br><span class="line">            redisTemplate.opsForValue().set(<span class="string">&quot;item:id:&quot;</span> + item.getId(), json);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3.查询商品库存信息</span></span><br><span class="line">        List&lt;ItemStock&gt; stockList = stockService.list();</span><br><span class="line">        <span class="comment">// 4.放入缓存</span></span><br><span class="line">        <span class="keyword">for</span> (ItemStock stock : stockList) &#123;</span><br><span class="line">            <span class="comment">// 2.1.item序列化为JSON</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">json</span> <span class="operator">=</span> MAPPER.writeValueAsString(stock);</span><br><span class="line">            <span class="comment">// 2.2.存入redis</span></span><br><span class="line">            redisTemplate.opsForValue().set(<span class="string">&quot;item:stock:id:&quot;</span> + stock.getId(), json);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">saveItem</span><span class="params">(Item item)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">json</span> <span class="operator">=</span> MAPPER.writeValueAsString(item);</span><br><span class="line">            redisTemplate.opsForValue().set(<span class="string">&quot;item:id:&quot;</span> + item.getId(), json);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (JsonProcessingException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">deleteItemById</span><span class="params">(Long id)</span> &#123;</span><br><span class="line">        redisTemplate.delete(<span class="string">&quot;item:id:&quot;</span> + id);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<p><a href="https://github.com/qqxx6661/miaosha/blob/25de14d951ecac92ca96b0b529762e584aa8f54e/miaosha-job/src/main/java/job/CanalClient.java#L15">miaosha/miaosha-job/src/main/java/job/CanalClient.java</a> </p>
 <h1 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h1><p><strong>今日内容</strong></p>
 <blockquote>
 <ul>
@@ -33487,6 +33561,498 @@ return 0;
         <tag>io</tag>
         <tag>select/poll/epoll</tag>
         <tag>socket</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>超大文件中在有限的内存里找到单词频率 top 100</title>
+    <url>/2025/05/29/algorithm-top100freq-files/</url>
+    <content><![CDATA[<h1 id="TOP-100-freq"><a href="#TOP-100-freq" class="headerlink" title="TOP 100 freq"></a>TOP 100 freq</h1><h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>问题：有一个 1G 大小的文件，里面每一行是一个词，每个词的大小不超过 16 字节，内存限制大小是 1M。返回出现频率最高的 100 个单词</p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><ul>
+<li>有一个 1GB 的文件，每行是一个词，每个词不超过 16 字节。</li>
+<li>内存限制为 1MB，因此无法一次性加载整个文件到内存中处理。</li>
+<li>需要返回出现频率最高的 100 个词，要求精确结果（非近似）。</li>
+<li>核心挑战：内存小，文件大，需高效处理大数据，避免内存溢出。</li>
+</ul>
+<h3 id="解决思路：分治法-外部排序-堆维护-Top-100"><a href="#解决思路：分治法-外部排序-堆维护-Top-100" class="headerlink" title="解决思路：分治法 + 外部排序 + 堆维护 Top 100"></a>解决思路：分治法 + 外部排序 + 堆维护 Top 100</h3><p>使用分治法将大文件分解为小文件块，每个块在内存中处理，然后多级合并部分结果。在合并过程中，维护一个最小堆来跟踪全局频率最高的 100 个词。思路简单直接，步骤如下：</p>
+<ol>
+<li><strong>分块（Divide）</strong>：<ul>
+<li>将大文件分割成多个小文件块，每个块大小约 500KB（约 32,000 行），确保块内不同词的数量不超过内存限制（1MB）。<ul>
+<li>为什么 500KB？内存 1MB，每个词最大 16 字节，哈希表条目（词 + 频率）约 20-32 字节（包括开销），32,000 个不同词需约 640KB，小于 1MB。</li>
+</ul>
+</li>
+<li>分割方法：顺序读取大文件，逐行写入块文件，直到块大小达到约 500KB。重复直到处理完整个文件。</li>
+<li>块数量：文件 1GB ≈ 1,000,000,000 字节，每行平均约 10 字节（词 + 换行符），总行数约 100,000,000 行。每个块 32,000 行，块数约 3,125（100,000,000 / 32,000 ≈ 3,125）。</li>
+</ul>
+</li>
+<li><strong>块内处理（Process Chunks）</strong>：<ul>
+<li>对每个块文件：<ul>
+<li>读入内存（约 500KB）。</li>
+<li>使用哈希表统计词频：逐行读取，以词为键，累加频率。</li>
+<li>块处理完后，对哈希表中的词按键（词）排序。</li>
+<li>输出到临时文件：每行格式为 “词 频率”，并按词排序（便于后续合并）。</li>
+</ul>
+</li>
+<li>内存使用：哈希表存储词（最大 16 字节）和频率（4 字节整数），条目上限 32,000，总内存约 640KB，满足 1MB 限制。</li>
+<li>输出：每个块生成一个排序后的部分频率文件。</li>
+</ul>
+</li>
+<li><strong>第一级合并（Merge Partially）</strong>：<ul>
+<li>部分文件数量多（约 3,125 个），需分组合并，避免同时打开太多文件（文件描述符限制，假设一次最多打开 256 个文件）。</li>
+<li>分组：将约 3,125 个部分文件分成 13 组（每组 240 文件）和 1 组（剩余文件），确保每组文件数 ≤ 256。</li>
+<li>对每组执行多路合并：<ul>
+<li>使用优先队列（最小堆）按键（词）合并：堆中每个条目存储（词、频率、文件索引），大小约 30 字节。</li>
+<li>合并逻辑：弹出最小词，检查所有输入文件是否有相同词，累加频率，输出全局（词，聚合频率）到新临时文件（按词排序）。</li>
+<li>内存使用：优先队列（256 条目 × 30 字节 ≈ 7.7KB），输入缓冲区（每个文件 512 字节缓冲区 × 256 文件 ≈ 128KB），输出缓冲区（4KB），总内存约 140KB &lt; 1MB。</li>
+</ul>
+</li>
+<li>输出：每组生成一个更大的排序频率文件（约 13 个文件）。</li>
+</ul>
+</li>
+<li><strong>第二级合并与 Top 100 提取（Final Merge and Heap Update）</strong>：<ul>
+<li>第一级合并后，文件数少（约 13 个），可一次性合并。</li>
+<li>执行多路合并（13 路）：<ul>
+<li>使用优先队列按键（词）合并：堆中每个条目约 30 字节。</li>
+<li>合并逻辑：弹出最小词，累加所有输入文件中的频率，得到全局（词，全局频率）。</li>
+<li>同时维护一个最小堆（大小 100）用于 Top 100：以频率为键，存储（词，频率）。<ul>
+<li>对于每个全局（词，频率），插入堆中。</li>
+<li>如果堆大小 &gt; 100，弹出最小频率条目，确保堆始终保留最大频率的 100 个词。</li>
+</ul>
+</li>
+<li>内存使用：优先队列（13 条目 × 30 字节 ≈ 0.4KB），输入缓冲区（13 文件 × 4KB = 52KB），堆（100 条目 × 30 字节 ≈ 3KB），总内存约 55KB &lt; 1MB。</li>
+<li>注意：无需输出完整全局文件，只更新堆，节省内存和磁盘。</li>
+</ul>
+</li>
+<li>处理完所有词后，堆中即为频率最高的 100 个词。</li>
+</ul>
+</li>
+<li><strong>输出结果</strong>：<ul>
+<li>堆中元素按频率最小堆组织，但 Top 100 已确定。</li>
+<li>将堆中元素按频率降序排序（例如，通过逐个弹出并反转），返回结果。</li>
+</ul>
+</li>
+</ol>
+<h3 id="为什么满足内存限制？"><a href="#为什么满足内存限制？" class="headerlink" title="为什么满足内存限制？"></a>为什么满足内存限制？</h3><ul>
+<li>分块大小（500KB）确保块内处理在 1MB 内。</li>
+<li>合并阶段使用小缓冲区（每个文件 512 字节-4KB）和紧凑数据结构（优先队列条目 30 字节），总内存始终 &lt; 1MB。</li>
+<li>堆维护 Top 100 仅需约 3KB，不影响内存。</li>
+</ul>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>简单直接：分治减少内存压力，外部排序处理大数据，堆高效维护 Top K。</li>
+<li>精确结果：通过全局频率累加，确保正确性。</li>
+<li>可扩展：适用于更大文件或更小内存。</li>
+</ul>
+<p>此思路可在标准编程语言（如 Python、Java）中实现，注意文件 I/O 和缓冲区管理以优化性能。</p>
+<h2 id="解法一"><a href="#解法一" class="headerlink" title="解法一"></a>解法一</h2><p>第一步：将 1 G 拆分成小文件，每个小文件的大小不超过 1 MB ，其实应该留空间用于统计一个小文件中单词出现的频率，所以为了保险起见，每个文件的大小不超过 512 kb，那么得到 1 GB / 512 KB = 2048 个小文件</p>
+<p>这里不用 hash 的方法来切分小文件，直接顺序读取然后写到小文件，小文件大小多到了 512kb 就关闭，写下一个小文件</p>
+<p>第二步：分别对每个文件做下面的事情：<br>① 将小文件中的单词加载进内存<br>② 使用 HashMap 进行单词统计<br>③ 将 HashMap 中词频数据写到另一个新的小文件中，我们称为词频小文件<br>这里再写的时候，对单词进行 hash (word) % 2048 写到对应的文件中<br>这样做的目的是为了相同的单词放到同一个文件中。</p>
+<p>第三步：初始化一个 100 个节点的小顶堆，用于保存 100 个出现频率最多的单词<br>分别对每个词频小文件做下面的事情：<br>① 将小文件中的单词及其频率加载进内存<br>② 使用 HashMap 进行单词统计<br>③ 遍历 HashMap 中单词词频，如果词频大于小顶堆中堆顶词频的话，则放入小顶堆，否则不放</p>
+<p>最终，小顶堆中的 100 个单词就是出现频率最多的单词了</p>
+<p>该方案在第二步的第 ③ 点的时候有点问题：就是当词频小文件大于 1 M 了，该怎么处理呢？<br>或者说极端情况下，每个单词都只出现一次，并且每个单词的 hash (word) % 2048 值都是相同的话，那词频小文件的大小都会超过 1 G 了</p>
+<h2 id="解法二"><a href="#解法二" class="headerlink" title="解法二"></a>解法二</h2><p>第一步：使用多路归并排序对大文件进行排序，这样相同的单词肯定是挨着的</p>
+<p>第二步：<br>① 初始化一个 100 个节点的小顶堆，用于保存 100 个出现频率最多的单词<br>② 遍历整个文件，一个单词一个单词的从文件中取出来，并计数<br>③ 等到遍历的单词和上一个单词不同的话，那么上一个单词及其频率如果大于堆顶的词的频率，那么放在堆中，否则不放</p>
+<p>最终，小顶堆中就是出现频率前 100 的单词了</p>
+<p>多路归并排序对大文件进行排序的步骤如下：<br>① 将文件按照顺序切分成大小不超过 512KB 的小文件，总共 2048 个小文件<br>② 使用 1MB 内存分别对 2048 个小文件中的单词进行排序<br>③ 使用一个大小为 2048 大小的堆，对 2048 个小文件进行多路排序，结果写到一个大文件中</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><h3 id="数据准备和工具类"><a href="#数据准备和工具类" class="headerlink" title="数据准备和工具类"></a>数据准备和工具类</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FileIOUtils</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 拿到指定文件的输入流，并包装成文件 BufferedReader</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> BufferedReader <span class="title function_">getReader</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">FileInputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(name);</span><br><span class="line">            <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedReader</span>(<span class="keyword">new</span> <span class="title class_">InputStreamReader</span>(inputStream));</span><br><span class="line">            <span class="keyword">return</span> br;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;IOException&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 拿到指定文件的输出流，并包装成文件 BufferedWriter</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> BufferedWriter <span class="title function_">getWriter</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">FileOutputStream</span> <span class="variable">outputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(name);</span><br><span class="line">            <span class="type">BufferedWriter</span> <span class="variable">bw</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedWriter</span>(<span class="keyword">new</span> <span class="title class_">OutputStreamWriter</span>(outputStream));</span><br><span class="line">            <span class="keyword">return</span> bw;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;IOException&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">closeReader</span><span class="params">(Reader reader)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (reader != <span class="literal">null</span>) &#123;</span><br><span class="line">                reader.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;IOException&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">closeWriter</span><span class="params">(Writer writer)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (writer != <span class="literal">null</span>) &#123;</span><br><span class="line">                writer.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;IOException&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 准备阶段：准备 1G 的文件，文件中每一行一个单词，每个单词的大小小于等于 16 字节</span></span><br><span class="line"><span class="comment"> * 数据写道当前工程目录下的文件：data\top100\words.txt</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_0_WordsGenerator</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Random</span> <span class="variable">r</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedWriter</span> <span class="variable">writer</span> <span class="operator">=</span> FileIOUtils.getWriter(<span class="string">&quot;data\\top100\\words.txt&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">char</span>[] chars = &#123;<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;d&#x27;</span>, <span class="string">&#x27;e&#x27;</span>, <span class="string">&#x27;f&#x27;</span>, <span class="string">&#x27;g&#x27;</span>&#125;;</span><br><span class="line">        <span class="type">int</span> <span class="variable">m</span> <span class="operator">=</span> chars.length;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">            <span class="type">StringBuilder</span> <span class="variable">line</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; r.nextInt(<span class="number">16</span>); j++) &#123;</span><br><span class="line">                line.append(chars[r.nextInt(m)]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (line.length() == <span class="number">0</span>) <span class="keyword">continue</span>;</span><br><span class="line">            writer.write(line.toString());</span><br><span class="line">            writer.newLine();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        FileIOUtils.closeWriter(writer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="将一个大文件切割成多个小文件"><a href="#将一个大文件切割成多个小文件" class="headerlink" title="将一个大文件切割成多个小文件"></a>将一个大文件切割成多个小文件</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 第一步：将一个大文件切割成多个小文件</span></span><br><span class="line"><span class="comment"> * 小文件的大小为 512kb 左右</span></span><br><span class="line"><span class="comment"> * 小文件都写到这个目录下：data\top100\raw_data\</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_1_FileSplit</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">splitFile</span><span class="params">(String fileName)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">fileNum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileSuffix</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\raw_data\\&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">littleFileName</span> <span class="operator">=</span> fileSuffix + fileNum;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 记录每个小文件的大小</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">totalSize</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedWriter</span> <span class="variable">bw</span> <span class="operator">=</span> FileIOUtils.getWriter(littleFileName);</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> FileIOUtils.getReader(fileName);</span><br><span class="line">        <span class="type">String</span> <span class="variable">line</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">while</span> ((line = br.readLine()) != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 如果当前小文件大小大于 512KB ，那么关闭当前小文件，写下一个小文件</span></span><br><span class="line">            <span class="keyword">if</span> (totalSize &gt;= <span class="number">512</span> * <span class="number">1024</span>) &#123;</span><br><span class="line">                <span class="comment">// 关闭当前小文件的输出流</span></span><br><span class="line">                FileIOUtils.closeWriter(bw);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 拿到下一个小文件的输出流，开始写下一个小文件</span></span><br><span class="line">                fileNum++;</span><br><span class="line">                littleFileName = fileSuffix + fileNum;</span><br><span class="line">                bw = FileIOUtils.getWriter(littleFileName);</span><br><span class="line">                totalSize = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            totalSize += line.length();</span><br><span class="line"></span><br><span class="line">            bw.write(line);</span><br><span class="line">            bw.newLine();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        FileIOUtils.closeReader(br);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\words.txt&quot;</span>;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">_1_FileSplit</span>().splitFile(fileName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="每个小文件中的单词进行排序"><a href="#每个小文件中的单词进行排序" class="headerlink" title="每个小文件中的单词进行排序"></a>每个小文件中的单词进行排序</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 第二步：将每个小文件中的单词进行排序</span></span><br><span class="line"><span class="comment"> *  排序后的数据写到另一个目录：data\top100\sorted_data\</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_2_LittleFileSorter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sortEachFile</span><span class="params">(String dirName)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">File</span> <span class="variable">dir</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(dirName);</span><br><span class="line">        File[] littleFiles = dir.listFiles();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 排序每一个小文件中的单词</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; littleFiles.length; i++) &#123;</span><br><span class="line">            <span class="comment">// 1. 将当前小文件中单词读取到内存中</span></span><br><span class="line">            <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> FileIOUtils.getReader(littleFiles[i].getName());</span><br><span class="line">            List&lt;String&gt; words = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">            <span class="type">String</span> <span class="variable">line</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">            <span class="keyword">while</span> ((line = br.readLine()) != <span class="literal">null</span>) &#123;</span><br><span class="line">                words.add(line);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            FileIOUtils.closeReader(br);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 2. 对当前文件中的所有单词进行排序</span></span><br><span class="line">            Collections.sort(words);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 3. 将排完序的单词写道目标文件中</span></span><br><span class="line">            <span class="type">BufferedWriter</span> <span class="variable">bw</span> <span class="operator">=</span> FileIOUtils.getWriter(<span class="string">&quot;data\\top100\\sorted_data\\&quot;</span> + i);</span><br><span class="line">            <span class="keyword">for</span> (String word : words) &#123;</span><br><span class="line">                bw.write(word);</span><br><span class="line">                bw.newLine();</span><br><span class="line">            &#125;</span><br><span class="line">            FileIOUtils.closeWriter(bw);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">dir</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\raw_data&quot;</span>;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">_2_LittleFileSorter</span>().sortEachFile(dir);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="对有序的小文件进行外部排序"><a href="#对有序的小文件进行外部排序" class="headerlink" title="对有序的小文件进行外部排序"></a>对有序的小文件进行外部排序</h3><p>我们先写一个 BufferedIterator 类，如下：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// BufferedIterator 是对文件输入流 BufferedReader 的包装，用于：</span></span><br><span class="line"><span class="comment">//  ① 判断输入流中是否还有数据，有过有的话，则先缓存下一行数据</span></span><br><span class="line"><span class="comment">//  ② 得到文件输入流中的下一行数据</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BufferedIterator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> BufferedReader reader;</span><br><span class="line">    <span class="keyword">private</span> String head;</span><br><span class="line"></span><br><span class="line">    BufferedIterator(BufferedReader reader) &#123;</span><br><span class="line">        <span class="built_in">this</span>.reader = reader;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">hasNext</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            head = <span class="built_in">this</span>.reader.readLine();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            head = <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> head != <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">next</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">close</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="built_in">this</span>.reader.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后使用多路归并排序来实现文件的外部排序，如下代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 第三步： 对有序的小文件进行外部排序</span></span><br><span class="line"><span class="comment"> * 使用多路归并排序实现</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_3_ExternalSorter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">mergeSort</span><span class="params">(String dirName)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">File</span> <span class="variable">dir</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(dirName);</span><br><span class="line">        File[] children = dir.listFiles();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 初始化一个最小堆，大小就是有序小文件的个数</span></span><br><span class="line">        <span class="comment">// 堆中的每个节点存放每个有序小文件对应的输入流</span></span><br><span class="line">        <span class="comment">// BufferedIterator 是对文件输入流 BufferedReader 的包装，用于：</span></span><br><span class="line">        <span class="comment">//  ① 判断输入流中是否还有数据</span></span><br><span class="line">        <span class="comment">//  ② 得到文件输入流中的下一行数据</span></span><br><span class="line">        PriorityQueue&lt;BufferedIterator&gt; minHeap = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;(children.length, <span class="keyword">new</span> <span class="title class_">Comparator</span>&lt;BufferedIterator&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compare</span><span class="params">(BufferedIterator o1, BufferedIterator o2)</span> &#123;</span><br><span class="line">                <span class="comment">// 按照每个有序文件中的下一行数据对所有文件输入流进行排序</span></span><br><span class="line">                <span class="comment">// 单词小的输入文件流放在堆顶</span></span><br><span class="line">                <span class="keyword">return</span> o1.next().compareTo(o2.next());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 将所有有序文件的输入流包装成 BufferedIterator 放入到堆中</span></span><br><span class="line">        <span class="keyword">for</span> (File file : children) &#123;</span><br><span class="line">            <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> FileIOUtils.getReader(file.getName());</span><br><span class="line">            <span class="type">BufferedIterator</span> <span class="variable">buf</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedIterator</span>(br);</span><br><span class="line">            <span class="comment">// 要有数据才放入到堆中，否则关闭流</span></span><br><span class="line">            <span class="keyword">if</span> (buf.hasNext()) &#123;</span><br><span class="line">                minHeap.add(buf);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                buf.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedWriter</span> <span class="variable">bw</span> <span class="operator">=</span> FileIOUtils.getWriter(<span class="string">&quot;data\\top100\\sorted_words.txt&quot;</span>);</span><br><span class="line">        <span class="comment">// 3. 拿出堆顶的数据，并写入到最终排序的文件中</span></span><br><span class="line">        <span class="keyword">while</span> (!minHeap.isEmpty()) &#123;</span><br><span class="line">            <span class="type">BufferedIterator</span> <span class="variable">firstBuf</span> <span class="operator">=</span> minHeap.poll();</span><br><span class="line">            bw.write(firstBuf.next());</span><br><span class="line">            bw.newLine();</span><br><span class="line">            <span class="comment">// 如果拿出来的输入流中还有数据的话，那么将这个输入流再一次添加到栈中，</span></span><br><span class="line">            <span class="keyword">if</span> (firstBuf.hasNext()) &#123;</span><br><span class="line">                minHeap.add(firstBuf);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123; <span class="comment">// 否则说明该文件输入流中没有数据了，那么可以关闭这个流</span></span><br><span class="line">                firstBuf.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">       FileIOUtils.closeWriter(bw);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">dirName</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\sorted_data\\&quot;</span>;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">_3_ExternalSorter</span>().mergeSort(dirName);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="利用-100-大小的小顶堆得到出现频率-top-100-的单词"><a href="#利用-100-大小的小顶堆得到出现频率-top-100-的单词" class="headerlink" title="利用 100 大小的小顶堆得到出现频率 top 100 的单词"></a>利用 100 大小的小顶堆得到出现频率 top 100 的单词</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 第四步：利用 100 大小的小顶堆得到出现频率 top 100 的单词</span></span><br><span class="line"><span class="comment"> * 到这里，经过外部排序后，文件中所有的单词都是有序的，相同的单词都是挨着的</span></span><br><span class="line"><span class="comment"> * 所以，可以顺序遍历有序的文件，得到出现频率 top 100 的单词</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_4_Top_100_Words</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Pair</span> &#123;</span><br><span class="line">        String word;</span><br><span class="line">        <span class="type">int</span> cnt;</span><br><span class="line"></span><br><span class="line">        Pair(String word, <span class="type">int</span> cnt) &#123;</span><br><span class="line">            <span class="built_in">this</span>.word = word;</span><br><span class="line">            <span class="built_in">this</span>.cnt = cnt;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String[] top_100 (String fileName) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 初始化一个 100 大小的小顶堆</span></span><br><span class="line">        <span class="comment">// 堆中每个节点存放的是单词及其出现的次数</span></span><br><span class="line">        PriorityQueue&lt;Pair&gt; minHeap = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;(<span class="number">100</span>, <span class="keyword">new</span> <span class="title class_">Comparator</span>&lt;Pair&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compare</span><span class="params">(Pair o1, Pair o2)</span> &#123;</span><br><span class="line">                <span class="comment">// 按照单词出现的次数排序</span></span><br><span class="line">                <span class="comment">// 出现次数多的，放在堆顶</span></span><br><span class="line">                <span class="keyword">return</span> o1.cnt - o2.cnt;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 前一个单词</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">prevWord</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="comment">// 前一个单词出现的次数</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">prevCnt</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> FileIOUtils.getReader(fileName);</span><br><span class="line">        <span class="comment">// 当前的单词</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">currWord</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="comment">// 2. 读取有序文件中每一行的单词，然后统计其出现的次数，并保留出现次数 top 100 的单词</span></span><br><span class="line">        <span class="keyword">while</span> ((currWord = br.readLine()) != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 如果当前的单词和前一个单词不是同一个单词</span></span><br><span class="line">            <span class="comment">// 那么需要处理前一个单词</span></span><br><span class="line">            <span class="keyword">if</span> (!currWord.equals(prevWord)) &#123;</span><br><span class="line">                <span class="comment">// 如果堆的大小小于 100，那么直接将前一个单词及其出现的次数放入堆中</span></span><br><span class="line">                <span class="keyword">if</span> (minHeap.size() &lt; <span class="number">100</span>) &#123;</span><br><span class="line">                    minHeap.add(<span class="keyword">new</span> <span class="title class_">Pair</span>(prevWord, prevCnt));</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (prevCnt &gt; minHeap.peek().cnt) &#123; <span class="comment">// 否则，如果前一个单词出现的次数大于堆顶单词出现的次数</span></span><br><span class="line">                    <span class="comment">// 先删除堆顶单词</span></span><br><span class="line">                    minHeap.remove();</span><br><span class="line">                    <span class="comment">//将前一个单词及其出现的次数放入堆中</span></span><br><span class="line">                    minHeap.add(<span class="keyword">new</span> <span class="title class_">Pair</span>(prevWord, prevCnt));</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 将当前单词设置为前一个单词</span></span><br><span class="line">                prevWord = currWord;</span><br><span class="line">                <span class="comment">// 前一个单词出现的次数清零</span></span><br><span class="line">                prevCnt = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 统计前一个单词出现的次数</span></span><br><span class="line">            prevCnt++;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//3. 最终堆中的 100 个单词就是出现频率最高的单词了，输出即可</span></span><br><span class="line">        String[] res = <span class="keyword">new</span> <span class="title class_">String</span>[<span class="number">100</span>];</span><br><span class="line">        <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (!minHeap.isEmpty()) &#123;</span><br><span class="line">            res[index++] = minHeap.poll().word;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\sorted_words.txt&quot;</span>;</span><br><span class="line">        String[] res = <span class="keyword">new</span> <span class="title class_">_4_Top_100_Words</span>().top_100(fileName);</span><br><span class="line">        System.out.println(Arrays.toString(res));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="MapReduce-框架-Hadoop-Spark"><a href="#MapReduce-框架-Hadoop-Spark" class="headerlink" title="MapReduce 框架 Hadoop Spark"></a>MapReduce 框架 Hadoop Spark</h2><h3 id="MapReduce-思路解决大文件词频统计与-Top-100-问题"><a href="#MapReduce-思路解决大文件词频统计与-Top-100-问题" class="headerlink" title="MapReduce 思路解决大文件词频统计与 Top 100 问题"></a>MapReduce 思路解决大文件词频统计与 Top 100 问题</h3><h4 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h4><p>MapReduce 是分布式计算模型，天然适合处理海量数据。我们将问题分解为两个 MapReduce 作业：</p>
+<ol>
+<li><strong>词频统计作业</strong>：精确计算每个词的全局频率</li>
+<li><strong>Top 100 提取作业</strong>：从全局词频中筛选最高频词</li>
+</ol>
+<h4 id="系统架构"><a href="#系统架构" class="headerlink" title="系统架构"></a>系统架构</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">输入文件 (1GB)</span><br><span class="line">     │</span><br><span class="line">     ├─ MapReduce Job 1 (词频统计)</span><br><span class="line">     │    ├─ Mapper 局部词频统计</span><br><span class="line">     │    └─ Reducer 全局词频合并</span><br><span class="line">     │</span><br><span class="line">     └─ MapReduce Job 2 (Top 100 提取)</span><br><span class="line">          ├─ Mapper 局部 Top 100 筛选</span><br><span class="line">          └─ Reducer 全局 Top 100 合并</span><br></pre></td></tr></table></figure>
+
+<h3 id="Job-1-全局词频统计"><a href="#Job-1-全局词频统计" class="headerlink" title="Job 1: 全局词频统计"></a><strong>Job 1: 全局词频统计</strong></h3><p><strong>目标</strong>：精确计算每个词的出现频率</p>
+<h4 id="Map-阶段"><a href="#Map-阶段" class="headerlink" title="Map 阶段"></a>Map 阶段</h4><ul>
+<li><strong>输入</strong>：文件分块（每块 ≈500KB）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mapper</span>(<span class="params">block</span>):</span><br><span class="line">    word_count = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> word <span class="keyword">in</span> block:</span><br><span class="line">        word_count[word] = word_count.get(word, <span class="number">0</span>) + <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出当前块的词频统计</span></span><br><span class="line">    <span class="keyword">for</span> word, count <span class="keyword">in</span> word_count.items():</span><br><span class="line">        <span class="keyword">yield</span> (word, count)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>内存控制</strong>：每个 Mapper 处理单块（500KB），哈希表内存 ≈700KB &lt; 1MB</li>
+<li><strong>输出示例</strong>：<code>(apple, 15)</code>, <code>(banana, 23)</code>, …</li>
+</ul>
+<h4 id="Shuffle-阶段"><a href="#Shuffle-阶段" class="headerlink" title="Shuffle 阶段"></a>Shuffle 阶段</h4><ul>
+<li>按单词哈希分区（如 <code>hash(word) % R</code>）</li>
+<li>相同单词的计数发送到同一 Reducer</li>
+</ul>
+<h4 id="Reduce-阶段"><a href="#Reduce-阶段" class="headerlink" title="Reduce 阶段"></a>Reduce 阶段</h4><ul>
+<li><strong>输入</strong>：相同单词的所有局部计数 <code>[ (word, [count1, count2,...]) ]</code></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">reducer</span>(<span class="params">word, counts</span>):</span><br><span class="line">    total = <span class="built_in">sum</span>(counts)</span><br><span class="line">    <span class="keyword">yield</span> (word, total)  <span class="comment"># 输出全局词频</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>内存控制：<ul>
+<li>设置 Reducer 数量 <code>R = 4000</code></li>
+<li>每个 Reducer 处理约 <code>1亿/R ≈ 25,000</code> 个单词</li>
+<li>内存占用：25,000 词 × 30 字节 ≈ 750KB &lt; 1MB</li>
+</ul>
+</li>
+<li><strong>输出</strong>：全局词频文件（<code>R</code> 个分区文件）</li>
+</ul>
+<h3 id="Job-2-Top-100-提取"><a href="#Job-2-Top-100-提取" class="headerlink" title="Job 2: Top 100 提取"></a><strong>Job 2: Top 100 提取</strong></h3><p><strong>目标</strong>：从全局词频中筛选频率最高的 100 个词</p>
+<h4 id="Map-阶段-1"><a href="#Map-阶段-1" class="headerlink" title="Map 阶段"></a>Map 阶段</h4><ul>
+<li><strong>输入</strong>：Job 1 的输出文件（每个文件 ≈250KB）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mapper</span>(<span class="params">file</span>):</span><br><span class="line">    heap = MinHeap(<span class="number">100</span>)  <span class="comment"># 最小堆维护局部 Top 100</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (word, count) <span class="keyword">in</span> file:</span><br><span class="line">        <span class="keyword">if</span> heap.size &lt; <span class="number">100</span> <span class="keyword">or</span> count &gt; heap.<span class="built_in">min</span>():</span><br><span class="line">            heap.push((count, word))</span><br><span class="line">        <span class="keyword">if</span> heap.size &gt; <span class="number">100</span>:</span><br><span class="line">            heap.pop()  <span class="comment"># 移除最小值</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出当前文件的 Top 100</span></span><br><span class="line">    <span class="keyword">for</span> count, word <span class="keyword">in</span> heap.items:</span><br><span class="line">        <span class="keyword">yield</span> (<span class="literal">None</span>, (word, count))  <span class="comment"># Key 统一为 None</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>内存控制</strong>：100 个词 × 30 字节 ≈ 3KB，远低于 1MB</li>
+<li><strong>输出示例</strong>：<code>(None, (&quot;apple&quot;, 1580))</code>, <code>(None, (&quot;banana&quot;, 1423))</code>…</li>
+</ul>
+<h4 id="Reduce-阶段（单-Reducer）"><a href="#Reduce-阶段（单-Reducer）" class="headerlink" title="Reduce 阶段（单 Reducer）"></a>Reduce 阶段（单 Reducer）</h4><ul>
+<li><strong>输入</strong>：所有 Mapper 的 Top 100 结果（共 <code>4000 × 100 = 400,000</code> 条）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">reducer</span>(<span class="params">_, values</span>):</span><br><span class="line">    heap = MinHeap(<span class="number">100</span>)  <span class="comment"># 最小堆维护全局 Top 100</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (word, count) <span class="keyword">in</span> values:</span><br><span class="line">        <span class="keyword">if</span> heap.size &lt; <span class="number">100</span> <span class="keyword">or</span> count &gt; heap.<span class="built_in">min</span>():</span><br><span class="line">            heap.push((count, word))</span><br><span class="line">        <span class="keyword">if</span> heap.size &gt; <span class="number">100</span>:</span><br><span class="line">            heap.pop()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出最终 Top 100（按频率降序）</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sorted</span>(heap.items, reverse=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>内存控制：<ul>
+<li>流式处理：逐条读取记录，不一次性加载</li>
+<li>堆大小固定 100，内存 ≈3KB</li>
+<li>文件缓冲区：4KB</li>
+<li>总计 &lt; 10KB &lt;&lt; 1MB</li>
+</ul>
+</li>
+</ul>
+<h3 id="关键优化与内存保障"><a href="#关键优化与内存保障" class="headerlink" title="关键优化与内存保障"></a>关键优化与内存保障</h3><ol>
+<li><strong>动态 Reducer 数量</strong>：<ul>
+<li>Job 1 中 <code>R = 4000</code> 确保每个 Reducer 处理 ≤25,000 词</li>
+<li>公式：<code>R &gt; (总词数 × 30 字节) / 1MB</code></li>
+</ul>
+</li>
+<li><strong>流式处理</strong>：<ul>
+<li>Job 2 的 Reducer 逐条处理记录，避免加载全部 400,000 条数据</li>
+</ul>
+</li>
+<li><strong>堆排序优势</strong>：<ul>
+<li>时间复杂度 <code>O(n log k)</code>（<code>k=100</code> 为常数级）</li>
+<li>空间复杂度 <code>O(k)</code> 严格受限</li>
+</ul>
+</li>
+<li><strong>分布式扩展性</strong>：<ul>
+<li>文件更大时：增加 Mapper 数量</li>
+<li>词量激增时：线性增加 Job 1 的 Reducer 数量</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="执行示例"><a href="#执行示例" class="headerlink" title="执行示例"></a>执行示例</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flowchart TB</span><br><span class="line">    A[1GB 输入文件] --&gt; B&#123;Job1 Mappers&#125;</span><br><span class="line">    B --&gt;|局部词频| C[Shuffle]</span><br><span class="line">    C --&gt; D&#123;Job1 Reducers&#125;</span><br><span class="line">    D --&gt;|全局词频| E[4000 个分区文件]</span><br><span class="line">    E --&gt; F&#123;Job2 Mappers&#125;</span><br><span class="line">    F --&gt;|局部 Top100| G[Shuffle]</span><br><span class="line">    G --&gt; H&#123;Job2 Reducer&#125;</span><br><span class="line">    H --&gt; I[全局 Top100]</span><br></pre></td></tr></table></figure>
+
+<p><svg aria-roledescription="flowchart-v2" role="graphics-document document" style="overflow: hidden; max-width: 100%;" class="flowchart" xmlns="http://www.w3.org/2000/svg" width="100%" id="svgGraph54700541592936" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"><g id="viewport-20250529151628010" class="svg-pan-zoom_viewport" transform="matrix(0.6705729999713365,0,0,0.6705729999713365,334.8240352952333,-299.0624837462725)" style="transform: matrix(0.670573, 0, 0, 0.670573, 334.824, -299.062);"><g><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="5" viewBox="0 0 10 10" class="marker flowchart-v2" id="svgGraph54700541592936_flowchart-v2-pointEnd"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 0 L 10 5 L 0 10 z"></path></marker><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="4.5" viewBox="0 0 10 10" class="marker flowchart-v2" id="svgGraph54700541592936_flowchart-v2-pointStart"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 5 L 10 10 L 10 0 z"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="11" viewBox="0 0 10 10" class="marker flowchart-v2" id="svgGraph54700541592936_flowchart-v2-circleEnd"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="-1" viewBox="0 0 10 10" class="marker flowchart-v2" id="svgGraph54700541592936_flowchart-v2-circleStart"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="12" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="svgGraph54700541592936_flowchart-v2-crossEnd"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="-1" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="svgGraph54700541592936_flowchart-v2-crossStart"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_A_B_0" d="M97.194,62L97.194,66.167C97.194,70.333,97.194,78.667,97.265,86.417C97.335,94.167,97.475,101.334,97.546,104.917L97.616,108.501"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_B_C_0" d="M97.694,263.847L97.611,269.931C97.528,276.014,97.361,288.181,97.278,299.764C97.194,311.347,97.194,322.347,97.194,327.847L97.194,333.347"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_C_D_0" d="M97.194,391.347L97.194,395.514C97.194,399.681,97.194,408.014,97.265,415.764C97.335,423.514,97.475,430.681,97.546,434.265L97.616,437.848"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_D_E_0" d="M97.694,598.576L97.611,604.66C97.528,610.743,97.361,622.91,97.278,634.493C97.194,646.076,97.194,657.076,97.194,662.576L97.194,668.076"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_E_F_0" d="M97.194,726.076L97.194,730.243C97.194,734.41,97.194,742.743,97.265,750.493C97.335,758.243,97.475,765.41,97.546,768.994L97.616,772.577"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_F_G_0" d="M97.694,927.924L97.611,934.007C97.528,940.09,97.361,952.257,97.278,963.84C97.194,975.424,97.194,986.424,97.194,991.924L97.194,997.424"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_G_H_0" d="M97.194,1055.424L97.194,1059.59C97.194,1063.757,97.194,1072.09,97.265,1079.84C97.335,1087.591,97.475,1094.757,97.546,1098.341L97.616,1101.924"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_H_I_0" d="M97.694,1256.174L97.611,1260.257C97.528,1264.34,97.361,1272.507,97.278,1280.09C97.194,1287.674,97.194,1294.674,97.194,1298.174L97.194,1301.674"></path></g><g class="edgeLabels"><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 300.34722900390625)" class="edgeLabel"><g transform="translate(-32, -12)" class="label"><foreignObject height="24" width="64"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word; background-color: rgb(88, 88, 88);">局部词频</p></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 635.0763854980469)" class="edgeLabel"><g transform="translate(-32, -12)" class="label"><foreignObject height="24" width="64"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word; background-color: rgb(88, 88, 88);">全局词频</p></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 964.4236145019531)" class="edgeLabel"><g transform="translate(-43.39583206176758, -12)" class="label"><foreignObject height="24" width="86.79166412353516"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word; background-color: rgb(88, 88, 88);">局部 Top100</p></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g></g><g class="nodes"><g transform="translate(97.19444274902344, 35)" id="flowchart-A-0" class="node default"><rect height="54" width="157.09027862548828" y="-27" x="-78.54513931274414" style="" class="basic label-container"></rect><g transform="translate(-48.54513931274414, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="97.09027862548828"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">1GB 输入文件</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 187.67361450195312)" id="flowchart-B-1" class="node default"><polygon transform="translate(-75.67361068725586,75.67361068725586)" class="label-container" points="75.67361068725586,0 151.34722137451172,-75.67361068725586 75.67361068725586,-151.34722137451172 0,-75.67361068725586"></polygon><g transform="translate(-48.67361068725586, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="97.34722137451172"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Job1 Mappers</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 364.34722900390625)" id="flowchart-C-3" class="node default"><rect height="54" width="110.45833206176758" y="-27" x="-55.22916603088379" style="" class="basic label-container"></rect><g transform="translate(-25.22916603088379, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="50.45833206176758"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Shuffle</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 519.7118072509766)" id="flowchart-D-5" class="node default"><polygon transform="translate(-78.36458206176758,78.36458206176758)" class="label-container" points="78.36458206176758,0 156.72916412353516,-78.36458206176758 78.36458206176758,-156.72916412353516 0,-78.36458206176758"></polygon><g transform="translate(-51.36458206176758, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="102.72916412353516"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Job1 Reducers</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 699.0763854980469)" id="flowchart-E-7" class="node default"><rect height="54" width="178.3888931274414" y="-27" x="-89.1944465637207" style="" class="basic label-container"></rect><g transform="translate(-59.1944465637207, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="118.3888931274414"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">4000 个分区文件</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 851.75)" id="flowchart-F-9" class="node default"><polygon transform="translate(-75.67361068725586,75.67361068725586)" class="label-container" points="75.67361068725586,0 151.34722137451172,-75.67361068725586 75.67361068725586,-151.34722137451172 0,-75.67361068725586"></polygon><g transform="translate(-48.67361068725586, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="97.34722137451172"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Job2 Mappers</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 1028.4236145019531)" id="flowchart-G-11" class="node default"><rect height="54" width="110.45833206176758" y="-27" x="-55.22916603088379" style="" class="basic label-container"></rect><g transform="translate(-25.22916603088379, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="50.45833206176758"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Shuffle</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 1180.5486145019531)" id="flowchart-H-13" class="node default"><polygon transform="translate(-75.125,75.125)" class="label-container" points="75.125,0 150.25,-75.125 75.125,-150.25 0,-75.125"></polygon><g transform="translate(-48.125, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="96.25"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Job2 Reducer</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 1332.6736145019531)" id="flowchart-I-15" class="node default"><rect height="54" width="146.79166412353516" y="-27" x="-73.39583206176758" style="" class="basic label-container"></rect><g transform="translate(-43.39583206176758, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="86.79166412353516"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">全局 Top100</p></span></div></foreignObject></g></g></g></g></g></g></svg></p>
+<p>此方案严格满足 1MB 内存限制，充分利用 MapReduce 的分布式能力，同时保证结果精确性。在 Hadoop/Spark 等框架可直接实现。</p>
+]]></content>
+      <categories>
+        <category>算法</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>反射、动态代理</title>
+    <url>/2025/05/20/jdk-proxy-reflection/</url>
+    <content><![CDATA[<h1 id="Reflection"><a href="#Reflection" class="headerlink" title="Reflection"></a>Reflection</h1><p>加载类，允许用编程的方式，解剖类中的各种成分（万物皆对象）比如ide中创建一个对象，对象引用后加一个点就能显示可以调用的方法，说明这个类实现的方法已经提前加载好了。</p>
+<p>反射（Reflection）是计算机编程中的一种机制，允许程序在运行时动态地检查、修改或调用其自身的结构或行为。它打破了传统静态代码的编译时绑定限制，使程序能够获取类、方法、属性等元信息，并动态操作它们。</p>
+<h2 id="load"><a href="#load" class="headerlink" title="load"></a>load</h2><ol>
+<li><p>加载类，获取 <code>Class</code> 对象</p>
+<ul>
+<li><code>Class c = 类名.class</code> </li>
+<li><code>Class.forName(全名)</code>  </li>
+<li><code>Class c = 对象.getClass()</code> </li>
+<li><code>getName() 全名带包名 getSimpleName() 简名</code></li>
+<li><code>getMethod() getConstructor() getField()</code> </li>
+</ul>
+</li>
+<li><p>获取类的构造器 <code>Constructor</code> 对象，主调是 <code>Class 对象</code></p>
+<ul>
+<li><code>getConstructors</code> 只有 public <strong>返回数组</strong></li>
+<li><code>getDeclaredConstructors</code> 存在就能拿到</li>
+<li><code>getConstructor(形参的类型对象)</code> 只有public 拿一个</li>
+<li><code>getDeclaredConstructor(形参的类型对象)</code> 存在就能拿到 拿1个</li>
+</ul>
+<ul>
+<li>下面的主调是构造器对象</li>
+<li><code>getParameterCount</code>几个参数</li>
+<li><code>newInstance(...参数)</code> 返回<code>object</code> 强转为对象，如果私有构造器会报错</li>
+<li><code>setAccessible(true)</code> 暴力反射，禁止检查访问权限</li>
+</ul>
+</li>
+<li><p>获取类的成员变量 <code>Field</code> 对象</p>
+<ul>
+<li><code>getFields</code> <code>getDeclaredFields</code> </li>
+<li><code>getField(name)</code> <code>getDeclaredField(name)</code></li>
+<li>下面主调是<code>Field</code>对象</li>
+<li><code>set(对象, 值)</code> <code>get(对象)</code> 赋值 取值</li>
+<li><code>setAccessible</code> 暴力反射</li>
+</ul>
+</li>
+<li><p>获取类的成员方法 <code>Method</code> 对象</p>
+<ul>
+<li><code>getMethods</code> <code>getDeclaredMethods</code></li>
+<li><code>getMethod(name, String.class, int.class) </code>返回值</li>
+<li>下面主调是<code>method</code></li>
+<li><code>getName getParameterConut getReturnType</code></li>
+<li><code>invoke(对象, 参数)</code> 返回object 强转为返回值类型</li>
+<li><code>setAccesible</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="作用、应用场景"><a href="#作用、应用场景" class="headerlink" title="作用、应用场景"></a>作用、应用场景</h2><ul>
+<li>得到类的全部成分</li>
+<li>做框架、解耦代码、提高通用性</li>
+<li>支持注解处理、AOP</li>
+<li>IDE代码分析、断点调试依赖反射</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920001226903.png" alt="image-20240920001226903"></p>
+<p>接收任意对象，接到对象，用反射获取class对象，获取全部成员变量，遍历他们，把他们的属性写出到文件中</p>
+<p>劣势：</p>
+<ul>
+<li>破坏封装性+反射代码需更高权限，可能引发安全漏洞（如通过反射调用<code>System.exit</code>）</li>
+<li>性能开销大，反射调用涉及动态解析类型和方法，比直接调用慢数倍</li>
+<li>代码可读性差，逻辑通常冗长且难以静态分析，增加维护成本。</li>
+<li>编译时检查失效：错误（如方法名拼写错误）在运行时才暴露，增加调试难度。</li>
+</ul>
+<h1 id="代理模式（Proxy-Pattern）"><a href="#代理模式（Proxy-Pattern）" class="headerlink" title="代理模式（Proxy Pattern）"></a>代理模式（Proxy Pattern）</h1><blockquote>
+<p>为什么要用代理模式</p>
+</blockquote>
+<ul>
+<li><strong>中介隔离作用</strong>：在某些情况下，一个客户类<strong>不想或者不能直接引用一个委托对象</strong>，而代理类对象可以在客户类和委托对象之间起到中介的作用，<strong>其特征是代理类和委托类实现相同的接口。</strong></li>
+<li><strong>开闭原则，增加功能</strong>：<strong>真正的业务功能还是由委托类来实现</strong>，但是可以在业务功能执行的前后加入一些公共的服务。例如我们想<strong>给项目加入缓存、日志</strong>这些功能，我们就可以使用代理类来完成，而没必要打开已经封装好的委托类。</li>
+</ul>
+<p>代理模式包含如下角色：</p>
+<ul>
+<li>Subject（抽象主题角色）：定义代理类和真实主题的公共对外方法，也是代理类代理真实主题的方法；</li>
+<li>RealSubject（真实主题角色）：真正实现业务逻辑的类；</li>
+<li>Proxy（代理主题角色）：用来代理和封装真实主题；</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250529222121439.png" alt="image-20250529222121439"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250529222209026.png" alt="image-20250529222209026"></p>
+<blockquote>
+<p>装饰器模式<strong>在 JDK 中通过包装对象实现功能扩展，典型如 I/O 流的多层装饰和集合的功能增强，具有灵活、可复用的特点。然而代理模式关注于控制对对象的访问。</strong></p>
+</blockquote>
+<ul>
+<li>使用代理模式的时候，<strong>我们常常在一个代理类中创建一个对象的实例</strong>。</li>
+<li>当我们使用装饰器模式的时候，我们通常的做法是<strong>将原始对象作为一个参数传给装饰者的构造器</strong>。</li>
+<li>典型：IO流中的流装饰器(数据流、缓冲流)、Collections工具类中为集合添加额外功能、打印流提供格式化输出或者更加灵活的文本输出</li>
+<li>宗旨：组合优于继承，避免类爆炸</li>
+</ul>
+<blockquote>
+<p>适配器模式主要解决接口不兼容问题，如流转换、事件监听简化等，通过 “转换” 让不同接口协同工作。</p>
+</blockquote>
+<ul>
+<li>InputStreamReader 将 InputStream 转换为 Reader</li>
+<li>AWT中<code>MouseAdapter</code>、<code>KeyAdapter</code> 等抽象类实现了对应事件接口的所有方法（空实现），开发者只需要重写MouseAdaptor中需要的方法，不用重写所有方法（实现Listener接口所有方法）</li>
+<li><code>Enumeration</code> 是早期 JDK 的迭代接口，<code>Iterator</code> 是更现代的接口。</li>
+</ul>
+<h2 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h2><p>在程序运行前就已经存在代理类的字节码文件，代理类和真实主题角色的关系在运行前就确定了。</p>
+<p>是<strong>由程序员创建或特定工具自动生成源代码</strong>，在对其编译。在程序员运行之前，代理类.class文件就已经被创建了。</p>
+<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>为什么类可以动态的生成？这涉及到Java虚拟机的<strong>类加载机制</strong> </p>
+<blockquote>
+<p>Java虚拟机类加载过程主要分为五个阶段：加载、验证、准备、解析、初始化。其中加载阶段需要完成以下3件事情：</p>
+<ol>
+<li>通过一个类的全限定名来获取定义此类的二进制字节流</li>
+<li>将这个字节流所代表的静态存储结构（字节码）转化为方法区的运行时数据结构（运行时常量池）</li>
+<li>在内存中生成一个代表这个类的 java.lang.Class 对象，作为方法区这个类的各种元数据访问入口。</li>
+</ol>
+<p>由于虚拟机规范对这3点要求并不具体，所以实际的实现是非常灵活的，关于第1点，获取类的二进制字节流（class字节码）就有很多途径：</p>
+<ol>
+<li>从ZIP包获取，这是JAR、EAR、WAR等格式的基础</li>
+<li>从网络中获取，典型的应用是 Applet</li>
+<li>运行时计算生成，这种场景使用最多的是动态代理技术，在 java.lang.reflect.Proxy 类中，就是用了 ProxyGenerator.generateProxyClass 来为特定接口生成形式为 *$Proxy 的代理类的二进制字节流</li>
+<li>由其它文件生成，典型应用是JSP，即由JSP文件生成对应的Class类</li>
+<li>从数据库中获取等等</li>
+</ol>
+<p>所以，动态代理就是想办法，根据接口或目标对象，计算出代理类的字节码，然后再加载到JVM中使用。</p>
+</blockquote>
+<p><strong>动态代理又有两种典型的实现方式：JDK动态代理和CGLib动态代理</strong></p>
+<ul>
+<li><strong>通过实现接口的方式</strong> -&gt; JDK动态代理</li>
+<li><strong>通过继承类的方式</strong> -&gt; CGLIB动态代理</li>
+</ul>
+<p>框架的核心技术，一个类有很多方法，需要加载资源，而代理可以代替类执行这些操作。</p>
+<p>Spring AOP技术使用了JDK动态代理和CGLIB动态代理两种方式，在不改变原始方法的前提下对功能进行增强。</p>
+<h2 id="JDK-动态代理——反射"><a href="#JDK-动态代理——反射" class="headerlink" title="JDK 动态代理——反射"></a>JDK 动态代理——反射</h2><ul>
+<li><p><strong>JDK动态代理</strong>：反射调用有一定性能开销，但初始化较快</p>
+</li>
+<li><p>JDK原生的实现方式，需要被代理的目标类必须实现接口。因为这个技术要求<strong>代理对象和目标对象实现同样的接口</strong>，目标对象和代理对象是平等地位的。</p>
+</li>
+</ul>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>对于一个UserServiceImpl，要生成它的代理对象，为了能创建一个跟UserServiceImpl拥有同名方法的代理Proxy，<mark>这个类必须实现一个接口UserService，并且拥有Impl的全部方法</mark>，然后把Impl传给生成代理的方法。</p>
+<p>接口能将原来的实现对象的方法抽象化（或者部分抽象） 方便代理进行重写，代理重写完具体的执行逻辑，返回的还是这个接口的实现对象，相当于是把原来的实现对象包装了一下，完美地把对象的职责转移到了代理身上，业务对象。减少代码冗余和多余的资源调用</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Subject</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">request</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RealSubject</span> <span class="keyword">implements</span> <span class="title class_">Subject</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">request</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Real request&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JdkProxy</span> <span class="keyword">implements</span> <span class="title class_">InvocationHandler</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Object target;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">bind</span><span class="params">(Object target)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.target = target;</span><br><span class="line">        <span class="keyword">return</span> Proxy.newProxyInstance(</span><br><span class="line">            target.getClass().getClassLoader(),</span><br><span class="line">            target.getClass().getInterfaces(),</span><br><span class="line">            <span class="built_in">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// proxy 是动态生成的代理类的实例，method是对应方法，args是方法参数</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Before JDK proxy&quot;</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> method.invoke(target, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;After JDK proxy&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">        <span class="type">Subject</span> <span class="variable">proxy</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JdkProxy</span>().bind(<span class="keyword">new</span> <span class="title class_">RealSubject</span>());</span><br><span class="line">        proxy.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ul>
+<li>基于Java反射机制实现，内存中动态生成一个代理类</li>
+<li>要求目标类必须实现至少一个接口</li>
+<li>在运行时动态生成接口的实现类（匿名类）</li>
+</ul>
+<p>流程：<mark>通过 Proxy.newProxyInstance() 创建代理对象</mark> </p>
+<ul>
+<li>动态生成的代理类特征：<ul>
+<li>由JDK内部的 ProxyGenerator 生成（final），通过反射获取要实现的方法的 Method 对象。</li>
+<li>继承了 <code>java.lang.reflect.Proxy</code> 类，类名通常格式为<code>$ProxyN</code>(N为数字)：实现了指定接口的所有方法。方法的实现会调用 InvocationHandler 的<code>invoke(proxy,method,args)</code>，也就是AOP切面逻辑。<ul>
+<li>proxy 就是 this，代理类的实例</li>
+<li>在这个invoke内部跟被代理对象<code>target</code>相关的只有 <code>method.invoke(target,args)</code>，其他逻辑都是增强行为。但是 Proxy 类内部并不存在被代理对象，因此如果需要生成真正的代理对象，<code>target</code> 的注入应该从InvocationHandler的实现类入手，跟代理类没关系。</li>
+</ul>
+</li>
+<li>内存中动态生成代理类的字节码。默认情况下，这些动态生成的代理类不会被保存到磁盘。但可以通过设置系统属性<code>sun.misc.ProxyGenerator.saveGeneratedFiles</code>为<code>true</code>来保存生成的.class文件。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">$Proxy0</span> <span class="keyword">extends</span> <span class="title class_">Proxy</span> <span class="keyword">implements</span> <span class="title class_">TargetInterface</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m1;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m2;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m3;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            m1 = Class.forName(<span class="string">&quot;java.lang.Object&quot;</span>).getMethod(<span class="string">&quot;equals&quot;</span>, ...);</span><br><span class="line">            m2 = Class.forName(<span class="string">&quot;java.lang.Object&quot;</span>).getMethod(<span class="string">&quot;toString&quot;</span>, ...);</span><br><span class="line">            m3 = Class.forName(<span class="string">&quot;com.dream.service.TargetInterface&quot;</span>).getMethod(<span class="string">&quot;targetMethod&quot;</span>, ...);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;...&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> $Proxy0(InvocationHandler h) &#123;</span><br><span class="line">        <span class="built_in">super</span>(h);</span><br><span class="line">    &#125; <span class="comment">// Proxy 父类有一个 protected 的 InvocationHandler 成员变量 h</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object var1)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> (Boolean) <span class="built_in">super</span>.h.invoke(<span class="built_in">this</span>, m1, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;var1&#125;); </span><br><span class="line">            <span class="comment">// 转发到InvocationHandler</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;...&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> String <span class="title function_">toString</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> (String) <span class="built_in">super</span>.h.invoke(<span class="built_in">this</span>, m2, <span class="literal">null</span>); </span><br><span class="line">            <span class="comment">// 转发到InvocationHandler</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;...&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">targetMethod</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="built_in">super</span>.h.invoke(<span class="built_in">this</span>, m3, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;name&#125;); </span><br><span class="line">            <span class="comment">// 转发到InvocationHandler</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;...&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 其他方法...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<h2 id="CGLIB-动态代理——ASM字节码框架"><a href="#CGLIB-动态代理——ASM字节码框架" class="headerlink" title="CGLIB 动态代理——ASM字节码框架"></a>CGLIB 动态代理——ASM字节码框架</h2><ul>
+<li><p><strong>CGLIB</strong>：生成字节码初始化较慢，但后续调用性能更好</p>
+</li>
+<li><p>通过<strong>继承被代理的目标类</strong>实现代理，所以不需要目标类实现接口。</p>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>cglib<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>cglib-nodeps<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>3.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RealService</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">request</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Real service&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CglibProxy</span> <span class="keyword">implements</span> <span class="title class_">MethodInterceptor</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">getProxy</span><span class="params">(Class clazz)</span> &#123;</span><br><span class="line">        <span class="type">Enhancer</span> <span class="variable">enhancer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Enhancer</span>();</span><br><span class="line">        enhancer.setSuperclass(clazz);</span><br><span class="line">        enhancer.setCallback(<span class="built_in">this</span>);</span><br><span class="line">        <span class="keyword">return</span> enhancer.create();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// obj 是代理类的实例对象, methodProxy 是核心的方法代理，可以看到这里并未使用反射的method调用</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">intercept</span><span class="params">(Object obj, Method method, Object[] args, MethodProxy proxy)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Before CGLIB proxy&quot;</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> proxy.invokeSuper(obj, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;After CGLIB proxy&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">        <span class="type">RealService</span> <span class="variable">proxy</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CglibProxy</span>().getProxy(RealService.class);</span><br><span class="line">        proxy.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h3><p><strong>CGLIB 通过动态生成一个需要被代理类的子类（即被代理类作为父类），该子类重写被代理类的所有不是 final 修饰的方法，并在子类中采用方法拦截的技术拦截父类所有的方法调用，进而织入横切逻辑，</strong> 目标对象是代理对象的父类。</p>
+<ul>
+<li>基于ASM字节码操作框架实现。<ul>
+<li><strong>ASM框架</strong>：一个轻量级Java字节码操作和分析框架</li>
+<li><strong>直接生成.class文件结构</strong>：比JDK反射方式更底层，性能更好，不过初始化需要的时间更长</li>
+</ul>
+</li>
+<li>通过继承目标类来生成其子类，不需要目标类实现接口<ul>
+<li><strong>避免反射开销</strong>：生成的方法调用是直接调用，而非反射调用。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>ASM从类文件中读入信息后，能够改变类行为，分析类信息，甚至能够根据用户要求生成新类。</p>
+<p>ASM相对于其他类似工具如BCEL、SERP、Javassist、CGLIB，它的最大的优势就在于其性能更高，其jar包仅30K。Hibernate和Spring都使用了cglib代理，而cglib底层使用的是ASM，可见ASM在各种开源框架都有广泛的应用。<a href="https://developer.aliyun.com/article/935647#slide-12">【设计模式自习室】详解代理模式-阿里云开发者社区</a> </p>
+<p>ASM 字节码框架动态生成字节码的步骤：<a href="https://blog.csdn.net/xifeijian/article/details/83246240">字节码实践 – 使用 ASM 实现 AOP_jdk.internal.org.objectweb.asm?-CSDN博客</a> </p>
+<ol>
+<li><strong>创建ClassWriter</strong>：使用ASM的ClassWriter开始构建类结构</li>
+<li><strong>定义类信息</strong>：设置版本号、访问修饰符、类名(继承目标类)</li>
+<li><strong>添加字段</strong>：生成用于存储 MethodInterceptor 的字段</li>
+<li><strong>方法生成</strong>：<ul>
+<li>对于每个非final方法，生成两个版本：<ul>
+<li>覆盖，也就是重写的方法(调用拦截器)</li>
+<li>直接调用父类方法的”fast”版本(避免反射)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>添加构造函数</strong>：初始化MethodInterceptor字段</li>
+<li><strong>类加载</strong>：使用自定义的ClassLoader加载生成的字节码</li>
+</ol>
+</blockquote>
+<p>生成的代理类class如下特征：</p>
+<ul>
+<li><p>由ASM字节码操作框架生成</p>
+</li>
+<li><p>类名格式：<code>OriginalClass$$EnhancerByCGLIB$$&lt;随机字符&gt;</code></p>
+</li>
+<li><p>继承自目标类，包含一个MethodInterceptor类型字段</p>
+</li>
+<li><p>重写父类的同名方法，同时有一个<strong>直接调用</strong>父类方法的fast方法。</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 生成的代理类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SampleService$$EnhancerByCGLIB$$1234abcd</span> <span class="keyword">extends</span> <span class="title class_">SampleService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> MethodInterceptor interceptor;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Method CGLIB$save$<span class="number">0</span>$Method; </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> MethodProxy CGLIB$save$<span class="number">0</span>$Proxy;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="comment">// 初始化方法引用和方法代理</span></span><br><span class="line">        CGLIB$save$<span class="number">0</span>$Method = ReflectUtils.findMethods(<span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;save&quot;</span>,<span class="string">&quot;()V&quot;</span>&#125;, ...)[<span class="number">0</span>];</span><br><span class="line">        CGLIB$save$<span class="number">0</span>$Proxy = MethodProxy.create(SampleService.class, SampleService$$EnhancerByCGLIB$$1234abcd.class, <span class="string">&quot;()V&quot;</span>, <span class="string">&quot;save&quot;</span>, <span class="string">&quot;CGLIB$save$0&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 生成的fast方法</span></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">void</span> CGLIB$save$<span class="number">0</span>() &#123;</span><br><span class="line">        <span class="built_in">super</span>.save(); <span class="comment">// 直接调用父类方法</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 重写的方法</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">save</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">MethodInterceptor</span> <span class="variable">tmp</span> <span class="operator">=</span> interceptor;</span><br><span class="line">        <span class="keyword">if</span> (tmp != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 调用拦截器</span></span><br><span class="line">            tmp.intercept(<span class="built_in">this</span>, CGLIB$save$<span class="number">0</span>$Method, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;&#125;, CGLIB$save$<span class="number">0</span>$Proxy);</span><br><span class="line">            <span class="comment">// CGLIB$save$0$Method是 Method, Object result = method.invoke(obj, args) 使用反射调用</span></span><br><span class="line">            <span class="comment">// CGLIB$save$0$Proxy是 MethodProxy, Object result = proxy.invokeSuper(obj, args) 可以看出没有使用反射调用</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">super</span>.save(); <span class="comment">// 无拦截器时直接调用父类</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>MethodProxy：是 <strong>CGLIB 提供的优化版代理对象</strong>，类型是 <code>net.sf.cglib.proxy.MethodProxy</code>。</p>
+<p>它的作用主要是：提供一个高效的、直接调用 <strong>super 方法</strong> 的方式。</p>
+<ul>
+<li>它可以用 <code>proxy.invokeSuper(obj, args)</code> 来调用被代理类的 <strong>父类方法</strong>，避免了反射带来的性能损耗。<ul>
+<li>主要是为代理类和目标类各自生成 FastClass，fastClass 通过方法索引直接定位方法，跳过了反射查找。<a href="https://github.com/cglib/cglib/blob/9d67875290d269c9b1ff5e4f4bc578a9f05c392e/cglib/src/main/java/net/sf/cglib/proxy/MethodProxy.java#L224">源码</a></li>
+</ul>
+</li>
+<li>它内部直接生成了字节码调用，所以比 <code>method.invoke</code> 快很多。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>比较点</th>
+<th>Method</th>
+<th>MethodProxy</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>通用性</td>
+<td>适用所有类、接口</td>
+<td>仅适用 CGLIB 代理子类</td>
+</tr>
+<tr>
+<td>反射能力</td>
+<td>可以操作注解、参数、返回值等</td>
+<td>主要用作高效 super 调用，不提供反射功能</td>
+</tr>
+<tr>
+<td>调用范围</td>
+<td>任意方法（只要有 Method 对象）</td>
+<td>只能调用当前拦截方法对应的父类实现</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>反射调用，较慢</td>
+<td>字节码生成，高效调用</td>
+</tr>
+<tr>
+<td>接口代理可用性</td>
+<td>可以</td>
+<td>不适用（只在继承结构上用）</td>
+</tr>
+</tbody></table>
+<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><h3 id="静态代理优缺点"><a href="#静态代理优缺点" class="headerlink" title="静态代理优缺点"></a>静态代理优缺点</h3><ul>
+<li><p>优点：可以做到<strong>在符合开闭原则的情况下</strong>对目标对象进行功能扩展。</p>
+</li>
+<li><p>缺点：当需要代理多个类的时候，由于代理对象要实现与目标对象一致的接口，有两种方式：</p>
+</li>
+<li><p>只维护一个代理类，由这个代理类实现多个接口，但是这样就<strong>导致代理类过于庞大</strong></p>
+</li>
+<li><p>新建多个代理类，每个目标对象对应一个代理类，但是这样会<strong>产生过多的代理类</strong></p>
+</li>
+</ul>
+<h3 id="JDK动态代理优缺点"><a href="#JDK动态代理优缺点" class="headerlink" title="JDK动态代理优缺点"></a>JDK动态代理优缺点</h3><ul>
+<li>优势：虽然相对于静态代理，动态代理大大减少了我们的开发任务，同时减少了对业务接口的依赖，降低了耦合度。</li>
+<li>劣势：<strong>只能对接口进行代理</strong>，使用反射调用原方法，性能稍弱</li>
+</ul>
+<h3 id="CGLIB动态代理优缺点"><a href="#CGLIB动态代理优缺点" class="headerlink" title="CGLIB动态代理优缺点"></a>CGLIB动态代理优缺点</h3><p><strong>CGLIB性能比JDK性能更高</strong>，但是<strong>CGLIB创建对象所花费的时间却比JDK多得多</strong>。</p>
+<ul>
+<li>所以<strong>对于单例的对象，因为无需频繁创建对象，用CGLIB合适</strong>，反之使用JDK方式要更为合适一些。</li>
+<li>同时由于CGLib由于是采用动态创建子类的方法，对于final修饰的方法无法进行代理。</li>
+</ul>
+<ol>
+<li><strong>构造函数限制</strong>：代理类会调用父类的默认构造函数</li>
+<li><strong>体积较大</strong>：相比JDK代理生成的字节码更复杂</li>
+<li><strong>初始化开销</strong>：首次生成代理类时需要较多时间</li>
+</ol>
+<p>CGLIB的字节码生成机制虽然复杂，但提供了比JDK动态代理更灵活和高效的代理方式，特别适合需要代理普通Java类(而非接口)的场景。</p>
+]]></content>
+      <categories>
+        <category>jdk</category>
+      </categories>
+      <tags>
+        <tag>动态代理</tag>
+        <tag>反射</tag>
       </tags>
   </entry>
 </search>

@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">89</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -745,6 +745,275 @@
 <h3 id="五种IO模型对比"><a href="#五种IO模型对比" class="headerlink" title="五种IO模型对比"></a>五种IO模型对比</h3><p>最后用一幅图，来说明他们之间的区别</p>
 <p>同步IO or 异步IO 取决于从内核拷贝到用户空间时是否阻塞</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653912219712.png" alt="1653912219712"></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/29/algorithm-top100freq-files/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/29/algorithm-top100freq-files/" class="post-title-link" itemprop="url">超大文件中在有限的内存里找到单词频率 top 100</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-29 00:00:00 / 修改时间：23:23:11" itemprop="dateCreated datePublished" datetime="2025-05-29T00:00:00+08:00">2025-05-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="TOP-100-freq"><a href="#TOP-100-freq" class="headerlink" title="TOP 100 freq"></a>TOP 100 freq</h1><h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>问题：有一个 1G 大小的文件，里面每一行是一个词，每个词的大小不超过 16 字节，内存限制大小是 1M。返回出现频率最高的 100 个单词</p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><ul>
+<li>有一个 1GB 的文件，每行是一个词，每个词不超过 16 字节。</li>
+<li>内存限制为 1MB，因此无法一次性加载整个文件到内存中处理。</li>
+<li>需要返回出现频率最高的 100 个词，要求精确结果（非近似）。</li>
+<li>核心挑战：内存小，文件大，需高效处理大数据，避免内存溢出。</li>
+</ul>
+<h3 id="解决思路：分治法-外部排序-堆维护-Top-100"><a href="#解决思路：分治法-外部排序-堆维护-Top-100" class="headerlink" title="解决思路：分治法 + 外部排序 + 堆维护 Top 100"></a>解决思路：分治法 + 外部排序 + 堆维护 Top 100</h3><p>使用分治法将大文件分解为小文件块，每个块在内存中处理，然后多级合并部分结果。在合并过程中，维护一个最小堆来跟踪全局频率最高的 100 个词。思路简单直接，步骤如下：</p>
+<ol>
+<li><strong>分块（Divide）</strong>：<ul>
+<li>将大文件分割成多个小文件块，每个块大小约 500KB（约 32,000 行），确保块内不同词的数量不超过内存限制（1MB）。<ul>
+<li>为什么 500KB？内存 1MB，每个词最大 16 字节，哈希表条目（词 + 频率）约 20-32 字节（包括开销），32,000 个不同词需约 640KB，小于 1MB。</li>
+</ul>
+</li>
+<li>分割方法：顺序读取大文件，逐行写入块文件，直到块大小达到约 500KB。重复直到处理完整个文件。</li>
+<li>块数量：文件 1GB ≈ 1,000,000,000 字节，每行平均约 10 字节（词 + 换行符），总行数约 100,000,000 行。每个块 32,000 行，块数约 3,125（100,000,000 / 32,000 ≈ 3,125）。</li>
+</ul>
+</li>
+<li><strong>块内处理（Process Chunks）</strong>：<ul>
+<li>对每个块文件：<ul>
+<li>读入内存（约 500KB）。</li>
+<li>使用哈希表统计词频：逐行读取，以词为键，累加频率。</li>
+<li>块处理完后，对哈希表中的词按键（词）排序。</li>
+<li>输出到临时文件：每行格式为 “词 频率”，并按词排序（便于后续合并）。</li>
+</ul>
+</li>
+<li>内存使用：哈希表存储词（最大 16 字节）和频率（4 字节整数），条目上限 32,000，总内存约 640KB，满足 1MB 限制。</li>
+<li>输出：每个块生成一个排序后的部分频率文件。</li>
+</ul>
+</li>
+<li><strong>第一级合并（Merge Partially）</strong>：<ul>
+<li>部分文件数量多（约 3,125 个），需分组合并，避免同时打开太多文件（文件描述符限制，假设一次最多打开 256 个文件）。</li>
+<li>分组：将约 3,125 个部分文件分成 13 组（每组 240 文件）和 1 组（剩余文件），确保每组文件数 ≤ 256。</li>
+<li>对每组执行多路合并：<ul>
+<li>使用优先队列（最小堆）按键（词）合并：堆中每个条目存储（词、频率、文件索引），大小约 30 字节。</li>
+<li>合并逻辑：弹出最小词，检查所有输入文件是否有相同词，累加频率，输出全局（词，聚合频率）到新临时文件（按词排序）。</li>
+<li>内存使用：优先队列（256 条目 × 30 字节 ≈ 7.7KB），输入缓冲区（每个文件 512 字节缓冲区 × 256 文件 ≈ 128KB），输出缓冲区（4KB），总内存约 140KB &lt; 1MB。</li>
+</ul>
+</li>
+<li>输出：每组生成一个更大的排序频率文件（约 13 个文件）。</li>
+</ul>
+</li>
+<li><strong>第二级合并与 Top 100 提取（Final Merge and Heap Update）</strong>：<ul>
+<li>第一级合并后，文件数少（约 13 个），可一次性合并。</li>
+<li>执行多路合并（13 路）：<ul>
+<li>使用优先队列按键（词）合并：堆中每个条目约 30 字节。</li>
+<li>合并逻辑：弹出最小词，累加所有输入文件中的频率，得到全局（词，全局频率）。</li>
+<li>同时维护一个最小堆（大小 100）用于 Top 100：以频率为键，存储（词，频率）。<ul>
+<li>对于每个全局（词，频率），插入堆中。</li>
+<li>如果堆大小 &gt; 100，弹出最小频率条目，确保堆始终保留最大频率的 100 个词。</li>
+</ul>
+</li>
+<li>内存使用：优先队列（13 条目 × 30 字节 ≈ 0.4KB），输入缓冲区（13 文件 × 4KB = 52KB），堆（100 条目 × 30 字节 ≈ 3KB），总内存约 55KB &lt; 1MB。</li>
+<li>注意：无需输出完整全局文件，只更新堆，节省内存和磁盘。</li>
+</ul>
+</li>
+<li>处理完所有词后，堆中即为频率最高的 100 个词。</li>
+</ul>
+</li>
+<li><strong>输出结果</strong>：<ul>
+<li>堆中元素按频率最小堆组织，但 Top 100 已确定。</li>
+<li>将堆中元素按频率降序排序（例如，通过逐个弹出并反转），返回结果。</li>
+</ul>
+</li>
+</ol>
+<h3 id="为什么满足内存限制？"><a href="#为什么满足内存限制？" class="headerlink" title="为什么满足内存限制？"></a>为什么满足内存限制？</h3><ul>
+<li>分块大小（500KB）确保块内处理在 1MB 内。</li>
+<li>合并阶段使用小缓冲区（每个文件 512 字节-4KB）和紧凑数据结构（优先队列条目 30 字节），总内存始终 &lt; 1MB。</li>
+<li>堆维护 Top 100 仅需约 3KB，不影响内存。</li>
+</ul>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
+<li>简单直接：分治减少内存压力，外部排序处理大数据，堆高效维护 Top K。</li>
+<li>精确结果：通过全局频率累加，确保正确性。</li>
+<li>可扩展：适用于更大文件或更小内存。</li>
+</ul>
+<p>此思路可在标准编程语言（如 Python、Java）中实现，注意文件 I/O 和缓冲区管理以优化性能。</p>
+<h2 id="解法一"><a href="#解法一" class="headerlink" title="解法一"></a>解法一</h2><p>第一步：将 1 G 拆分成小文件，每个小文件的大小不超过 1 MB ，其实应该留空间用于统计一个小文件中单词出现的频率，所以为了保险起见，每个文件的大小不超过 512 kb，那么得到 1 GB / 512 KB = 2048 个小文件</p>
+<p>这里不用 hash 的方法来切分小文件，直接顺序读取然后写到小文件，小文件大小多到了 512kb 就关闭，写下一个小文件</p>
+<p>第二步：分别对每个文件做下面的事情：<br>① 将小文件中的单词加载进内存<br>② 使用 HashMap 进行单词统计<br>③ 将 HashMap 中词频数据写到另一个新的小文件中，我们称为词频小文件<br>这里再写的时候，对单词进行 hash (word) % 2048 写到对应的文件中<br>这样做的目的是为了相同的单词放到同一个文件中。</p>
+<p>第三步：初始化一个 100 个节点的小顶堆，用于保存 100 个出现频率最多的单词<br>分别对每个词频小文件做下面的事情：<br>① 将小文件中的单词及其频率加载进内存<br>② 使用 HashMap 进行单词统计<br>③ 遍历 HashMap 中单词词频，如果词频大于小顶堆中堆顶词频的话，则放入小顶堆，否则不放</p>
+<p>最终，小顶堆中的 100 个单词就是出现频率最多的单词了</p>
+<p>该方案在第二步的第 ③ 点的时候有点问题：就是当词频小文件大于 1 M 了，该怎么处理呢？<br>或者说极端情况下，每个单词都只出现一次，并且每个单词的 hash (word) % 2048 值都是相同的话，那词频小文件的大小都会超过 1 G 了</p>
+<h2 id="解法二"><a href="#解法二" class="headerlink" title="解法二"></a>解法二</h2><p>第一步：使用多路归并排序对大文件进行排序，这样相同的单词肯定是挨着的</p>
+<p>第二步：<br>① 初始化一个 100 个节点的小顶堆，用于保存 100 个出现频率最多的单词<br>② 遍历整个文件，一个单词一个单词的从文件中取出来，并计数<br>③ 等到遍历的单词和上一个单词不同的话，那么上一个单词及其频率如果大于堆顶的词的频率，那么放在堆中，否则不放</p>
+<p>最终，小顶堆中就是出现频率前 100 的单词了</p>
+<p>多路归并排序对大文件进行排序的步骤如下：<br>① 将文件按照顺序切分成大小不超过 512KB 的小文件，总共 2048 个小文件<br>② 使用 1MB 内存分别对 2048 个小文件中的单词进行排序<br>③ 使用一个大小为 2048 大小的堆，对 2048 个小文件进行多路排序，结果写到一个大文件中</p>
+<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><h3 id="数据准备和工具类"><a href="#数据准备和工具类" class="headerlink" title="数据准备和工具类"></a>数据准备和工具类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FileIOUtils</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 拿到指定文件的输入流，并包装成文件 BufferedReader</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> BufferedReader <span class="title function_">getReader</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">FileInputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(name);</span><br><span class="line">            <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedReader</span>(<span class="keyword">new</span> <span class="title class_">InputStreamReader</span>(inputStream));</span><br><span class="line">            <span class="keyword">return</span> br;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;IOException&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 拿到指定文件的输出流，并包装成文件 BufferedWriter</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> BufferedWriter <span class="title function_">getWriter</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">FileOutputStream</span> <span class="variable">outputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(name);</span><br><span class="line">            <span class="type">BufferedWriter</span> <span class="variable">bw</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedWriter</span>(<span class="keyword">new</span> <span class="title class_">OutputStreamWriter</span>(outputStream));</span><br><span class="line">            <span class="keyword">return</span> bw;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;IOException&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">closeReader</span><span class="params">(Reader reader)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (reader != <span class="literal">null</span>) &#123;</span><br><span class="line">                reader.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;IOException&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">closeWriter</span><span class="params">(Writer writer)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (writer != <span class="literal">null</span>) &#123;</span><br><span class="line">                writer.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;IOException&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 准备阶段：准备 1G 的文件，文件中每一行一个单词，每个单词的大小小于等于 16 字节</span></span><br><span class="line"><span class="comment"> * 数据写道当前工程目录下的文件：data\top100\words.txt</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_0_WordsGenerator</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Random</span> <span class="variable">r</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedWriter</span> <span class="variable">writer</span> <span class="operator">=</span> FileIOUtils.getWriter(<span class="string">&quot;data\\top100\\words.txt&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">char</span>[] chars = &#123;<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;d&#x27;</span>, <span class="string">&#x27;e&#x27;</span>, <span class="string">&#x27;f&#x27;</span>, <span class="string">&#x27;g&#x27;</span>&#125;;</span><br><span class="line">        <span class="type">int</span> <span class="variable">m</span> <span class="operator">=</span> chars.length;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">            <span class="type">StringBuilder</span> <span class="variable">line</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; r.nextInt(<span class="number">16</span>); j++) &#123;</span><br><span class="line">                line.append(chars[r.nextInt(m)]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (line.length() == <span class="number">0</span>) <span class="keyword">continue</span>;</span><br><span class="line">            writer.write(line.toString());</span><br><span class="line">            writer.newLine();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        FileIOUtils.closeWriter(writer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="将一个大文件切割成多个小文件"><a href="#将一个大文件切割成多个小文件" class="headerlink" title="将一个大文件切割成多个小文件"></a>将一个大文件切割成多个小文件</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 第一步：将一个大文件切割成多个小文件</span></span><br><span class="line"><span class="comment"> * 小文件的大小为 512kb 左右</span></span><br><span class="line"><span class="comment"> * 小文件都写到这个目录下：data\top100\raw_data\</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_1_FileSplit</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">splitFile</span><span class="params">(String fileName)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">fileNum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileSuffix</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\raw_data\\&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">littleFileName</span> <span class="operator">=</span> fileSuffix + fileNum;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 记录每个小文件的大小</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">totalSize</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedWriter</span> <span class="variable">bw</span> <span class="operator">=</span> FileIOUtils.getWriter(littleFileName);</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> FileIOUtils.getReader(fileName);</span><br><span class="line">        <span class="type">String</span> <span class="variable">line</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">while</span> ((line = br.readLine()) != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 如果当前小文件大小大于 512KB ，那么关闭当前小文件，写下一个小文件</span></span><br><span class="line">            <span class="keyword">if</span> (totalSize &gt;= <span class="number">512</span> * <span class="number">1024</span>) &#123;</span><br><span class="line">                <span class="comment">// 关闭当前小文件的输出流</span></span><br><span class="line">                FileIOUtils.closeWriter(bw);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 拿到下一个小文件的输出流，开始写下一个小文件</span></span><br><span class="line">                fileNum++;</span><br><span class="line">                littleFileName = fileSuffix + fileNum;</span><br><span class="line">                bw = FileIOUtils.getWriter(littleFileName);</span><br><span class="line">                totalSize = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            totalSize += line.length();</span><br><span class="line"></span><br><span class="line">            bw.write(line);</span><br><span class="line">            bw.newLine();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        FileIOUtils.closeReader(br);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\words.txt&quot;</span>;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">_1_FileSplit</span>().splitFile(fileName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="每个小文件中的单词进行排序"><a href="#每个小文件中的单词进行排序" class="headerlink" title="每个小文件中的单词进行排序"></a>每个小文件中的单词进行排序</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 第二步：将每个小文件中的单词进行排序</span></span><br><span class="line"><span class="comment"> *  排序后的数据写到另一个目录：data\top100\sorted_data\</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_2_LittleFileSorter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sortEachFile</span><span class="params">(String dirName)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">File</span> <span class="variable">dir</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(dirName);</span><br><span class="line">        File[] littleFiles = dir.listFiles();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 排序每一个小文件中的单词</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; littleFiles.length; i++) &#123;</span><br><span class="line">            <span class="comment">// 1. 将当前小文件中单词读取到内存中</span></span><br><span class="line">            <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> FileIOUtils.getReader(littleFiles[i].getName());</span><br><span class="line">            List&lt;String&gt; words = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">            <span class="type">String</span> <span class="variable">line</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">            <span class="keyword">while</span> ((line = br.readLine()) != <span class="literal">null</span>) &#123;</span><br><span class="line">                words.add(line);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            FileIOUtils.closeReader(br);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 2. 对当前文件中的所有单词进行排序</span></span><br><span class="line">            Collections.sort(words);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 3. 将排完序的单词写道目标文件中</span></span><br><span class="line">            <span class="type">BufferedWriter</span> <span class="variable">bw</span> <span class="operator">=</span> FileIOUtils.getWriter(<span class="string">&quot;data\\top100\\sorted_data\\&quot;</span> + i);</span><br><span class="line">            <span class="keyword">for</span> (String word : words) &#123;</span><br><span class="line">                bw.write(word);</span><br><span class="line">                bw.newLine();</span><br><span class="line">            &#125;</span><br><span class="line">            FileIOUtils.closeWriter(bw);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">dir</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\raw_data&quot;</span>;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">_2_LittleFileSorter</span>().sortEachFile(dir);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="对有序的小文件进行外部排序"><a href="#对有序的小文件进行外部排序" class="headerlink" title="对有序的小文件进行外部排序"></a>对有序的小文件进行外部排序</h3><p>我们先写一个 BufferedIterator 类，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// BufferedIterator 是对文件输入流 BufferedReader 的包装，用于：</span></span><br><span class="line"><span class="comment">//  ① 判断输入流中是否还有数据，有过有的话，则先缓存下一行数据</span></span><br><span class="line"><span class="comment">//  ② 得到文件输入流中的下一行数据</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BufferedIterator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> BufferedReader reader;</span><br><span class="line">    <span class="keyword">private</span> String head;</span><br><span class="line"></span><br><span class="line">    BufferedIterator(BufferedReader reader) &#123;</span><br><span class="line">        <span class="built_in">this</span>.reader = reader;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">hasNext</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            head = <span class="built_in">this</span>.reader.readLine();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            head = <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> head != <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">next</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">close</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="built_in">this</span>.reader.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后使用多路归并排序来实现文件的外部排序，如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 第三步： 对有序的小文件进行外部排序</span></span><br><span class="line"><span class="comment"> * 使用多路归并排序实现</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_3_ExternalSorter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">mergeSort</span><span class="params">(String dirName)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">File</span> <span class="variable">dir</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(dirName);</span><br><span class="line">        File[] children = dir.listFiles();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 初始化一个最小堆，大小就是有序小文件的个数</span></span><br><span class="line">        <span class="comment">// 堆中的每个节点存放每个有序小文件对应的输入流</span></span><br><span class="line">        <span class="comment">// BufferedIterator 是对文件输入流 BufferedReader 的包装，用于：</span></span><br><span class="line">        <span class="comment">//  ① 判断输入流中是否还有数据</span></span><br><span class="line">        <span class="comment">//  ② 得到文件输入流中的下一行数据</span></span><br><span class="line">        PriorityQueue&lt;BufferedIterator&gt; minHeap = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;(children.length, <span class="keyword">new</span> <span class="title class_">Comparator</span>&lt;BufferedIterator&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compare</span><span class="params">(BufferedIterator o1, BufferedIterator o2)</span> &#123;</span><br><span class="line">                <span class="comment">// 按照每个有序文件中的下一行数据对所有文件输入流进行排序</span></span><br><span class="line">                <span class="comment">// 单词小的输入文件流放在堆顶</span></span><br><span class="line">                <span class="keyword">return</span> o1.next().compareTo(o2.next());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 将所有有序文件的输入流包装成 BufferedIterator 放入到堆中</span></span><br><span class="line">        <span class="keyword">for</span> (File file : children) &#123;</span><br><span class="line">            <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> FileIOUtils.getReader(file.getName());</span><br><span class="line">            <span class="type">BufferedIterator</span> <span class="variable">buf</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedIterator</span>(br);</span><br><span class="line">            <span class="comment">// 要有数据才放入到堆中，否则关闭流</span></span><br><span class="line">            <span class="keyword">if</span> (buf.hasNext()) &#123;</span><br><span class="line">                minHeap.add(buf);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                buf.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedWriter</span> <span class="variable">bw</span> <span class="operator">=</span> FileIOUtils.getWriter(<span class="string">&quot;data\\top100\\sorted_words.txt&quot;</span>);</span><br><span class="line">        <span class="comment">// 3. 拿出堆顶的数据，并写入到最终排序的文件中</span></span><br><span class="line">        <span class="keyword">while</span> (!minHeap.isEmpty()) &#123;</span><br><span class="line">            <span class="type">BufferedIterator</span> <span class="variable">firstBuf</span> <span class="operator">=</span> minHeap.poll();</span><br><span class="line">            bw.write(firstBuf.next());</span><br><span class="line">            bw.newLine();</span><br><span class="line">            <span class="comment">// 如果拿出来的输入流中还有数据的话，那么将这个输入流再一次添加到栈中，</span></span><br><span class="line">            <span class="keyword">if</span> (firstBuf.hasNext()) &#123;</span><br><span class="line">                minHeap.add(firstBuf);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123; <span class="comment">// 否则说明该文件输入流中没有数据了，那么可以关闭这个流</span></span><br><span class="line">                firstBuf.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">       FileIOUtils.closeWriter(bw);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">dirName</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\sorted_data\\&quot;</span>;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">_3_ExternalSorter</span>().mergeSort(dirName);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="利用-100-大小的小顶堆得到出现频率-top-100-的单词"><a href="#利用-100-大小的小顶堆得到出现频率-top-100-的单词" class="headerlink" title="利用 100 大小的小顶堆得到出现频率 top 100 的单词"></a>利用 100 大小的小顶堆得到出现频率 top 100 的单词</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 第四步：利用 100 大小的小顶堆得到出现频率 top 100 的单词</span></span><br><span class="line"><span class="comment"> * 到这里，经过外部排序后，文件中所有的单词都是有序的，相同的单词都是挨着的</span></span><br><span class="line"><span class="comment"> * 所以，可以顺序遍历有序的文件，得到出现频率 top 100 的单词</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_4_Top_100_Words</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Pair</span> &#123;</span><br><span class="line">        String word;</span><br><span class="line">        <span class="type">int</span> cnt;</span><br><span class="line"></span><br><span class="line">        Pair(String word, <span class="type">int</span> cnt) &#123;</span><br><span class="line">            <span class="built_in">this</span>.word = word;</span><br><span class="line">            <span class="built_in">this</span>.cnt = cnt;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String[] top_100 (String fileName) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 初始化一个 100 大小的小顶堆</span></span><br><span class="line">        <span class="comment">// 堆中每个节点存放的是单词及其出现的次数</span></span><br><span class="line">        PriorityQueue&lt;Pair&gt; minHeap = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;(<span class="number">100</span>, <span class="keyword">new</span> <span class="title class_">Comparator</span>&lt;Pair&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compare</span><span class="params">(Pair o1, Pair o2)</span> &#123;</span><br><span class="line">                <span class="comment">// 按照单词出现的次数排序</span></span><br><span class="line">                <span class="comment">// 出现次数多的，放在堆顶</span></span><br><span class="line">                <span class="keyword">return</span> o1.cnt - o2.cnt;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 前一个单词</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">prevWord</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="comment">// 前一个单词出现的次数</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">prevCnt</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> FileIOUtils.getReader(fileName);</span><br><span class="line">        <span class="comment">// 当前的单词</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">currWord</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="comment">// 2. 读取有序文件中每一行的单词，然后统计其出现的次数，并保留出现次数 top 100 的单词</span></span><br><span class="line">        <span class="keyword">while</span> ((currWord = br.readLine()) != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 如果当前的单词和前一个单词不是同一个单词</span></span><br><span class="line">            <span class="comment">// 那么需要处理前一个单词</span></span><br><span class="line">            <span class="keyword">if</span> (!currWord.equals(prevWord)) &#123;</span><br><span class="line">                <span class="comment">// 如果堆的大小小于 100，那么直接将前一个单词及其出现的次数放入堆中</span></span><br><span class="line">                <span class="keyword">if</span> (minHeap.size() &lt; <span class="number">100</span>) &#123;</span><br><span class="line">                    minHeap.add(<span class="keyword">new</span> <span class="title class_">Pair</span>(prevWord, prevCnt));</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (prevCnt &gt; minHeap.peek().cnt) &#123; <span class="comment">// 否则，如果前一个单词出现的次数大于堆顶单词出现的次数</span></span><br><span class="line">                    <span class="comment">// 先删除堆顶单词</span></span><br><span class="line">                    minHeap.remove();</span><br><span class="line">                    <span class="comment">//将前一个单词及其出现的次数放入堆中</span></span><br><span class="line">                    minHeap.add(<span class="keyword">new</span> <span class="title class_">Pair</span>(prevWord, prevCnt));</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 将当前单词设置为前一个单词</span></span><br><span class="line">                prevWord = currWord;</span><br><span class="line">                <span class="comment">// 前一个单词出现的次数清零</span></span><br><span class="line">                prevCnt = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 统计前一个单词出现的次数</span></span><br><span class="line">            prevCnt++;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//3. 最终堆中的 100 个单词就是出现频率最高的单词了，输出即可</span></span><br><span class="line">        String[] res = <span class="keyword">new</span> <span class="title class_">String</span>[<span class="number">100</span>];</span><br><span class="line">        <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (!minHeap.isEmpty()) &#123;</span><br><span class="line">            res[index++] = minHeap.poll().word;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\sorted_words.txt&quot;</span>;</span><br><span class="line">        String[] res = <span class="keyword">new</span> <span class="title class_">_4_Top_100_Words</span>().top_100(fileName);</span><br><span class="line">        System.out.println(Arrays.toString(res));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="MapReduce-框架-Hadoop-Spark"><a href="#MapReduce-框架-Hadoop-Spark" class="headerlink" title="MapReduce 框架 Hadoop Spark"></a>MapReduce 框架 Hadoop Spark</h2><h3 id="MapReduce-思路解决大文件词频统计与-Top-100-问题"><a href="#MapReduce-思路解决大文件词频统计与-Top-100-问题" class="headerlink" title="MapReduce 思路解决大文件词频统计与 Top 100 问题"></a>MapReduce 思路解决大文件词频统计与 Top 100 问题</h3><h4 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h4><p>MapReduce 是分布式计算模型，天然适合处理海量数据。我们将问题分解为两个 MapReduce 作业：</p>
+<ol>
+<li><strong>词频统计作业</strong>：精确计算每个词的全局频率</li>
+<li><strong>Top 100 提取作业</strong>：从全局词频中筛选最高频词</li>
+</ol>
+<h4 id="系统架构"><a href="#系统架构" class="headerlink" title="系统架构"></a>系统架构</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">输入文件 (1GB)</span><br><span class="line">     │</span><br><span class="line">     ├─ MapReduce Job 1 (词频统计)</span><br><span class="line">     │    ├─ Mapper 局部词频统计</span><br><span class="line">     │    └─ Reducer 全局词频合并</span><br><span class="line">     │</span><br><span class="line">     └─ MapReduce Job 2 (Top 100 提取)</span><br><span class="line">          ├─ Mapper 局部 Top 100 筛选</span><br><span class="line">          └─ Reducer 全局 Top 100 合并</span><br></pre></td></tr></table></figure>
+
+<h3 id="Job-1-全局词频统计"><a href="#Job-1-全局词频统计" class="headerlink" title="Job 1: 全局词频统计"></a><strong>Job 1: 全局词频统计</strong></h3><p><strong>目标</strong>：精确计算每个词的出现频率</p>
+<h4 id="Map-阶段"><a href="#Map-阶段" class="headerlink" title="Map 阶段"></a>Map 阶段</h4><ul>
+<li><strong>输入</strong>：文件分块（每块 ≈500KB）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mapper</span>(<span class="params">block</span>):</span><br><span class="line">    word_count = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> word <span class="keyword">in</span> block:</span><br><span class="line">        word_count[word] = word_count.get(word, <span class="number">0</span>) + <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出当前块的词频统计</span></span><br><span class="line">    <span class="keyword">for</span> word, count <span class="keyword">in</span> word_count.items():</span><br><span class="line">        <span class="keyword">yield</span> (word, count)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>内存控制</strong>：每个 Mapper 处理单块（500KB），哈希表内存 ≈700KB &lt; 1MB</li>
+<li><strong>输出示例</strong>：<code>(apple, 15)</code>, <code>(banana, 23)</code>, …</li>
+</ul>
+<h4 id="Shuffle-阶段"><a href="#Shuffle-阶段" class="headerlink" title="Shuffle 阶段"></a>Shuffle 阶段</h4><ul>
+<li>按单词哈希分区（如 <code>hash(word) % R</code>）</li>
+<li>相同单词的计数发送到同一 Reducer</li>
+</ul>
+<h4 id="Reduce-阶段"><a href="#Reduce-阶段" class="headerlink" title="Reduce 阶段"></a>Reduce 阶段</h4><ul>
+<li><strong>输入</strong>：相同单词的所有局部计数 <code>[ (word, [count1, count2,...]) ]</code></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">reducer</span>(<span class="params">word, counts</span>):</span><br><span class="line">    total = <span class="built_in">sum</span>(counts)</span><br><span class="line">    <span class="keyword">yield</span> (word, total)  <span class="comment"># 输出全局词频</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>内存控制：<ul>
+<li>设置 Reducer 数量 <code>R = 4000</code></li>
+<li>每个 Reducer 处理约 <code>1亿/R ≈ 25,000</code> 个单词</li>
+<li>内存占用：25,000 词 × 30 字节 ≈ 750KB &lt; 1MB</li>
+</ul>
+</li>
+<li><strong>输出</strong>：全局词频文件（<code>R</code> 个分区文件）</li>
+</ul>
+<h3 id="Job-2-Top-100-提取"><a href="#Job-2-Top-100-提取" class="headerlink" title="Job 2: Top 100 提取"></a><strong>Job 2: Top 100 提取</strong></h3><p><strong>目标</strong>：从全局词频中筛选频率最高的 100 个词</p>
+<h4 id="Map-阶段-1"><a href="#Map-阶段-1" class="headerlink" title="Map 阶段"></a>Map 阶段</h4><ul>
+<li><strong>输入</strong>：Job 1 的输出文件（每个文件 ≈250KB）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mapper</span>(<span class="params">file</span>):</span><br><span class="line">    heap = MinHeap(<span class="number">100</span>)  <span class="comment"># 最小堆维护局部 Top 100</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (word, count) <span class="keyword">in</span> file:</span><br><span class="line">        <span class="keyword">if</span> heap.size &lt; <span class="number">100</span> <span class="keyword">or</span> count &gt; heap.<span class="built_in">min</span>():</span><br><span class="line">            heap.push((count, word))</span><br><span class="line">        <span class="keyword">if</span> heap.size &gt; <span class="number">100</span>:</span><br><span class="line">            heap.pop()  <span class="comment"># 移除最小值</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出当前文件的 Top 100</span></span><br><span class="line">    <span class="keyword">for</span> count, word <span class="keyword">in</span> heap.items:</span><br><span class="line">        <span class="keyword">yield</span> (<span class="literal">None</span>, (word, count))  <span class="comment"># Key 统一为 None</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>内存控制</strong>：100 个词 × 30 字节 ≈ 3KB，远低于 1MB</li>
+<li><strong>输出示例</strong>：<code>(None, (&quot;apple&quot;, 1580))</code>, <code>(None, (&quot;banana&quot;, 1423))</code>…</li>
+</ul>
+<h4 id="Reduce-阶段（单-Reducer）"><a href="#Reduce-阶段（单-Reducer）" class="headerlink" title="Reduce 阶段（单 Reducer）"></a>Reduce 阶段（单 Reducer）</h4><ul>
+<li><strong>输入</strong>：所有 Mapper 的 Top 100 结果（共 <code>4000 × 100 = 400,000</code> 条）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">reducer</span>(<span class="params">_, values</span>):</span><br><span class="line">    heap = MinHeap(<span class="number">100</span>)  <span class="comment"># 最小堆维护全局 Top 100</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (word, count) <span class="keyword">in</span> values:</span><br><span class="line">        <span class="keyword">if</span> heap.size &lt; <span class="number">100</span> <span class="keyword">or</span> count &gt; heap.<span class="built_in">min</span>():</span><br><span class="line">            heap.push((count, word))</span><br><span class="line">        <span class="keyword">if</span> heap.size &gt; <span class="number">100</span>:</span><br><span class="line">            heap.pop()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出最终 Top 100（按频率降序）</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sorted</span>(heap.items, reverse=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>内存控制：<ul>
+<li>流式处理：逐条读取记录，不一次性加载</li>
+<li>堆大小固定 100，内存 ≈3KB</li>
+<li>文件缓冲区：4KB</li>
+<li>总计 &lt; 10KB &lt;&lt; 1MB</li>
+</ul>
+</li>
+</ul>
+<h3 id="关键优化与内存保障"><a href="#关键优化与内存保障" class="headerlink" title="关键优化与内存保障"></a>关键优化与内存保障</h3><ol>
+<li><strong>动态 Reducer 数量</strong>：<ul>
+<li>Job 1 中 <code>R = 4000</code> 确保每个 Reducer 处理 ≤25,000 词</li>
+<li>公式：<code>R &gt; (总词数 × 30 字节) / 1MB</code></li>
+</ul>
+</li>
+<li><strong>流式处理</strong>：<ul>
+<li>Job 2 的 Reducer 逐条处理记录，避免加载全部 400,000 条数据</li>
+</ul>
+</li>
+<li><strong>堆排序优势</strong>：<ul>
+<li>时间复杂度 <code>O(n log k)</code>（<code>k=100</code> 为常数级）</li>
+<li>空间复杂度 <code>O(k)</code> 严格受限</li>
+</ul>
+</li>
+<li><strong>分布式扩展性</strong>：<ul>
+<li>文件更大时：增加 Mapper 数量</li>
+<li>词量激增时：线性增加 Job 1 的 Reducer 数量</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="执行示例"><a href="#执行示例" class="headerlink" title="执行示例"></a>执行示例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">flowchart TB</span><br><span class="line">    A[1GB 输入文件] --&gt; B&#123;Job1 Mappers&#125;</span><br><span class="line">    B --&gt;|局部词频| C[Shuffle]</span><br><span class="line">    C --&gt; D&#123;Job1 Reducers&#125;</span><br><span class="line">    D --&gt;|全局词频| E[4000 个分区文件]</span><br><span class="line">    E --&gt; F&#123;Job2 Mappers&#125;</span><br><span class="line">    F --&gt;|局部 Top100| G[Shuffle]</span><br><span class="line">    G --&gt; H&#123;Job2 Reducer&#125;</span><br><span class="line">    H --&gt; I[全局 Top100]</span><br></pre></td></tr></table></figure>
+
+<p><svg aria-roledescription="flowchart-v2" role="graphics-document document" style="overflow: hidden; max-width: 100%;" class="flowchart" xmlns="http://www.w3.org/2000/svg" width="100%" id="svgGraph54700541592936" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"><g id="viewport-20250529151628010" class="svg-pan-zoom_viewport" transform="matrix(0.6705729999713365,0,0,0.6705729999713365,334.8240352952333,-299.0624837462725)" style="transform: matrix(0.670573, 0, 0, 0.670573, 334.824, -299.062);"><g><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="5" viewBox="0 0 10 10" class="marker flowchart-v2" id="svgGraph54700541592936_flowchart-v2-pointEnd"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 0 L 10 5 L 0 10 z"></path></marker><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="4.5" viewBox="0 0 10 10" class="marker flowchart-v2" id="svgGraph54700541592936_flowchart-v2-pointStart"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 5 L 10 10 L 10 0 z"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="11" viewBox="0 0 10 10" class="marker flowchart-v2" id="svgGraph54700541592936_flowchart-v2-circleEnd"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="-1" viewBox="0 0 10 10" class="marker flowchart-v2" id="svgGraph54700541592936_flowchart-v2-circleStart"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="12" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="svgGraph54700541592936_flowchart-v2-crossEnd"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="-1" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="svgGraph54700541592936_flowchart-v2-crossStart"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_A_B_0" d="M97.194,62L97.194,66.167C97.194,70.333,97.194,78.667,97.265,86.417C97.335,94.167,97.475,101.334,97.546,104.917L97.616,108.501"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_B_C_0" d="M97.694,263.847L97.611,269.931C97.528,276.014,97.361,288.181,97.278,299.764C97.194,311.347,97.194,322.347,97.194,327.847L97.194,333.347"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_C_D_0" d="M97.194,391.347L97.194,395.514C97.194,399.681,97.194,408.014,97.265,415.764C97.335,423.514,97.475,430.681,97.546,434.265L97.616,437.848"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_D_E_0" d="M97.694,598.576L97.611,604.66C97.528,610.743,97.361,622.91,97.278,634.493C97.194,646.076,97.194,657.076,97.194,662.576L97.194,668.076"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_E_F_0" d="M97.194,726.076L97.194,730.243C97.194,734.41,97.194,742.743,97.265,750.493C97.335,758.243,97.475,765.41,97.546,768.994L97.616,772.577"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_F_G_0" d="M97.694,927.924L97.611,934.007C97.528,940.09,97.361,952.257,97.278,963.84C97.194,975.424,97.194,986.424,97.194,991.924L97.194,997.424"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_G_H_0" d="M97.194,1055.424L97.194,1059.59C97.194,1063.757,97.194,1072.09,97.265,1079.84C97.335,1087.591,97.475,1094.757,97.546,1098.341L97.616,1101.924"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_H_I_0" d="M97.694,1256.174L97.611,1260.257C97.528,1264.34,97.361,1272.507,97.278,1280.09C97.194,1287.674,97.194,1294.674,97.194,1298.174L97.194,1301.674"></path></g><g class="edgeLabels"><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 300.34722900390625)" class="edgeLabel"><g transform="translate(-32, -12)" class="label"><foreignObject height="24" width="64"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word; background-color: rgb(88, 88, 88);">局部词频</p></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 635.0763854980469)" class="edgeLabel"><g transform="translate(-32, -12)" class="label"><foreignObject height="24" width="64"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word; background-color: rgb(88, 88, 88);">全局词频</p></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 964.4236145019531)" class="edgeLabel"><g transform="translate(-43.39583206176758, -12)" class="label"><foreignObject height="24" width="86.79166412353516"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word; background-color: rgb(88, 88, 88);">局部 Top100</p></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g></g><g class="nodes"><g transform="translate(97.19444274902344, 35)" id="flowchart-A-0" class="node default"><rect height="54" width="157.09027862548828" y="-27" x="-78.54513931274414" style="" class="basic label-container"></rect><g transform="translate(-48.54513931274414, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="97.09027862548828"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">1GB 输入文件</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 187.67361450195312)" id="flowchart-B-1" class="node default"><polygon transform="translate(-75.67361068725586,75.67361068725586)" class="label-container" points="75.67361068725586,0 151.34722137451172,-75.67361068725586 75.67361068725586,-151.34722137451172 0,-75.67361068725586"></polygon><g transform="translate(-48.67361068725586, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="97.34722137451172"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Job1 Mappers</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 364.34722900390625)" id="flowchart-C-3" class="node default"><rect height="54" width="110.45833206176758" y="-27" x="-55.22916603088379" style="" class="basic label-container"></rect><g transform="translate(-25.22916603088379, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="50.45833206176758"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Shuffle</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 519.7118072509766)" id="flowchart-D-5" class="node default"><polygon transform="translate(-78.36458206176758,78.36458206176758)" class="label-container" points="78.36458206176758,0 156.72916412353516,-78.36458206176758 78.36458206176758,-156.72916412353516 0,-78.36458206176758"></polygon><g transform="translate(-51.36458206176758, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="102.72916412353516"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Job1 Reducers</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 699.0763854980469)" id="flowchart-E-7" class="node default"><rect height="54" width="178.3888931274414" y="-27" x="-89.1944465637207" style="" class="basic label-container"></rect><g transform="translate(-59.1944465637207, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="118.3888931274414"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">4000 个分区文件</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 851.75)" id="flowchart-F-9" class="node default"><polygon transform="translate(-75.67361068725586,75.67361068725586)" class="label-container" points="75.67361068725586,0 151.34722137451172,-75.67361068725586 75.67361068725586,-151.34722137451172 0,-75.67361068725586"></polygon><g transform="translate(-48.67361068725586, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="97.34722137451172"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Job2 Mappers</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 1028.4236145019531)" id="flowchart-G-11" class="node default"><rect height="54" width="110.45833206176758" y="-27" x="-55.22916603088379" style="" class="basic label-container"></rect><g transform="translate(-25.22916603088379, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="50.45833206176758"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Shuffle</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 1180.5486145019531)" id="flowchart-H-13" class="node default"><polygon transform="translate(-75.125,75.125)" class="label-container" points="75.125,0 150.25,-75.125 75.125,-150.25 0,-75.125"></polygon><g transform="translate(-48.125, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="96.25"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Job2 Reducer</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 1332.6736145019531)" id="flowchart-I-15" class="node default"><rect height="54" width="146.79166412353516" y="-27" x="-73.39583206176758" style="" class="basic label-container"></rect><g transform="translate(-43.39583206176758, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="86.79166412353516"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">全局 Top100</p></span></div></foreignObject></g></g></g></g></g></g></svg></p>
+<p>此方案严格满足 1MB 内存限制，充分利用 MapReduce 的分布式能力，同时保证结果精确性。在 Hadoop/Spark 等框架可直接实现。</p>
 
       
     </div>
@@ -1679,6 +1948,371 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/20/jdk-proxy-reflection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/20/jdk-proxy-reflection/" class="post-title-link" itemprop="url">反射、动态代理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-05-20 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-20T00:00:00+08:00">2025-05-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-05-29 22:39:51" itemprop="dateModified" datetime="2025-05-29T22:39:51+08:00">2025-05-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/jdk/" itemprop="url" rel="index"><span itemprop="name">jdk</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Reflection"><a href="#Reflection" class="headerlink" title="Reflection"></a>Reflection</h1><p>加载类，允许用编程的方式，解剖类中的各种成分（万物皆对象）比如ide中创建一个对象，对象引用后加一个点就能显示可以调用的方法，说明这个类实现的方法已经提前加载好了。</p>
+<p>反射（Reflection）是计算机编程中的一种机制，允许程序在运行时动态地检查、修改或调用其自身的结构或行为。它打破了传统静态代码的编译时绑定限制，使程序能够获取类、方法、属性等元信息，并动态操作它们。</p>
+<h2 id="load"><a href="#load" class="headerlink" title="load"></a>load</h2><ol>
+<li><p>加载类，获取 <code>Class</code> 对象</p>
+<ul>
+<li><code>Class c = 类名.class</code> </li>
+<li><code>Class.forName(全名)</code>  </li>
+<li><code>Class c = 对象.getClass()</code> </li>
+<li><code>getName() 全名带包名 getSimpleName() 简名</code></li>
+<li><code>getMethod() getConstructor() getField()</code> </li>
+</ul>
+</li>
+<li><p>获取类的构造器 <code>Constructor</code> 对象，主调是 <code>Class 对象</code></p>
+<ul>
+<li><code>getConstructors</code> 只有 public <strong>返回数组</strong></li>
+<li><code>getDeclaredConstructors</code> 存在就能拿到</li>
+<li><code>getConstructor(形参的类型对象)</code> 只有public 拿一个</li>
+<li><code>getDeclaredConstructor(形参的类型对象)</code> 存在就能拿到 拿1个</li>
+</ul>
+<ul>
+<li>下面的主调是构造器对象</li>
+<li><code>getParameterCount</code>几个参数</li>
+<li><code>newInstance(...参数)</code> 返回<code>object</code> 强转为对象，如果私有构造器会报错</li>
+<li><code>setAccessible(true)</code> 暴力反射，禁止检查访问权限</li>
+</ul>
+</li>
+<li><p>获取类的成员变量 <code>Field</code> 对象</p>
+<ul>
+<li><code>getFields</code> <code>getDeclaredFields</code> </li>
+<li><code>getField(name)</code> <code>getDeclaredField(name)</code></li>
+<li>下面主调是<code>Field</code>对象</li>
+<li><code>set(对象, 值)</code> <code>get(对象)</code> 赋值 取值</li>
+<li><code>setAccessible</code> 暴力反射</li>
+</ul>
+</li>
+<li><p>获取类的成员方法 <code>Method</code> 对象</p>
+<ul>
+<li><code>getMethods</code> <code>getDeclaredMethods</code></li>
+<li><code>getMethod(name, String.class, int.class) </code>返回值</li>
+<li>下面主调是<code>method</code></li>
+<li><code>getName getParameterConut getReturnType</code></li>
+<li><code>invoke(对象, 参数)</code> 返回object 强转为返回值类型</li>
+<li><code>setAccesible</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="作用、应用场景"><a href="#作用、应用场景" class="headerlink" title="作用、应用场景"></a>作用、应用场景</h2><ul>
+<li>得到类的全部成分</li>
+<li>做框架、解耦代码、提高通用性</li>
+<li>支持注解处理、AOP</li>
+<li>IDE代码分析、断点调试依赖反射</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920001226903.png" alt="image-20240920001226903"></p>
+<p>接收任意对象，接到对象，用反射获取class对象，获取全部成员变量，遍历他们，把他们的属性写出到文件中</p>
+<p>劣势：</p>
+<ul>
+<li>破坏封装性+反射代码需更高权限，可能引发安全漏洞（如通过反射调用<code>System.exit</code>）</li>
+<li>性能开销大，反射调用涉及动态解析类型和方法，比直接调用慢数倍</li>
+<li>代码可读性差，逻辑通常冗长且难以静态分析，增加维护成本。</li>
+<li>编译时检查失效：错误（如方法名拼写错误）在运行时才暴露，增加调试难度。</li>
+</ul>
+<h1 id="代理模式（Proxy-Pattern）"><a href="#代理模式（Proxy-Pattern）" class="headerlink" title="代理模式（Proxy Pattern）"></a>代理模式（Proxy Pattern）</h1><blockquote>
+<p>为什么要用代理模式</p>
+</blockquote>
+<ul>
+<li><strong>中介隔离作用</strong>：在某些情况下，一个客户类<strong>不想或者不能直接引用一个委托对象</strong>，而代理类对象可以在客户类和委托对象之间起到中介的作用，<strong>其特征是代理类和委托类实现相同的接口。</strong></li>
+<li><strong>开闭原则，增加功能</strong>：<strong>真正的业务功能还是由委托类来实现</strong>，但是可以在业务功能执行的前后加入一些公共的服务。例如我们想<strong>给项目加入缓存、日志</strong>这些功能，我们就可以使用代理类来完成，而没必要打开已经封装好的委托类。</li>
+</ul>
+<p>代理模式包含如下角色：</p>
+<ul>
+<li>Subject（抽象主题角色）：定义代理类和真实主题的公共对外方法，也是代理类代理真实主题的方法；</li>
+<li>RealSubject（真实主题角色）：真正实现业务逻辑的类；</li>
+<li>Proxy（代理主题角色）：用来代理和封装真实主题；</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250529222121439.png" alt="image-20250529222121439"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250529222209026.png" alt="image-20250529222209026"></p>
+<blockquote>
+<p>装饰器模式<strong>在 JDK 中通过包装对象实现功能扩展，典型如 I/O 流的多层装饰和集合的功能增强，具有灵活、可复用的特点。然而代理模式关注于控制对对象的访问。</strong></p>
+</blockquote>
+<ul>
+<li>使用代理模式的时候，<strong>我们常常在一个代理类中创建一个对象的实例</strong>。</li>
+<li>当我们使用装饰器模式的时候，我们通常的做法是<strong>将原始对象作为一个参数传给装饰者的构造器</strong>。</li>
+<li>典型：IO流中的流装饰器(数据流、缓冲流)、Collections工具类中为集合添加额外功能、打印流提供格式化输出或者更加灵活的文本输出</li>
+<li>宗旨：组合优于继承，避免类爆炸</li>
+</ul>
+<blockquote>
+<p>适配器模式主要解决接口不兼容问题，如流转换、事件监听简化等，通过 “转换” 让不同接口协同工作。</p>
+</blockquote>
+<ul>
+<li>InputStreamReader 将 InputStream 转换为 Reader</li>
+<li>AWT中<code>MouseAdapter</code>、<code>KeyAdapter</code> 等抽象类实现了对应事件接口的所有方法（空实现），开发者只需要重写MouseAdaptor中需要的方法，不用重写所有方法（实现Listener接口所有方法）</li>
+<li><code>Enumeration</code> 是早期 JDK 的迭代接口，<code>Iterator</code> 是更现代的接口。</li>
+</ul>
+<h2 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h2><p>在程序运行前就已经存在代理类的字节码文件，代理类和真实主题角色的关系在运行前就确定了。</p>
+<p>是<strong>由程序员创建或特定工具自动生成源代码</strong>，在对其编译。在程序员运行之前，代理类.class文件就已经被创建了。</p>
+<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>为什么类可以动态的生成？这涉及到Java虚拟机的<strong>类加载机制</strong> </p>
+<blockquote>
+<p>Java虚拟机类加载过程主要分为五个阶段：加载、验证、准备、解析、初始化。其中加载阶段需要完成以下3件事情：</p>
+<ol>
+<li>通过一个类的全限定名来获取定义此类的二进制字节流</li>
+<li>将这个字节流所代表的静态存储结构（字节码）转化为方法区的运行时数据结构（运行时常量池）</li>
+<li>在内存中生成一个代表这个类的 java.lang.Class 对象，作为方法区这个类的各种元数据访问入口。</li>
+</ol>
+<p>由于虚拟机规范对这3点要求并不具体，所以实际的实现是非常灵活的，关于第1点，获取类的二进制字节流（class字节码）就有很多途径：</p>
+<ol>
+<li>从ZIP包获取，这是JAR、EAR、WAR等格式的基础</li>
+<li>从网络中获取，典型的应用是 Applet</li>
+<li>运行时计算生成，这种场景使用最多的是动态代理技术，在 java.lang.reflect.Proxy 类中，就是用了 ProxyGenerator.generateProxyClass 来为特定接口生成形式为 *$Proxy 的代理类的二进制字节流</li>
+<li>由其它文件生成，典型应用是JSP，即由JSP文件生成对应的Class类</li>
+<li>从数据库中获取等等</li>
+</ol>
+<p>所以，动态代理就是想办法，根据接口或目标对象，计算出代理类的字节码，然后再加载到JVM中使用。</p>
+</blockquote>
+<p><strong>动态代理又有两种典型的实现方式：JDK动态代理和CGLib动态代理</strong></p>
+<ul>
+<li><strong>通过实现接口的方式</strong> -&gt; JDK动态代理</li>
+<li><strong>通过继承类的方式</strong> -&gt; CGLIB动态代理</li>
+</ul>
+<p>框架的核心技术，一个类有很多方法，需要加载资源，而代理可以代替类执行这些操作。</p>
+<p>Spring AOP技术使用了JDK动态代理和CGLIB动态代理两种方式，在不改变原始方法的前提下对功能进行增强。</p>
+<h2 id="JDK-动态代理——反射"><a href="#JDK-动态代理——反射" class="headerlink" title="JDK 动态代理——反射"></a>JDK 动态代理——反射</h2><ul>
+<li><p><strong>JDK动态代理</strong>：反射调用有一定性能开销，但初始化较快</p>
+</li>
+<li><p>JDK原生的实现方式，需要被代理的目标类必须实现接口。因为这个技术要求<strong>代理对象和目标对象实现同样的接口</strong>，目标对象和代理对象是平等地位的。</p>
+</li>
+</ul>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>对于一个UserServiceImpl，要生成它的代理对象，为了能创建一个跟UserServiceImpl拥有同名方法的代理Proxy，<mark>这个类必须实现一个接口UserService，并且拥有Impl的全部方法</mark>，然后把Impl传给生成代理的方法。</p>
+<p>接口能将原来的实现对象的方法抽象化（或者部分抽象） 方便代理进行重写，代理重写完具体的执行逻辑，返回的还是这个接口的实现对象，相当于是把原来的实现对象包装了一下，完美地把对象的职责转移到了代理身上，业务对象。减少代码冗余和多余的资源调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Subject</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">request</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RealSubject</span> <span class="keyword">implements</span> <span class="title class_">Subject</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">request</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Real request&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JdkProxy</span> <span class="keyword">implements</span> <span class="title class_">InvocationHandler</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Object target;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">bind</span><span class="params">(Object target)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.target = target;</span><br><span class="line">        <span class="keyword">return</span> Proxy.newProxyInstance(</span><br><span class="line">            target.getClass().getClassLoader(),</span><br><span class="line">            target.getClass().getInterfaces(),</span><br><span class="line">            <span class="built_in">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// proxy 是动态生成的代理类的实例，method是对应方法，args是方法参数</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Before JDK proxy&quot;</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> method.invoke(target, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;After JDK proxy&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">        <span class="type">Subject</span> <span class="variable">proxy</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JdkProxy</span>().bind(<span class="keyword">new</span> <span class="title class_">RealSubject</span>());</span><br><span class="line">        proxy.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ul>
+<li>基于Java反射机制实现，内存中动态生成一个代理类</li>
+<li>要求目标类必须实现至少一个接口</li>
+<li>在运行时动态生成接口的实现类（匿名类）</li>
+</ul>
+<p>流程：<mark>通过 Proxy.newProxyInstance() 创建代理对象</mark> </p>
+<ul>
+<li>动态生成的代理类特征：<ul>
+<li>由JDK内部的 ProxyGenerator 生成（final），通过反射获取要实现的方法的 Method 对象。</li>
+<li>继承了 <code>java.lang.reflect.Proxy</code> 类，类名通常格式为<code>$ProxyN</code>(N为数字)：实现了指定接口的所有方法。方法的实现会调用 InvocationHandler 的<code>invoke(proxy,method,args)</code>，也就是AOP切面逻辑。<ul>
+<li>proxy 就是 this，代理类的实例</li>
+<li>在这个invoke内部跟被代理对象<code>target</code>相关的只有 <code>method.invoke(target,args)</code>，其他逻辑都是增强行为。但是 Proxy 类内部并不存在被代理对象，因此如果需要生成真正的代理对象，<code>target</code> 的注入应该从InvocationHandler的实现类入手，跟代理类没关系。</li>
+</ul>
+</li>
+<li>内存中动态生成代理类的字节码。默认情况下，这些动态生成的代理类不会被保存到磁盘。但可以通过设置系统属性<code>sun.misc.ProxyGenerator.saveGeneratedFiles</code>为<code>true</code>来保存生成的.class文件。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">$Proxy0</span> <span class="keyword">extends</span> <span class="title class_">Proxy</span> <span class="keyword">implements</span> <span class="title class_">TargetInterface</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m1;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m2;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m3;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            m1 = Class.forName(<span class="string">&quot;java.lang.Object&quot;</span>).getMethod(<span class="string">&quot;equals&quot;</span>, ...);</span><br><span class="line">            m2 = Class.forName(<span class="string">&quot;java.lang.Object&quot;</span>).getMethod(<span class="string">&quot;toString&quot;</span>, ...);</span><br><span class="line">            m3 = Class.forName(<span class="string">&quot;com.dream.service.TargetInterface&quot;</span>).getMethod(<span class="string">&quot;targetMethod&quot;</span>, ...);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;...&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> $Proxy0(InvocationHandler h) &#123;</span><br><span class="line">        <span class="built_in">super</span>(h);</span><br><span class="line">    &#125; <span class="comment">// Proxy 父类有一个 protected 的 InvocationHandler 成员变量 h</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object var1)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> (Boolean) <span class="built_in">super</span>.h.invoke(<span class="built_in">this</span>, m1, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;var1&#125;); </span><br><span class="line">            <span class="comment">// 转发到InvocationHandler</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;...&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> String <span class="title function_">toString</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> (String) <span class="built_in">super</span>.h.invoke(<span class="built_in">this</span>, m2, <span class="literal">null</span>); </span><br><span class="line">            <span class="comment">// 转发到InvocationHandler</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;...&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">targetMethod</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="built_in">super</span>.h.invoke(<span class="built_in">this</span>, m3, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;name&#125;); </span><br><span class="line">            <span class="comment">// 转发到InvocationHandler</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;...&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 其他方法...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<h2 id="CGLIB-动态代理——ASM字节码框架"><a href="#CGLIB-动态代理——ASM字节码框架" class="headerlink" title="CGLIB 动态代理——ASM字节码框架"></a>CGLIB 动态代理——ASM字节码框架</h2><ul>
+<li><p><strong>CGLIB</strong>：生成字节码初始化较慢，但后续调用性能更好</p>
+</li>
+<li><p>通过<strong>继承被代理的目标类</strong>实现代理，所以不需要目标类实现接口。</p>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>cglib<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>cglib-nodeps<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>3.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RealService</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">request</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Real service&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CglibProxy</span> <span class="keyword">implements</span> <span class="title class_">MethodInterceptor</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">getProxy</span><span class="params">(Class clazz)</span> &#123;</span><br><span class="line">        <span class="type">Enhancer</span> <span class="variable">enhancer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Enhancer</span>();</span><br><span class="line">        enhancer.setSuperclass(clazz);</span><br><span class="line">        enhancer.setCallback(<span class="built_in">this</span>);</span><br><span class="line">        <span class="keyword">return</span> enhancer.create();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// obj 是代理类的实例对象, methodProxy 是核心的方法代理，可以看到这里并未使用反射的method调用</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">intercept</span><span class="params">(Object obj, Method method, Object[] args, MethodProxy proxy)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Before CGLIB proxy&quot;</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> proxy.invokeSuper(obj, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;After CGLIB proxy&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">        <span class="type">RealService</span> <span class="variable">proxy</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CglibProxy</span>().getProxy(RealService.class);</span><br><span class="line">        proxy.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h3><p><strong>CGLIB 通过动态生成一个需要被代理类的子类（即被代理类作为父类），该子类重写被代理类的所有不是 final 修饰的方法，并在子类中采用方法拦截的技术拦截父类所有的方法调用，进而织入横切逻辑，</strong> 目标对象是代理对象的父类。</p>
+<ul>
+<li>基于ASM字节码操作框架实现。<ul>
+<li><strong>ASM框架</strong>：一个轻量级Java字节码操作和分析框架</li>
+<li><strong>直接生成.class文件结构</strong>：比JDK反射方式更底层，性能更好，不过初始化需要的时间更长</li>
+</ul>
+</li>
+<li>通过继承目标类来生成其子类，不需要目标类实现接口<ul>
+<li><strong>避免反射开销</strong>：生成的方法调用是直接调用，而非反射调用。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>ASM从类文件中读入信息后，能够改变类行为，分析类信息，甚至能够根据用户要求生成新类。</p>
+<p>ASM相对于其他类似工具如BCEL、SERP、Javassist、CGLIB，它的最大的优势就在于其性能更高，其jar包仅30K。Hibernate和Spring都使用了cglib代理，而cglib底层使用的是ASM，可见ASM在各种开源框架都有广泛的应用。<a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/935647#slide-12">【设计模式自习室】详解代理模式-阿里云开发者社区</a> </p>
+<p>ASM 字节码框架动态生成字节码的步骤：<a target="_blank" rel="noopener" href="https://blog.csdn.net/xifeijian/article/details/83246240">字节码实践 – 使用 ASM 实现 AOP_jdk.internal.org.objectweb.asm?-CSDN博客</a> </p>
+<ol>
+<li><strong>创建ClassWriter</strong>：使用ASM的ClassWriter开始构建类结构</li>
+<li><strong>定义类信息</strong>：设置版本号、访问修饰符、类名(继承目标类)</li>
+<li><strong>添加字段</strong>：生成用于存储 MethodInterceptor 的字段</li>
+<li><strong>方法生成</strong>：<ul>
+<li>对于每个非final方法，生成两个版本：<ul>
+<li>覆盖，也就是重写的方法(调用拦截器)</li>
+<li>直接调用父类方法的”fast”版本(避免反射)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>添加构造函数</strong>：初始化MethodInterceptor字段</li>
+<li><strong>类加载</strong>：使用自定义的ClassLoader加载生成的字节码</li>
+</ol>
+</blockquote>
+<p>生成的代理类class如下特征：</p>
+<ul>
+<li><p>由ASM字节码操作框架生成</p>
+</li>
+<li><p>类名格式：<code>OriginalClass$$EnhancerByCGLIB$$&lt;随机字符&gt;</code></p>
+</li>
+<li><p>继承自目标类，包含一个MethodInterceptor类型字段</p>
+</li>
+<li><p>重写父类的同名方法，同时有一个<strong>直接调用</strong>父类方法的fast方法。</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 生成的代理类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SampleService$$EnhancerByCGLIB$$1234abcd</span> <span class="keyword">extends</span> <span class="title class_">SampleService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> MethodInterceptor interceptor;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Method CGLIB$save$<span class="number">0</span>$Method; </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> MethodProxy CGLIB$save$<span class="number">0</span>$Proxy;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="comment">// 初始化方法引用和方法代理</span></span><br><span class="line">        CGLIB$save$<span class="number">0</span>$Method = ReflectUtils.findMethods(<span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;save&quot;</span>,<span class="string">&quot;()V&quot;</span>&#125;, ...)[<span class="number">0</span>];</span><br><span class="line">        CGLIB$save$<span class="number">0</span>$Proxy = MethodProxy.create(SampleService.class, SampleService$$EnhancerByCGLIB$$1234abcd.class, <span class="string">&quot;()V&quot;</span>, <span class="string">&quot;save&quot;</span>, <span class="string">&quot;CGLIB$save$0&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 生成的fast方法</span></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">void</span> CGLIB$save$<span class="number">0</span>() &#123;</span><br><span class="line">        <span class="built_in">super</span>.save(); <span class="comment">// 直接调用父类方法</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 重写的方法</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">save</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">MethodInterceptor</span> <span class="variable">tmp</span> <span class="operator">=</span> interceptor;</span><br><span class="line">        <span class="keyword">if</span> (tmp != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 调用拦截器</span></span><br><span class="line">            tmp.intercept(<span class="built_in">this</span>, CGLIB$save$<span class="number">0</span>$Method, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;&#125;, CGLIB$save$<span class="number">0</span>$Proxy);</span><br><span class="line">            <span class="comment">// CGLIB$save$0$Method是 Method, Object result = method.invoke(obj, args) 使用反射调用</span></span><br><span class="line">            <span class="comment">// CGLIB$save$0$Proxy是 MethodProxy, Object result = proxy.invokeSuper(obj, args) 可以看出没有使用反射调用</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">super</span>.save(); <span class="comment">// 无拦截器时直接调用父类</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>MethodProxy：是 <strong>CGLIB 提供的优化版代理对象</strong>，类型是 <code>net.sf.cglib.proxy.MethodProxy</code>。</p>
+<p>它的作用主要是：提供一个高效的、直接调用 <strong>super 方法</strong> 的方式。</p>
+<ul>
+<li>它可以用 <code>proxy.invokeSuper(obj, args)</code> 来调用被代理类的 <strong>父类方法</strong>，避免了反射带来的性能损耗。<ul>
+<li>主要是为代理类和目标类各自生成 FastClass，fastClass 通过方法索引直接定位方法，跳过了反射查找。<a target="_blank" rel="noopener" href="https://github.com/cglib/cglib/blob/9d67875290d269c9b1ff5e4f4bc578a9f05c392e/cglib/src/main/java/net/sf/cglib/proxy/MethodProxy.java#L224">源码</a></li>
+</ul>
+</li>
+<li>它内部直接生成了字节码调用，所以比 <code>method.invoke</code> 快很多。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>比较点</th>
+<th>Method</th>
+<th>MethodProxy</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>通用性</td>
+<td>适用所有类、接口</td>
+<td>仅适用 CGLIB 代理子类</td>
+</tr>
+<tr>
+<td>反射能力</td>
+<td>可以操作注解、参数、返回值等</td>
+<td>主要用作高效 super 调用，不提供反射功能</td>
+</tr>
+<tr>
+<td>调用范围</td>
+<td>任意方法（只要有 Method 对象）</td>
+<td>只能调用当前拦截方法对应的父类实现</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>反射调用，较慢</td>
+<td>字节码生成，高效调用</td>
+</tr>
+<tr>
+<td>接口代理可用性</td>
+<td>可以</td>
+<td>不适用（只在继承结构上用）</td>
+</tr>
+</tbody></table>
+<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><h3 id="静态代理优缺点"><a href="#静态代理优缺点" class="headerlink" title="静态代理优缺点"></a>静态代理优缺点</h3><ul>
+<li><p>优点：可以做到<strong>在符合开闭原则的情况下</strong>对目标对象进行功能扩展。</p>
+</li>
+<li><p>缺点：当需要代理多个类的时候，由于代理对象要实现与目标对象一致的接口，有两种方式：</p>
+</li>
+<li><p>只维护一个代理类，由这个代理类实现多个接口，但是这样就<strong>导致代理类过于庞大</strong></p>
+</li>
+<li><p>新建多个代理类，每个目标对象对应一个代理类，但是这样会<strong>产生过多的代理类</strong></p>
+</li>
+</ul>
+<h3 id="JDK动态代理优缺点"><a href="#JDK动态代理优缺点" class="headerlink" title="JDK动态代理优缺点"></a>JDK动态代理优缺点</h3><ul>
+<li>优势：虽然相对于静态代理，动态代理大大减少了我们的开发任务，同时减少了对业务接口的依赖，降低了耦合度。</li>
+<li>劣势：<strong>只能对接口进行代理</strong>，使用反射调用原方法，性能稍弱</li>
+</ul>
+<h3 id="CGLIB动态代理优缺点"><a href="#CGLIB动态代理优缺点" class="headerlink" title="CGLIB动态代理优缺点"></a>CGLIB动态代理优缺点</h3><p><strong>CGLIB性能比JDK性能更高</strong>，但是<strong>CGLIB创建对象所花费的时间却比JDK多得多</strong>。</p>
+<ul>
+<li>所以<strong>对于单例的对象，因为无需频繁创建对象，用CGLIB合适</strong>，反之使用JDK方式要更为合适一些。</li>
+<li>同时由于CGLib由于是采用动态创建子类的方法，对于final修饰的方法无法进行代理。</li>
+</ul>
+<ol>
+<li><strong>构造函数限制</strong>：代理类会调用父类的默认构造函数</li>
+<li><strong>体积较大</strong>：相比JDK代理生成的字节码更复杂</li>
+<li><strong>初始化开销</strong>：首次生成代理类时需要较多时间</li>
+</ol>
+<p>CGLIB的字节码生成机制虽然复杂，但提供了比JDK动态代理更灵活和高效的代理方式，特别适合需要代理普通Java类(而非接口)的场景。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/18/git-usage/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2200,566 +2834,6 @@
     <div class="post-body" itemprop="articleBody">
           <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">BoundedBuffer</span>&lt;E&gt; &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">ReentrantLock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line">    <span class="keyword">final</span> <span class="type">Condition</span> <span class="variable">notFull</span>  <span class="operator">=</span> lock.newCondition(); </span><br><span class="line">    <span class="keyword">final</span> <span class="type">Condition</span> <span class="variable">notEmpty</span> <span class="operator">=</span> lock.newCondition(); </span><br><span class="line"> </span><br><span class="line">    <span class="keyword">final</span> Object[] items = <span class="keyword">new</span> <span class="title class_">Object</span>[<span class="number">100</span>];</span><br><span class="line">    <span class="type">int</span> putptr, takeptr, count;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">put</span><span class="params">(E x)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">      lock.lock();</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (count == items.length)</span><br><span class="line">          notFull.await();</span><br><span class="line">        items[putptr] = x;</span><br><span class="line">        <span class="keyword">if</span> (++putptr == items.length) putptr = <span class="number">0</span>;</span><br><span class="line">        ++count;</span><br><span class="line">        notEmpty.signal();</span><br><span class="line">      &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> E <span class="title function_">take</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">      lock.lock();</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (count == <span class="number">0</span>)</span><br><span class="line">          notEmpty.await();</span><br><span class="line">        <span class="type">E</span> <span class="variable">x</span> <span class="operator">=</span> (E) items[takeptr];</span><br><span class="line">        <span class="keyword">if</span> (++takeptr == items.length) takeptr = <span class="number">0</span>;</span><br><span class="line">        --count;</span><br><span class="line">        notFull.signal();</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">      &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/16/example-pub-sub/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/16/example-pub-sub/" class="post-title-link" itemprop="url">发布-订阅</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2025-05-16 00:00:00 / 修改时间：22:52:56" itemprop="dateCreated datePublished" datetime="2025-05-16T00:00:00+08:00">2025-05-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 事件接口</span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Event</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 示例事件类型</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MessageEvent</span> <span class="keyword">implements</span> <span class="title class_">Event</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String message;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MessageEvent</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.message = message;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getMessage</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> message;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 订阅者接口</span></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Subscriber</span>&lt;T <span class="keyword">extends</span> <span class="title class_">Event</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">onEvent</span><span class="params">(T event)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 事件总线（中心）</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EventBus</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;Class&lt;? <span class="keyword">extends</span> <span class="title class_">Event</span>&gt;, List&lt;Subscriber&lt;? <span class="keyword">extends</span> <span class="title class_">Event</span>&gt;&gt;&gt; subscribers = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> &lt;T <span class="keyword">extends</span> <span class="title class_">Event</span>&gt; <span class="keyword">void</span> <span class="title function_">subscribe</span><span class="params">(Class&lt;T&gt; eventType, Subscriber&lt;T&gt; subscriber)</span> &#123;</span><br><span class="line">        subscribers.computeIfAbsent(eventType, k -&gt; <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;()).add(subscriber);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> &lt;T <span class="keyword">extends</span> <span class="title class_">Event</span>&gt; <span class="keyword">void</span> <span class="title function_">publish</span><span class="params">(T event)</span> &#123;</span><br><span class="line">        List&lt;Subscriber&lt;? <span class="keyword">extends</span> <span class="title class_">Event</span>&gt;&gt; eventSubscribers = subscribers.get(event.getClass());</span><br><span class="line">        <span class="keyword">if</span> (eventSubscribers != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">for</span> (Subscriber&lt;? <span class="keyword">extends</span> <span class="title class_">Event</span>&gt; sub : eventSubscribers) &#123;</span><br><span class="line">                <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">                Subscriber&lt;T&gt; typedSub = (Subscriber&lt;T&gt;) sub;</span><br><span class="line">                typedSub.onEvent(event);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/14/408-%E8%AE%A1%E7%BD%91-HTTP/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/14/408-%E8%AE%A1%E7%BD%91-HTTP/" class="post-title-link" itemprop="url">HTTP</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2025-05-14 00:00:00 / 修改时间：18:24:08" itemprop="dateCreated datePublished" datetime="2025-05-14T00:00:00+08:00">2025-05-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%BD%91/" itemprop="url" rel="index"><span itemprop="name">计网</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote class="blockquote-center"><a target="_blank" rel="noopener" href="https://hpbn.co/">High Performance Browser Networking</a></blockquote>
-
-<h1 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h1><h2 id="超文本传输协议（HTTP）"><a href="#超文本传输协议（HTTP）" class="headerlink" title="超文本传输协议（HTTP）"></a>超文本传输协议（HTTP）</h2><p><strong>HyperText Transfer Protocol</strong> based on TCP port 80</p>
-<p>TCP/IP 协议四层架构的最上层 规定了服务器和浏览器之间传输数据的规则</p>
-<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP">HTTP | MDN (mozilla.org)</a></p>
-<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE">超文本传输协议 - 维基百科，自由的百科全书 (wikipedia.org)</a> </p>
-<h3 id="超文本"><a href="#超文本" class="headerlink" title="超文本"></a>超文本</h3><p><strong>超文本</strong>（英语：<strong>Hypertext</strong>）是一种可以显示在<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E8%85%A6%E9%A1%AF%E7%A4%BA%E5%99%A8">电脑显示器</a>或其他<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E8%A3%9D%E7%BD%AE">电子设备</a>上的文本，普遍以<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E6%AA%94">电子文档</a>的方式存在，其中的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B6%85%E6%96%87%E5%AD%97">超文本</a>包含有可以链接到其他<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F">文件</a>/<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A0%81%E9%9D%A2">文件页面</a>的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%B6%85%E9%93%BE%E6%8E%A5">超链接</a>，允许从当前阅读的文字直接切换到超链接所指向的所有文字。</p>
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Sistema_hipertextual.jpg"></p>
-<h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
-<li>基于TCP，面向连接，安全</li>
-<li>基于请求-响应模型：1Request1Response</li>
-<li>HTTP是无状态协议，对事务处理没有记忆能力，每次RR都是独立的<ul>
-<li>缺点：多次请求之间不能共享数据，用会话技术（cookie session）解决这个问题</li>
-<li>优点：速度快，没有存储状态的开销</li>
-</ul>
-</li>
-</ul>
-<p>HTTP 协议基于 TCP 协议，发送 HTTP 请求之前首先要建立 TCP 连接也就是要经历 3 次握手。目前使用的 HTTP 协议大部分都是 1.1。在 1.1 的协议里面，默认是开启了 Keep-Alive 的，这样的话建立的连接就可以在多次请求中被复用了。</p>
-<h3 id="请求数据"><a href="#请求数据" class="headerlink" title="请求数据"></a>请求数据</h3><p><strong>请求行</strong>：第一行，<code>GET</code>(请求方式) 后面的<code>/</code>表示请求资源的路径，HTTP/1.1表示协议版本</p>
-<p><strong>请求头</strong>：第二行开始 key: value形式</p>
-<p><strong>请求体</strong>：POST请求的最后一部分，存放请求参数</p>
-<p>GET请求参数在请求行中，没有请求体，参数大小有限制(URL长度限制) POST请求的参数在请求体中，参数大小无限制</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926220614547.png" alt="image-20240926220614547"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926221417729.png" alt="image-20240926221417729"></p>
-<p><strong>Host</strong>: 请求的主机名</p>
-<p><strong>User-Agent</strong>: 浏览器版本</p>
-<p><strong>Accept</strong>: 浏览器能接受的资源类型，如text/* image/* */* </p>
-<p><strong>Accept-Language</strong>: 浏览器的偏好语言</p>
-<p><strong>Accept-Encoding</strong>: 浏览器支持的压缩类型</p>
-<h3 id="响应数据"><a href="#响应数据" class="headerlink" title="响应数据"></a>响应数据</h3><p><strong>响应行</strong>：响应数据的第一行，HTTP/1.1表示协议版本，下一个是响应状态码，OK表示状态码描述</p>
-<p><strong>响应头</strong>：key value</p>
-<p><strong>响应体</strong>：最后一部分，存放响应数据</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240926221630980.png" alt="image-20240926221630980"></p>
-<p><strong>Content-Type</strong>：响应内容类型，比如text/html image/jpeg</p>
-<p><strong>Content-Length</strong>：响应内容长度（bytes）</p>
-<p><strong>Content-Encoding</strong>：响应压缩算法 gzip等</p>
-<p><strong>Cache-Control</strong>: 指示客户端如何缓存，例如max-age=300 表示最多缓存300s</p>
-<h4 id="状态码"><a href="#状态码" class="headerlink" title="状态码"></a>状态码</h4><p><a target="_blank" rel="noopener" href="https://javaguide.cn/cs-basics/network/http-status-codes.html">HTTP 常见状态码总结（应用层） | JavaGuide</a> </p>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/http-status-code.png" alt="常见 HTTP 状态码" style="zoom:67%;" />
-
-<h5 id="2xx-Success"><a href="#2xx-Success" class="headerlink" title="2xx Success"></a>2xx Success</h5><ul>
-<li><mark>200 OK</mark>：请求被成功处理。例如，发送一个查询用户数据的 HTTP 请求到服务端，服务端正确返回了用户数据。这个是我们平时最常见的一个 HTTP 状态码。</li>
-<li><strong>201 Created</strong>：请求被成功处理并且在服务端创建了一个新的资源。例如，通过 POST 请求创建一个新的用户。</li>
-<li><strong>202 Accepted</strong>：服务端已经接收到了请求，但是还未处理。例如，发送一个需要服务端花费较长时间处理的请求（如报告生成、Excel 导出），服务端接收了请求但尚未处理完毕。</li>
-<li><strong>204 No Content</strong>：服务端已经成功处理了请求，但是没有返回任何内容。例如，发送请求删除一个用户，服务器成功处理了删除操作但没有返回任何内容。（也就是 true or false）</li>
-</ul>
-<h5 id="3xx-Redirection"><a href="#3xx-Redirection" class="headerlink" title="3xx Redirection"></a>3xx Redirection</h5><ul>
-<li><strong>301 Moved Permanently</strong>：资源被永久重定向了。比如你的网站的网址更换了。</li>
-<li><strong>302 Found</strong>：资源被临时重定向了。比如你的网站的某些资源被暂时转移到另外一个网址。</li>
-<li><strong>304 Not Modified</strong>：表示资源在由请求头中的If-Modified-Since或If-None-Match参数指定的这一版本之后，未曾被修改。在这种情况下，由于客户端仍然具有以前下载的副本，因此不需要重新传输资源。</li>
-</ul>
-<h5 id="4xx-Client-Error"><a href="#4xx-Client-Error" class="headerlink" title="4xx Client Error"></a>4xx Client Error</h5><ul>
-<li><strong>400 Bad Request</strong>：发送的 HTTP 请求存在问题。比如请求参数不合法、请求方法错误。</li>
-<li><strong>401 Unauthorized</strong>：未认证却请求需要认证之后才能访问的资源。</li>
-<li><strong>403 Forbidden</strong>：直接拒绝 HTTP 请求，不处理。一般用来针对非法请求。</li>
-<li><strong>404 Not Found</strong>：你请求的资源未在服务端找到。比如你请求某个用户的信息，服务端并没有找到指定的用户。</li>
-<li><strong>409 Conflict</strong>：表示请求的资源与服务端当前的状态存在冲突，请求无法被处理。</li>
-</ul>
-<h5 id="5xx-Server-Error"><a href="#5xx-Server-Error" class="headerlink" title="5xx Server Error"></a>5xx Server Error</h5><ul>
-<li><strong>500 Internal Error</strong>：服务端出问题了（通常是服务端出 Bug 了）。比如你服务端处理请求的时候突然抛出异常，但是异常并未在服务端被正确处理。</li>
-<li><strong>503 Service Unavailable</strong>：由于临时的服务器维护或者过载，服务器当前无法处理请求。这个状况是暂时的，并且将在一段时间以后恢复。如果能够预计延迟时间，那么响应中可以包含一个Retry-After头用以标明这个延迟时间。如果没有给出这个Retry-After信息，那么客户端应当以处理500响应的方式处理它。</li>
-<li><strong>502 Bad Gateway</strong>：我们的网关将请求转发到服务端，但是服务端返回的却是一个错误的响应。</li>
-</ul>
-<p>Java程序中，如果直接用自带的javawebsocketAPI 代码会变得异常繁琐，要注意请求和响应的格式要求，因此要用web服务器软件进行开发—-Tomcat</p>
-<h3 id="HTTP-缓存"><a href="#HTTP-缓存" class="headerlink" title="HTTP 缓存"></a><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/2_http/http_interview.html#http-%E7%BC%93%E5%AD%98%E6%8A%80%E6%9C%AF">HTTP 缓存</a></h3><h4 id="强制缓存"><a href="#强制缓存" class="headerlink" title="强制缓存"></a>强制缓存</h4><p>响应头里有 <code>Cache-control</code>：提供了多种指令，用于精确控制缓存行为（时间段）。如 <code>max-age</code>、<code>no-cache</code>、<code>no-store</code>、<code>must-revalidate</code> 等。示例：<code>Cache-Control: max-age=3600</code>（资源有效期 3600 秒），其优先级高于 <code>Expires</code>（绝对时间）。</p>
-<ul>
-<li>当浏览器第一次请求访问服务器资源时，服务器会在返回这个资源的同时，在 Response 头部加上 Cache-Control，Cache-Control 中设置了过期时间大小； </li>
-<li>浏览器再次请求访问服务器中的该资源时，会先通过请求资源的时间与 Cache-Control 中设置的过期时间大小，来计算出该资源是否过期，如果没有，则使用本地缓存，否则重新请求服务器； </li>
-<li>服务器再次收到请求后，会再次更新 Response 头部的 Cache-Control。</li>
-</ul>
-<p>可以看到响应的结果 (from disk cache)。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1cb6bc37597e4af8adfef412bfc57a42.png" alt="img"></p>
-<h4 id="协商缓存"><a href="#协商缓存" class="headerlink" title="协商缓存"></a>协商缓存</h4><p><strong>协商缓存只有在未命中强制缓存的时候才能使用，因此必须依赖于 之前 Cache-control 的缓存。</strong></p>
-<p>条件请求 Etag 的优先级高于 Last-Modified，因为 Last-Modified 是秒级粒度，而 Etag 更能准确判断是否被修改</p>
-<ul>
-<li>服务器响应中带上Last-Modified:x </li>
-<li>客户端下次请求就带上If-Modified-Since:x</li>
-<li>如果服务器看鉴定没有过期，回复一个HTTP 304 允许使用缓存，过期就回复HTTP 200发送最新数据。</li>
-</ul>
-<img src="https://cdn.xiaolincoding.com/gh/xiaolincoder/network/http/http%E7%BC%93%E5%AD%98.png" alt="img" style="zoom: 50%;" />
-
-<p>许多<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%A7%E5%AE%B9%E5%82%B3%E9%81%9E%E7%B6%B2%E8%B7%AF">CDN</a>和网络设备制造商已经用动态缓存取代了这个标准的HTTP缓存控制。</p>
-<h3 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h3><p><a target="_blank" rel="noopener" href="https://javaguide.cn/cs-basics/network/http-vs-https.html">HTTP vs HTTPS（应用层） | JavaGuide</a> </p>
-<p><a href="https://scatteredream.github.io/2025/05/12/408-%E8%AE%A1%E7%BD%91-HTTPS/">HTTPS in one - scatteredream’s blog</a> </p>
-<h1 id="HTTP-1-0-到-HTTP-3"><a href="#HTTP-1-0-到-HTTP-3" class="headerlink" title="HTTP/1.0 到 HTTP/3"></a>HTTP/1.0 到 HTTP/3</h1><p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/2_http/http_interview.html#http-1-1%E3%80%81http-2%E3%80%81http-3-%E6%BC%94%E5%8F%98">HTTP/1.1、HTTP/2、HTTP/3 演变 - 小林 coding</a> </p>
-<h2 id="早期版本"><a href="#早期版本" class="headerlink" title="早期版本"></a>早期版本</h2><h3 id="HTTP-0-9"><a href="#HTTP-0-9" class="headerlink" title="HTTP/0.9"></a>HTTP/0.9</h3><p>只支持 GET 请求，不支持请求头。</p>
-<h3 id="HTTP-1-0"><a href="#HTTP-1-0" class="headerlink" title="HTTP/1.0"></a>HTTP/1.0</h3><p>基本成型，支持富文本、请求头、状态码、缓存。第一个在通讯协议中使用版本号的协议，状态码、请求方式比较少。</p>
-<h2 id="HTTP-1-1"><a href="#HTTP-1-1" class="headerlink" title="HTTP/1.1"></a>HTTP/1.1</h2><p><a target="_blank" rel="noopener" href="https://javaguide.cn/cs-basics/network/http1.0-vs-http1.1.html">HTTP 1.0 vs HTTP 1.1（应用层） | JavaGuide</a> </p>
-<h3 id="持久连接-默认开启-Connection-keep-alive"><a href="#持久连接-默认开启-Connection-keep-alive" class="headerlink" title="持久连接 (默认开启 Connection: keep-alive)"></a>持久连接 (默认开启 <code>Connection: keep-alive</code>)</h3><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/HTTP_persistent_connection.svg/2560px-HTTP_persistent_connection.svg.png" style="zoom:25%;" />
-
-<p>在 HTTP 1.0 中，每次请求 - 响应完成后，连接就会被关闭。这意味着如果客户端需要再次请求服务器上的其他资源，就需要重新建立连接，而建立连接需要消耗额外的时间和资源，包括 DNS 查询、TCP 握手等过程。HTTP 1.0协议中并未定义持久连接的实现方式，但是一些服务端和客户端开始使用这种方式交互。如果浏览器支持keep-alive，它会在请求头添加<code>Connection: keep-alive</code> 服务器也会在响应头中添加相同的字段。</p>
-<p>在HTTP 1.1中，除非任意一方在请求时明确声明不支持，否则所有的连接默认都是持续连接，即一次连接可以在多个请求 - 响应之间复用。这样可以显著减少连接建立的开销，提高性能，特别是对于包含多个资源的网页（如包含多个图片、脚本、样式表等），可以大大加快页面的加载速度。</p>
-<h3 id="管道化-Pipelining"><a href="#管道化-Pipelining" class="headerlink" title="管道化 (Pipelining)"></a>管道化 (Pipelining)</h3><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/HTTP_pipelining.svg/2560px-HTTP_pipelining.svg.png" alt="undefined" style="zoom: 25%;" />
-
-<p>HTTP 1.0 那样必须等待前一个请求的响应返回后才能发送新的请求。</p>
-<p>在持久连接的基础上，HTTP 1.1 还支持管道化。管道化允许客户端在未收到前一个请求的响应时，就可以发送下一个请求。这样可以进一步提高效率，减少整体的请求 - 响应时间。例如，客户端可以连续发送多个对不同资源的请求，服务器按照请求的顺序依次响应，客户端可以在接收响应的同时继续发送新的请求，充分利用连接的带宽。长连接会复用一个 TCP 连接。</p>
-<ul>
-<li>服务端要遵循 HTTP/1.1 协议，必须按照客户端发送的请求顺序来回复请求。</li>
-<li>一般又允许每个主机建立6个TCP连接，这样可以更加充分的利用带宽资源。</li>
-<li>但每个连接中队头阻塞的问题还是存在的。这样整个连接还是先进先出的，<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%98%9F%E5%A4%B4%E9%98%BB%E5%A1%9E">队头阻塞</a>（HOL blocking）可能会发生，造成延迟。</li>
-</ul>
-<h3 id="更好的缓存机制-Expires-Last-Modified-gt-Cache-Control-ETag"><a href="#更好的缓存机制-Expires-Last-Modified-gt-Cache-Control-ETag" class="headerlink" title="更好的缓存机制 (Expires,Last-Modified-&gt;Cache-Control,ETag)"></a>更好的缓存机制 (<code>Expires,Last-Modified-&gt;Cache-Control,ETag</code>)</h3><figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">HTTP/1.1</span> <span class="number">200</span> OK</span><br><span class="line"><span class="attribute">Expires</span><span class="punctuation">: </span>Thu, 01 Jan 1970 00:00:00 GMT</span><br><span class="line"><span class="attribute">Last-Modified</span><span class="punctuation">: </span>Wed, 15 Jun 2022 12:00:00 GMT</span><br></pre></td></tr></table></figure>
-
-<p>在 HTTP 1.0 中，主要通过<code>Expires</code>, <code>Last-Modified</code> , <code>If-Modified-Since</code> 实现缓存机制。服务器可以在响应头中设置<code>Expires</code>字段，指定资源的过期时间。客户端在请求资源时，会检查本地缓存中资源的过期时间。如果未过期，客户端就可以直接使用缓存中的资源，而不必再次向服务器发送请求，从而提高了性能和减少了网络带宽的占用。Expires 字段依赖于服务器和客户端的时钟同步，如果两者的时钟不一致，可能会导致缓存策略出现偏差。对于缓存的控制相对简单，不够灵活，无法满足复杂的缓存需求。</p>
-<ul>
-<li>使用 <code>Last-Modified</code> 和 <code>If-Modified-Since</code> 实现条件请求。</li>
-<li>服务器返回资源的最后修改时间（<code>Last-Modified</code>），客户端下次请求时通过 <code>If-Modified-Since</code> 询问资源是否有更新。</li>
-</ul>
-<hr>
-<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">HTTP/1.1</span> <span class="number">200</span> OK</span><br><span class="line"><span class="attribute">Cache-Control</span><span class="punctuation">: </span>max-age=3600, public</span><br><span class="line"><span class="attribute">ETag</span><span class="punctuation">: </span>&quot;abc123&quot;</span><br><span class="line"><span class="attribute">Last-Modified</span><span class="punctuation">: </span>Wed, 15 Jun 2022 12:00:00 GMT</span><br></pre></td></tr></table></figure>
-
-<p>相比之下，HTTP 1.1 引入了更强大和灵活的缓存机制，如<code>Cache - Control</code>头字段，提供了更多的缓存控制选项，能够更精确地管理缓存行为。</p>
-<ul>
-<li>新增 <code>ETag</code>（实体标签）和 <code>If-None-Match</code> 作为条件请求更可靠的验证方式。优先使用 <code>ETag</code>，其次才是 <code>Last-Modified</code>，提高验证准确性。</li>
-<li><code>ETag</code> 是资源的唯一标识符（如哈希值），即使资源修改时间未变，内容变化也会导致 <code>ETag</code> 变化，避免误判。</li>
-</ul>
-<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><ul>
-<li><p>增加了更多的请求方法（如 PUT、DELETE 等）和状态码</p>
-</li>
-<li><p>支持断点续传（通过 Range 头字段，它允许只请求资源的某个部分，即返回码是 206（Partial Content），方便了开发者自由的选择以便于充分利用带宽和连接。</p>
-</li>
-<li><p><strong>Host 头处理</strong> : HTTP/1.1 在请求头中加入了<code>Host</code>字段。</p>
-</li>
-<li><p>支持分块发送（应用层的分块）</p>
-</li>
-</ul>
-<h2 id="HTTP-2"><a href="#HTTP-2" class="headerlink" title="HTTP/2"></a><a target="_blank" rel="noopener" href="https://hpbn.co/http2/">HTTP/2</a></h2><blockquote>
-<p>From <em>High Performance Browser Networking</em></p>
-</blockquote>
-<p>HTTP/2 [2015] 的前身是 SPDY[2009]</p>
-<h3 id="多路复用（Stream）"><a href="#多路复用（Stream）" class="headerlink" title="多路复用（Stream）"></a>多路复用（Stream）</h3><p>HTTP 1.1 对于连续多个请求可能会开启<strong>并行的最多6个TCP连接</strong>，用来提高带宽利用率。另外，<strong>管道化</strong>虽然也能实现同时发送多个请求，但是返回的时候是会阻塞的，<strong>受限于其请求-响应的基本模型</strong>，谁先到达，谁先返回，顺序绝对不能乱，因此造成了<strong>队头阻塞</strong>。HTTP 1.1还有另一个限制，只有幂等请求（get、head等）才能使用，大部分浏览器默认是关闭管道化的。</p>
-<hr>
-<p>HTTP/2中，浏览器针对同一个域名的资源，只建立一个 TCP 通道，所有的针对这个域名的请求全部在这个通道中完成，并且引入了<strong>流（Stream）</strong>的机制，如下图：</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/8e6931bb40fc26c511ad15645e7b6113.svg" alt="Figure 12-2. HTTP/2 streams, messages, and frames"></p>
-<ul>
-<li><strong>流</strong>（Stream）：在一个 TCP 连接中进行的一个独立的、双向的、按序的数据交换。换句话说，流就对应着一个 <strong>请求-响应对</strong>。所有的流共享同一个 TCP 连接。</li>
-<li><strong>流编号</strong>（Stream ID）：是一个 31 位的无符号整数（最高位保留），用于唯一标识每个流。客户端发起的流编号是奇数，服务器发起的是偶数。</li>
-<li><strong>帧</strong>（Frame）：协议将每个请求/响应（Message）分割为二进制头帧与数据帧。并且帧有所属的流编号，帧可以乱序传输，减轻<strong>应用层</strong>的<strong>队头阻塞</strong>。</li>
-<li>举例：客户端发送 1 3 5 号请求，如下图，请求5的数据帧还在途中，服务端同时处理了请求1 3，可以看到是乱序的实现了多路复用：</li>
-</ul>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/47ba5b32e42cf5a06c3741d29ef9b94a.svg"  />
-
-
-
-<h3 id="以二进制帧为单位的流"><a href="#以二进制帧为单位的流" class="headerlink" title="以二进制帧为单位的流"></a>以二进制帧为单位的流</h3><p><strong>帧是原子单位</strong>：HTTP/2 协议规定，每个帧（包括 <code>HEADERS</code> 和 <code>DATA</code>）必须作为一个完整单元发送和接收。帧头（Frame Header）明确定义了帧的长度（Length 字段，占 3 字节），接收方必须读取完整的帧后才能处理。</p>
-<ul>
-<li>例如：一个 <code>DATA</code> 帧若声明长度为 1000 字节，则必须完整传输这 1000 字节的数据。</li>
-<li>HTTP/2 Flow control只对<code>DATA</code>帧生效，<code>HEADERS</code>作为元数据始终处于高优先级</li>
-</ul>
-<img src="https://hpbn.co/assets/diagrams/ae09920e853bee0b21be83f8e770ba01.svg" alt="img"  />
-
-<h4 id="DATA-帧：载荷分块传输"><a href="#DATA-帧：载荷分块传输" class="headerlink" title="DATA 帧：载荷分块传输"></a>DATA 帧：载荷分块传输</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/8199bc14fc3e692d5ea83792822d5def.png" alt="Figure 12-9. DATA frame"></p>
-<p><code>DATA</code>帧的的<strong>载荷</strong>（Payload）可能会因底层限制（如 TCP MSS、流控等）被<strong>间接拆分或分片</strong></p>
-<ul>
-<li>**HTTP/1.1 的 <code>Transfer-Encoding: chunked</code>**：显式将响应体拆分为多个块（每个块包含长度前缀），是应用层行为。</li>
-<li><strong>HTTP/2 的 二进制帧</strong>：天然支持分块传输，可以将负载拆到多个帧里。最后一帧将 <code>END_STREAM</code>字段设置为true，false 表明表明负载尚未完成传输，更多的数据帧即将到来。</li>
-</ul>
-<h4 id="HEADER-帧编码：HPACK-算法"><a href="#HEADER-帧编码：HPACK-算法" class="headerlink" title="HEADER 帧编码：HPACK 算法"></a>HEADER 帧编码：HPACK 算法</h4><p>双方共同维护字典（静态表、动态表及 Huffman 编码），将HEADER中的重复出现的常见部分进行编码，取代之前的ASCII文本。图中 1 号流和 3 号流分别对共享字典进行了更新。（path 更新到动态表）</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/feb142f82737d148ed5bcefd91915276.svg" alt="Figure 12-6. HPACK: Header Compression for HTTP/2"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/61dc2bae615536155a5af7203ad191fd.png" alt="Figure 12-8. Decoded HEADERS frame in Wireshark"></p>
-<h3 id="服务器推送-Server-Push"><a href="#服务器推送-Server-Push" class="headerlink" title="服务器推送 (Server Push)"></a>服务器推送 (Server Push)</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/d759887277b266a42c526643285dd244.svg" alt="Figure 12-5. Server initiates new streams (promises) for push resources"  />
-
-<p>网站为了使请求数减少，通常采用对页面上的图片、脚本进行极简化处理。但是，这一举措十分不方便，也不高效，依然需要诸多HTTP链接来加载页面和页面资源。</p>
-<p>HTTP/2引入了<strong>服务器推送</strong>，即服务端向客户端发送比客户端请求更多的数据。服务器根据HTML的内容解析需要发送哪些内容，直接提供浏览器渲染页面所需要的资源，而无须浏览器在收到、解析页面后再提起一轮请求，节约了加载时间。</p>
-<h3 id="其他-1"><a href="#其他-1" class="headerlink" title="其他"></a>其他</h3><ul>
-<li>HTTP/2禁用了诸多加密包</li>
-<li><strong>允许设置请求优先级</strong>，服务器根据优先级响应</li>
-</ul>
-<h2 id="HTTP-3-QUIC"><a href="#HTTP-3-QUIC" class="headerlink" title="HTTP/3 (QUIC)"></a>HTTP/3 (QUIC)</h2><p>HTTP2协议虽然大幅提升了 HTTP/1.1 的性能，然而，基于TCP实现的HTTP/2遗留下3个问题：</p>
-<ul>
-<li><p><strong>TCP</strong> 的有序字节流导致丢包就会出现<strong>传输层</strong>队头阻塞（Head-of-line blocking），使得HTTP2的多路复用能力大打折扣</p>
-</li>
-<li><p>TCP与TLS叠加握手时延</p>
-<ul>
-<li>HTTPS 需要经过<a href="https://scatteredream.github.io/2025/05/11/408-%E8%AE%A1%E7%BD%91-TCP+UDP/">三次TCP握手</a>和<a href="https://scatteredream.github.io/2025/05/12/408-%E8%AE%A1%E7%BD%91-HTTPS/">四次TLS握手（TLS v1.2）</a>总共3个RTT才能发送数据。</li>
-<li>TCP连接的慢启动拖延连接建立</li>
-</ul>
-</li>
-<li><p>基于TCP四元组确定一个连接，这种诞生于有线网络的设计，并不适合移动状态下的无线网络，这意味着IP地址的频繁变动会导致TCP连接、TLS会话反复握手，成本高昂。</p>
-</li>
-</ul>
-<img src="https://miro.medium.com/v2/resize:fit:1875/1*uk5OZPL7gtUwqRLwaoGyFw.png" alt="img" style="zoom:67%;" />
-
-
-
-<p>HTTP/3 的 QUIC 实现了 <strong>多个stream的拥塞控制与可靠传输</strong>、<strong>原生加密</strong>、<strong>连接迁移</strong> </p>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/quic-fig1.png" alt="A quick look at QUIC | APNIC Blog" style="zoom: 80%;" />
-
-<h3 id="HTTP-3-帧：简化帧头、升级压缩算法"><a href="#HTTP-3-帧：简化帧头、升级压缩算法" class="headerlink" title="HTTP/3 帧：简化帧头、升级压缩算法"></a>HTTP/3 帧：简化帧头、升级压缩算法</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240105144457456.png" alt="image-20240105144457456" style="zoom: 33%;" />
-
-<p>HTTP/3 延续了 HTTP/2 的帧结构设计，仍通过 <strong>DATA帧</strong> 传输请求/响应的正文内容，通过 <strong>HEADERS帧</strong> 传输经过 <strong>QPACK</strong> (HTTP/2 为 HPACK) 压缩的 HTTP 头部信息，其他帧类型（如 SETTINGS、CANCEL_PUSH 等）也得到保留，但部分功能因 QUIC 的特性有所调整。</p>
-<p>封装：HTTP/3 帧 → 封装到 QUIC STREAM 帧 → 封装到 QUIC 包 → 通过 UDP 发送。</p>
-<ul>
-<li><strong>HTTP/2</strong>：基于 TCP，帧在流（Stream）上传输，流由 HTTP/2 自身管理，存在队头阻塞问题</li>
-<li><strong>HTTP/3</strong>：基于 QUIC，直接复用 QUIC 的流机制，帧通过 QUIC 流传输。QUIC 的流相互独立，避免了 TCP 层的队头阻塞。<ol>
-<li>HTTP/3 的<strong>帧头仅包含类型和长度字段</strong>，比 HTTP/2 更简洁，因为 Stream 管理转移给了 QUIC。</li>
-<li>HPACK 升级为 QPACK，增加静态表的同时改进动态表：</li>
-</ol>
-</li>
-</ul>
-<blockquote>
-<p>所谓的动态表，在首次请求-响应后，双方会将未包含在静态表中的 Header 项更新各自的动态表，接着后续传输时仅用 1 个数字表示，然后对方可以根据这 1 个数字从动态表查到对应的数据，就不必每次都传输长长的数据，大大提升了编码效率。动态表是具有<strong>时序性</strong>的，如果首次出现的请求<strong>发生丢包</strong>，后续的收到请求，对方就无法解码出 HPACK 头部，因为对方还没建立好动态表，因此后续的请求解码会阻塞直到首次请求中丢失的数据包重传过来。</p>
-</blockquote>
-<p>HTTP/3 使用两个单向流，一个叫 <strong>QPACK Encoder Stream</strong>，用于将一个字典（Key-Value）传递给对方，比如面对不属于静态表的 HTTP 请求头部，客户端可以通过这个 Stream 发送字典；一个叫 <strong>QPACK Decoder Stream</strong>，用于响应对方，告诉它刚发的字典已经更新到自己的本地动态表了，后续就可以使用这个字典来编码了。这两个单向流同步双方的动态表，编码方收到解码方的确认通知以后才使用动态表编码头帧。解决了HTTP/2的HPACK队头阻塞（也是因为TCP）</p>
-<h3 id="UDP-上实现基于-Stream-的可靠传输"><a href="#UDP-上实现基于-Stream-的可靠传输" class="headerlink" title="UDP 上实现基于 Stream 的可靠传输"></a>UDP 上实现基于 Stream 的可靠传输</h3><p><a target="_blank" rel="noopener" href="https://cabulous.medium.com/http-3-quic-and-how-it-works-c5ffdb6735b4">HTTP/3, QUIC, and How it Works. Though HTTP/3 is still in draft today… | by Carson | Medium</a> </p>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-49a6be0d647f0f9241a122971166ea23_1440w.jpg" alt="金山视频云推出QUIC+ ，畅快直播再升级（技术篇） - 知乎" style="zoom:67%;" />
-
-<table>
-<thead>
-<tr>
-<th>特性</th>
-<th>HTTP/2 的 stream</th>
-<th>HTTP/3 (QUIC) 的 stream</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>属于哪一层</td>
-<td>应用层</td>
-<td>传输层（QUIC）</td>
-</tr>
-<tr>
-<td>是否独立传输</td>
-<td>否，共用 TCP 的一个流</td>
-<td>是， stream 为传输层的基本单位，天然支持多路复用</td>
-</tr>
-<tr>
-<td>队头阻塞问题</td>
-<td>有，TCP 一丢包，所有 stream 都阻塞</td>
-<td>无，哪个流丢包只影响该流</td>
-</tr>
-<tr>
-<td>序号机制</td>
-<td>Stream ID（奇偶区分）</td>
-<td>Stream ID（可双向并发）</td>
-</tr>
-<tr>
-<td>对应</td>
-<td>一个请求/响应对</td>
-<td>一个请求/响应对</td>
-</tr>
-</tbody></table>
-<h4 id="QUIC-Packet：传输层单元"><a href="#QUIC-Packet：传输层单元" class="headerlink" title="QUIC Packet：传输层单元"></a>QUIC Packet：传输层单元</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-60231adb6c7014c7f043712839f77ab5_1440w.jpg" alt="img" style="zoom: 50%;" />
-
-<ul>
-<li>Packet 数据包是 QUIC 的传输单元，负责在 UDP 上可靠传输数据，一个 UDP 数据报里可以有一个或者多个 QUIC Packet。</li>
-<li><strong>作用</strong>：用来可靠传输 Frame（包括加密、确认、重传）</li>
-<li><strong>构成</strong>：包含 <strong>头部（Header）</strong> 和 <strong>负载（Payload）</strong>。</li>
-<li><strong>头部</strong>：连接 ID（标识终点和起点，将 HTTP 连接和 UDP 四元组解耦）、QUIC 版本、Public Flags、<strong>Packet Number</strong>。明文。</li>
-<li><strong>负载</strong>：可能包含一个或多个 <strong>QUIC 帧</strong>（QUIC Frames）。密文。</li>
-</ul>
-<h4 id="QUIC-Frame：协议层单元"><a href="#QUIC-Frame：协议层单元" class="headerlink" title="QUIC Frame：协议层单元"></a>QUIC Frame：协议层单元</h4><p><strong>作用</strong>：QUIC 协议的最小数据单元，用于实现连接控制、流管理、ACK、和数据传输等。</p>
-<p><strong>​关键帧类型​</strong>​：</p>
-<ul>
-<li><strong>STREAM 帧</strong>：传输应用层数据（如 HTTP/3 的帧）。</li>
-<li><strong>CRYPTO 帧</strong>：传输 TLS 握手数据。</li>
-<li><strong>ACK 帧</strong>：确认收到的包号（替代 TCP 的 ACK）。</li>
-<li><strong>MAX_DATA 帧</strong>：流量控制（类似 TCP 的窗口机制）。</li>
-</ul>
-<h5 id="STREAM-帧：传输应用层数据"><a href="#STREAM-帧：传输应用层数据" class="headerlink" title="STREAM 帧：传输应用层数据"></a>STREAM 帧：传输应用层数据</h5><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-f1cb88ac186e851a724a85dbd4f3de01_r.jpg" alt="img" style="zoom: 40%;" />
-
-<ul>
-<li><strong>Frame Type</strong>：标识帧类型。</li>
-<li><strong>Stream ID</strong>: 唯一标识 Stream，因此一个 QUIC Stream ID 就对应唯一一个 HTTP 请求-响应对。</li>
-<li><strong>offset</strong>：偏移量，用于排序。</li>
-<li><strong>Data Length</strong>：data长度。</li>
-</ul>
-<h5 id="ACK-帧：可靠传输"><a href="#ACK-帧：可靠传输" class="headerlink" title="ACK 帧：可靠传输"></a>ACK 帧：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/405387352">可靠传输</a></h5><p><strong>问题 1：发送端怎么知道发出的包是否被接收端收到了？</strong></p>
-<p>解决方案：通过包号（PKN）和选择确认（Selective-ACK）</p>
-<ol>
-<li>客户端：发送 3 个数据包给服务器（PKN = 1,2,3）</li>
-<li>服务器：通过 SACK 告知客户端已经收到了 1 和 3，没有收到 2</li>
-<li>客户端：重传第 2 个数据包（PKN=4）</li>
-</ol>
-<p>由此可以看出，QUIC 的PKN是单调递增的。也就是说，之前发送的数据包（PKN=2）和重传的数据包（PKN=4），虽然数据一样，但包号不同。</p>
-<p><strong>问题 2：既然包号是单调递增的，那接收端怎么保证数据的有序性呢？</strong></p>
-<p>解决方案：通过数据偏移量 offset</p>
-<ol>
-<li>每个数据包都有一个 offset 字段，表示在整个数据中的偏移量，比如 PKN 1,2,3 分别对应 offset 0,1,2，重传包 PKN=4, offset=1。</li>
-<li>接收端根据 offset 字段就可以对异步到达的数据包进行排序了。</li>
-</ol>
-<p><strong>为什么 QUIC 要将 PKN 设计为单调递增？</strong></p>
-<p>解决 TCP 的重传歧义问题：由于原始包和重传包的序列号是一样的，客户端不知道服务器返回的 ACK 包到底是原始包的，还是重传包的。但 QUIC 的原始包和重传包的序列号是不同的，也就能够判断 ACK 包的归属。</p>
-<h4 id="可靠传输防止不同-Stream-之间的队头阻塞"><a href="#可靠传输防止不同-Stream-之间的队头阻塞" class="headerlink" title="可靠传输防止不同 Stream 之间的队头阻塞"></a>可靠传输防止不同 Stream 之间的队头阻塞</h4><p>QUIC 协议会保证数据包的可靠性，每个数据包都有一个 Packet Number 唯一标识。 <strong>QUIC 的 packet 是以 frame 为单位封装的，frame 可跨 stream 独立发送</strong></p>
-<p>当某个包丢失，里面帧所对应的流就会影响，即使该流的其他帧到达了，数据也无法被 HTTP/3 读取，流内部仍然会阻塞，直到 QUIC 重传丢失的报文，数据才会交给 HTTP/3。而其他跟这个包没关系的流完全不受影响，HTTP/3 可以读取到数据。</p>
-<p>因此，QUIC 连接上的多个 Stream 之间并没有依赖，都是独立的，某个流所在的包发生丢包，只会影响该流，其他流不受影响。HTTP/2 就会互相影响，因为基于 TCP</p>
-<h3 id="建立连接速度快、原生加密"><a href="#建立连接速度快、原生加密" class="headerlink" title="建立连接速度快、原生加密"></a>建立连接速度快、原生加密</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/QUIC-PICTURE-04-1024x553.jpg" alt="QUIC-PICTURE-04-1024x553.jpg"></p>
-<table>
-<thead>
-<tr>
-<th>特性</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>使用协议</td>
-<td><strong>TLS 1.3</strong>（不是 TCP 上的 TLS，而是集成到 QUIC 内部）</td>
-</tr>
-<tr>
-<td>加密内容</td>
-<td>所有 <strong>QUIC Packet 的 Payload（Frame）</strong> 都会加密；只有 <strong>部分 Header 字段明文</strong></td>
-</tr>
-<tr>
-<td>握手流程</td>
-<td>连接建立阶段使用 <strong>QUIC CRYPTO Frame</strong> 承载 TLS 1.3 的握手数据</td>
-</tr>
-<tr>
-<td>对称密钥生成</td>
-<td>通过 TLS 1.3 完成密钥协商（ECDHE）</td>
-</tr>
-<tr>
-<td>后续通信加密</td>
-<td>使用 <strong>AEAD 算法</strong>（如 AES-GCM 或 ChaCha20-Poly1305）加密 QUIC Packet 的 payload</td>
-</tr>
-<tr>
-<td>Header 保护</td>
-<td>QUIC 还对部分 Header 字段进行加密混淆，防止中间人分析</td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th>握手步骤</th>
-<th>内容</th>
-<th>QUIC 特点</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Client Hello</td>
-<td>用 CRYPTO frame 承载 TLS ClientHello</td>
-<td>无需 TCP Handshake</td>
-</tr>
-<tr>
-<td>Server Hello</td>
-<td>返回证书、公钥等</td>
-<td>建立早期密钥</td>
-</tr>
-<tr>
-<td>完成握手</td>
-<td>双方完成密钥协商</td>
-<td>建立 0-RTT/1-RTT 数据加密通道</td>
-</tr>
-</tbody></table>
-<p>对于 HTTP/1 和 HTTP/2 协议，TCP 和 TLS 是分层的，分别属于内核实现的传输层、OpenSSL 库实现的表示层，因此它们难以合并在一起，需要分批次来握手，先 TCP 握手，再 TLS 握手。HTTP/3 在传输数据前虽然需要 QUIC 协议握手，这个握手过程只需要 1 RTT，握手的目的是为确认双方的「连接 ID」，连接迁移就是基于连接 ID 实现的。</p>
-<p>QUIC 默认包含并开启 TLS 1.3，仅需 1 RTT 即可完成连接的建立和密钥协商，第二次连接，在握手完成之前，客户端就能基于缓存密钥发送部分早期加密应用数据。达到 0 RTT 的效果。</p>
-<h3 id="连接迁移"><a href="#连接迁移" class="headerlink" title="连接迁移"></a>连接迁移</h3><p>QUIC 协议没有用四元组的方式来“绑定”连接，而是通过「<strong>连接 ID</strong> 」来标记通信的两个端点，客户端和服务器可以各自选择一组 ID 来标记自己，因此即使移动设备的网络变化后，导致 IP 地址变化了，只要仍保有<strong>上下文信息（比如连接 ID、TLS 密钥等）</strong>，就可以<strong>无缝复用</strong>原连接，消除重连成本。</p>
-<hr>
-<h1 id="服务器推送（Server-Push）"><a href="#服务器推送（Server-Push）" class="headerlink" title="服务器推送（Server Push）"></a>服务器推送（Server Push）</h1><img src="https://hpbn.co/assets/diagrams/1a8db2948eb2aad0dd47470c6c011a42.svg" alt="Figure 17-2. Communication flow of XHR, SSE, and WebSocket"  />
-
-<p>方法主要有 长轮询、SSE、WebSocket三种</p>
-<h2 id="长轮询-Long-polling"><a href="#长轮询-Long-polling" class="headerlink" title="长轮询 (Long-polling)"></a>长轮询 (Long-polling)</h2><img src="https://websocket.org/_astro/long-polling.d7000adb_Vn4A9.webp" style="zoom:67%;" />
-
-<p>从本质上讲，长轮询是一种更有效的轮询形式，是一项服务器选择尽可能长时间保持客户连接的技术，服务器仅在请求的数据可用或达到超时门槛后才提供响应。收到服务器响应后，客户端通常立即发出另一个请求。本质还是客户端发起请求。</p>
-<h2 id="服务器发送事件-Server-Sent-Events"><a href="#服务器发送事件-Server-Sent-Events" class="headerlink" title="服务器发送事件 (Server-Sent Events)"></a>服务器发送事件 (Server-Sent Events)</h2><p>SSE是一种通常用于将消息更新或连续数据流发送给浏览器客户端的服务器推送技术。 SSE旨在通过称为EventSource的JavaScript API来增强本地的、跨浏览器的、Server-to-Client的推送，是 HTML5 的一部分。本质是服务器这边专门开一条 HTTP 链接，这条链接里面服务器和客户端的角色互换。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> source = <span class="keyword">new</span> <span class="title class_">EventSource</span>(<span class="string">&#x27;URL_TO_EVENT_STREAM&#x27;</span>);</span><br><span class="line">source.<span class="property">onopen</span> = <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;connection to stream has been opened&#x27;</span>);</span><br><span class="line">&#125;;</span><br><span class="line">source.<span class="property">onerror</span> = <span class="keyword">function</span> (<span class="params">error</span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;An error has occurred while receiving stream&#x27;</span>, error);</span><br><span class="line">&#125;;</span><br><span class="line">source.<span class="property">onmessage</span> = <span class="keyword">function</span> (<span class="params">stream</span>) &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;received stream&#x27;</span>, stream);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/2_http/http_websocket.html">WebSocket</a></h2><p>WebSocket 是一种基于 TCP 连接的<strong>全双工通信协议</strong>，即客户端和服务器可以同时发送和接收数据。WebSocket 协议在 2008 年诞生，2011 年成为国际标准，几乎所有主流较新版本的浏览器都支持该协议。不过，WebSocket 不只能在基于浏览器的应用程序中使用，很多编程语言、框架和服务器都提供了 WebSocket 支持。WebSocket 协议本质上是应用层的协议，用于弥补 HTTP 协议在持久通信能力上的不足。客户端和服务器仅需一次握手，两者之间就直接可以创建持久性的连接，并进行双向数据传输。 常见应用场景：视频弹幕、实时消息推送，详见<a target="_blank" rel="noopener" href="https://javaguide.cn/system-design/web-real-time-message-push.html">Web 实时消息推送详解</a>这篇文章、实时游戏对战、多用户协同编辑、社交聊天。</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th><strong>WebSockets</strong></th>
-<th><strong>HTTP/1.1</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><strong>通信形式</strong></td>
-<td>全双工</td>
-<td>半双工</td>
-</tr>
-<tr>
-<td><strong>信息交换方式</strong></td>
-<td>双向通信</td>
-<td>基于请求-响应对</td>
-</tr>
-<tr>
-<td><strong>服务器推送</strong></td>
-<td>核心特色</td>
-<td>原生不支持</td>
-</tr>
-<tr>
-<td><strong>开销</strong></td>
-<td>连接建立有一定开销，信息开销极小</td>
-<td>每条信息都有一定开销</td>
-</tr>
-<tr>
-<td><strong>状态</strong></td>
-<td>有状态</td>
-<td>无状态</td>
-</tr>
-</tbody></table>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/websocket-vs-http.be03ced1_sWP4f.webp" alt="Websocket 示意图" style="zoom: 67%;" />
-
-<p>WebSocket 的工作过程可以分为以下几个步骤：</p>
-<ol>
-<li>客户端向服务器发送一个 HTTP 请求，请求头中包含 <code>Upgrade: websocket</code> 和 <code>Sec-WebSocket-Key</code> 等字段，表示要求升级协议为 WebSocket；</li>
-<li>服务器收到这个请求后，会进行升级协议的操作，如果支持 WebSocket，它将回复一个 HTTP 101 状态码，响应头中包含 ，<code>Connection: Upgrade</code>和 <code>Sec-WebSocket-Accept: xxx</code> 等字段、表示成功升级到 WebSocket 协议。</li>
-<li>客户端和服务器之间建立了一个 WebSocket 连接，可以进行双向的数据传输。数据以帧（frames）的形式进行传送，WebSocket 的每条消息可能会被切分成多个数据帧（最小单位）。发送端会将消息切割成多个帧发送给接收端，接收端接收消息帧，并将关联的帧重新组装成完整的消息。</li>
-<li>客户端或服务器可以主动发送一个关闭帧，表示要断开连接。另一方收到后，也会回复一个关闭帧，然后双方关闭 TCP 连接。</li>
-</ol>
-<p>另外，建立 WebSocket 连接之后，通过心跳机制来保持 WebSocket 连接的稳定性和活跃性。</p>
 
       
     </div>
