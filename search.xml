@@ -1491,7 +1491,7 @@ return 0;
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241225213105676.png" alt="image-20241225213105676"></p>
 <p>不要同时并行执行需要获取完全相同锁的线程</p>
 <h3 id="探测死锁与恢复"><a href="#探测死锁与恢复" class="headerlink" title="探测死锁与恢复"></a>探测死锁与恢复</h3><p>如果根除死锁实在很困难，可以定期检查死锁，并运行专门的程序来恢复</p>
-<h1 id="基于事件的并发"><a href="#基于事件的并发" class="headerlink" title="基于事件的并发"></a><a href="https://scatteredream.github.io/2024/08/13/redis-source-code/#IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8-IO-Multiplexing">基于事件的并发</a></h1><p><strong>Event</strong> Loop（事件循环）: 等待事件-&gt;处理事件-&gt;等待事件，重点是如何获取事件？</p>
+<h1 id="基于事件的并发"><a href="#基于事件的并发" class="headerlink" title="基于事件的并发"></a><a href="https://scatteredream.github.io/2025/05/29/net-io-socket#IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8" title="IO Multiplexing">基于事件的并发</a></h1><p><strong>Event</strong> Loop（事件循环）: 等待事件-&gt;处理事件-&gt;等待事件，重点是如何获取事件？</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(<span class="number">1</span>)&#123;</span><br><span class="line">	events = getEvents();</span><br><span class="line">    <span class="keyword">for</span> (e in events)</span><br><span class="line">    	processEvent(e);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="select"><a href="#select" class="headerlink" title="select()"></a><code>select()</code></h2><h3 id="API-Usage"><a href="#API-Usage" class="headerlink" title="API Usage"></a>API Usage</h3><ul>
@@ -16075,7 +16075,7 @@ return 0;
   <entry>
     <title>java.util.concurrent</title>
     <url>/2024/11/30/juc-in-one/</url>
-    <content><![CDATA[<h1 id="Java-Concurrency-Overview"><a href="#Java-Concurrency-Overview" class="headerlink" title="Java Concurrency Overview"></a>Java Concurrency Overview</h1><h2 id="java-lang-Thread"><a href="#java-lang-Thread" class="headerlink" title="java.lang.Thread"></a><code>java.lang.Thread</code></h2><ol>
+    <content><![CDATA[<h1 id="Java-Concurrency-Overview"><a href="#Java-Concurrency-Overview" class="headerlink" title="Java Concurrency Overview"></a>Java Concurrency Overview</h1><h2 id="java-lang-Thread"><a href="#java-lang-Thread" class="headerlink" title="java.lang.Thread"></a><a href="https://scatteredream.github.io/2024/11/20/juc-thread-in-one/">java.lang.Thread</a></h2><ol>
 <li><p><strong>线程创建与运行</strong>:</p>
 <ul>
 <li><strong>继承 <code>Thread</code> 类</strong>: 继承 <code>Thread</code> 并重写 <code>run()</code> 方法<ul>
@@ -16162,7 +16162,7 @@ return 0;
 </ol>
 <p><strong>可选：</strong>虚拟线程、Reactor、Disruptor</p>
 <p><code>java.util.concurrent</code> 给并发控制提供更多可用的操作:</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/format,webp.webp" alt="img"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/formatte.png" alt="formatte"></p>
 <ol>
 <li><p><strong><mark><a href="#lock">Locks</a><mark></strong>:（悲观锁）</p>
 <ul>
@@ -16222,7 +16222,7 @@ return 0;
 </ul>
 </li>
 </ol>
-<h1 id="JVM-支持"><a href="#JVM-支持" class="headerlink" title="JVM 支持"></a><span id="jvm">JVM 支持</span></h1><h2 id="并发问题的根源"><a href="#并发问题的根源" class="headerlink" title="并发问题的根源"></a>并发问题的根源</h2><h3 id="CPU-时分复用"><a href="#CPU-时分复用" class="headerlink" title="CPU 时分复用"></a>CPU 时分复用</h3><p>**<mark>原子性<mark>**：一个过程要么完全执行并且执行的过程不会被任何因素打断，要么就完全不执行。</p>
+<h1 id="JVM-支持"><a href="#JVM-支持" class="headerlink" title="JVM 支持"></a><span id="jvm">JVM 支持</span></h1><h2 id="并发问题的根源"><a href="#并发问题的根源" class="headerlink" title="并发问题的根源"></a>并发问题的根源</h2><h3 id="CPU-时分复用"><a href="#CPU-时分复用" class="headerlink" title="CPU 时分复用"></a>CPU 时分复用</h3><p><mark>原子性</mark>：一个过程要么完全执行并且执行的过程不会被任何因素打断，要么就完全不执行。</p>
 <p>操作系统基于受限直接执行(Limited Direct Execution)来运行任务，基于 CPU 的时钟中断对任务进行调度，通过这种 CPU 虚拟化技术让应用程序认为是自己在独占 CPU。</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">i += <span class="number">1</span>;<span class="comment">// 线程1执行</span></span><br><span class="line">i += <span class="number">1</span>;<span class="comment">// 线程2执行</span></span><br><span class="line"><span class="comment">/*注意：i += 1 需要三条 CPU 指令</span></span><br><span class="line"><span class="comment">1. 将变量 i 从内存读取到 CPU寄存器；</span></span><br><span class="line"><span class="comment">2. 在CPU寄存器中执行 i + 1 操作；</span></span><br><span class="line"><span class="comment">3. 将最后的结果 i 写入内存（缓存机制导致可能写入的是 CPU 缓存而不是内存）。*/</span></span><br></pre></td></tr></table></figure>
 
@@ -16458,88 +16458,89 @@ return 0;
 <h2 id="并发安全总结"><a href="#并发安全总结" class="headerlink" title="并发安全总结"></a>并发安全总结</h2><p>原子性：atomic、锁</p>
 <p>可见性：synchronized volatile final</p>
 <p>有序性：锁、volatile、happens before原则</p>
-<h2 id="ThreadLocal-lt-T-gt"><a href="#ThreadLocal-lt-T-gt" class="headerlink" title="ThreadLocal&lt;T&gt;"></a><mark>ThreadLocal&lt;T&gt;</mark></h2><p><code>ThreadLocal</code> 主要用于以下场景：</p>
+<h1 id="ThreadLocal-lt-T-gt"><a href="#ThreadLocal-lt-T-gt" class="headerlink" title="ThreadLocal&lt;T&gt;"></a><mark>ThreadLocal&lt;T&gt;</mark></h1><p><code>ThreadLocal</code> 主要用于以下场景：</p>
 <ol>
 <li><strong>线程安全的变量管理：</strong> 比如事务管理、用户会话等。</li>
 <li><strong>避免同步锁：</strong> 替代传统的锁机制，提高并发性能。</li>
 <li><strong>数据库连接或会话缓存：</strong> 每个线程维护自己的数据库连接实例。</li>
 </ol>
 <p>T 用于表示 ThreadLocal 存的值类型</p>
-<p>ThreadLocal在Spring中发挥着巨大的作用，在管理request作用域中的bean、事务管理、任务调度、aop等模块都出现了它的身影。<br>Spring中绝大部分Bean都可以声明成Singleton作用域，采用ThreadLocal进行封装，因此有状态的bean就能够以 Singleton的方式在多线程中正常工作了。</p>
-<h3 id="底层机制"><a href="#底层机制" class="headerlink" title="底层机制"></a>底层机制</h3><p><strong>JVM 提供线程隔离：</strong></p>
+<p>ThreadLocal在Spring中发挥着巨大的作用，在管理request作用域中的bean、事务管理、任务调度、aop等模块都出现了它的身影。Spring中绝大部分Bean都可以声明成Singleton作用域，采用ThreadLocal进行封装，因此有状态的bean就能够以 Singleton的方式在多线程中正常工作了。</p>
+<h2 id="底层机制"><a href="#底层机制" class="headerlink" title="底层机制"></a>底层机制</h2><p><strong>JVM 提供线程隔离：</strong></p>
 <ul>
 <li>每个线程都有自己的栈空间和线程私有变量。</li>
 <li>JVM 将 <code>Thread</code> 对象与其局部变量绑定，保证变量不被其他线程访问。</li>
 </ul>
 <p><strong>JDK 提供 <code>ThreadLocal</code>：</strong> </p>
 <ul>
-<li><code>ThreadLocal</code> 依赖于每个线程 (<code>Thread</code> 对象) 内部的 <code>ThreadLocalMap</code> 实现数据存储，每个线程都持有一个独立的 <code>ThreadLocalMap</code> 实例</li>
-<li><code>ThrealLocal</code> 类中可以通过<code>Thread.currentThread()</code>获取到当前线程对象后，直接通过<code>getMap(Thread t)</code>可以访问到该线程的<code>ThreadLocalMap</code>对象。</li>
+<li><code>ThrealLocal</code> 类中可以通过<code>Thread.currentThread()</code>获取到当前线程对象后，直接通过<code>getMap(Thread t)</code>可以访问到该线程的<code>ThreadLocalMap</code>对象：</li>
+<li><code>ThreadLocalMap</code> <ul>
 <li><code>ThreadLocalMap</code>存储以<code>ThreadLocal</code>为 key ，Object 对象为 value 的键值对。</li>
 <li>每次访问 <code>ThreadLocal</code> 时，都会从当前线程的 <code>ThreadLocalMap</code> 查找对应的value。</li>
 <li>不同线程之间的 <code>ThreadLocalMap</code> 互不影响，因此保证了变量的线程隔离性。</li>
+<li>哈希冲突解决：开放定址法（线性探测）「而 HashMap 采用的是链地址法（拉链法）」</li>
+</ul>
+</li>
 </ul>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2-CFHd4NU8.png" alt="img"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/ThreadLocal-01.png" alt="ThreadLocal各引用间的关系"></p>
-<p>哈希冲突解决：开放地址法（线性探测）</p>
-<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>注意泛型、remove避免内存泄露 public static final</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//定义 ThreadLocal 变量</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;Integer&gt; tl = <span class="keyword">new</span> <span class="title class_">ThreadLocal</span>&lt;&gt;();</span><br><span class="line"><span class="comment">// tl = ThreadLocal.withInitial(() -&gt; 0) 可以设置初始值</span></span><br><span class="line">tl.set(<span class="number">100</span>); <span class="comment">// 当前线程设置值</span></span><br><span class="line"><span class="type">int</span> <span class="variable">value</span> <span class="operator">=</span> threadLocal.get(); <span class="comment">// 获取当前线程的值</span></span><br><span class="line">tl.remove(); <span class="comment">// 避免内存泄漏</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">ThreadLocalMap</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Entry</span> <span class="keyword">extends</span> <span class="title class_">WeakReference</span>&lt;ThreadLocal&lt;?&gt;&gt; &#123;</span><br><span class="line">        <span class="comment">/** The value associated with this ThreadLocal. */</span></span><br><span class="line">        Object value;</span><br><span class="line">        Entry(ThreadLocal&lt;?&gt; k, Object v) &#123;</span><br><span class="line"><span class="comment">//super(k)：调用父类 WeakReference 的构造方法，把 k 包装成一个弱引用。</span></span><br><span class="line">            <span class="built_in">super</span>(k);</span><br><span class="line">            value = v;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">ThreadLocal&lt;String&gt; tl = <span class="keyword">new</span> <span class="title class_">ThreadLocal</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">ThreadLocal&lt;String&gt; tlWithInitial = ThreadLocal.withInitial(()-&gt;<span class="keyword">return</span> <span class="string">&quot;Hello&quot;</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> T <span class="title function_">get</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> get(Thread.currentThread()); <span class="comment">// 入参: currentThread()</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">private</span> T <span class="title function_">get</span><span class="params">(Thread t)</span> &#123;</span><br><span class="line">    <span class="type">ThreadLocalMap</span> <span class="variable">map</span> <span class="operator">=</span> getMap(t); <span class="comment">// one map per thread</span></span><br><span class="line">    <span class="keyword">if</span> (map != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 通过 key:tl 获取 entry</span></span><br><span class="line">        ThreadLocalMap.<span class="type">Entry</span> <span class="variable">e</span> <span class="operator">=</span> map.getEntry(<span class="built_in">this</span>); </span><br><span class="line">        <span class="keyword">if</span> (e != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">            <span class="type">T</span> <span class="variable">result</span> <span class="operator">=</span> (T) e.value; <span class="comment">// 获取 value</span></span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> setInitialValue(t);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">set</span><span class="params">(T value)</span> &#123;</span><br><span class="line">    set(Thread.currentThread(), value);</span><br><span class="line">    <span class="keyword">if</span> (TRACE_VTHREAD_LOCALS) &#123;</span><br><span class="line">        dumpStackIfVirtualThread();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">set</span><span class="params">(Thread t, T value)</span> &#123;</span><br><span class="line">    <span class="comment">// 通过 currentThread 找到对应的map</span></span><br><span class="line">    <span class="type">ThreadLocalMap</span> <span class="variable">map</span> <span class="operator">=</span> getMap(t);</span><br><span class="line">    <span class="keyword">if</span> (map != <span class="literal">null</span>) &#123;</span><br><span class="line">        map.set(<span class="built_in">this</span>, value); <span class="comment">// key: tl</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        createMap(t, value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">remove</span><span class="params">(ThreadLocal&lt;?&gt; key)</span> &#123;</span><br><span class="line">    Entry[] tab = table;</span><br><span class="line">    <span class="type">int</span> <span class="variable">len</span> <span class="operator">=</span> tab.length;</span><br><span class="line">    <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> key.threadLocalHashCode &amp; (len-<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">Entry</span> <span class="variable">e</span> <span class="operator">=</span> tab[i]; e != <span class="literal">null</span>; e = tab[i = nextIndex(i, len)]) &#123;</span><br><span class="line">        <span class="keyword">if</span> (e.refersTo(key)) &#123;</span><br><span class="line">            e.clear(); <span class="comment">// entry 弱引用了threadLocal, 找到就CLEAR, </span></span><br><span class="line">            expungeStaleEntry(i);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserHolder</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;UserDTO&gt; tl = <span class="keyword">new</span> <span class="title class_">ThreadLocal</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">saveUser</span><span class="params">(UserDTO user)</span>&#123;</span><br><span class="line">        tl.set(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> UserDTO <span class="title function_">getUser</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> tl.get();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">removeUser</span><span class="params">()</span>&#123;</span><br><span class="line">        tl.remove();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241230193230746.png" alt="image-20241230193230746"></p>
-<p>如图 在 web 请求到达时，进入controller之前的interceptor可以</p>
-<h3 id="内存泄漏：弱引用与强引用"><a href="#内存泄漏：弱引用与强引用" class="headerlink" title="内存泄漏：弱引用与强引用"></a>内存泄漏：弱引用与强引用</h3><p>key 是 ThreadLocal 对象，弱引用；value 是 Object 对象，强引用。</p>
+
+<h2 id="内存泄漏：entry-未及时删除"><a href="#内存泄漏：entry-未及时删除" class="headerlink" title="内存泄漏：entry 未及时删除"></a>内存泄漏：entry 未及时删除</h2><blockquote>
+<p>ThreadLocal 通过访问本线程的 ThreadLocalMap.Entry 进行对 value 的各种操作，如果你在外部失去对 TL 的引用，但是线程生命周期又迟迟未结束（线程池），导致map不会被回收，<code>thread-&gt;map-&gt;entry-&gt;value</code>这条引用链一直存在，那么就会有内存泄露的风险（为什么是“风险”？且看后面强引用和弱引用的区别），因此应该养成使用完就及时remove删除条目的习惯，避免一系列的问题。</p>
+</blockquote>
+<h3 id="强引用和弱引用"><a href="#强引用和弱引用" class="headerlink" title="强引用和弱引用"></a>强引用和弱引用</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/ThreadLocal-01.png" alt="ThreadLocal各引用间的关系"></p>
+<p>ENTRY：key 是 ThreadLocal ，弱引用；value 是 Object 对象，强引用。</p>
 <p>那么在<code>ThreadLocal.get()</code>的时候，发生<code>GC</code>之后，<code>key</code>是否是<code>null</code>？</p>
 <p>为了搞清楚这个问题，我们需要搞清楚<code>Java</code>的<strong>四种引用类型</strong>：</p>
 <ul>
-<li><strong>强引用</strong>：我们常常 new 出来的对象就是强引用类型，只要强引用存在，垃圾回收器将永远不会回收被引用的对象，哪怕内存不足的时候</li>
-<li><strong>软引用</strong>：使用 SoftReference 修饰的对象被称为软引用，软引用指向的对象在内存要溢出的时候被回收</li>
+<li><strong>强引用</strong>：我们常常 new 出来的对象就是强引用类型，只要强引用存在，垃圾回收器将永远不会回收被引用的对象，哪怕内存不足的时候，宁愿 OutofMemoryError 也不回收。</li>
 <li><strong>弱引用</strong>：使用 WeakReference 修饰的对象被称为弱引用，只要发生垃圾回收，若这个对象只被弱引用指向，那么就会被回收</li>
+<li><strong>软引用</strong>：使用 SoftReference 修饰的对象被称为软引用，软引用指向的对象在内存要溢出的时候被回收</li>
 <li><strong>虚引用</strong>：虚引用是最弱的引用，在 Java 中使用 PhantomReference 进行定义。虚引用中唯一的作用就是用队列接收对象即将死亡的通知</li>
 </ul>
-<img src="https://i-blog.csdnimg.cn/direct/f7f2fb6689cd40d49263ded959f30b86.png#pic_center" style="zoom:50%;" />
-
-<p>图中的虚线就是弱引用。</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">ThreadLocalMap</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">Entry</span> <span class="keyword">extends</span> <span class="title class_">WeakReference</span>&lt;ThreadLocal&lt;?&gt;&gt; &#123;</span><br><span class="line">        <span class="comment">/** The value associated with this ThreadLocal. */</span></span><br><span class="line">        Object value;</span><br><span class="line"></span><br><span class="line">        Entry(ThreadLocal&lt;?&gt; k, Object v) &#123;</span><br><span class="line"><span class="comment">//super(k)：调用父类 WeakReference 的构造方法，把 k 包装成一个弱引用。</span></span><br><span class="line">            <span class="built_in">super</span>(k);</span><br><span class="line">            value = v;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">ThreadLocal&lt;String&gt; tl = <span class="keyword">new</span> <span class="title class_">ThreadLocal</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">ThreadLocal&lt;String&gt; tlWithInitial = ThreadLocal.withInitial(()-&gt;<span class="keyword">return</span> <span class="string">&quot;Hello&quot;</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> T <span class="title function_">get</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> get(Thread.currentThread()); <span class="comment">// 入参: currentThread()</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">private</span> T <span class="title function_">get</span><span class="params">(Thread t)</span> &#123;</span><br><span class="line">    <span class="type">ThreadLocalMap</span> <span class="variable">map</span> <span class="operator">=</span> getMap(t); <span class="comment">// one map per thread</span></span><br><span class="line">    <span class="keyword">if</span> (map != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="comment">// 通过 key:tl 获取 entry</span></span><br><span class="line">        ThreadLocalMap.<span class="type">Entry</span> <span class="variable">e</span> <span class="operator">=</span> map.getEntry(<span class="built_in">this</span>); </span><br><span class="line">        <span class="keyword">if</span> (e != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">            <span class="type">T</span> <span class="variable">result</span> <span class="operator">=</span> (T) e.value; <span class="comment">// 获取 value</span></span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> setInitialValue(t);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">set</span><span class="params">(T value)</span> &#123;</span><br><span class="line">    set(Thread.currentThread(), value);</span><br><span class="line">    <span class="keyword">if</span> (TRACE_VTHREAD_LOCALS) &#123;</span><br><span class="line">        dumpStackIfVirtualThread();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">set</span><span class="params">(Thread t, T value)</span> &#123;</span><br><span class="line">    <span class="comment">// 通过 currentThread 找到对应的map</span></span><br><span class="line">    <span class="type">ThreadLocalMap</span> <span class="variable">map</span> <span class="operator">=</span> getMap(t);</span><br><span class="line">    <span class="keyword">if</span> (map != <span class="literal">null</span>) &#123;</span><br><span class="line">        map.set(<span class="built_in">this</span>, value); <span class="comment">// key: tl</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        createMap(t, value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">remove</span><span class="params">(ThreadLocal&lt;?&gt; key)</span> &#123;</span><br><span class="line">    Entry[] tab = table;</span><br><span class="line">    <span class="type">int</span> <span class="variable">len</span> <span class="operator">=</span> tab.length;</span><br><span class="line">    <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> key.threadLocalHashCode &amp; (len-<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">Entry</span> <span class="variable">e</span> <span class="operator">=</span> tab[i]; e != <span class="literal">null</span>; e = tab[i = nextIndex(i, len)]) &#123;</span><br><span class="line">        <span class="keyword">if</span> (e.refersTo(key)) &#123;</span><br><span class="line">            e.clear(); <span class="comment">// entry 弱引用了threadLocal, 找到就CLEAR, </span></span><br><span class="line">            expungeStaleEntry(i);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>ThreadLocal 实例 tl 存储在堆中，线程通过引用访问它，调用 <code>tl.set(value)</code>: 获取属于这个线程的ThreadLocalMap，然后通过 tl 找到对应的 Entry，设置值。 <code>tl.get()</code>，获取这个线程的ThreadLocalMap，通过 tl 找到对应的entry，获取对应的值。</p>
-<p>引用链：<code>Thread-&gt;ThreadLocalMap-&gt;Entry--&gt;value（强引用）</code>  <code>Entry---&gt;ThreadLocal</code> </p>
-<p>Entry 对于 ThreadLocal 是一个弱引用的状态，而反映到线程的tl变量这边就是一个典型的强引用。</p>
-<ul>
-<li>对于一般的线程，线程生命周期到了，map也没有了，value 跟 tl 自然会被当成垃圾回收掉</li>
-<li>对于线程池里的线程，线程并不会走完生命周期，那么map会一直存在，一旦在堆上的tl对象失去强引用，tl被当成垃圾回收，而<code>map-&gt;entry-&gt;value</code>这条链路将会一直存在，失去引用意味着无法通过tl.get来访问value， key 为 <code>null</code> 的 entry 无法被垃圾回收，由此造成内存的泄露。value就是一个清除不了的垃圾：内存泄漏<ul>
-<li>什么时候失去外部对于 ThreadLocal 的强引用？<ol>
+<blockquote>
+<p>什么时候会失去外部对于 TL 的强引用？</p>
+</blockquote>
+<ol>
 <li>ThreadLocal 作为类的成员变量，实例对象被置null</li>
 <li>ThreadLocal 作为类的静态变量，ThreadLocal被置null</li>
-<li>方法内部的局部变量，方法结束之后就失去了强引用。</li>
+<li>方法内部的局部变量，方法结束之后就失去了强引用，比如线程池里提交的任务里的tl局部变量。</li>
 </ol>
-</li>
-<li>为什么是弱引用？<ol>
-<li>如果是强引用：如果失去外部的强引用，但是map这边依然是一个强引用，但是并不能访问，如果不去手动删除那就是垃圾，内存泄漏</li>
-<li>弱引用：不手动删除，tl就会被自动回收，当key为null，在下一次ThreadLocalMap调用set(),get()，remove()方法的时候会清除value值，但是如果你不用这些方法，又不主动remove，依然会造成内存的泄漏。</li>
-</ol>
-</li>
-</ul>
-</li>
-</ul>
-<p>最佳实践：</p>
+<h3 id="为什么-Entry-对-TL-弱引用？"><a href="#为什么-Entry-对-TL-弱引用？" class="headerlink" title="为什么 Entry 对 TL 弱引用？"></a>为什么 Entry 对 TL 弱引用？</h3><blockquote>
+<p>假设每次使用都忘记remove，那么在失去外部tl引用的情况下，会存在内存泄漏的风险，但是弱引用可以补救。</p>
+</blockquote>
+<p><strong>假如 ThreadLocal 是强引用</strong>：无法补救内存泄漏</p>
 <ul>
-<li>static final：final 无法置 null，并且利用static的特性，全部的线程共用这个 threadlocal，可以分别在属于本线程的map设置与这个tl key 对应的值，完全无影响。一直存在对于tl的强引用，那么就能通过调用tl的方法实现key=null的条目的清除</li>
-<li>使用完ThreadLocal以后记得在拦截器或者 finally 块里面进行 remove 操作，防止脏读，也避免了内存泄漏</li>
+<li>如果失去外部强引用（tl是一个run方法里面的局部变量），map这边依然对tl是一个强引用，线程和map也一直存活，entry依然是(tl,value)，但此时已经无法从外部访问value了，那么整个条目也就变成了事实意义上的「强引用」的垃圾，JVM肯定对这些垃圾肯定是束手无策的，从而造成内存泄漏。</li>
 </ul>
-<h4 id="为什么TL要设置成弱引用？"><a href="#为什么TL要设置成弱引用？" class="headerlink" title="为什么TL要设置成弱引用？"></a>为什么TL要设置成弱引用？</h4><p>在线程池中，一个线程会不断的从队列中拿去任务执行（不发生异常的话），这个线程是会一直存活的，换句话说他的ThreadLocalMap一直都在。<br>如果此时ThreadLocal作为run方法里的局部变量，且ThreadLocalMap的key不声明为弱引用（则为硬引用）。run方法跑完，threadLocal被回收，但是线程不会结束（因为是线程池的线程），ThreadLocalMap不会被回收，对应上一步的生成的Entry还是保留在ThreadLocalMap的数组中，只要Thread不死（ThreadLocalMap就还在），GC就无法回收那个Entry(key,value)，然后key不为null，已经没办法判断是不是回收的了。<br>还是讨论ThreadLocal作为run方法里的局部变量，且ThreadLocalMap的key声明为弱引用。run方法跑完，threadLocal被回收，但是线程不会结束（因为是线程池的线程），ThreadLocalMap不会被回收，对应上一步的生成的Entry还是保留在ThreadLocalMap的数组中。等待某次GC后，Entry的key被回收，变成Entry(null,value)，在remove源码中，有对key==null的Entry进行value=null的help GC的操作。在某次调用remove还能再补救一下，相比为硬引用，已经没办法补救了，已经识别不出来哪些是正在需要GC的了。<br>总结来说，在ThreadLocal为局部变量的时候，不声明为WeekReference，忘记remove了，然后ThreadLocal被回收后，再也没办法确认ThreadLocalMap这个认为是用完的Entry（key，value）节点是不是可以GC了。而弱引用的Entry的key，某次GC后，无用的Entry都被标记为（null， value），此时就能识别出来是泄露的内存。</p>
-<h4 id="为什么TL建议设置成-static-final"><a href="#为什么TL建议设置成-static-final" class="headerlink" title="为什么TL建议设置成 static final"></a>为什么TL建议设置成 static final</h4><p>这样就保留了ThreadLocal为强引用了，因为他是GCRoot对象，永不可能回收，key（ThreadLocal对象）是不是弱引用已经无所谓了。因为ThreadLocal是静态变量，所以只存在一个ThreadLocal对象，即使是线程池的线程（假设不发生异常，永远存活），这个ThreadLocal对象也只会占用ThreadLocalMap一个Entry的坑位，换句话说，及时我不回收他，我声明的这个对象在一个线程里只占一个Entry的坑位，永不回收问题也不是很大。对比局部变量ThreadLocal，不回收，每跑一次run方法可能就生成一个Entry，只要不调用remove，内存就会一直泄漏下去。</p>
-<h3 id="InheritableThreadLocal"><a href="#InheritableThreadLocal" class="headerlink" title="InheritableThreadLocal"></a>InheritableThreadLocal</h3><p>这个和ThreadLocal最大的区别就是：可以将父线程的传到子线程（值传递）InheritableThreadLocal是在<mark>new Thread</mark>对象的时候<u>复制</u>父线程的local到子线程的。 因此子线程对自己这个local的remove不会影响到父线程。</p>
+<p><strong>弱引用</strong>：只要线程继续访问tlmap，就能补救。</p>
+<ul>
+<li>失去强引用，tl就会被自动回收，无用的entry就会变成<code>(null,value)</code>。此时map这里有一个helpGC：调用<code>set()</code>,<code>get()</code>,<code>remove()</code> 方法的时候会给当前<code>ThreadLocalMap</code>里面<code>(null,value)</code>的value置null，相当于还有补救机会</li>
+<li>但是如果你不用这些方法，又不主动 remove，<strong>依然会造成内存的泄漏。</strong></li>
+</ul>
+<h2 id="最佳实践：psf-手动-remove-Holder工具类"><a href="#最佳实践：psf-手动-remove-Holder工具类" class="headerlink" title="最佳实践：psf + 手动 remove + Holder工具类"></a>最佳实践：psf + 手动 remove + Holder工具类</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//定义 ThreadLocal 变量</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;Integer&gt; tl = <span class="keyword">new</span> <span class="title class_">ThreadLocal</span>&lt;&gt;();</span><br><span class="line"><span class="comment">// tl = ThreadLocal.withInitial(() -&gt; 0) 可以设置初始值</span></span><br><span class="line">tl.set(<span class="number">100</span>); <span class="comment">// 当前线程设置值</span></span><br><span class="line"><span class="type">int</span> <span class="variable">value</span> <span class="operator">=</span> threadLocal.get(); <span class="comment">// 获取当前线程的值</span></span><br><span class="line">tl.remove(); <span class="comment">// 避免内存泄漏</span></span><br><span class="line"><span class="comment">// ------------------------------</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserHolder</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;UserDTO&gt; tl = <span class="keyword">new</span> <span class="title class_">ThreadLocal</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">saveUser</span><span class="params">(UserDTO user)</span>&#123;</span><br><span class="line">        tl.set(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> UserDTO <span class="title function_">getUser</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> tl.get();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">removeUser</span><span class="params">()</span>&#123;</span><br><span class="line">        tl.remove();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241230193230746.png" alt="image-20241230193230746" style="zoom: 80%;" />
+
+<h3 id="为什么-TL-建议设置成-static-final？"><a href="#为什么-TL-建议设置成-static-final？" class="headerlink" title="为什么 TL 建议设置成 static final？"></a>为什么 TL 建议设置成 static final？</h3><p>之前分析过，线程提交的任务内部new ThreadLocal但是忘记回收就可能会导致内存泄漏的问题，那我们不妨将其设置为static，这样就保留了ThreadLocal为强引用了，因为他是 GCRoot，永不可能被回收，key（ThreadLocal）是不是弱引用已经无所谓了。</p>
+<p>因为这边ThreadLocal是静态变量，所以只存在一个ThreadLocal对象，即使是线程池的线程（假设不发生异常，永远存活），这个ThreadLocal对象也只会占用每个线程的ThreadLocalMap一个Entry，如果我不去主动remove，相比于局部tl泄漏程度不是那么的严重，当然最佳实践还是remove。</p>
+<h3 id="手动-remove-不仅为了防止内存泄漏"><a href="#手动-remove-不仅为了防止内存泄漏" class="headerlink" title="手动 remove 不仅为了防止内存泄漏"></a>手动 remove 不仅为了防止内存泄漏</h3><p>前面说过，remove能够通过删除条目有效防止内存泄漏，这里还有一个好处，如果线程池内的线程一直处于存活状态，并且tl设置成static final，虽然不会发生严重内存泄漏，但是线程执行之前任务留下的threadlocal脏值依然在，之后就可能读到这个脏值。</p>
+<ul>
+<li>Spring 拦截器：对于tomcat服务器的线程池可以采用 filter或者interceptor，在出站的方法里remove。</li>
+<li>try-finally: 手动释放。</li>
+</ul>
+<h2 id="InheritableThreadLocal"><a href="#InheritableThreadLocal" class="headerlink" title="InheritableThreadLocal"></a>InheritableThreadLocal</h2><p>这个和ThreadLocal最大的区别就是：可以将父线程的传到子线程（值传递）InheritableThreadLocal是在<mark>new Thread</mark>对象的时候<u>复制</u>父线程的local到子线程的。 因此子线程对自己这个local的remove不会影响到父线程。</p>
 <p>复制方式是只管复制，基本数据类型还好，子线程和父线程的改变不互通，值传递最大的问题在于引用：复制了引用的值，这就使得父子仍然使用的是同一个对象，使用的时候应该注意这一点。我们需要重写这个类的childValue方法，把parentValue<a href="https://scatteredream.github.io/2024/10/01/java-se/#Object-%E7%9A%84-clone()">深拷贝</a>（json之类的）。</p>
-<h3 id="TransmittableThreadLocal-TTL"><a href="#TransmittableThreadLocal-TTL" class="headerlink" title="TransmittableThreadLocal(TTL)"></a>TransmittableThreadLocal(TTL)</h3><p>TransmittableThreadLocal 是由阿里开发的一个线程变量传递工具包，解决了InheritableThreadLocal只能再new Thread的时候传递本地变量，之后父线程再对threadLocal做改变，子线程也看不见的问题。可以应用来作链路追踪，传递变量等用途。</p>
+<h2 id="TransmittableThreadLocal-TTL"><a href="#TransmittableThreadLocal-TTL" class="headerlink" title="TransmittableThreadLocal(TTL)"></a>TransmittableThreadLocal(TTL)</h2><p>TransmittableThreadLocal 是由阿里开发的一个线程变量传递工具包，解决了InheritableThreadLocal只能再new Thread的时候传递本地变量，之后父线程再对threadLocal做改变，子线程也看不见的问题。可以应用来作链路追踪，传递变量等用途。</p>
 <h1 id="锁"><a href="#锁" class="headerlink" title="锁"></a><span id="lock">锁</span></h1><p><code>java.util.concurrent.locks</code></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241230173434255-1735551283426-42.png" alt="image-20241230173434255"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241230173500715.png" alt="image-20241230173500715"></p>
 <h2 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a><mark><code>ReentrantLock</code><mark></h2><p><code>ReentrantLock</code> 实现了 <code>Lock</code> 接口，是一个<mark>可重入<mark>且<mark>独占式<mark>的锁，和 <code>synchronized</code> 关键字类似。不过，<code>ReentrantLock</code> 更灵活、更强大，增加了<strong>非阻塞</strong>、<strong>超时</strong>、<strong>中断</strong>、<strong>公平锁和非公平锁</strong>等高级功能。</p>
 <p>继承关系：实现了 Lock 接口，有一个 Sync 内部类，Sync 继承了 AQS，加锁和释放锁基本在 Sync 中实现，Sync 有公平锁 FairSync 和非公平锁 NonfairSync 两个子类。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/aqs.png" alt="Classes"></p>
-<h3 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">ReentrantLock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line"></span><br><span class="line">lock.lock(); <span class="comment">// 获取锁</span></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 临界区代码</span></span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    lock.unlock(); <span class="comment">// 释放锁</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">ReentrantLock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line"></span><br><span class="line">lock.lock(); <span class="comment">// 获取锁</span></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// 临界区代码</span></span><br><span class="line">&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    lock.unlock(); <span class="comment">// 释放锁</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>基本如上，finally 逻辑一定要释放锁，防止死锁</p>
 <h3 id="与-synchronized-比较"><a href="#与-synchronized-比较" class="headerlink" title="与 synchronized 比较"></a>与 <code>synchronized</code> 比较</h3><table>
@@ -24355,462 +24356,9 @@ return 0;
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241117003843384.png" alt="image-20241117003843384"></p>
 <p>当 ZSet 的元素数量很少（默认小于 128 个），Redis 会用 <strong>ziplist（压缩列表）</strong> 存储，以节省空间。ziplist 是一种连续内存块结构，适合小数据量。</p>
 <p>Redis 3.2 后 ziplist 被 <strong>quicklist</strong> 替代，到了 Redis 5.0+，ZSet 的底层小数据结构是 <strong>listpack</strong>（更加高效）。</p>
-<h2 id="Redis网络模型"><a href="#Redis网络模型" class="headerlink" title="Redis网络模型"></a>Redis网络模型</h2><h3 id="用户空间和内核态空间"><a href="#用户空间和内核态空间" class="headerlink" title="用户空间和内核态空间"></a>用户空间和内核态空间</h3><p>服务器大多都采用Linux系统，这里我们以Linux为例来讲解:</p>
-<p>ubuntu和Centos 都是Linux的发行版，发行版可以看成对linux包了一层壳，任何Linux发行版，其系统内核都是Linux。我们的应用都需要通过Linux内核与硬件交互</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653844970346.png" alt="1653844970346"></p>
-<p>用户的应用，比如redis，mysql等其实是没有办法去执行访问我们操作系统的硬件的，所以我们可以通过发行版的这个壳子去访问内核，再通过内核去访问计算机硬件</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653845147190.png" alt="1653845147190"></p>
-<p>计算机硬件包括，如cpu，内存，网卡等等，内核（通过寻址空间）可以操作硬件的，但是内核需要不同设备的驱动，有了这些驱动之后，内核就可以去对计算机硬件去进行 内存管理，文件系统的管理，进程的管理等等</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653896065386.png" alt="1653896065386"></p>
-<p>我们想要用户的应用来访问，计算机就必须要通过对外暴露的一些接口，才能访问到，从而简介的实现对内核的操控，但是内核本身上来说也是一个应用，所以他本身也需要一些内存，cpu等设备资源，用户应用本身也在消耗这些资源，如果不加任何限制，用户去操作随意的去操作我们的资源，就有可能导致一些冲突，甚至有可能导致我们的系统出现无法运行的问题，因此我们需要把用户和<strong>内核隔离开</strong></p>
-<p>进程的寻址空间划分成两部分：<strong>内核空间、用户空间</strong></p>
-<p>什么是寻址空间呢？我们的应用程序也好，还是内核空间也好，都是没有办法直接去物理内存的，而是通过分配一些虚拟内存映射到物理内存中，我们的内核和应用程序去访问虚拟内存的时候，就需要一个虚拟地址，这个地址是一个无符号的整数，比如一个32位的操作系统，他的带宽就是32，他的虚拟地址就是2的32次方，也就是说他寻址的范围就是0~2的32次方， 这片寻址空间对应的就是2的32个字节，就是4GB，这个4GB，会有3个GB分给用户空间，会有1GB给内核系统</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653896377259.png" alt="1653896377259"></p>
-<p>在linux中，他们权限分成两个等级，0和3，用户空间只能执行受限的命令（Ring3），而且不能直接调用系统资源，必须通过内核提供的接口来访问内核空间可以执行特权命令（Ring0），调用一切系统资源，所以一般情况下，用户的操作是运行在用户空间，而内核运行的数据是在内核空间的，而有的情况下，一个应用程序需要去调用一些特权资源，去调用一些内核空间的操作，所以此时他俩需要在用户态和内核态之间进行切换。</p>
-<p>比如：</p>
-<p>Linux系统为了提高IO效率，会在用户空间和内核空间都加入缓冲区：</p>
-<p>写数据时，要把用户缓冲数据拷贝到内核缓冲区，然后写入设备</p>
-<p>读数据时，要从设备读取数据到内核缓冲区，然后拷贝到用户缓冲区</p>
-<p>针对这个操作：我们的用户在写读数据时，会去向内核态申请，想要读取内核的数据，而内核数据要去等待驱动程序从硬件上读取数据，当从磁盘上加载到数据之后，内核会将数据写入到内核的缓冲区中，然后再将数据拷贝到用户态的buffer中，然后再返回给应用程序，整体而言，速度慢，就是这个原因，为了加速，我们希望read也好，还是wait for data也最好都不要等待，或者时间尽量的短。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653896687354.png" alt="1653896687354"></p>
-<h3 id="TCP-Socket"><a href="#TCP-Socket" class="headerlink" title="TCP Socket"></a>TCP Socket</h3><p><a href="https://zhuanlan.zhihu.com/p/464268288">网络编程：Socket 是如何创建的？ - 知乎 (zhihu.com)</a></p>
-<h4 id="Socket-定义"><a href="#Socket-定义" class="headerlink" title="Socket 定义"></a>Socket 定义</h4><p>Socket：应用程序通过socket提供的接口将网络传输的工作交给linux内核，内核通过驱动程序操作网卡，接受网卡发来的信息。</p>
-<p><code>socket</code> 是一个 <strong>编程接口</strong>（API），它本身并不属于网络协议栈的某一层，但它主要用于操作 <strong>传输层</strong>（如 TCP 和 UDP）以及网络层（如原始套接字）的通信，它本身不是传输层或应用层的一部分，而是一个编程抽象，用于简化应用程序访问网络的过程。</p>
-<ul>
-<li><strong>Socket API</strong> 是操作系统提供的接口，用于应用程序与网络协议栈交互。</li>
-<li>它允许开发者使用 <strong>传输层协议（TCP/UDP）</strong> 或更底层的协议（如 IP）进行网络通信。</li>
-<li>因此，虽然 Socket 本身不属于传输层或应用层，但它主要作用于 <strong>传输层协议</strong>，并为应用层提供访问网络的工具。</li>
-</ul>
-<p><strong>按照使用的协议可以分为</strong>：</p>
-<ul>
-<li><p><strong>传输层：</strong></p>
-<ul>
-<li>使用 <code>TCP</code> 协议时，<code>TCP Socket</code> 提供可靠的面向连接的数据传输。</li>
-<li>使用 <code>UDP</code> 协议时，<code>UDP Socket</code> 提供无连接、不可靠的数据传输。</li>
-</ul>
-</li>
-<li><p><strong>网络层：</strong></p>
-<ul>
-<li>使用原始套接字（Raw Socket）时，可以直接处理 IP 包，适用于网络工具如 ping 和 traceroute。</li>
-</ul>
-</li>
-<li><p>应用程序通过 Socket 来发送和接收数据，但具体的数据传输和可靠性保障是由 <strong>传输层协议（如 TCP/UDP）</strong> 实现的</p>
-</li>
-</ul>
-<h4 id="Socket-类型"><a href="#Socket-类型" class="headerlink" title="Socket 类型"></a>Socket 类型</h4><ul>
-<li><strong>主动Socket</strong> socket()默认创建的socket类型，客户端向服务端建立连接需要的socket</li>
-<li><strong>监听Socket</strong> listen()将主动socket转换成监听socket，用于监听客户端的连接请求。是服务端独有的，将伴随服务端的整个生命周期。</li>
-<li><strong>已连接Socket</strong> 通过系统库函数accept()获取的已建立连接的socket，该socket是用于客户端和服务端数据读写的通道，已连接socket是服务器独有的，生命周期为 客户端和服务端的维持的连接时长，当断开连接，生命周期结束。</li>
-</ul>
-<p>一个服务器通常通常仅仅只创建一个监听socket描述字，它在该服务器的生命周期内一直存在。内核为每个由服务器进程接受的客户连接创建了一个已连接socket描述字，当服务器完成了对某个客户的服务，相应的已连接socket描述字就被关闭。</p>
-<h4 id="Socket-相关函数"><a href="#Socket-相关函数" class="headerlink" title="Socket 相关函数"></a>Socket 相关函数</h4><p>socket, bind, connect, listen, accept….</p>
-<blockquote>
-<ul>
-<li><p><code>socket()</code>:创建socket，规定各项参数，不能随意组合，socket()创建的socket默认是一个主动类型的，参数如下：</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241115195114618.png" alt="image-20241115195114618"></p>
-</li>
-<li><p><code>bind</code>: 将IP和端口号绑定到socket上，如果不绑定，客户端会通过connect随机分配，服务端会通过listen随机分配，服务端需要的是一个明确的地址信息，所以必须提前绑定好端口。</p>
-</li>
-</ul>
-<img src="https://cdn.xiaolincoding.com//mysql/other/35bc3541c237686aa36e0a88f80592d4.png" alt="图片" style="zoom: 80%;" />
-
-<ul>
-<li><p><code>connect()</code>: 客户端通过connect向服务端发起连接请求。从调用到返回：从<code>SYN_SENT</code>到<code>ESTABLISHED</code>，之后客户端会发送ACK报文，提示</p>
-</li>
-<li><p><code>listen()</code>: 将socket变为被动类型（监听Socket）监听客户的连接请求。</p>
-</li>
-<li><p><code>accept()</code>: 服务端监听到连接请求之后，在3次成功握手之后成功建立连接。1个<strong>监听Socket</strong>维护2个连接队列（全连接established和半连接syn_rcvd），accept会从全连接队列中拿出一个已连接的Socket进行处理，如果还没有完成，就要阻塞等待直到全链接队列有可用的socket。拿到已连接Socket之后就可以开始网络I/O，类同普通文件的读写I/O。当连接可用时，创建的套接字就可以从请求连接的进程中读取数据。</p>
-<ul>
-<li>accept() 调用创建一个与监听socket具有相同属性的新socketFD，并将其返回给调用者caller。如果队列没有挂起的连接请求，accept() 会阻塞调用者，除非socket处于非阻塞模式（Non-Blocking）。如果没有连接请求排队并且套接字处于非阻塞模式，则accept()返回-1并将错误代码设置为<mark>EWOULDBLOCK<mark>。新的socketFD不能用于接受新连接。原来的监听socket仍然可以接受更多的连接请求。</li>
-<li>accept的第一个参数为服务器的socketFD，是服务器开始调用socket()函数生成的，称为监听socketFD；<br>而accept函数返回的是已连接的socketFD。两个套接字不一样。</li>
-</ul>
-</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241115202937962.png" alt="image-20241115202937962"></p>
-<p>连接双方的IP地址和端口构成一个四元组，唯一标记一个客户端，将其作为Key，存到哈希表里，值就是sockfd，下次连接时重新从哈希表里取出来即可。        </p>
-<ul>
-<li><code>send/recv read/write</code>: 读写操作会先写到缓冲区中</li>
-</ul>
-<p><strong>怎么观察 socket 缓冲区</strong> </p>
-<p>如果想要查看 socket 缓冲区，可以在linux环境下执行 <code>netstat -nt</code> 命令。</p>
-<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"># netstat -nt</span><br><span class="line">Active Internet connections (w/o servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State      </span><br><span class="line">tcp        <span class="number">0</span>     <span class="number">60</span> <span class="number">172.22</span><span class="number">.66</span><span class="number">.69</span>:<span class="number">22</span>         <span class="number">122.14</span><span class="number">.220</span><span class="number">.252</span>:<span class="number">59889</span>    ESTABLISHED</span><br></pre></td></tr></table></figure>
-
-<p>这上面表明了，这里有一个协议（Proto）类型为 TCP 的连接，同时还有本地（Local Address）和远端（Foreign Address）的IP信息，状态（State）是已连接（Established） 还有<strong>Send-Q 是发送缓冲区</strong>，下面的数字60是指，当前还有60 Byte在发送缓冲区中未发送。而 <strong>Recv-Q 代表接收缓冲区</strong>，此时是空的，数据都被应用进程接收干净了。</p>
-<p><a href="https://blog.csdn.net/qcrao/article/details/120278587">动画图解 socket 缓冲区的那些事儿-CSDN博客</a> </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241116154258525.png" alt="image-20241116154258525"></p>
+<h2 id="Redis网络模型"><a href="#Redis网络模型" class="headerlink" title="Redis网络模型"></a>Redis网络模型</h2><blockquote>
+<p><a href="https://scatteredream.github.io/2025/05/29/net-io-socket/">Socket Programming</a></p>
 </blockquote>
-<h4 id="Socket-与文件系统、内核的调用关系"><a href="#Socket-与文件系统、内核的调用关系" class="headerlink" title="Socket 与文件系统、内核的调用关系"></a>Socket 与文件系统、内核的调用关系</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241115193558676.png" alt="image-20241115193558676"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241115193416185.png" alt="image-20241115193416185"></p>
-<h4 id="Socket-就绪之前"><a href="#Socket-就绪之前" class="headerlink" title="Socket 就绪之前"></a>Socket 就绪之前</h4><p>从ESTABLISHED tcp connection 到 就绪 之前：</p>
-<p>TCP是面向连接的协议，通过三次握手建立连接后，会进行一些必要的初始化：</p>
-<p><strong>（1）TCP状态维护</strong></p>
-<ul>
-<li><strong>接收和发送缓冲区准备</strong>：双方为这个连接分配缓冲区，准备接收或发送数据。</li>
-<li><strong>连接状态记录</strong>：内核中的Socket结构会记录新连接的相关信息，如对端的IP地址、端口、协议状态等。</li>
-</ul>
-<p><strong>（2）SSL/TLS握手（如适用）</strong></p>
-<p>如果通信使用了加密（如HTTPS），在TCP连接建立后会进行SSL/TLS握手。此过程包括：</p>
-<ul>
-<li>协商协议版本和加密算法。</li>
-<li>交换密钥。</li>
-<li>验证身份。</li>
-</ul>
-<p><strong>（3）应用层协议的初始化</strong></p>
-<p>在TCP连接建立后，通常需要按照应用层协议（如HTTP、FTP、WebSocket等）定义的逻辑进行数据交互的初始化。例如：</p>
-<ul>
-<li>HTTP/1.1会发送<code>GET</code>或<code>POST</code>请求。</li>
-<li>WebSocket会升级协议，通过<code>Upgrade</code>头进行握手。</li>
-</ul>
-<p><strong>（4）延迟与阻塞等待</strong></p>
-<p>如果一端发送了数据而另一端未及时处理，连接可能处于阻塞或等待状态。例如：</p>
-<ul>
-<li><strong>服务端等待客户端请求</strong>。  </li>
-<li><strong>客户端等待服务端响应</strong>。  </li>
-</ul>
-<h3 id="五种IO模型"><a href="#五种IO模型" class="headerlink" title="五种IO模型"></a>五种IO模型</h3><h4 id="阻塞IO-BIO"><a href="#阻塞IO-BIO" class="headerlink" title="阻塞IO (BIO)"></a>阻塞IO (BIO)</h4><p>在《UNIX网络编程》一书中，总结归纳了5种IO模型：</p>
-<ul>
-<li>阻塞IO（Blocking IO）</li>
-<li>非阻塞IO（Nonblocking IO）</li>
-<li>IO多路复用（IO Multiplexing）</li>
-<li>信号驱动IO（Signal Driven IO）</li>
-<li>异步IO（Asynchronous IO）</li>
-</ul>
-<p>应用程序想要去读取数据，他是无法直接去读取磁盘/网卡数据的，他需要先到内核里边去等待内核操作硬件拿到数据，这个过程就是1，是需要等待的，等到内核从磁盘上把数据加载出来之后，再把这个数据写给用户的缓存区，这个过程是2，如果是阻塞IO，那么整个过程中，用户从发起读请求开始，一直到读取到数据，都是一个阻塞状态。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653897115346.png" alt="1653897115346"></p>
-<p>具体流程如下图：</p>
-<p>用户去读取数据时，会去先发起recvform一个命令，去尝试从内核上加载数据，如果内核没有数据，那么用户就会等待，此时内核会去从硬件上读取数据，内核读取数据之后，会把数据拷贝到用户态，并且返回ok，整个过程，都是阻塞等待的，这就是阻塞IO</p>
-<p>总结如下：</p>
-<p>顾名思义，阻塞IO就是两个阶段都必须阻塞等待：</p>
-<p>阶段一：receivefrom（阻塞）</p>
-<ul>
-<li>用户进程尝试读取数据（比如网卡数据）</li>
-<li>此时数据尚未到达，内核需要等待数据</li>
-<li>此时用户进程也处于阻塞状态</li>
-</ul>
-<p>阶段二：copy（阻塞）</p>
-<ul>
-<li>数据到达并拷贝到内核缓冲区，代表已就绪</li>
-<li>将内核数据拷贝到用户缓冲区</li>
-<li>拷贝过程中，用户进程依然阻塞等待</li>
-<li>拷贝完成，用户进程解除阻塞，处理数据</li>
-</ul>
-<p>可以看到，阻塞IO模型中，用户进程在两个阶段都是阻塞状态。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653897270074.png" alt="1653897270074"></p>
-<h4 id="非阻塞IO-NIO"><a href="#非阻塞IO-NIO" class="headerlink" title="非阻塞IO (NIO)"></a>非阻塞IO (NIO)</h4><p>顾名思义，非阻塞IO的recvfrom操作会立即返回结果而不是阻塞用户进程。</p>
-<p>阶段一：recvfrom（非阻塞）</p>
-<ul>
-<li>用户进程尝试读取数据（比如网卡数据）</li>
-<li>此时数据尚未到达，内核需要等待数据</li>
-<li>返回异常给用户进程</li>
-<li>用户进程拿到error后，再次尝试读取</li>
-<li>循环往复，直到数据就绪</li>
-</ul>
-<p>阶段二：copy（阻塞）</p>
-<ul>
-<li>将内核数据拷贝到用户缓冲区</li>
-<li>拷贝过程中，用户进程依然阻塞等待</li>
-<li>拷贝完成，用户进程解除阻塞，处理数据</li>
-<li>可以看到，非阻塞IO模型中，用户进程在第一个阶段是非阻塞，第二个阶段是阻塞状态。虽然是非阻塞，但性能并没有得到提高。而且忙等机制会导致CPU空转，CPU使用率暴增。</li>
-</ul>
-<p>用户应用进行IO操作，调用监听socket的accept()获取已连接socket进行IO操作，如果accept获取不到已连接的socket则直接返回-1(EWOULDBLOCK)，获取成功则返回已连接的socket的socketFD</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653897490116.png" alt="1653897490116"></p>
-<h4 id="IO多路复用-IO-Multiplexing"><a href="#IO多路复用-IO-Multiplexing" class="headerlink" title="IO多路复用 (IO Multiplexing)"></a>IO多路复用 (IO Multiplexing)</h4><p>无论是阻塞IO还是非阻塞IO，用户应用在一阶段都需要调用recvfrom来获取数据，差别在于无数据时的处理方案：</p>
-<p>如果调用recvfrom时，恰好没有数据，阻塞IO会使CPU阻塞，非阻塞IO使CPU空转，都不能充分发挥CPU的作用。<br>如果调用recvfrom时，恰好有数据，则用户进程可以直接进入第二阶段，读取并处理数据</p>
-<p>所以怎么看起来以上两种方式性能都不好</p>
-<p>而在单线程情况下，只能依次处理IO事件，如果正在处理的IO事件恰好未就绪（数据不可读或不可写），线程就会被阻塞，所有IO事件都必须等待，性能自然会很差。</p>
-<p>就比如服务员给顾客点餐，<strong>分两步</strong>：</p>
-<ul>
-<li>顾客思考要吃什么（服务员这边等待数据就绪）</li>
-<li>顾客想好了，开始点餐（服务员开始真正读取数据）</li>
-</ul>
-<p>要提高效率有几种办法？</p>
-<p>方案一：增加更多服务员（多线程）：上下文切换消耗资源 PASS<br>方案二：不排队，谁想好了吃什么（数据就绪了），服务员就给谁点餐（用户应用就去读取数据）OKAY</p>
-<p>那么问题来了：用户进程如何知道内核中数据是否就绪呢？</p>
-<p>所以接下来就需要详细的来解决多路复用模型是如何知道到底怎么知道内核数据是否就绪的问题了</p>
-<p>这个问题的解决依赖于提出的：Socket FD</p>
-<p>文件描述符（File Descriptor）：简称FD，是一个从0 开始的无符号整数，用来关联Linux中的一个文件。在Linux中，一切皆文件，例如常规文件、视频、硬件设备等，当然也包括网络套接字（Socket）。</p>
-<blockquote>
-<p>一个进程对应一个<code>task_struct</code>，一个<code>task_struct</code>中有一个<code>file_struct</code>，一个<code>file_struct</code>中有一个<code>fdt</code>(file descriptor table文件描述符表) <code>fdt</code>中就有一个<code>fd_array</code>（fd数组）数组索引为fd，内容就是指向<code>file</code>的指针</p>
-</blockquote>
-<p>通过FD，我们的网络模型可以利用一个线程监听多个FD，并在某个FD可读、可写时得到通知，从而避免无效的等待，充分利用CPU资源。</p>
-<p>阶段一：</p>
-<ul>
-<li>用户进程调用select，指定要监听的FD集合</li>
-<li>核监听FD对应的多个socket</li>
-<li>任意一个或多个socket数据就绪则返回readable（可读）</li>
-<li>此过程中用户进程阻塞</li>
-</ul>
-<p>阶段二：</p>
-<ul>
-<li>用户进程找到就绪的socket</li>
-<li>依次调用recvfrom读取数据</li>
-<li>内核将数据拷贝到用户空间</li>
-<li>用户进程处理数据。</li>
-</ul>
-<p>当用户去读取数据的时候，不再去直接调用recvfrom了，而是调用select的函数，select函数会将需要监听的数据交给内核，由内核去检查这些数据是否就绪了，如果说这个数据就绪了，就会通知应用程序数据就绪，然后来读取数据，再从内核中把数据拷贝给用户态，完成数据处理，如果N多个FD一个都没处理完，此时就进行等待。</p>
-<p>BIO模式只能查看一个socket，SocketA准备就绪了，但是用户进程在阻塞等待SocketB的数据，这就是无效的等待。</p>
-<p>IO Multiplexing可以减少空等空转空轮询，提高性能</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653898691736.png" alt="1653898691736"></p>
-<p>数据就绪返回readable，用户进程调用recvfrom处理数据。</p>
-<p>IO多路复用是利用单个线程来同时监听多个FD，并在某个FD可读、可写时得到通知，从而避免无效的等待，充分利用CPU资源。不过监听FD的方式、通知的方式又有多种实现，常见的有：select，poll，epoll。其中select和pool相当于是当被监听的数据准备好之后，他会把你监听的FD数组整个数据都发给你，你需要到整个FD中去找，哪些是处理好了的，需要通过遍历的方式，所以性能也并不是那么好。而epoll，则相当于内核准备好了之后，他会把准备好的数据，直接发给你，省去了遍历的动作。</p>
-<h5 id="IO多路复用-select函数"><a href="#IO多路复用-select函数" class="headerlink" title="IO多路复用-select函数"></a>IO多路复用-select函数</h5><p><a href="https://xiaolincoding.com/os/8_network_system/selete_poll_epoll.html#select-poll">select/poll</a> </p>
-<h6 id="select-流程"><a href="#select-流程" class="headerlink" title="select 流程"></a>select 流程</h6><p>select是Linux最早是由的I/O多路复用技术：</p>
-<p>简单说，就是我们把需要处理的数据封装成FD，然后在用户态时创建一个fd的集合（这个集合的大小是要监听的那个FD的最大值+1，但是大小整体是有限制的 ），这个集合的长度大小是有限制的，同时在这个集合中，标明出来我们要控制哪些数据，比如要监听的数据，是1,2,5三个数据，此时会执行select函数，<strong>遍历数组把需要监听的FD置1</strong>（直到nfds fd上限），然后<mark>将整个FDSet拷贝到内核态<mark>，内核态会去<strong>遍历用户态传递过来的数据</strong>，如果发现这里边都数据都没有就绪，就休眠。</p>
-<p>直到有数据准备好时，就会被唤醒，唤醒之后，<strong>再次遍历一遍</strong>，看看谁准备好了，将没有准备好的数据置0，<mark>最后再次将这个FDSet拷贝回用户态<mark>，此时用户态就知道有人准备好了（readable），但对于用户态而言，并不知道谁处理好了，所以用户态<strong>也需要去进行遍历</strong>，然后找到被置1（准备就绪）的节点，再去发起receivefrom读写请求，我们会发现，这种模式下他虽然比阻塞IO和非阻塞IO好，但是依然有些麻烦的事情， 比如说频繁的传递fd集合，频繁的去遍历FD等问题</p>
-<p>bitmap： __fd_mask = 32bits  FDSet共1024个bit位。</p>
-<p>把fd的状态映射到单个bit位上面，很大程度上节省了内存空间，但是也导致用户态不知道谁准备好了</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653900022580.png" alt="1653900022580"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241114211029023.png" alt="image-20241114211029023"></p>
-<h6 id="select-返回值"><a href="#select-返回值" class="headerlink" title="select 返回值"></a><strong>select 返回值</strong></h6><blockquote>
-<ul>
-<li><strong>大于0</strong>：表示有文件描述符准备好了。返回值是就绪的文件描述符的数量，也就是有多少个文件描述符在监视的时间内发生了事件（例如：可以读、可以写、异常等）。</li>
-<li><strong>0</strong>：表示在指定的时间内没有文件描述符准备好，即超时。</li>
-<li>-1：表示发生了错误，errno 中会设置为相应的错误码。常见的错误包括：<ul>
-<li><code>EBADF</code>：传递给 <code>select</code> 的某些文件描述符无效。</li>
-<li><code>EINTR</code>：调用被信号中断。</li>
-<li><code>EINVAL</code>：某个参数无效（例如 <code>nfds</code> 负值）。</li>
-</ul>
-</li>
-</ul>
-</blockquote>
-<h6 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h6><ul>
-<li>整个流程涉及到两次用户态与内核态之间的拷贝，频繁切换，一共需要2次「拷贝」fdSet</li>
-<li>返回值只是就绪的节点个数，然而select并不知道是具体哪个节点就绪，还需要重新遍历，一共需要2次「遍历」</li>
-<li>fd_Set 最多监听1024个</li>
-</ul>
-<h5 id="IO多路复用-poll函数"><a href="#IO多路复用-poll函数" class="headerlink" title="IO多路复用-poll函数"></a>IO多路复用-poll函数</h5><p>poll模式对select模式做了简单改进，但性能提升不明显，部分关键代码如下：</p>
-<p>IO流程：</p>
-<ul>
-<li>创建pollfd数组，向其中添加关注的fd信息，数组大小自定义</li>
-<li>调用poll函数，将pollfd数组拷贝到内核空间，转链表存储，无上限</li>
-<li>内核遍历fd，判断是否就绪</li>
-<li>数据就绪或超时后，拷贝pollfd数组到用户空间，返回就绪fd数量n</li>
-<li>用户进程判断n是否大于0,大于0则遍历pollfd数组，找到就绪的fd</li>
-</ul>
-<p><strong>与select对比：</strong></p>
-<ul>
-<li>select模式中的fd_set大小固定为1024，而pollfd在内核中采用链表，理论上无上限</li>
-<li>监听FD越多，每次遍历消耗时间也越久，性能反而会下降</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653900721427.png" alt="1653900721427"></p>
-<h5 id="IO多路复用-epoll函数（event-poll-事件轮询）"><a href="#IO多路复用-epoll函数（event-poll-事件轮询）" class="headerlink" title="IO多路复用-epoll函数（event poll 事件轮询）"></a>IO多路复用-epoll函数（event poll 事件轮询）</h5><p><a href="https://xiaolincoding.com/os/8_network_system/selete_poll_epoll.html#epoll">epoll</a></p>
-<p><mark>核心：事件轮询<mark></p>
-<h6 id="执行流程"><a href="#执行流程" class="headerlink" title="执行流程"></a>执行流程</h6><p>创建eventpoll结构，包含以下两个结构：</p>
-<p>1、监听红黑树-&gt; 记录要监听的FD rb_root</p>
-<p>2、就绪链表-&gt;记录就绪的FD list_head</p>
-<p>紧接着，调用<code>epoll_ctl</code>操作，将要监听的数据添加到红黑树上去，并且给对应的每个fd设置一个监听函数，这个函数会在fd数据就绪时触发，把对应就绪的fd数据添加到就绪链表中</p>
-<p>3、调用<code>epoll_wait</code>函数</p>
-<p>就去等待，在用户态创建一个空的<code>events</code>数组，当就绪之后，我们的回调函数会把数据添加到<code>list_head</code>中去，当调用这个函数的时候，会去检查list_head，当然这个过程需要参考配置的等待时间，可以等一定时间，也可以一直等， 如果在此过程中，检查到了list_head中有数据会将数据添加到链表中，此时将数据放入到events数组中，并且返回对应的事件数量，用户态的此时收到响应后，从events中拿到对应准备好的数据的节点（SocketFD），再去调用方法从Socket拿数据。</p>
-<p><a href="https://zh.wikipedia.org/zh-cn/%E5%8F%A5%E6%9F%84">句柄 - 维基百科，自由的百科全书 (wikipedia.org)</a></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241114221957536.png" alt="image-20241114221957536"></p>
-<p>最后返回的依然是数量，但是只需要拷贝已就绪的FD，开销大大减小，并且不用遍历</p>
-<h6 id="回调函数与事件驱动"><a href="#回调函数与事件驱动" class="headerlink" title="回调函数与事件驱动"></a>回调函数与事件驱动</h6><blockquote>
-<p>回调函数：将函数作为参数传入，Java中是函数式接口的实现类，C中是函数指针</p>
-<p>事件驱动：以状态的转换作为事件发生的标志，事件发生会触发回调函数的执行。而事件是多种多样的，这就要求执行的函数不能写死，需要实现充分的解耦</p>
-<p><a href="https://www.runoob.com/w3cnote/c-callback-function.html">C 语言回调函数详解 | 菜鸟教程 (runoob.com)</a> </p>
-</blockquote>
-<h5 id="小总结"><a href="#小总结" class="headerlink" title="小总结"></a>小总结</h5><p>select模式存在的三个问题：</p>
-<ul>
-<li>能监听的FD<mark>最大不超过<mark>1024</li>
-<li><mark>每次<mark>select都需要把<mark>所有<mark>要监听的FD都拷贝到内核空间</li>
-<li>每次都要<mark>遍历所有<mark>FD来判断就绪状态</li>
-</ul>
-<p>poll模式的问题：</p>
-<ul>
-<li>poll利用链表解决了select中监听FD上限的问题，但依然要遍历所有FD，如果监听较多，性能会下降</li>
-</ul>
-<p>epoll模式中如何解决这些问题的？</p>
-<ul>
-<li>基于epoll实例中的红黑树保存要监听的FD，理论上无上限，而且增删改查效率都非常高</li>
-<li>每个FD只需要执行一次epoll_ctl添加到红黑树，以后每次epol_wait无需传递任何参数，无需重复拷贝FD到内核空间</li>
-<li>利用ep_poll_callback机制来监听FD状态，无需遍历所有FD，因此性能不会随监听的FD数量增多而下降</li>
-</ul>
-<p>epoll 是解决 C10K 问题的利器，通过两个方面解决了 select/poll 的问题。</p>
-<ul>
-<li>epoll 在内核里使用「红黑树」来关注进程所有待检测的 Socket，红黑树是个高效的数据结构，增删改一般时间复杂度是 O(logn)，通过对这棵黑红树的管理，不需要像 select/poll 在每次操作时都传入整个 Socket 集合，减少了内核和用户空间大量的数据拷贝和内存分配。</li>
-<li>epoll 使用事件驱动的机制，内核里维护了一个「链表」来记录就绪事件，只将有事件发生的 Socket 集合传递给应用程序，不需要像 select/poll 那样轮询扫描整个集合（包含有和无事件的 Socket ），大大提高了检测的效率。</li>
-</ul>
-<h5 id="epoll中的ET和LT"><a href="#epoll中的ET和LT" class="headerlink" title="epoll中的ET和LT"></a>epoll中的ET和LT</h5><p>当FD有数据可读时，我们调用epoll_wait（或者select、poll）可以得到通知。但是事件通知的模式有两种：</p>
-<ul>
-<li>LevelTriggered：简称LT，也叫做水平触发。只要某个FD中有数据可读，每次调用epoll_wait都会得到通知。</li>
-<li>EdgeTriggered：简称ET，也叫做边沿触发。只有在某个FD有状态变化时，调用epoll_wait才会被通知。</li>
-</ul>
-<p>举个栗子：</p>
-<ul>
-<li>假设一个客户端socket对应的FD已经注册到了epoll实例中</li>
-<li>客户端socket发送了2kb的数据</li>
-<li>服务端调用epoll_wait，得到通知说FD就绪</li>
-<li>服务端从FD读取了1kb数据回到步骤3（再次调用epoll_wait，形成循环）</li>
-</ul>
-<p>结论</p>
-<p>如果我们采用LT模式，因为FD中仍有1kb数据，则第⑤步依然会返回结果，并且得到通知<br>如果我们采用ET模式，因为第③步已经消费了FD可读事件，第⑤步FD状态没有变化，因此epoll_wait不会返回，数据无法读取，客户端响应超时。</p>
-<h6 id="LT-ET-的底层实现"><a href="#LT-ET-的底层实现" class="headerlink" title="LT ET 的底层实现"></a>LT ET 的底层实现</h6><p><code>ep_send_events ep_scan_ready_list ep_send_events_proc</code></p>
-<p>读写就绪的事件会触发回调函数把FD添加至链表中，wait函数将就绪节点从链表断开之后将内容拷贝回用户态。</p>
-<p>读取之后，如果FD仍然是就绪的状态（没有读完），内核会根据LT或ET做出不同的行为：</p>
-<p><strong>LT</strong> 会把仍就绪的节点加回去，确保下次wait还能读到链表的内容，同一个就绪的事件反复通知。（状态 state）</p>
-<p><strong>ET</strong> 不会加回去，只有一次IO机会，没读完也不会通知，同一就绪的事件只通知一次。（状态的变化 state transitions）</p>
-<p>如果ET要实现LT效果，需要在拷贝完以后手动调用ctl(before wait)修改的时候检查FD节点，将其重新添加会队列</p>
-<h6 id="ET的优势"><a href="#ET的优势" class="headerlink" title="ET的优势"></a>ET的优势</h6><p>ET结合NIO能够确保一次性读完Socket中的数据，减少epoll_wait的调用次数，提高效率</p>
-<p>LT因为会保留就绪链表上的节点，因此多个进程阻塞在epoll_wait的系统调用时，会将他们全部唤醒，即惊群</p>
-<p><a href="https://zhuanlan.zhihu.com/p/385410196">深入浅出 Linux 惊群：现象、原因和解决方案 - 知乎 (zhihu.com)</a></p>
-<p><a href="https://mp.weixin.qq.com/s/xxjCrFH1361iG-srfNL9_Q">再谈 Linux epoll 惊群问题的原因和解决方案 (qq.com)</a> </p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//如果“就绪链表”上仍有未处理的epi，且有进程阻塞在epoll句柄的睡眠队列，则唤醒它！</span></span><br><span class="line"><span class="comment">//(这将是LT惊群的根源)</span></span><br><span class="line"><span class="comment">//ET将链表清空，LT将链表重新加回去</span></span><br><span class="line"><span class="keyword">if</span> (!list_empty(&amp;ep-&gt;rdllist)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (waitqueue_active(&amp;ep-&gt;wq))</span><br><span class="line">        wake_up_locked(&amp;ep-&gt;wq);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在 <code>epoll</code> 中，事件（event）是通过 <code>epoll_event</code> 结构体来定义和处理的。<code>epoll</code> 的事件分类主要基于 I/O 操作的类型（例如：可读、可写等），它们可以通过 <code>epoll_ctl</code> 函数注册，之后通过 <code>epoll_wait</code> 等函数来等待这些事件的发生。</p>
-<h5 id="epoll-事件分类"><a href="#epoll-事件分类" class="headerlink" title="epoll 事件分类"></a>epoll 事件分类</h5><p><code>epoll</code> 支持多种事件类型，主要有以下几种：</p>
-<ol>
-<li><strong><code>EPOLLIN</code> - 可读事件</strong></li>
-</ol>
-<ul>
-<li><p><strong>描述</strong>：表示指定的文件描述符（如 socket）可供读取数据。</p>
-</li>
-<li><p><strong>适用场景</strong>：当一个 socket 有数据可读时，<code>epoll</code> 会触发此事件。</p>
-</li>
-<li><p><strong>使用场景</strong>：服务器通常使用此事件来检测客户端是否有数据发送过来。</p>
-<p><strong>例子</strong>：</p>
-<ul>
-<li>对于 TCP socket，<code>EPOLLIN</code> 事件表示客户端发送了数据，服务器可以使用 <code>recv()</code> 函数读取数据。</li>
-<li>对于 监听 socket，<code>EPOLLIN</code> 表示有客户端发起了连接请求，服务器可以调用 <code>accept()</code> 来接受连接。</li>
-</ul>
-</li>
-</ul>
-<ol start="2">
-<li><strong><code>EPOLLOUT</code> - 可写事件</strong> </li>
-</ol>
-<ul>
-<li><p><strong>描述</strong>：表示指定的文件描述符（如 socket）可以写入数据。</p>
-</li>
-<li><p><strong>适用场景</strong>：当 socket 可以安全地写入数据时，<code>epoll</code> 会触发此事件。</p>
-</li>
-<li><p><strong>使用场景</strong>：客户端在发送大量数据时，可能需要等待 socket 可写。此时，<code>epoll</code> 通过 <code>EPOLLOUT</code> 事件通知应用程序可以写入数据了。</p>
-<p><strong>例子</strong>：</p>
-<ul>
-<li>如果一个 socket 处于阻塞状态，等待写缓冲区可用，<code>EPOLLOUT</code> 会被触发，表示可以开始写入数据。</li>
-</ul>
-</li>
-</ul>
-<ol start="3">
-<li><strong><code>EPOLLERR</code> - 错误事件</strong></li>
-</ol>
-<ul>
-<li><p><strong>描述</strong>：表示文件描述符发生了错误。</p>
-</li>
-<li><p><strong>适用场景</strong>：如果连接发生了错误或出错事件（如网络中断），<code>epoll</code> 会触发此事件。</p>
-</li>
-<li><p><strong>使用场景</strong>：应用程序通常会检查 <code>EPOLLERR</code> 事件来处理错误情况，如关闭连接或执行错误恢复。</p>
-<p><strong>例子</strong>：</p>
-<ul>
-<li>当 socket 发生网络错误，或者远程主机不可达时，<code>EPOLLERR</code> 会被触发。</li>
-</ul>
-</li>
-</ul>
-<ol start="4">
-<li><strong><code>EPOLLHUP</code> - 挂起事件（Hangup）</strong></li>
-</ol>
-<ul>
-<li><p><strong>描述</strong>：表示文件描述符发生挂起（通常表示连接关闭）。</p>
-</li>
-<li><p><strong>适用场景</strong>：当连接被关闭，或者流中的另一端挂起时，<code>epoll</code> 会触发此事件。</p>
-</li>
-<li><p><strong>使用场景</strong>：客户端或服务器检测到连接关闭时，通常会处理此事件并清理资源。</p>
-<p><strong>例子</strong>：</p>
-<ul>
-<li>当客户端断开连接时，服务器会收到 <code>EPOLLHUP</code> 事件。此时，服务器应关闭对应的 socket。</li>
-</ul>
-</li>
-</ul>
-<ol start="5">
-<li><strong><code>EPOLLRDHUP</code> - 远程挂起事件</strong></li>
-</ol>
-<ul>
-<li><strong>描述</strong>：表示对端关闭了连接。该事件是对 <code>EPOLLHUP</code> 的补充，专门用于表示对端关闭连接时的事件。</li>
-<li><strong>适用场景</strong>：它是为了处理 <strong>TCP</strong> 连接中远程关闭（例如客户端关闭连接）时的特定事件。</li>
-<li><strong>使用场景</strong>：与 <code>EPOLLHUP</code> 类似，应用程序通常通过这个事件来检测到对端已关闭连接，并可以进行相应处理。</li>
-</ul>
-<ol start="6">
-<li><strong><code>EPOLLET</code> - 边缘触发（Edge Triggered）</strong></li>
-</ol>
-<ul>
-<li><strong>描述</strong>：<code>EPOLLET</code> 是边缘触发模式，意味着当文件描述符的状态发生变化时，事件会被触发一次。边缘触发模式相比于传统的水平触发（Level Triggered），能够更加高效地处理 I/O 操作。</li>
-<li><strong>适用场景</strong>：在高性能场景中使用，可以避免对文件描述符的重复检查。应用程序需要保证不会丢失事件，并且需要轮询所有事件，直到事件处理完成。</li>
-<li><strong>使用场景</strong>：通常与 <code>EPOLLIN</code>、<code>EPOLLOUT</code> 等事件一同使用。</li>
-</ul>
-<ol start="7">
-<li><strong><code>EPOLLONESHOT</code> - 单次触发</strong></li>
-</ol>
-<ul>
-<li><strong>描述</strong>：表示文件描述符只会被触发一次事件。处理完事件后，<code>epoll</code> 会自动停止监视该文件描述符，直到再次通过 <code>epoll_ctl</code> 显式注册为监听状态。</li>
-<li><strong>适用场景</strong>：用于那些只需要处理一次事件的场景，如处理某个特定的请求，处理完后不再关心该文件描述符。</li>
-<li><strong>使用场景</strong>：一般用于一个事件只处理一次的情况，可以减少事件触发的次数，提高效率。</li>
-</ul>
-<ol start="8">
-<li><strong><code>EPOLLPRI</code> - 优先事件</strong></li>
-</ol>
-<ul>
-<li><strong>描述</strong>：表示文件描述符上发生了高优先级的事件。通常这种事件的优先级高于常规的 I/O 事件。</li>
-<li><strong>适用场景</strong>：通常用于处理信号量、优先级消息队列等场景。</li>
-</ul>
-<ol start="9">
-<li><strong><code>EPOLLWAKEUP</code> - 唤醒事件</strong></li>
-</ol>
-<ul>
-<li><strong>描述</strong>：表示 <code>epoll</code> 实例在事件等待期间需要被唤醒。</li>
-<li><strong>适用场景</strong>：适用于在多线程环境中希望从 <code>epoll_wait()</code> 等待事件的线程外部唤醒的情况。</li>
-</ul>
-<p><strong>组合使用的方式</strong></p>
-<p><code>epoll</code> 事件通常可以组合使用，以满足更复杂的场景。例如，应用程序可以同时监视 <strong><code>EPOLLIN</code></strong> 和 **<code>EPOLLOUT</code>**，这样就可以同时处理读和写事件。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">ev</span>;</span></span><br><span class="line">ev.events = EPOLLIN | EPOLLOUT | EPOLLERR;  <span class="comment">// 监听读、写和错误事件</span></span><br><span class="line">ev.data.fd = fd;</span><br><span class="line">epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &amp;ev);</span><br></pre></td></tr></table></figure>
-
-<h5 id="基于epoll的服务端流程"><a href="#基于epoll的服务端流程" class="headerlink" title="基于epoll的服务端流程"></a>基于epoll的服务端流程</h5><p><a href="https://zhuanlan.zhihu.com/p/384098769">从内核看epoll的实现（基于5.9.9） - 知乎 (zhihu.com)</a></p>
-<ol>
-<li>服务器通过前文提到的listen()将普通的socket转换成专门用来监听的socket(Listened Socket)</li>
-<li>服务端会去调用epoll_create，创建一个epoll实例，epoll实例中包含两个数据</li>
-</ol>
-<ul>
-<li>红黑树（为空）：rb_root 用来去记录需要被监听的FD(Socket)</li>
-<li>链表（为空）：list_head，用来存放已经就绪的FD<ul>
-<li>创建好了之后，会去调用epoll_ctl函数，此函数将需要监听的数据添加到rb_root中去，并且对当前这些存在于红黑树的节点设置回调函数，（同时设置要监听什么类型的事件）当这些被监听的数据一旦准备完成，就会被调用，而调用的结果就是将红黑树的fd添加到list_head中去(但是此时并没有完成)</li>
-</ul>
-</li>
-</ul>
-<ol start="3">
-<li>当第二步完成后，就会调用epoll_wait函数，这个函数会去校验是否有数据准备完毕（因为数据一旦准备就绪，就会被回调函数添加到list_head中），wait一段时间后(可配置)，如果等待超时，则返回无数据，如果有，则进一步判断当前是什么事件：</li>
-</ol>
-<ul>
-<li>如果是<strong>监听Socket</strong>的FD发生了EPOLLIN事件，则调用accept() 获取已建立的TCP连接，开始准备IO。</li>
-<li>如果是<strong>已连接Socket</strong>的EPOLLIN事件，则正常读取socket的数据</li>
-</ul>
-<p><strong>网络套接字</strong>：在使用 <code>epoll</code> 时，最常见的就是网络套接字（如 TCP 套接字）的数据就绪。具体来说，数据就绪意味着：</p>
-<ul>
-<li><strong>可读事件（<code>EPOLLIN</code>）</strong>：当套接字有数据可读时，<code>epoll_wait</code> 会返回，表明应用程序可以从套接字中读取数据。</li>
-<li><strong>可写事件（<code>EPOLLOUT</code>）</strong>：当套接字可写时，即缓冲区有足够空间发送数据时，<code>epoll_wait</code> 会返回，表明应用程序可以向套接字写入数据。</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653902845082.png" alt="1653902845082"></p>
-<h4 id="信号驱动IO-Signal-Driven-IO"><a href="#信号驱动IO-Signal-Driven-IO" class="headerlink" title="信号驱动IO (Signal Driven IO)"></a>信号驱动IO (Signal Driven IO)</h4><p>信号驱动IO是与内核建立SIGIO的信号关联并设置回调，当内核有FD就绪时，会发出SIGIO信号通知用户，期间用户应用可以执行其它业务，无需阻塞等待。</p>
-<p>阶段一：</p>
-<ul>
-<li>用户进程调用sigaction，注册信号处理函数</li>
-<li>内核返回成功，开始监听FD</li>
-<li>用户进程不阻塞等待，可以执行其它业务</li>
-<li>当内核数据就绪后，回调用户进程的SIGIO处理函数</li>
-</ul>
-<p>阶段二：</p>
-<ul>
-<li>收到SIGIO回调信号</li>
-<li>调用recvfrom，读取</li>
-<li>内核将数据拷贝到用户空间</li>
-<li>用户进程处理数据</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653911776583.png" alt="1653911776583"></p>
-<p>当有大量IO操作时，信号较多，SIGIO处理函数不能及时处理可能导致信号队列溢出，而且内核空间与用户空间的频繁信号交互性能也较低。</p>
-<p>与NIO要做区分：NIO会一直空轮询，SIGIO只会询问一次。</p>
-<h4 id="异步IO-Asynchronous-IO"><a href="#异步IO-Asynchronous-IO" class="headerlink" title="异步IO (Asynchronous IO)"></a>异步IO (Asynchronous IO)</h4><p>这种方式，不仅仅是用户态在试图读取数据后，不阻塞，而且当内核的数据准备完成后，也不会阻塞</p>
-<p>他会由内核将所有数据处理完成后，由内核将数据写入到用户态中，然后才算完成，所以性能极高，不会有任何阻塞，全部都由内核完成，可以看到，异步IO模型中，用户进程在两个阶段都是非阻塞状态。</p>
-<p>缺陷：高并发下，内核中积累的IO任务很多，消耗太多系统资源从而导致崩溃，所以要求限流机制。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653911877542.png" alt="1653911877542"></p>
-<h4 id="五种IO模型对比"><a href="#五种IO模型对比" class="headerlink" title="五种IO模型对比"></a>五种IO模型对比</h4><p>最后用一幅图，来说明他们之间的区别</p>
-<p>同步IO or 异步IO 取决于从内核拷贝到用户空间时是否阻塞</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653912219712.png" alt="1653912219712"></p>
 <h3 id="Redis-单线程？"><a href="#Redis-单线程？" class="headerlink" title="Redis 单线程？"></a>Redis 单线程？</h3><h4 id="到底是单线程还是多线程？"><a href="#到底是单线程还是多线程？" class="headerlink" title="到底是单线程还是多线程？"></a>到底是单线程还是多线程？</h4><ul>
 <li>如果仅仅聊Redis的核心业务部分（命令处理），答案是单线程。</li>
 <li>如果是聊整个Redis，那么答案就是多线程。</li>
@@ -24895,7 +24443,7 @@ return 0;
 <li>拿到就绪的socketFD集合之后，遍历处理，分别调用对应的不同的事件处理器(每个socket事件类型不同，处理器也不同)</li>
 </ol>
 </blockquote>
-<h4 id="IO多路复用-命令处理模型"><a href="#IO多路复用-命令处理模型" class="headerlink" title="IO多路复用+命令处理模型"></a>IO多路复用+命令处理模型</h4><h5 id="处理器"><a href="#处理器" class="headerlink" title="处理器"></a>处理器</h5><blockquote>
+<h4 id="epoll-命令处理模型"><a href="#epoll-命令处理模型" class="headerlink" title="+ epoll + 命令处理模型"></a>+ epoll + 命令处理模型</h4><h5 id="处理器"><a href="#处理器" class="headerlink" title="处理器"></a>处理器</h5><blockquote>
 <p><code>acceptTcpHandler</code>：TCP连接建立处理器</p>
 <ul>
 <li>大名鼎鼎的accept函数返回已经建立连接的socket FD，</li>
@@ -26080,7 +25628,7 @@ return 0;
 <ol>
 <li>扫描到 <code>@Configuration</code> 配置类，又扫到了 <code>@Import(RpcBeanDefinitionRegistrar.class)</code> </li>
 <li>通过 <code>RpcBeanDefinitionRegistrar</code> 的 <code>registerBeanDefinitions(AnnotationMetadata data, BeanDefinitionRegistry registry)</code> 进行动态注册，其中 <code>data</code> 参数为被@Import注解 的类（这里是注解<code>@RpcComponentScan</code>）解析出要扫描的包路径，<code>registry</code> 为注册bean的核心。在里面 new 一个 <code>RpcClassPathBeanDefinitionScanner(registry, RpcService.class)</code> 在其构造函数里添加针对 RpcService.class 的 TypeFilter。</li>
-<li>设置好 scanner 的 <code>resourceloader</code>，增强代码健壮性。调用 scanner 的 <code>scan(basePackages)</code> 方法，此方法会在内部调用 scanner 的 <code>registry</code> 进行 bean 的注册。</li>
+<li>设置好 scanner 的<code>resourceloader</code>，增强代码健壮性。调用 scanner 的 <code>scan(basePackages)</code> 方法，此方法会在内部调用 scanner 的 <code>registry</code> 进行 bean 的注册。</li>
 </ol>
 <h4 id="定义-BeanDefinition-扫描器"><a href="#定义-BeanDefinition-扫描器" class="headerlink" title="定义 BeanDefinition 扫描器"></a>定义 BeanDefinition 扫描器</h4><blockquote>
 <p><code>ClassPathBeanDefinitionScanner</code> 是 Spring 框架中的一个类，用于从指定的类路径中扫描符合条件的类，并将其注册为 Spring 容器中的 Bean 定义。</p>
@@ -26867,11 +26415,12 @@ return 0;
 <li><p>主要用于第三方框架和Spring框架对接，他们创建的对象要配置一些参数，这时就需要一个FactoryBean，工厂bean会提供set对象参数的方法，返回的就是配好参的对象，可以省去手动配参的麻烦</p>
 </li>
 </ul>
-<h4 id="bean-生命周期"><a href="#bean-生命周期" class="headerlink" title="bean 生命周期"></a>bean 生命周期</h4><p><a href="https://docs.spring.io/spring-framework/reference/core/beans/factory-nature.html#beans-factory-lifecycle-initializingbean">Customizing the Nature of a Bean :: Spring Framework</a> </p>
+<h4 id="bean-生命周期"><a href="#bean-生命周期" class="headerlink" title="bean 生命周期"></a>bean 生命周期</h4><p><a href="https://scatteredream.github.io/2025/02/03/rpc-interpretation/#Review-Spring-Bean-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%B8%80%E8%A7%88">Review: Bean 生命周期</a></p>
+<p><a href="https://docs.spring.io/spring-framework/reference/core/beans/factory-nature.html#beans-factory-lifecycle-initializingbean">Customizing the Nature of a Bean :: Spring Framework</a> </p>
 <h5 id="init-method-初始化"><a href="#init-method-初始化" class="headerlink" title="init-method 初始化"></a>init-method 初始化</h5><p><u>ATTRIBUTE</u> 方法名</p>
 <h5 id="destroy-method-销毁"><a href="#destroy-method-销毁" class="headerlink" title="destroy-method 销毁"></a>destroy-method 销毁</h5><p><u>ATTRIBUTE</u> 方法名</p>
 <p>销毁方式1: 容器关闭 <code>ctx.close()</code> appctx这个类没有关闭功能，换一个annotationConfigAppctx才有</p>
-<p>销毁方式2: 注册关闭钩子<code>ctx.registerShutdownHook()</code></p>
+<p>销毁方式2: 注册关闭钩子<code>ctx.registerShutdownHook()</code> </p>
 <h5 id="自定义实体类实现接口"><a href="#自定义实体类实现接口" class="headerlink" title="自定义实体类实现接口"></a>自定义实体类实现接口</h5><p><code>DisposableBean</code> <code>InitializingBean</code> </p>
 <p>分别重写destory() afterPropertiesSet()</p>
 <p>属性设置就是在属性注入(调用setter)之后调用的方法</p>
@@ -26940,20 +26489,21 @@ return 0;
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019220634669.png" alt="image-20241019220634669"></p>
 <p>classpath:*.properties 当前模块下所有的配置文件</p>
 <h3 id="容器-ctx"><a href="#容器-ctx" class="headerlink" title="容器 ctx"></a>容器 ctx</h3><h4 id="创建容器方式"><a href="#创建容器方式" class="headerlink" title="创建容器方式"></a>创建容器方式</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019221415451.png" alt="image-20241019221415451"></p>
-<h4 id="getBean"><a href="#getBean" class="headerlink" title="getBean"></a>getBean</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019221407031.png" alt="image-20241019221407031"></p>
+<h4 id="getBean"><a href="#getBean" class="headerlink" title="getBean()"></a>getBean()</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019221407031.png" alt="image-20241019221407031"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019221914707.png" alt="image-20241019221914707"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019222158026.png" alt="image-20241019222158026"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019221938964.png" alt="image-20241019221938964"></p>
 <p>立即加载（饿汉），lazy-init 延迟加载 (懒汉)</p>
-<h2 id="注解开发"><a href="#注解开发" class="headerlink" title="注解开发"></a>注解开发</h2><h3 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h3><h4 id="定义bean-Component"><a href="#定义bean-Component" class="headerlink" title="定义bean@Component"></a><mark>定义bean@Component<mark></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019223116345.png" alt="image-20241019223116345"></p>
+<h2 id="注解开发"><a href="#注解开发" class="headerlink" title="注解开发"></a>注解开发</h2><h3 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h3><h4 id="定义bean-Component"><a href="#定义bean-Component" class="headerlink" title="定义bean@Component"></a><mark>定义bean@Component</mark></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019223116345.png" alt="image-20241019223116345"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019223156078.png" alt="image-20241019223156078"></p>
 <p>加上对应的bean的id ，不加就要加载字节码class</p>
-<h4 id="纯注解开发-Configuration-ComponetScan"><a href="#纯注解开发-Configuration-ComponetScan" class="headerlink" title="纯注解开发@Configuration  @ComponetScan"></a><mark>纯注解开发@Configuration  @ComponetScan<mark></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019224153002.png" alt="image-20241019224153002"></p>
+<h4 id="纯注解开发-Configuration-ComponetScan"><a href="#纯注解开发-Configuration-ComponetScan" class="headerlink" title="纯注解开发@Configuration  @ComponetScan"></a><mark>纯注解开发@Configuration  @ComponetScan</mark></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019224153002.png" alt="image-20241019224153002"></p>
 <p>获取ctx: <code>ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringConfig.class)</code> </p>
 <p>默认xml配置文件只给了beans的命名空间，context还得另外自己加，纯注解开发需要定义一个SpringConfig类，常用的配置都有，不用手动去加命名空间</p>
 <p>XML out!</p>
 <h3 id="2-bean管理"><a href="#2-bean管理" class="headerlink" title="2. bean管理"></a>2. bean管理</h3><h4 id="作用范围-Scope"><a href="#作用范围-Scope" class="headerlink" title="作用范围 @Scope"></a>作用范围 @Scope</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019225307356.png" alt="image-20241019225307356"></p>
-<h4 id="生命周期-PostConstruct-PreDestroy"><a href="#生命周期-PostConstruct-PreDestroy" class="headerlink" title="生命周期 @PostConstruct @PreDestroy"></a>生命周期 @PostConstruct @PreDestroy</h4><p><a href="https://cloud.tencent.com/developer/article/2426419">探究Spring Boot中@PostConstruct注解的使用场景-腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
+<h4 id="生命周期-PostConstruct-PreDestroy"><a href="#生命周期-PostConstruct-PreDestroy" class="headerlink" title="生命周期 @PostConstruct @PreDestroy"></a>生命周期 @PostConstruct @PreDestroy</h4><p><a href="https://scatteredream.github.io/2025/02/03/rpc-interpretation/#Review-Spring-Bean-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%B8%80%E8%A7%88">Review-Spring-Bean-生命周期一览</a> </p>
+<p><a href="https://cloud.tencent.com/developer/article/2426419">探究Spring Boot中@PostConstruct注解的使用场景-腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
 <p><a href="https://cloud.tencent.com/developer/article/1588212">Spring 框架中 @PostConstruct 注解详解-腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019225254913.png" alt="image-20241019225254913"></p>
 <p>Instantiate(Constructor)&gt; @Autowired &gt; @PostConstruct</p>
@@ -26977,8 +26527,9 @@ return 0;
 <h4 id="简单类型注入依赖-Value"><a href="#简单类型注入依赖-Value" class="headerlink" title="简单类型注入依赖@Value"></a>简单类型注入依赖@Value</h4><p>需要注入的属性上 写value</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020011954765.png" alt="image-20241020011954765"></p>
 <h4 id="导入配置文件-PropertySource"><a href="#导入配置文件-PropertySource" class="headerlink" title="导入配置文件@PropertySource"></a>导入配置文件@PropertySource</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020011844984.png" alt="image-20241020011844984"></p>
-<h4 id="循环依赖"><a href="#循环依赖" class="headerlink" title="循环依赖"></a><mark>循环依赖<mark></h4><p>Spring循环依赖指的是两个或多个Bean之间相互依赖，形成一个环状依赖的情况。简单来说，就是A依赖B，B依赖C，C依赖A，这样就形成了一个循环依赖的环。</p>
+<h4 id="循环依赖"><a href="#循环依赖" class="headerlink" title="循环依赖"></a><mark>循环依赖</mark></h4><p>Spring循环依赖指的是两个或多个Bean之间相互依赖，形成一个环状依赖的情况。简单来说，就是A依赖B，B依赖C，C依赖A，这样就形成了一个循环依赖的环。</p>
 <p>Spring循环依赖通常会导致Bean无法正确地被实例化，从而导致应用程序无法正常启动或者出现异常。因此，Spring循环依赖是一种需要尽量避免的情况。</p>
+<p>Spring 使用<a href="https://scatteredream.github.io/2025/05/25/spring-circle-ref/">三级缓存机制</a>部分解决循环依赖问题，但是从 SpringBoot 2.6 开始默认禁止循环依赖，因为这是顶层设计出现问题的表现。 </p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/633066ae3fcb2fcc117ab142dd90d3da-1730639875106-2.png"></p>
 <h5 id="使用构造函数注入"><a href="#使用构造函数注入" class="headerlink" title="使用构造函数注入"></a>使用构造函数注入</h5><p>构造函数注入是一种相对保险的方式，因为在实例化Bean时，Spring会检查是否存在循环依赖，并在发现循环依赖时抛出异常，避免死循环。示例代码如下：</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> B b;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">A</span><span class="params">(B b)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.b = b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> A a;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">B</span><span class="params">(A a)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.a = a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -26986,37 +26537,53 @@ return 0;
 <h5 id="使用-Lazy注解"><a href="#使用-Lazy注解" class="headerlink" title="使用@Lazy注解"></a>使用@Lazy注解</h5><p>@Lazy注解可以延迟Bean的实例化，从而避免循环依赖的问题。示例代码如下：</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Lazy</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> B b;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Lazy</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> A a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h5 id="使用setter方法注入"><a href="#使用setter方法注入" class="headerlink" title="使用setter方法注入"></a>使用setter方法注入</h5><p>使用setter方法注入也可以解决循环依赖的问题，但要注意可能出现的空指针异常。示例代码如下：</p>
+<h5 id="使用-setter-注入"><a href="#使用-setter-注入" class="headerlink" title="使用 setter 注入"></a>使用 setter 注入</h5><p>使用setter方法注入也可以解决循环依赖的问题，但要注意可能出现的空指针异常。示例代码如下：</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> B b;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setB</span><span class="params">(B b)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.b = b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> A a;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setA</span><span class="params">(A a)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.a = a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h3 id="管理第三方Bean-1"><a href="#管理第三方Bean-1" class="headerlink" title="管理第三方Bean"></a>管理第三方Bean</h3><h4 id="Config配置类中bean的创建-Bean"><a href="#Config配置类中bean的创建-Bean" class="headerlink" title="Config配置类中bean的创建@Bean"></a><span id="bean"><mark>Config配置类中bean的创建@Bean<mark></span></h4><p>与@Component不同 这个是方法级别的注解，方法返回的对象将由Spring容器管理</p>
+<h3 id="管理第三方Bean-1"><a href="#管理第三方Bean-1" class="headerlink" title="管理第三方Bean"></a>管理第三方Bean</h3><h4 id="Config配置类中bean的创建-Bean"><a href="#Config配置类中bean的创建-Bean" class="headerlink" title="Config配置类中bean的创建@Bean"></a><span id="bean"><mark>Config配置类中bean的创建@Bean</mark></span></h4><p>与@Component不同 这个是方法级别的注解，方法返回的对象将由Spring容器管理</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020012511399.png" alt="image-20241020012511399"></p>
 <h5 id="Bean声明的Bean名称？"><a href="#Bean声明的Bean名称？" class="headerlink" title="@Bean声明的Bean名称？"></a>@Bean声明的Bean名称？</h5><p><a href="https://blog.csdn.net/w1014074794/article/details/106768607">spring boot中通过注解@Bean声明的bean的名称是什么？_springboot 声明bean的名称-CSDN博客</a></p>
-<h6 id="不指定name属性，bean名称为方法名"><a href="#不指定name属性，bean名称为方法名" class="headerlink" title="不指定name属性，bean名称为方法名"></a>不指定name属性，bean名称为方法名</h6><h6 id="指定name属性，bean名称为name"><a href="#指定name属性，bean名称为name" class="headerlink" title="指定name属性，bean名称为name"></a>指定name属性，bean名称为name</h6><h5 id="导入其他Config类到核心配置-Import"><a href="#导入其他Config类到核心配置-Import" class="headerlink" title="导入其他Config类到核心配置@Import"></a>导入其他Config类到核心配置@Import</h5><p>不建议直接把其他的配置写到SpringConfig里面，分出去然后import</p>
+<h6 id="不指定name属性，bean名称为方法名"><a href="#不指定name属性，bean名称为方法名" class="headerlink" title="不指定name属性，bean名称为方法名"></a>不指定name属性，bean名称为方法名</h6><h6 id="指定name属性，bean名称为name"><a href="#指定name属性，bean名称为name" class="headerlink" title="指定name属性，bean名称为name"></a>指定name属性，bean名称为name</h6><h5 id="导入其他Config类到核心配置-Import"><a href="#导入其他Config类到核心配置-Import" class="headerlink" title="导入其他Config类到核心配置 @Import"></a>导入其他Config类到核心配置 @Import</h5><p>不建议直接把其他的配置写到SpringConfig里面，分出去然后import</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020012755726.png" alt="image-20241020012755726"></p>
 <h4 id="DI-依赖注入-1"><a href="#DI-依赖注入-1" class="headerlink" title="DI 依赖注入"></a>DI 依赖注入</h4><p><span id="thirdpartydi">最简单的方法：自己new个对象出来，手动配参数，丢给spring</span> (其实xml就是把手动配参的过程从业务代码中解耦出来)</p>
 <h5 id="简单类型依赖注入：成员变量-Value"><a href="#简单类型依赖注入：成员变量-Value" class="headerlink" title="简单类型依赖注入：成员变量@Value"></a>简单类型依赖注入：成员变量@Value</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020013246624.png" alt="image-20241020013246624"></p>
 <h5 id="引用类型依赖注入：方法形参"><a href="#引用类型依赖注入：方法形参" class="headerlink" title="引用类型依赖注入：方法形参"></a><mark>引用类型依赖注入：方法形参<mark></h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020013406409.png" alt="image-20241020013406409"></p>
 <h3 id="XML-vs-Annotation"><a href="#XML-vs-Annotation" class="headerlink" title="XML vs. Annotation"></a>XML vs. Annotation</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020013703651.png" alt="image-20241020013703651"></p>
-<h2 id="整合第三方框架实战"><a href="#整合第三方框架实战" class="headerlink" title="整合第三方框架实战"></a>整合第三方框架实战</h2><h3 id="Spring-amp-MyBatis"><a href="#Spring-amp-MyBatis" class="headerlink" title="Spring &amp; MyBatis"></a>Spring &amp; MyBatis</h3><p><a href="https://blog.csdn.net/m0_64737877/article/details/122608987">使用纯注解方式Spring整合MyBatis_spring整合mybatis基于注解-CSDN博客</a></p>
+<h2 id="整合第三方框架"><a href="#整合第三方框架" class="headerlink" title="整合第三方框架"></a>整合第三方框架</h2><h3 id="Spring-amp-MyBatis"><a href="#Spring-amp-MyBatis" class="headerlink" title="Spring &amp; MyBatis"></a>Spring &amp; MyBatis</h3><p><a href="https://blog.csdn.net/m0_64737877/article/details/122608987">使用纯注解方式Spring整合MyBatis_spring整合mybatis基于注解-CSDN博客</a></p>
 <p><a href="https://blog.csdn.net/SerikaOnoe/article/details/90639135">Spring整合Mybatis(注解方式完整过程，摒弃MyBatis配置文件)_springboot启动去除mybatis-CSDN博客</a> </p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020123544343.png" alt="image-20241020123544343"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020123756444.png" alt="image-20241020123756444"></p>
 <p>dao是session用动态代理造出来的，不同业务的内部实现有区别。session也不会一直复用，根源在sqlSessionFactory。</p>
 <p>还有一个就是mapper映射，这个跟ssf没什么关系。</p>
-<h4 id="MyBatisConfig-SqlSessionFactoryBean"><a href="#MyBatisConfig-SqlSessionFactoryBean" class="headerlink" title="MyBatisConfig - SqlSessionFactoryBean"></a>MyBatisConfig - SqlSessionFactoryBean</h4><p>导入mybatis-spring spring-jdbc，mybatis实现了Spring规定的FactoryBean接口，专门用来造sqlSessionFactory对象。</p>
+<blockquote>
+<p>MyBatisConfig - SqlSessionFactoryBean</p>
+</blockquote>
+<p>导入mybatis-spring spring-jdbc，mybatis实现了Spring规定的FactoryBean接口，专门用来造sqlSessionFactory对象。</p>
 <p>回顾spring创建对象的方法，一种是<a href="#thirdpartydi">使用构造</a>器直接得到对象，另一种就是使用factoryBean&lt;E&gt;得到对象E，定义一个造E的工厂Bean，这样spring就知道类型E创对象需要用工厂Bean的方式。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020130218463.png" alt="image-20241020130218463"></p>
 <p>factorybean中提供了很多设置E参数的方法，最终返回的是一个设置好参数的E，思想还是一样的，只不过套了一层工厂的皮，封装进去很多固定的参数set方法，一般这个E需要xml进行配置(跟真正的业务代码解耦)，工厂Bean就取代了xml，直接给你返回一个配置好的对象。</p>
 <p>需要传参就直接在写上方法参数即可，spring自动匹配</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020145504890.png" alt="image-20241020145504890"></p>
-<h4 id="MyBatisConfig-MapperScannerConfigurer"><a href="#MyBatisConfig-MapperScannerConfigurer" class="headerlink" title="MyBatisConfig - MapperScannerConfigurer"></a>MyBatisConfig - MapperScannerConfigurer</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020145526730.png" alt="image-20241020145526730"></p>
+<blockquote>
+<p>MyBatisConfig - MapperScannerConfigurer</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020145526730.png" alt="image-20241020145526730"></p>
 <p>DAO没有实现类了，在原始接口上加Component、Repository给ioc容器标识一下，不标也行。</p>
 <p>这个mapperScannerConfigurer是mybatis和spring集成的部分，扫描指定mapper所在的包，mapper生成代理对象，通过factoryBean方式交给Spring容器，所以重点不是让spring知道dao的实现类在哪，重点是要让mybatis知道mapper位置</p>
-<h4 id="JdbcConfig-创建DataSource的Bean交给Spring管理"><a href="#JdbcConfig-创建DataSource的Bean交给Spring管理" class="headerlink" title="JdbcConfig - 创建DataSource的Bean交给Spring管理"></a>JdbcConfig - 创建DataSource的Bean交给Spring管理</h4><h3 id="Spring-amp-JUnit"><a href="#Spring-amp-JUnit" class="headerlink" title="Spring &amp; JUnit"></a>Spring &amp; JUnit</h3><p>导入spring-test 在Test<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020191443245.png" alt="image-20241020191443245"></p>
+<blockquote>
+<p>JdbcConfig - 创建DataSource的Bean交给Spring管理</p>
+</blockquote>
+<h3 id="Spring-amp-JUnit"><a href="#Spring-amp-JUnit" class="headerlink" title="Spring &amp; JUnit"></a>Spring &amp; JUnit</h3><p>导入spring-test 在Test<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020191443245.png" alt="image-20241020191443245"></p>
 <p>在test.java中测试。</p>
-<h4 id="RunWith-ContextConfiguration"><a href="#RunWith-ContextConfiguration" class="headerlink" title="@RunWith @ContextConfiguration"></a>@RunWith @ContextConfiguration</h4><h4 id="Autowired-Test"><a href="#Autowired-Test" class="headerlink" title="@Autowired @Test"></a>@Autowired @Test</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020145826024.png" alt="image-20241020145826024"></p>
+<blockquote>
+<p>@RunWith @ContextConfiguration</p>
+</blockquote>
+<blockquote>
+<p>@Autowired @Test</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020145826024.png" alt="image-20241020145826024"></p>
 <p>需要引用类型参数直接autowired注入即可，一般是业务类做测试</p>
+<h2 id="BeanDefinition-BeanPostProcessor"><a href="#BeanDefinition-BeanPostProcessor" class="headerlink" title="BeanDefinition BeanPostProcessor"></a>BeanDefinition BeanPostProcessor</h2><p><a href="https://scatteredream.github.io/2025/02/03/rpc-interpretation/#Spring-%E6%89%AB%E6%8F%8F%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3">Spring-扫描自定义注解</a> </p>
 <h1 id="Spring-AOP"><a href="#Spring-AOP" class="headerlink" title="Spring AOP"></a>Spring AOP</h1><h2 id="AOP的含义"><a href="#AOP的含义" class="headerlink" title="AOP的含义"></a>AOP的含义</h2><p>AOP 面向切面编程 <strong>不惊动原始设计</strong>的情况下增强功能</p>
 <p>Spring理念：无侵入式增强功能</p>
 <ul>
@@ -27040,12 +26607,15 @@ return 0;
 </ul>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020152910091.png" alt="image-20241020152910091"></p>
 <p>连接点包含切入点</p>
-<h2 id="Spring中进行AOP编程"><a href="#Spring中进行AOP编程" class="headerlink" title="Spring中进行AOP编程"></a>Spring中进行AOP编程</h2><h3 id="导入坐标"><a href="#导入坐标" class="headerlink" title="导入坐标"></a>导入坐标</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020154236445.png" alt="image-20241020154236445"></p>
-<h3 id="MyAdvice"><a href="#MyAdvice" class="headerlink" title="MyAdvice"></a><mark>MyAdvice<mark></h3><h4 id="定义通知"><a href="#定义通知" class="headerlink" title="定义通知"></a>定义通知</h4><h4 id="定义切入点-Pointcut"><a href="#定义切入点-Pointcut" class="headerlink" title="定义切入点 @Pointcut"></a>定义切入点 @Pointcut</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020154309848.png" alt="image-20241020154309848"></p>
+<h2 id="Spring中进行AOP编程"><a href="#Spring中进行AOP编程" class="headerlink" title="Spring中进行AOP编程"></a>Spring中进行AOP编程</h2><blockquote>
+<p>导入坐标</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020154236445.png" alt="image-20241020154236445"></p>
+<h3 id="MyAdvice"><a href="#MyAdvice" class="headerlink" title="MyAdvice"></a><mark>MyAdvice<mark></h3><h4 id="定义通知（功能增强点）"><a href="#定义通知（功能增强点）" class="headerlink" title="定义通知（功能增强点）"></a>定义通知（功能增强点）</h4><h4 id="定义切入点-Pointcut"><a href="#定义切入点-Pointcut" class="headerlink" title="定义切入点 @Pointcut"></a>定义切入点 @Pointcut</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020154309848.png" alt="image-20241020154309848"></p>
 <p><code>private</code> <code>void</code> <code>空参</code> </p>
 <h4 id="绑定通知与切入点"><a href="#绑定通知与切入点" class="headerlink" title="绑定通知与切入点"></a>绑定通知与切入点</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020154407660.png" alt="image-20241020154407660"></p>
 <h4 id="Spring接管此类-Component"><a href="#Spring接管此类-Component" class="headerlink" title="Spring接管此类 @Component"></a>Spring接管此类 @Component</h4><h4 id="定义AOP-Aspect"><a href="#定义AOP-Aspect" class="headerlink" title="定义AOP @Aspect"></a>定义AOP @Aspect</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020154529656.png" alt="image-20241020154529656"></p>
-<h3 id="SpringConfig-EnableAspectAutoProxy"><a href="#SpringConfig-EnableAspectAutoProxy" class="headerlink" title="SpringConfig @EnableAspectAutoProxy"></a><mark>SpringConfig @EnableAspectAutoProxy<mark></h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020154505110-1729410361899-4.png" alt="image-20241020154505110"></p>
+<h3 id="SpringConfig-EnableAspectAutoProxy"><a href="#SpringConfig-EnableAspectAutoProxy" class="headerlink" title="SpringConfig @EnableAspectAutoProxy"></a><mark>SpringConfig @EnableAspectAutoProxy</mark></h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020154505110-1729410361899-4.png" alt="image-20241020154505110"></p>
 <h2 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h2><h3 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020155857766.png" alt="image-20241020155857766"></p>
 <p>**基于<mark>动态代理<mark>**：</p>
 <ul>
@@ -27072,7 +26642,7 @@ return 0;
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020163432072.png" alt="image-20241020163432072"></p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Pointcut(&quot;execution(void com.itheima.dao.BookDao.update())&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(void com.itheima.dao.impl.BookDaoImpl.update())&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(* com.itheima.dao.impl.BookDaoImpl.update(*))&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(void com.*.*.*.update())&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(* *..*(..))&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(* *..*e(..))&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(void com..*())&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(* com.itheima.*.*Service.find*(..))&quot;)</span></span><br><span class="line"><span class="comment">//执行com.itheima包下的任意包下的名称以Service结尾的类或接口中的save方法，参数任意，返回值任意</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<h3 id="通知类型"><a href="#通知类型" class="headerlink" title="通知类型"></a>通知类型</h3><h4 id="前置-Before"><a href="#前置-Before" class="headerlink" title="前置@Before"></a>前置@Before</h4><h4 id="后置-After"><a href="#后置-After" class="headerlink" title="后置@After"></a>后置@After</h4><h4 id="环绕-Around"><a href="#环绕-Around" class="headerlink" title="环绕@Around"></a><strong><u><mark>环绕@Around<mark></u></strong></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020170038080.png" alt="image-20241020170038080"></p>
+<h3 id="通知类型"><a href="#通知类型" class="headerlink" title="通知类型"></a>通知类型</h3><h4 id="前置-Before"><a href="#前置-Before" class="headerlink" title="前置@Before"></a>前置@Before</h4><h4 id="后置-After"><a href="#后置-After" class="headerlink" title="后置@After"></a>后置@After</h4><h4 id="环绕-Around"><a href="#环绕-Around" class="headerlink" title="环绕@Around"></a><u><mark>环绕@Around</mark></u></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020170038080.png" alt="image-20241020170038080"></p>
 <ul>
 <li><p>ProceedingJoinPoint</p>
 </li>
@@ -27095,7 +26665,7 @@ return 0;
 <h4 id="AOP获取原始方法调用参数"><a href="#AOP获取原始方法调用参数" class="headerlink" title="AOP获取原始方法调用参数"></a><mark>AOP获取原始方法调用参数<mark></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020173959692.png" alt="image-20241020173959692"></p>
 <p>这样可以对原始参数进行处理，可以增加程序健壮性。</p>
 <p><code>Object proceed(Object[] args)</code> 可以把处理以后的参数传给原始方法。</p>
-<h5 id="案例：网盘提取码去空格"><a href="#案例：网盘提取码去空格" class="headerlink" title="案例：网盘提取码去空格"></a>案例：网盘提取码去空格</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020180157823.png" alt="image-20241020180157823"></p>
+<h4 id="案例：网盘提取码去空格"><a href="#案例：网盘提取码去空格" class="headerlink" title="案例：网盘提取码去空格"></a>案例：网盘提取码去空格</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020180157823.png" alt="image-20241020180157823"></p>
 <p>args本身是Object数组，拿进来需要转成字符串toString getArgs 然后遍历参数数组，对每个字符串参数trim，再把处理以后的传给proceed</p>
 <h4 id="AOP获取返回值"><a href="#AOP获取返回值" class="headerlink" title="AOP获取返回值"></a>AOP获取返回值</h4><ol>
 <li>环绕 pjp proceed </li>
@@ -27129,7 +26699,7 @@ return 0;
 <td>不要往出抛Throwable，try catch Throwable</td>
 </tr>
 </tbody></table>
-<h2 id="AOP编程思想—this调用实例方法失效"><a href="#AOP编程思想—this调用实例方法失效" class="headerlink" title="AOP编程思想—this调用实例方法失效"></a>AOP编程思想—this调用实例方法失效</h2><p>AOP的核心，是从调用对象的方法时生成代理对象—PROXY，this指向真正的目标对象—TARGET</p>
+<h2 id="代理对象的实质—this调用实例方法失效"><a href="#代理对象的实质—this调用实例方法失效" class="headerlink" title="代理对象的实质—this调用实例方法失效"></a>代理对象的实质—this调用实例方法失效</h2><p>AOP的核心，是从调用对象的方法时生成代理对象—PROXY，this指向真正的目标对象—TARGET</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">interface</span> <span class="title class_">IService</span>&#123;</span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">foo</span><span class="params">()</span>;</span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">zoo</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">IService</span>&#123;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">foo</span><span class="params">()</span>&#123;</span><br><span class="line">		System.println(<span class="string">&quot;fooStart...&quot;</span>);</span><br><span class="line">		zoo();<span class="comment">//this指针调用实例方法</span></span><br><span class="line">		System.println(<span class="string">&quot;fooFinish...&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@Transactional</span></span><br><span class="line">	<span class="keyword">void</span> <span class="title function_">zoo</span><span class="params">()</span>&#123;</span><br><span class="line">		save(a);<span class="comment">//假设是将a保存到数据库</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>/<span class="number">0</span>;</span><br><span class="line">		save(b);<span class="comment">//假设是将b保存到数据库</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Test</span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> IService service;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">        service.foo();<span class="comment">//从外部调用内部的事务方法</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>事务的实现基于spring aop，如果直接用this，则会使用target对象进行方法调用，</p>
@@ -27175,7 +26745,7 @@ return 0;
 <h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><ul>
 <li>InnoDB存储引擎支持事务（SQL语句）</li>
 </ul>
-<h3 id="原生JDBC"><a href="#原生JDBC" class="headerlink" title="原生JDBC"></a>原生JDBC</h3><ul>
+<h3 id="原生-JDBC"><a href="#原生-JDBC" class="headerlink" title="原生 JDBC"></a>原生 JDBC</h3><ul>
 <li> 注册驱动，</li>
 <li> 获取Connection，</li>
 <li> 建立Statement执行SQL语句，Connection可以管理事务（本质是执行SQL语句）</li>
@@ -27318,7 +26888,7 @@ return 0;
 </ul>
 <p><mark>总结：不要在事务里面开启子线程，应该是在子线程里开启事务。</mark></p>
 <h1 id="Spring-MVC"><a href="#Spring-MVC" class="headerlink" title="Spring MVC"></a>Spring MVC</h1><h2 id="入门案例"><a href="#入门案例" class="headerlink" title="入门案例"></a>入门案例</h2><p>Java实现MVC模型的web框架，灵活性强，主要进行<strong>表现层开发</strong> Controller。</p>
-<h3 id="导坐标"><a href="#导坐标" class="headerlink" title="导坐标"></a>导坐标</h3><h3 id="bean创建-Controller"><a href="#bean创建-Controller" class="headerlink" title="bean创建@Controller"></a>bean创建@Controller</h3><h4 id="方法级别注解-请求映射-RequestMapping"><a href="#方法级别注解-请求映射-RequestMapping" class="headerlink" title="方法级别注解 请求映射 @RequestMapping"></a>方法级别注解 请求映射 @RequestMapping</h4><h4 id="方法级别注解-设置响应-ResponseBody"><a href="#方法级别注解-设置响应-ResponseBody" class="headerlink" title="方法级别注解 设置响应 @ResponseBody"></a>方法级别注解 设置响应 @ResponseBody</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021161644841.png" alt="image-20241021161644841"></p>
+<h3 id="bean创建-Controller"><a href="#bean创建-Controller" class="headerlink" title="bean创建@Controller"></a>bean创建@Controller</h3><h4 id="方法级别注解-请求映射-RequestMapping"><a href="#方法级别注解-请求映射-RequestMapping" class="headerlink" title="方法级别注解 请求映射 @RequestMapping"></a>方法级别注解 请求映射 @RequestMapping</h4><h4 id="方法级别注解-设置响应-ResponseBody"><a href="#方法级别注解-设置响应-ResponseBody" class="headerlink" title="方法级别注解 设置响应 @ResponseBody"></a>方法级别注解 设置响应 @ResponseBody</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021161644841.png" alt="image-20241021161644841"></p>
 <p>都是方法级别注解    </p>
 <h3 id="创建SpringMvcConfig-Configuration-ComponentScan"><a href="#创建SpringMvcConfig-Configuration-ComponentScan" class="headerlink" title="创建SpringMvcConfig@Configuration@ComponentScan"></a>创建SpringMvcConfig@Configuration@ComponentScan</h3><p>扫描到controller</p>
 <h3 id="创建servlet容器Config"><a href="#创建servlet容器Config" class="headerlink" title="创建servlet容器Config"></a>创建servlet容器Config</h3><p>ServletContainerInitConfig继承AbstractDispatcherServeltInitializer类重写对应方法。都是一次性</p>
@@ -27660,7 +27230,7 @@ return 0;
 <h5 id="100-code-based"><a href="#100-code-based" class="headerlink" title="100% code-based"></a>100% code-based</h5><p>用Java类的形式配置ServletContext，有一些细微差异，Spring这边实现了ServletContainerInitializer接口，注册组件的工作就交给了WebApplicationInitializer：</p>
 <p>先根据指定的rootWacConfig配置类（SpringConfig）创建出父容器，父容器作为参数进行Listener的有参构造，最后以<mark>add<mark>Listener的方式注册到ServletContext中。</p>
 <h2 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h2><h3 id="Interceptor"><a href="#Interceptor" class="headerlink" title="Interceptor"></a>Interceptor</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023193138396.png" alt="image-20241023193138396"></p>
-<h4 id="Interceptor-vs-Filter"><a href="#Interceptor-vs-Filter" class="headerlink" title="Interceptor vs Filter"></a>Interceptor vs Filter</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023193414214.png" alt="image-20241023193414214"></p>
+<h4 id="In-Filter"><a href="#In-Filter" class="headerlink" title="In Filter"></a>In Filter</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023193414214.png" alt="image-20241023193414214"></p>
 <p>filter在一定是在访问servlet之前，interceptor只能在servlet中， <mark>before Controller<mark></p>
 <h3 id="功能类"><a href="#功能类" class="headerlink" title="功能类"></a>功能类</h3><p>控制表现层：controller下新建interceptor包，新建一个Interceptor类 <strong>extends HandlerInterceptor</strong> </p>
 <p>注意preHandle返回值和@Component</p>
@@ -27688,8 +27258,8 @@ return 0;
 <h3 id="写控制器类"><a href="#写控制器类" class="headerlink" title="写控制器类"></a>写控制器类</h3><p>把controller类写好</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025194037167.png" alt="image-20241025194037167"></p>
 <h3 id="启动app"><a href="#启动app" class="headerlink" title="启动app"></a>启动app</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025194052846.png" alt="image-20241025194052846"></p>
-<h2 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h2><h3 id="打包—jar"><a href="#打包—jar" class="headerlink" title="打包—jar"></a>打包—jar</h3><p><code>package</code> 之前 <code>clean</code> 全部设置为UTF-8参数</p>
-<h3 id="命令行启动-java-jar"><a href="#命令行启动-java-jar" class="headerlink" title="命令行启动 java -jar"></a>命令行启动 java -jar</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025194844475.png" alt="image-20241025194844475"></p>
+<h3 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h3><h4 id="打包—jar"><a href="#打包—jar" class="headerlink" title="打包—jar"></a>打包—jar</h4><p><code>package</code> 之前 <code>clean</code> 全部设置为UTF-8参数</p>
+<h4 id="命令行启动-java-jar"><a href="#命令行启动-java-jar" class="headerlink" title="命令行启动 java -jar"></a>命令行启动 java -jar</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025194844475.png" alt="image-20241025194844475"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025194925821.png" alt="image-20241025194925821"></p>
 <p>jar执行要有入口类，boot打包需要插件才能生成可执行的入口类</p>
 <h2 id="简述boot"><a href="#简述boot" class="headerlink" title="简述boot"></a>简述boot</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025195226537.png" alt="image-20241025195226537"></p>
@@ -27791,6 +27361,58 @@ return 0;
 <h5 id="配置类全部删除"><a href="#配置类全部删除" class="headerlink" title="配置类全部删除"></a>配置类全部删除</h5><h5 id="Dao加-Mapper"><a href="#Dao加-Mapper" class="headerlink" title="Dao加@Mapper"></a>Dao加@Mapper</h5><h5 id="Controller-Service不变"><a href="#Controller-Service不变" class="headerlink" title="Controller Service不变"></a>Controller Service不变</h5><h5 id="application-yml-配置端口和数据源"><a href="#application-yml-配置端口和数据源" class="headerlink" title="application.yml 配置端口和数据源"></a>application.yml 配置端口和数据源</h5><h5 id="静态资源放到resources-static"><a href="#静态资源放到resources-static" class="headerlink" title="静态资源放到resources/static"></a>静态资源放到resources/static</h5><h6 id="静态资源的重定向-JS脚本"><a href="#静态资源的重定向-JS脚本" class="headerlink" title="静态资源的重定向(JS脚本)"></a>静态资源的重定向(JS脚本)</h6><p>访问一个web资源，如果直接访问 <code>localhost:port</code> 一般会请求一个主页index.html，为了能直接从地址访问资源，创建一个index.html，添加一个跳转的js脚本</p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">	<span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&quot;pages/books.html&quot;</span>;</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
+<h2 id="Spring-Boot-自动装配"><a href="#Spring-Boot-自动装配" class="headerlink" title="Spring Boot 自动装配"></a>Spring Boot 自动装配</h2><p><a href="https://scatteredream.github.io/2025/02/03/rpc-interpretation/#SpringBoot-%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%EF%BC%9A%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%A1%86%E6%9E%B6%E5%86%85%E9%83%A8%E7%9A%84-Bean">SpringBoot-自动装配：自动装配框架内部的-Bean</a> </p>
+<p><a href="https://scatteredream.github.io/2024/10/01/spring-boot-starter/">自定义 starter | scatteredream’s blog</a> </p>
+<h2 id="SpringBootApplication"><a href="#SpringBootApplication" class="headerlink" title="@SpringBootApplication"></a>@SpringBootApplication</h2><p><code>@SpringBootApplication</code> 是 Spring Boot 的核心注解，它是一个<strong>组合注解</strong>，整合了以下三个关键注解的功能：</p>
+<h3 id="核心作用"><a href="#核心作用" class="headerlink" title="核心作用"></a>核心作用</h3><ul>
+<li><strong><code>@Configuration</code></strong><br>标记当前类为<strong>配置类</strong>，允许通过 <code>@Bean</code> 定义 Spring 容器中的组件。</li>
+<li><strong><code>@EnableAutoConfiguration</code></strong><br>启用 Spring Boot 的<strong>自动配置机制</strong>，根据项目依赖（如 JDBC、Web、Redis 等）自动配置 Spring 应用。</li>
+<li><strong><code>@ComponentScan</code></strong><br>自动扫描<strong>当前包及其子包</strong>下的组件（如 <code>@Controller</code>、<code>@Service</code>、<code>@Repository</code> 等），无需手动注册。</li>
+</ul>
+<h3 id="典型用法"><a href="#典型用法" class="headerlink" title="典型用法"></a>典型用法</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyApp</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(MyApp.class, args); <span class="comment">// 启动 Spring Boot 应用</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>通常放在项目的<strong>主类</strong>（含 <code>main</code> 方法）上。</li>
+<li>启动后会自动初始化 Spring 容器、加载配置、启动内嵌服务器（如 Tomcat）。</li>
+</ul>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><h4 id="排除特定自动配置"><a href="#排除特定自动配置" class="headerlink" title="排除特定自动配置"></a>排除特定自动配置</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication(exclude = &#123;DataSourceAutoConfiguration.class&#125;)</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>例如：项目未使用数据库时，可排除数据源自动配置。</li>
+</ul>
+<h4 id="自定义扫描路径"><a href="#自定义扫描路径" class="headerlink" title="自定义扫描路径"></a>自定义扫描路径</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication(scanBasePackages = &quot;com.example&quot;)</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>默认扫描主类所在包，如需扫描其他包，可通过 <code>scanBasePackages</code> 指定</li>
+<li>因此，默认情况下，SpringBootApplication修饰的类应该在根目录，确保所有类都能被扫到</li>
+</ul>
+<h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><ul>
+<li><p><strong>Q：为什么我的 <code>@Component</code> 组件没被扫描到？</strong><br>A：确保组件位于主类的<strong>同级或子包</strong>下，或通过 <code>scanBasePackages</code> 显式指定路径。</p>
+</li>
+<li><p><strong>Q：如何查看生效的自动配置？</strong><br>A：启动时添加 <code>--debug</code> 参数，日志会输出所有自动配置的评估结果。</p>
+</li>
+</ul>
+<h3 id="对比传统-Spring"><a href="#对比传统-Spring" class="headerlink" title="对比传统 Spring"></a>对比传统 Spring</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Spring Boot (<code>@SpringBootApplication</code>)</th>
+<th>传统 Spring</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>配置方式</td>
+<td>自动配置 + 默认约定</td>
+<td>手动 XML 或 Java Config</td>
+</tr>
+<tr>
+<td>组件扫描</td>
+<td>自动（默认包扫描）</td>
+<td>需显式配置 <code>@ComponentScan</code></td>
+</tr>
+<tr>
+<td>依赖管理</td>
+<td>通过 Starter 简化</td>
+<td>手动管理依赖版本</td>
+</tr>
+</tbody></table>
 ]]></content>
       <categories>
         <category>spring</category>
@@ -33363,5 +32985,508 @@ return 0;
       <categories>
         <category>review</category>
       </categories>
+  </entry>
+  <entry>
+    <title>Socket 编程</title>
+    <url>/2025/05/29/net-io-socket/</url>
+    <content><![CDATA[<h1 id="Socket-Programming"><a href="#Socket-Programming" class="headerlink" title="Socket Programming"></a>Socket Programming</h1><h2 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h2><h3 id="用户空间和内核态空间"><a href="#用户空间和内核态空间" class="headerlink" title="用户空间和内核态空间"></a>用户空间和内核态空间</h3><p>服务器大多都采用Linux系统，这里我们以Linux为例来讲解:</p>
+<p>ubuntu和Centos 都是Linux的发行版，发行版可以看成对linux包了一层壳，任何Linux发行版，其系统内核都是Linux。我们的应用都需要通过Linux内核与硬件交互</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653844970346.png" alt="1653844970346"></p>
+<p>用户的应用，比如redis，mysql等其实是没有办法去执行访问我们操作系统的硬件的，所以我们可以通过发行版的这个壳子去访问内核，再通过内核去访问计算机硬件</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653845147190.png" alt="1653845147190"></p>
+<p>计算机硬件包括，如cpu，内存，网卡等等，内核（通过寻址空间）可以操作硬件的，但是内核需要不同设备的驱动，有了这些驱动之后，内核就可以去对计算机硬件去进行 内存管理，文件系统的管理，进程的管理等等</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653896065386.png" alt="1653896065386"></p>
+<p>我们想要用户的应用来访问，计算机就必须要通过对外暴露的一些接口，才能访问到，从而简介的实现对内核的操控，但是内核本身上来说也是一个应用，所以他本身也需要一些内存，cpu等设备资源，用户应用本身也在消耗这些资源，如果不加任何限制，用户去操作随意的去操作我们的资源，就有可能导致一些冲突，甚至有可能导致我们的系统出现无法运行的问题，因此我们需要把用户和<strong>内核隔离开</strong></p>
+<p>进程的寻址空间划分成两部分：<strong>内核空间、用户空间</strong></p>
+<p>什么是寻址空间呢？我们的应用程序也好，还是内核空间也好，都是没有办法直接去物理内存的，而是通过分配一些虚拟内存映射到物理内存中，我们的内核和应用程序去访问虚拟内存的时候，就需要一个虚拟地址，这个地址是一个无符号的整数，比如一个32位的操作系统，他的带宽就是32，他的虚拟地址就是2的32次方，也就是说他寻址的范围就是0~2的32次方， 这片寻址空间对应的就是2的32个字节，就是4GB，这个4GB，会有3个GB分给用户空间，会有1GB给内核系统</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653896377259.png" alt="1653896377259"></p>
+<p>在linux中，他们权限分成两个等级，0和3，用户空间只能执行受限的命令（Ring3），而且不能直接调用系统资源，必须通过内核提供的接口来访问内核空间可以执行特权命令（Ring0），调用一切系统资源，所以一般情况下，用户的操作是运行在用户空间，而内核运行的数据是在内核空间的，而有的情况下，一个应用程序需要去调用一些特权资源，去调用一些内核空间的操作，所以此时他俩需要在用户态和内核态之间进行切换。</p>
+<p>比如：</p>
+<p>Linux系统为了提高IO效率，会在用户空间和内核空间都加入缓冲区：</p>
+<p>写数据时，要把用户缓冲数据拷贝到内核缓冲区，然后写入设备</p>
+<p>读数据时，要从设备读取数据到内核缓冲区，然后拷贝到用户缓冲区</p>
+<p>针对这个操作：我们的用户在写读数据时，会去向内核态申请，想要读取内核的数据，而内核数据要去等待驱动程序从硬件上读取数据，当从磁盘上加载到数据之后，内核会将数据写入到内核的缓冲区中，然后再将数据拷贝到用户态的buffer中，然后再返回给应用程序，整体而言，速度慢，就是这个原因，为了加速，我们希望read也好，还是wait for data也最好都不要等待，或者时间尽量的短。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653896687354.png" alt="1653896687354"></p>
+<h3 id="TCP-Socket"><a href="#TCP-Socket" class="headerlink" title="TCP Socket"></a>TCP Socket</h3><p><a href="https://zhuanlan.zhihu.com/p/464268288">网络编程：Socket 是如何创建的？ - 知乎 (zhihu.com)</a></p>
+<h4 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h4><p>Socket：应用程序通过socket提供的接口将网络传输的工作交给linux内核，内核通过驱动程序操作网卡，接受网卡发来的信息。</p>
+<p><code>socket</code> 是一个 <strong>编程接口</strong>（API），它本身并不属于网络协议栈的某一层，但它主要用于操作 <strong>传输层</strong>（如 TCP 和 UDP）以及网络层（如原始套接字）的通信，它本身不是传输层或应用层的一部分，而是一个编程抽象，用于简化应用程序访问网络的过程。</p>
+<ul>
+<li><strong>Socket API</strong> 是操作系统提供的接口，用于应用程序与网络协议栈交互。</li>
+<li>它允许开发者使用 <strong>传输层协议（TCP/UDP）</strong> 或更底层的协议（如 IP）进行网络通信。</li>
+<li>因此，虽然 Socket 本身不属于传输层或应用层，但它主要作用于 <strong>传输层协议</strong>，并为应用层提供访问网络的工具。</li>
+</ul>
+<p><strong>按照使用的协议可以分为</strong>：</p>
+<ul>
+<li><p><strong>传输层：</strong></p>
+<ul>
+<li>使用 <code>TCP</code> 协议时，<code>TCP Socket</code> 提供可靠的面向连接的数据传输。</li>
+<li>使用 <code>UDP</code> 协议时，<code>UDP Socket</code> 提供无连接、不可靠的数据传输。</li>
+</ul>
+</li>
+<li><p><strong>网络层：</strong></p>
+<ul>
+<li>使用原始套接字（Raw Socket）时，可以直接处理 IP 包，适用于网络工具如 ping 和 traceroute。</li>
+</ul>
+</li>
+<li><p>应用程序通过 Socket 来发送和接收数据，但具体的数据传输和可靠性保障是由 <strong>传输层协议（如 TCP/UDP）</strong> 实现的</p>
+</li>
+</ul>
+<h4 id="类型"><a href="#类型" class="headerlink" title="类型"></a>类型</h4><ul>
+<li><strong>主动 Socket</strong> socket()默认创建的socket类型，客户端向服务端建立连接需要的socket</li>
+<li><strong>监听 Socket</strong> listen()将主动socket转换成监听socket，用于监听客户端的连接请求。是服务端独有的，将伴随服务端的整个生命周期。</li>
+<li><strong>已连接 Socket</strong> 通过系统库函数accept()获取的已建立连接的socket，该socket是用于客户端和服务端数据读写的通道，已连接socket是服务器独有的，生命周期为 客户端和服务端的维持的连接时长，当断开连接，生命周期结束。</li>
+</ul>
+<p>一个服务器通常通常仅仅只创建一个监听socket描述字，它在该服务器的生命周期内一直存在。内核为每个由服务器进程接受的客户连接创建了一个已连接socket描述字，当服务器完成了对某个客户的服务，相应的已连接socket描述字就被关闭。</p>
+<h4 id="socket-的基本使用"><a href="#socket-的基本使用" class="headerlink" title="socket 的基本使用"></a>socket 的基本使用</h4><p>socket, bind, connect, listen, accept….</p>
+<blockquote>
+<ul>
+<li><p><code>socket()</code>:创建socket，规定各项参数，不能随意组合，socket()创建的socket默认是一个主动类型的，参数如下：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241115195114618.png" alt="image-20241115195114618"></p>
+</li>
+<li><p><code>bind</code>: 将IP和端口号绑定到socket上，如果不绑定，客户端会通过connect随机分配，服务端会通过listen随机分配，服务端需要的是一个明确的地址信息，所以必须提前绑定好端口。</p>
+</li>
+</ul>
+<img src="https://cdn.xiaolincoding.com//mysql/other/35bc3541c237686aa36e0a88f80592d4.png" alt="图片" style="zoom: 80%;" />
+
+<ul>
+<li><p><code>connect()</code>: 客户端通过connect向服务端发起连接请求。从调用到返回：从<code>SYN_SENT</code>到<code>ESTABLISHED</code>，之后客户端会发送ACK报文，提示</p>
+</li>
+<li><p><code>listen()</code>: 将socket变为被动类型（监听Socket）监听客户的连接请求。</p>
+</li>
+<li><p><code>accept()</code>: 服务端监听到连接请求之后，在3次成功握手之后成功建立连接。1个<strong>监听Socket</strong>维护2个连接队列（全连接established和半连接syn_rcvd），accept会从全连接队列中拿出一个已连接的Socket进行处理，如果还没有完成，就要阻塞等待直到全链接队列有可用的socket。拿到已连接Socket之后就可以开始网络I/O，类同普通文件的读写I/O。当连接可用时，创建的套接字就可以从请求连接的进程中读取数据。</p>
+<ul>
+<li>accept() 调用创建一个与监听socket具有相同属性的新socketFD，并将其返回给调用者caller。如果队列没有挂起的连接请求，accept() 会阻塞调用者，除非socket处于非阻塞模式（Non-Blocking）。如果没有连接请求排队并且套接字处于非阻塞模式，则accept()返回-1并将错误代码设置为<mark>EWOULDBLOCK<mark>。新的socketFD不能用于接受新连接。原来的监听socket仍然可以接受更多的连接请求。</li>
+<li>accept的第一个参数为服务器的socketFD，是服务器开始调用socket()函数生成的，称为监听socketFD；<br>而accept函数返回的是已连接的socketFD。两个套接字不一样。</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241115202937962.png" alt="image-20241115202937962"></p>
+<p>连接双方的IP地址和端口构成一个四元组，唯一标记一个客户端，将其作为Key，存到哈希表里，值就是sockfd，下次连接时重新从哈希表里取出来即可。        </p>
+<ul>
+<li><code>send/recv read/write</code>: 读写操作会先写到缓冲区中</li>
+</ul>
+<p><strong>怎么观察 socket 缓冲区</strong> </p>
+<p>如果想要查看 socket 缓冲区，可以在linux环境下执行 <code>netstat -nt</code> 命令。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"># netstat -nt</span><br><span class="line">Active Internet connections (w/o servers)</span><br><span class="line">Proto Recv-Q Send-Q Local Address           Foreign Address         State      </span><br><span class="line">tcp        <span class="number">0</span>     <span class="number">60</span> <span class="number">172.22</span><span class="number">.66</span><span class="number">.69</span>:<span class="number">22</span>         <span class="number">122.14</span><span class="number">.220</span><span class="number">.252</span>:<span class="number">59889</span>    ESTABLISHED</span><br></pre></td></tr></table></figure>
+
+<p>这上面表明了，这里有一个协议（Proto）类型为 TCP 的连接，同时还有本地（Local Address）和远端（Foreign Address）的IP信息，状态（State）是已连接（Established） 还有<strong>Send-Q 是发送缓冲区</strong>，下面的数字60是指，当前还有60 Byte在发送缓冲区中未发送。而 <strong>Recv-Q 代表接收缓冲区</strong>，此时是空的，数据都被应用进程接收干净了。</p>
+<p><a href="https://blog.csdn.net/qcrao/article/details/120278587">动画图解 socket 缓冲区的那些事儿-CSDN博客</a> </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241116154258525.png" alt="image-20241116154258525"></p>
+</blockquote>
+<h4 id="与文件系统、内核的调用关系"><a href="#与文件系统、内核的调用关系" class="headerlink" title="与文件系统、内核的调用关系"></a>与文件系统、内核的调用关系</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241115193558676.png" alt="image-20241115193558676"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241115193416185.png" alt="image-20241115193416185"></p>
+<h4 id="Socket-就绪之前"><a href="#Socket-就绪之前" class="headerlink" title="Socket 就绪之前"></a>Socket 就绪之前</h4><p>从ESTABLISHED tcp connection 到 就绪 之前：</p>
+<p>TCP是面向连接的协议，通过三次握手建立连接后，会进行一些必要的初始化：</p>
+<p><strong>（1）TCP状态维护</strong></p>
+<ul>
+<li><strong>接收和发送缓冲区准备</strong>：双方为这个连接分配缓冲区，准备接收或发送数据。</li>
+<li><strong>连接状态记录</strong>：内核中的Socket结构会记录新连接的相关信息，如对端的IP地址、端口、协议状态等。</li>
+</ul>
+<p><strong>（2）SSL/TLS握手（如适用）</strong></p>
+<p>如果通信使用了加密（如HTTPS），在TCP连接建立后会进行SSL/TLS握手。此过程包括：</p>
+<ul>
+<li>协商协议版本和加密算法。</li>
+<li>交换密钥。</li>
+<li>验证身份。</li>
+</ul>
+<p><strong>（3）应用层协议的初始化</strong></p>
+<p>在TCP连接建立后，通常需要按照应用层协议（如HTTP、FTP、WebSocket等）定义的逻辑进行数据交互的初始化。例如：</p>
+<ul>
+<li>HTTP/1.1会发送<code>GET</code>或<code>POST</code>请求。</li>
+<li>WebSocket会升级协议，通过<code>Upgrade</code>头进行握手。</li>
+</ul>
+<p><strong>（4）延迟与阻塞等待</strong></p>
+<p>如果一端发送了数据而另一端未及时处理，连接可能处于阻塞或等待状态。例如：</p>
+<ul>
+<li><strong>服务端等待客户端请求</strong>。  </li>
+<li><strong>客户端等待服务端响应</strong>。  </li>
+</ul>
+<h2 id="五种IO模型"><a href="#五种IO模型" class="headerlink" title="五种IO模型"></a>五种IO模型</h2><h3 id="阻塞IO-BIO"><a href="#阻塞IO-BIO" class="headerlink" title="阻塞IO (BIO)"></a>阻塞IO (BIO)</h3><p>在《UNIX网络编程》一书中，总结归纳了5种IO模型：</p>
+<ul>
+<li>阻塞IO（Blocking IO）</li>
+<li>非阻塞IO（Nonblocking IO）</li>
+<li>IO多路复用（IO Multiplexing）</li>
+<li>信号驱动IO（Signal Driven IO）</li>
+<li>异步IO（Asynchronous IO）</li>
+</ul>
+<p>应用程序想要去读取数据，他是无法直接去读取磁盘/网卡数据的，他需要先到内核里边去等待内核操作硬件拿到数据，这个过程就是1，是需要等待的，等到内核从磁盘上把数据加载出来之后，再把这个数据写给用户的缓存区，这个过程是2，如果是阻塞IO，那么整个过程中，用户从发起读请求开始，一直到读取到数据，都是一个阻塞状态。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653897115346.png" alt="1653897115346"></p>
+<p>具体流程如下图：</p>
+<p>用户去读取数据时，会去先发起recvform一个命令，去尝试从内核上加载数据，如果内核没有数据，那么用户就会等待，此时内核会去从硬件上读取数据，内核读取数据之后，会把数据拷贝到用户态，并且返回ok，整个过程，都是阻塞等待的，这就是阻塞IO</p>
+<p>总结如下：</p>
+<p>顾名思义，阻塞IO就是两个阶段都必须阻塞等待：</p>
+<p>阶段一：receivefrom（阻塞）</p>
+<ul>
+<li>用户进程尝试读取数据（比如网卡数据）</li>
+<li>此时数据尚未到达，内核需要等待数据</li>
+<li>此时用户进程也处于阻塞状态</li>
+</ul>
+<p>阶段二：copy（阻塞）</p>
+<ul>
+<li>数据到达并拷贝到内核缓冲区，代表已就绪</li>
+<li>将内核数据拷贝到用户缓冲区</li>
+<li>拷贝过程中，用户进程依然阻塞等待</li>
+<li>拷贝完成，用户进程解除阻塞，处理数据</li>
+</ul>
+<p>可以看到，阻塞IO模型中，用户进程在两个阶段都是阻塞状态。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653897270074.png" alt="1653897270074"></p>
+<h3 id="非阻塞IO-NIO"><a href="#非阻塞IO-NIO" class="headerlink" title="非阻塞IO (NIO)"></a>非阻塞IO (NIO)</h3><p>顾名思义，非阻塞IO的recvfrom操作会立即返回结果而不是阻塞用户进程。</p>
+<p>阶段一：recvfrom（非阻塞）</p>
+<ul>
+<li>用户进程尝试读取数据（比如网卡数据）</li>
+<li>此时数据尚未到达，内核需要等待数据</li>
+<li>返回异常给用户进程</li>
+<li>用户进程拿到error后，再次尝试读取</li>
+<li>循环往复，直到数据就绪</li>
+</ul>
+<p>阶段二：copy（阻塞）</p>
+<ul>
+<li>将内核数据拷贝到用户缓冲区</li>
+<li>拷贝过程中，用户进程依然阻塞等待</li>
+<li>拷贝完成，用户进程解除阻塞，处理数据</li>
+<li>可以看到，非阻塞IO模型中，用户进程在第一个阶段是非阻塞，第二个阶段是阻塞状态。虽然是非阻塞，但性能并没有得到提高。而且忙等机制会导致CPU空转，CPU使用率暴增。</li>
+</ul>
+<p>用户应用进行IO操作，调用监听socket的accept()获取已连接socket进行IO操作，如果accept获取不到已连接的socket则直接返回-1(EWOULDBLOCK)，获取成功则返回已连接的socket的socketFD</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653897490116.png" alt="1653897490116"></p>
+<h3 id="IO多路复用-IO-Multiplexing"><a href="#IO多路复用-IO-Multiplexing" class="headerlink" title="IO多路复用 (IO Multiplexing)"></a>IO多路复用 (IO Multiplexing)</h3><p>无论是阻塞IO还是非阻塞IO，用户应用在一阶段都需要调用recvfrom来获取数据，差别在于无数据时的处理方案：</p>
+<p>如果调用recvfrom时，恰好没有数据，阻塞IO会使CPU阻塞，非阻塞IO使CPU空转，都不能充分发挥CPU的作用。<br>如果调用recvfrom时，恰好有数据，则用户进程可以直接进入第二阶段，读取并处理数据</p>
+<p>所以怎么看起来以上两种方式性能都不好</p>
+<p>而在单线程情况下，只能依次处理IO事件，如果正在处理的IO事件恰好未就绪（数据不可读或不可写），线程就会被阻塞，所有IO事件都必须等待，性能自然会很差。</p>
+<p>就比如服务员给顾客点餐，<strong>分两步</strong>：</p>
+<ul>
+<li>顾客思考要吃什么（服务员这边等待数据就绪）</li>
+<li>顾客想好了，开始点餐（服务员开始真正读取数据）</li>
+</ul>
+<p>要提高效率有几种办法？</p>
+<p>方案一：增加更多服务员（多线程）：上下文切换消耗资源 PASS<br>方案二：不排队，谁想好了吃什么（数据就绪了），服务员就给谁点餐（用户应用就去读取数据）OKAY</p>
+<p>那么问题来了：用户进程如何知道内核中数据是否就绪呢？</p>
+<p>所以接下来就需要详细的来解决多路复用模型是如何知道到底怎么知道内核数据是否就绪的问题了</p>
+<p>这个问题的解决依赖于提出的：Socket FD</p>
+<p>文件描述符（File Descriptor）：简称FD，是一个从0 开始的无符号整数，用来关联Linux中的一个文件。在Linux中，一切皆文件，例如常规文件、视频、硬件设备等，当然也包括网络套接字（Socket）。</p>
+<blockquote>
+<p>一个进程对应一个<code>task_struct</code>，一个<code>task_struct</code>中有一个<code>file_struct</code>，一个<code>file_struct</code>中有一个<code>fdt</code>(file descriptor table文件描述符表) <code>fdt</code>中就有一个<code>fd_array</code>（fd数组）数组索引为fd，内容就是指向<code>file</code>的指针</p>
+</blockquote>
+<p>通过FD，我们的网络模型可以利用一个线程监听多个FD，并在某个FD可读、可写时得到通知，从而避免无效的等待，充分利用CPU资源。</p>
+<p>阶段一：</p>
+<ul>
+<li>用户进程调用select，指定要监听的FD集合</li>
+<li>核监听FD对应的多个socket</li>
+<li>任意一个或多个socket数据就绪则返回readable（可读）</li>
+<li>此过程中用户进程阻塞</li>
+</ul>
+<p>阶段二：</p>
+<ul>
+<li>用户进程找到就绪的socket</li>
+<li>依次调用recvfrom读取数据</li>
+<li>内核将数据拷贝到用户空间</li>
+<li>用户进程处理数据。</li>
+</ul>
+<p>当用户去读取数据的时候，不再去直接调用recvfrom了，而是调用select的函数，select函数会将需要监听的数据交给内核，由内核去检查这些数据是否就绪了，如果说这个数据就绪了，就会通知应用程序数据就绪，然后来读取数据，再从内核中把数据拷贝给用户态，完成数据处理，如果N多个FD一个都没处理完，此时就进行等待。</p>
+<p>BIO模式只能查看一个socket，SocketA准备就绪了，但是用户进程在阻塞等待SocketB的数据，这就是无效的等待。</p>
+<p>IO Multiplexing可以减少空等空转空轮询，提高性能</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653898691736.png" alt="1653898691736"></p>
+<p>数据就绪返回readable，用户进程调用recvfrom处理数据。</p>
+<p>IO多路复用是利用单个线程来同时监听多个FD，并在某个FD可读、可写时得到通知，从而避免无效的等待，充分利用CPU资源。不过监听FD的方式、通知的方式又有多种实现，常见的有：select，poll，epoll。其中select和pool相当于是当被监听的数据准备好之后，他会把你监听的FD数组整个数据都发给你，你需要到整个FD中去找，哪些是处理好了的，需要通过遍历的方式，所以性能也并不是那么好。而epoll，则相当于内核准备好了之后，他会把准备好的数据，直接发给你，省去了遍历的动作。</p>
+<h4 id="select"><a href="#select" class="headerlink" title="select()"></a><code>select()</code></h4><p><a href="https://xiaolincoding.com/os/8_network_system/selete_poll_epoll.html#select-poll">select/poll</a> </p>
+<h5 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h5><p>select是Linux最早是由的I/O多路复用技术：</p>
+<p>简单说，就是我们把需要处理的数据封装成FD，然后在用户态时创建一个fd的集合（这个集合的大小是要监听的那个FD的最大值+1，但是大小整体是有限制的 ），这个集合的长度大小是有限制的，同时在这个集合中，标明出来我们要控制哪些数据，比如要监听的数据，是1,2,5三个数据，此时会执行select函数，<strong>遍历数组把需要监听的FD置1</strong>（直到nfds fd上限），然后<mark>将整个FDSet拷贝到内核态<mark>，内核态会去<strong>遍历用户态传递过来的数据</strong>，如果发现这里边都数据都没有就绪，就休眠。</p>
+<p>直到有数据准备好时，就会被唤醒，唤醒之后，<strong>再次遍历一遍</strong>，看看谁准备好了，将没有准备好的数据置0，<mark>最后再次将这个FDSet拷贝回用户态<mark>，此时用户态就知道有人准备好了（readable），但对于用户态而言，并不知道谁处理好了，所以用户态<strong>也需要去进行遍历</strong>，然后找到被置1（准备就绪）的节点，再去发起receivefrom读写请求，我们会发现，这种模式下他虽然比阻塞IO和非阻塞IO好，但是依然有些麻烦的事情， 比如说频繁的传递fd集合，频繁的去遍历FD等问题</p>
+<p>bitmap： __fd_mask = 32bits  FDSet共1024个bit位。</p>
+<p>把fd的状态映射到单个bit位上面，很大程度上节省了内存空间，但是也导致用户态不知道谁准备好了</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653900022580.png" alt="1653900022580"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241114211029023.png" alt="image-20241114211029023"></p>
+<blockquote>
+<p>select 返回值：</p>
+<ul>
+<li><strong>大于0</strong>：表示有文件描述符准备好了。返回值是就绪的文件描述符的数量，也就是有多少个文件描述符在监视的时间内发生了事件（例如：可以读、可以写、异常等）。</li>
+<li><strong>0</strong>：表示在指定的时间内没有文件描述符准备好，即超时。</li>
+<li>-1：表示发生了错误，errno 中会设置为相应的错误码。常见的错误包括：<ul>
+<li><code>EBADF</code>：传递给 <code>select</code> 的某些文件描述符无效。</li>
+<li><code>EINTR</code>：调用被信号中断。</li>
+<li><code>EINVAL</code>：某个参数无效（例如 <code>nfds</code> 负值）。</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<h5 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h5><ul>
+<li>整个流程涉及到两次用户态与内核态之间的拷贝，频繁切换，一共需要2次「拷贝」fdSet</li>
+<li>返回值只是就绪的节点个数，然而select并不知道是具体哪个节点就绪，还需要重新遍历，一共需要2次「遍历」</li>
+<li>fd_Set 最多监听1024个</li>
+</ul>
+<h4 id="poll"><a href="#poll" class="headerlink" title="poll()"></a><code>poll()</code></h4><p>poll模式对select模式做了简单改进，但性能提升不明显，部分关键代码如下：</p>
+<p>IO流程：</p>
+<ul>
+<li>创建pollfd数组，向其中添加关注的fd信息，数组大小自定义</li>
+<li>调用poll函数，将pollfd数组拷贝到内核空间，转链表存储，无上限</li>
+<li>内核遍历fd，判断是否就绪</li>
+<li>数据就绪或超时后，拷贝pollfd数组到用户空间，返回就绪fd数量n</li>
+<li>用户进程判断n是否大于0,大于0则遍历pollfd数组，找到就绪的fd</li>
+</ul>
+<p><strong>与select对比：</strong></p>
+<ul>
+<li>select模式中的fd_set大小固定为1024，而pollfd在内核中采用链表，理论上无上限</li>
+<li>监听FD越多，每次遍历消耗时间也越久，性能反而会下降</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653900721427.png" alt="1653900721427"></p>
+<h4 id="epoll-：event-poll"><a href="#epoll-：event-poll" class="headerlink" title="epoll()：event poll"></a><code>epoll()</code>：event poll</h4><p><a href="https://xiaolincoding.com/os/8_network_system/selete_poll_epoll.html#epoll">epoll</a> <mark>核心：事件轮询</mark></p>
+<h5 id="流程-1"><a href="#流程-1" class="headerlink" title="流程"></a>流程</h5><p>创建eventpoll结构，包含以下两个结构：</p>
+<p>1、监听红黑树-&gt; 记录要监听的FD rb_root</p>
+<p>2、就绪链表-&gt;记录就绪的FD list_head</p>
+<p>紧接着，调用<code>epoll_ctl</code>操作，将要监听的数据添加到红黑树上去，并且给对应的每个fd设置一个监听函数，这个函数会在fd数据就绪时触发，把对应就绪的fd数据添加到就绪链表中</p>
+<p>3、调用<code>epoll_wait</code>函数</p>
+<p>就去等待，在用户态创建一个空的<code>events</code>数组，当就绪之后，我们的回调函数会把数据添加到<code>list_head</code>中去，当调用这个函数的时候，会去检查list_head，当然这个过程需要参考配置的等待时间，可以等一定时间，也可以一直等， 如果在此过程中，检查到了list_head中有数据会将数据添加到链表中，此时将数据放入到events数组中，并且返回对应的事件数量，用户态的此时收到响应后，从events中拿到对应准备好的数据的节点（SocketFD），再去调用方法从Socket拿数据。</p>
+<p><a href="https://zh.wikipedia.org/zh-cn/%E5%8F%A5%E6%9F%84">句柄 - 维基百科，自由的百科全书 (wikipedia.org)</a></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241114221957536.png" alt="image-20241114221957536"></p>
+<p>最后返回的依然是数量，但是只需要拷贝已就绪的FD，开销大大减小，并且不用遍历</p>
+<blockquote>
+<p>回调函数：将函数作为参数传入，Java中是函数式接口的实现类，C中是函数指针</p>
+<p>事件驱动：以状态的转换作为事件发生的标志，事件发生会触发回调函数的执行。而事件是多种多样的，这就要求执行的函数不能写死，需要实现充分的解耦</p>
+<p><a href="https://www.runoob.com/w3cnote/c-callback-function.html">C 语言回调函数详解 | 菜鸟教程 (runoob.com)</a> </p>
+</blockquote>
+<h5 id="epoll-的优势"><a href="#epoll-的优势" class="headerlink" title="epoll 的优势"></a>epoll 的优势</h5><p>select模式存在的三个问题：</p>
+<ul>
+<li>能监听的FD<mark>最大不超过</mark>1024</li>
+<li><mark>每次</mark>select都需要把<mark>所有</mark>要监听的FD都拷贝到内核空间</li>
+<li>每次都要<mark>遍历所有</mark>FD来判断就绪状态</li>
+</ul>
+<p>poll模式的问题：</p>
+<ul>
+<li>poll利用链表解决了select中监听FD上限的问题，但依然要遍历所有FD，如果监听较多，性能会下降</li>
+</ul>
+<p>epoll模式中如何解决这些问题的？</p>
+<ul>
+<li>基于epoll实例中的红黑树保存要监听的FD，理论上无上限，而且增删改查效率都非常高</li>
+<li>每个FD只需要执行一次epoll_ctl添加到红黑树，以后每次epol_wait无需传递任何参数，无需重复拷贝FD到内核空间</li>
+<li>利用ep_poll_callback机制来监听FD状态，无需遍历所有FD，因此性能不会随监听的FD数量增多而下降</li>
+</ul>
+<p>epoll 是解决 C10K 问题的利器，通过两个方面解决了 select/poll 的问题。</p>
+<ul>
+<li>epoll 在内核里使用「红黑树」来关注进程所有待检测的 Socket，红黑树是个高效的数据结构，增删改一般时间复杂度是 O(logn)，通过对这棵黑红树的管理，不需要像 select/poll 在每次操作时都传入整个 Socket 集合，减少了内核和用户空间大量的数据拷贝和内存分配。</li>
+<li>epoll 使用事件驱动的机制，内核里维护了一个「链表」来记录就绪事件，只将有事件发生的 Socket 集合传递给应用程序，不需要像 select/poll 那样轮询扫描整个集合（包含有和无事件的 Socket ），大大提高了检测的效率。</li>
+</ul>
+<h5 id="epoll中的ET-边沿触发-和LT-水平触发"><a href="#epoll中的ET-边沿触发-和LT-水平触发" class="headerlink" title="epoll中的ET(边沿触发)和LT(水平触发)"></a>epoll中的ET(边沿触发)和LT(水平触发)</h5><p>当FD有数据可读时，我们调用epoll_wait（或者select、poll）可以得到通知。但是事件通知的模式有两种：</p>
+<ul>
+<li>LevelTriggered：简称LT，也叫做水平触发。只要某个FD中有数据可读，每次调用epoll_wait都会得到通知。</li>
+<li>EdgeTriggered：简称ET，也叫做边沿触发。只有在某个FD有状态变化时，调用epoll_wait才会被通知。</li>
+</ul>
+<p>举个栗子：</p>
+<ol>
+<li>假设一个客户端socket对应的FD已经注册到了epoll实例中</li>
+<li>客户端socket发送了2kb的数据</li>
+<li>服务端调用epoll_wait，得到通知说FD就绪</li>
+<li>服务端从FD读取了1kb数据回到步骤3（再次调用epoll_wait，形成循环）</li>
+</ol>
+<p>如果我们采用LT模式，因为FD中仍有1kb数据，则回到第3步依然会返回结果，并且得到通知</p>
+<p>如果我们采用ET模式，因为一开始第4步已经消费了FD可读事件，此后FD状态并没有「变化」，因此epoll_wait也不会触发实践回调，数据无法读取，客户端响应就会超时。</p>
+<h6 id="底层实现"><a href="#底层实现" class="headerlink" title="底层实现"></a>底层实现</h6><p><code>ep_send_events ep_scan_ready_list ep_send_events_proc</code></p>
+<p>读写就绪的事件会触发回调函数把FD添加至链表中，wait函数将就绪节点从链表断开之后将内容拷贝回用户态。</p>
+<p>读取之后，如果FD仍然是就绪的状态（没有读完），内核会根据LT或ET做出不同的行为：</p>
+<p><strong>LT</strong> 会把仍就绪的节点加回去，确保下次wait还能读到链表的内容，同一个就绪的事件反复通知。（状态 state）</p>
+<p><strong>ET</strong> 不会加回去，只有一次IO机会，没读完也不会通知，同一就绪的事件只通知一次。（状态的变化 state transitions）</p>
+<p>如果ET要实现LT效果，需要在拷贝完以后手动调用ctl(before wait)修改的时候检查FD节点，将其重新添加会队列</p>
+<h6 id="ET-优势"><a href="#ET-优势" class="headerlink" title="ET 优势"></a>ET 优势</h6><p>ET结合NIO能够确保一次性读完Socket中的数据，减少epoll_wait的调用次数，提高效率</p>
+<p>LT因为会保留就绪链表上的节点，因此多个进程阻塞在epoll_wait的系统调用时，会将他们全部唤醒，即惊群，</p>
+<p><a href="https://zhuanlan.zhihu.com/p/385410196">深入浅出 Linux 惊群：现象、原因和解决方案 - 知乎 (zhihu.com)</a></p>
+<p><a href="https://mp.weixin.qq.com/s/xxjCrFH1361iG-srfNL9_Q">再谈 Linux epoll 惊群问题的原因和解决方案 (qq.com)</a> </p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">//如果“就绪链表”上仍有未处理的epi，且有进程阻塞在epoll句柄的睡眠队列，则唤醒它！</span></span><br><span class="line"><span class="comment">//(这将是LT惊群的根源)</span></span><br><span class="line"><span class="comment">//ET将链表清空，LT将链表重新加回去</span></span><br><span class="line"><span class="keyword">if</span> (!list_empty(&amp;ep-&gt;rdllist)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (waitqueue_active(&amp;ep-&gt;wq))</span><br><span class="line">        wake_up_locked(&amp;ep-&gt;wq);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>epoll</code> 中，事件（event）是通过 <code>epoll_event</code> 结构体来定义和处理的。<code>epoll</code> 的事件分类主要基于 I/O 操作的类型（例如：可读、可写等），它们可以通过 <code>epoll_ctl</code> 函数注册，之后通过 <code>epoll_wait</code> 等函数来等待这些事件的发生。</p>
+<h5 id="惊群（thundering-herd）"><a href="#惊群（thundering-herd）" class="headerlink" title="惊群（thundering herd）"></a>惊群（thundering herd）</h5><p>当有多个进程或线程在等待同一个事件（比如同一个 socket 上的 <code>accept</code>，或 <code>epoll</code>/<code>select</code> 事件），一旦事件发生，<strong>所有等待的进程或线程都被唤醒</strong>，但最终只有一个能真正处理这个事件，其余的唤醒都是<strong>无效唤醒</strong>，白白消耗了 CPU 资源。这样一来，唤醒和竞争的成本非常高，尤其在高并发场景下，<strong>频繁唤醒多个进程/线程</strong> 会导致性能大幅下降。这就是所谓的 <strong>thundering herd（惊群效应）</strong>：</p>
+<ul>
+<li>多进程服务器（如 Nginx、Apache）使用 <code>accept</code> 等待客户端连接。</li>
+<li>一个新连接到来时，所有阻塞在 <code>accept</code> 的进程都被唤醒。</li>
+<li>但操作系统只允许一个进程成功 <code>accept</code>，其余进程会发现 <code>accept</code> 返回 <code>EAGAIN</code> 或直接失败，然后又继续休眠等待下次唤醒。</li>
+</ul>
+<p>惊群出现的常见位置</p>
+<ul>
+<li><p><code>accept</code></p>
+</li>
+<li><p><code>epoll_wait</code>（旧内核，水平LT触发时容易）</p>
+</li>
+<li><p><code>select</code> / <code>poll</code></p>
+</li>
+<li><p>多线程下等待互斥锁、条件变量</p>
+</li>
+</ul>
+<blockquote>
+<p>解决方案</p>
+</blockquote>
+<p>1️⃣ <strong>多进程 <code>accept</code>：</strong></p>
+<ul>
+<li>Linux 2.6 以后引入 <code>SO_REUSEPORT</code>，让每个进程拥有独立的监听 socket，避免惊群。</li>
+<li>使用 <code>accept</code> 锁：自己用互斥锁mutex保护 <code>accept</code>，保证同一时刻只有一个进程调用。</li>
+</ul>
+<p>2️⃣ <strong>epoll 驱动：</strong></p>
+<ul>
+<li>用 <code>EPOLLET</code>（边缘触发）代替 <code>EPOLLLT</code>（水平触发），减少重复通知。</li>
+<li>用 <code>EPOLLONESHOT</code>，保证事件只通知一次，处理完后再重新注册。</li>
+</ul>
+<p>3️⃣ <strong>多线程竞争：</strong></p>
+<ul>
+<li>优化锁设计，减少竞争区域或用条件变量精准唤醒。</li>
+</ul>
+<h5 id="epoll-事件分类"><a href="#epoll-事件分类" class="headerlink" title="epoll 事件分类"></a>epoll 事件分类</h5><p><code>epoll</code> 支持多种事件类型，主要有以下几种：</p>
+<ol>
+<li><strong><code>EPOLLIN</code> - 可读事件</strong></li>
+</ol>
+<ul>
+<li><p><strong>描述</strong>：表示指定的文件描述符（如 socket）可供读取数据。</p>
+</li>
+<li><p><strong>适用场景</strong>：当一个 socket 有数据可读时，<code>epoll</code> 会触发此事件。</p>
+</li>
+<li><p><strong>使用场景</strong>：服务器通常使用此事件来检测客户端是否有数据发送过来。</p>
+<p><strong>例子</strong>：</p>
+<ul>
+<li>对于 TCP socket，<code>EPOLLIN</code> 事件表示客户端发送了数据，服务器可以使用 <code>recv()</code> 函数读取数据。</li>
+<li>对于 监听 socket，<code>EPOLLIN</code> 表示有客户端发起了连接请求，服务器可以调用 <code>accept()</code> 来接受连接。</li>
+</ul>
+</li>
+</ul>
+<ol start="2">
+<li><strong><code>EPOLLOUT</code> - 可写事件</strong> </li>
+</ol>
+<ul>
+<li><p><strong>描述</strong>：表示指定的文件描述符（如 socket）可以写入数据。</p>
+</li>
+<li><p><strong>适用场景</strong>：当 socket 可以安全地写入数据时，<code>epoll</code> 会触发此事件。</p>
+</li>
+<li><p><strong>使用场景</strong>：客户端在发送大量数据时，可能需要等待 socket 可写。此时，<code>epoll</code> 通过 <code>EPOLLOUT</code> 事件通知应用程序可以写入数据了。</p>
+<p><strong>例子</strong>：</p>
+<ul>
+<li>如果一个 socket 处于阻塞状态，等待写缓冲区可用，<code>EPOLLOUT</code> 会被触发，表示可以开始写入数据。</li>
+</ul>
+</li>
+</ul>
+<ol start="3">
+<li><strong><code>EPOLLERR</code> - 错误事件</strong></li>
+</ol>
+<ul>
+<li><p><strong>描述</strong>：表示文件描述符发生了错误。</p>
+</li>
+<li><p><strong>适用场景</strong>：如果连接发生了错误或出错事件（如网络中断），<code>epoll</code> 会触发此事件。</p>
+</li>
+<li><p><strong>使用场景</strong>：应用程序通常会检查 <code>EPOLLERR</code> 事件来处理错误情况，如关闭连接或执行错误恢复。</p>
+<p><strong>例子</strong>：</p>
+<ul>
+<li>当 socket 发生网络错误，或者远程主机不可达时，<code>EPOLLERR</code> 会被触发。</li>
+</ul>
+</li>
+</ul>
+<ol start="4">
+<li><strong><code>EPOLLHUP</code> - 挂起事件（Hangup）</strong></li>
+</ol>
+<ul>
+<li><p><strong>描述</strong>：表示文件描述符发生挂起（通常表示连接关闭）。</p>
+</li>
+<li><p><strong>适用场景</strong>：当连接被关闭，或者流中的另一端挂起时，<code>epoll</code> 会触发此事件。</p>
+</li>
+<li><p><strong>使用场景</strong>：客户端或服务器检测到连接关闭时，通常会处理此事件并清理资源。</p>
+<p><strong>例子</strong>：</p>
+<ul>
+<li>当客户端断开连接时，服务器会收到 <code>EPOLLHUP</code> 事件。此时，服务器应关闭对应的 socket。</li>
+</ul>
+</li>
+</ul>
+<ol start="5">
+<li><strong><code>EPOLLRDHUP</code> - 远程挂起事件</strong></li>
+</ol>
+<ul>
+<li><strong>描述</strong>：表示对端关闭了连接。该事件是对 <code>EPOLLHUP</code> 的补充，专门用于表示对端关闭连接时的事件。</li>
+<li><strong>适用场景</strong>：它是为了处理 <strong>TCP</strong> 连接中远程关闭（例如客户端关闭连接）时的特定事件。</li>
+<li><strong>使用场景</strong>：与 <code>EPOLLHUP</code> 类似，应用程序通常通过这个事件来检测到对端已关闭连接，并可以进行相应处理。</li>
+</ul>
+<ol start="6">
+<li><strong><code>EPOLLET</code> - 边缘触发（Edge Triggered）</strong></li>
+</ol>
+<ul>
+<li><strong>描述</strong>：<code>EPOLLET</code> 是边缘触发模式，意味着当文件描述符的状态发生变化时，事件会被触发一次。边缘触发模式相比于传统的水平触发（Level Triggered），能够更加高效地处理 I/O 操作。</li>
+<li><strong>适用场景</strong>：在高性能场景中使用，可以避免对文件描述符的重复检查。应用程序需要保证不会丢失事件，并且需要轮询所有事件，直到事件处理完成。</li>
+<li><strong>使用场景</strong>：通常与 <code>EPOLLIN</code>、<code>EPOLLOUT</code> 等事件一同使用。</li>
+</ul>
+<ol start="7">
+<li><strong><code>EPOLLONESHOT</code> - 单次触发</strong></li>
+</ol>
+<ul>
+<li><strong>描述</strong>：表示文件描述符只会被触发一次事件。处理完事件后，<code>epoll</code> 会自动停止监视该文件描述符，直到再次通过 <code>epoll_ctl</code> 显式注册为监听状态。</li>
+<li><strong>适用场景</strong>：用于那些只需要处理一次事件的场景，如处理某个特定的请求，处理完后不再关心该文件描述符。</li>
+<li><strong>使用场景</strong>：一般用于一个事件只处理一次的情况，可以减少事件触发的次数，提高效率。</li>
+</ul>
+<ol start="8">
+<li><strong><code>EPOLLPRI</code> - 优先事件</strong></li>
+</ol>
+<ul>
+<li><strong>描述</strong>：表示文件描述符上发生了高优先级的事件。通常这种事件的优先级高于常规的 I/O 事件。</li>
+<li><strong>适用场景</strong>：通常用于处理信号量、优先级消息队列等场景。</li>
+</ul>
+<ol start="9">
+<li><strong><code>EPOLLWAKEUP</code> - 唤醒事件</strong></li>
+</ol>
+<ul>
+<li><strong>描述</strong>：表示 <code>epoll</code> 实例在事件等待期间需要被唤醒。</li>
+<li><strong>适用场景</strong>：适用于在多线程环境中希望从 <code>epoll_wait()</code> 等待事件的线程外部唤醒的情况。</li>
+</ul>
+<p><strong>组合使用的方式</strong></p>
+<p><code>epoll</code> 事件通常可以组合使用，以满足更复杂的场景。例如，应用程序可以同时监视 <strong><code>EPOLLIN</code></strong> 和 **<code>EPOLLOUT</code>**，这样就可以同时处理读和写事件。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">ev</span>;</span></span><br><span class="line">ev.events = EPOLLIN | EPOLLOUT | EPOLLERR;  <span class="comment">// 监听读、写和错误事件</span></span><br><span class="line">ev.data.fd = fd;</span><br><span class="line">epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &amp;ev);</span><br></pre></td></tr></table></figure>
+
+<h5 id="基于epoll的服务端流程"><a href="#基于epoll的服务端流程" class="headerlink" title="基于epoll的服务端流程"></a>基于epoll的服务端流程</h5><p><a href="https://zhuanlan.zhihu.com/p/384098769">从内核看epoll的实现（基于5.9.9） - 知乎 (zhihu.com)</a></p>
+<ol>
+<li>服务器通过前文提到的listen()将普通的socket转换成专门用来监听的socket(Listened Socket)</li>
+<li>服务端会去调用<code>epoll_create()</code>，创建一个epoll实例，epoll实例中包含两个数据</li>
+</ol>
+<ul>
+<li>红黑树（为空）：<code>rb_root</code> 用来去记录需要被监听的 FD(Socket)</li>
+<li>链表（为空）：<code>list_head</code>，用来存放已就绪 FD<ul>
+<li>创建好了之后，会去调用<code>epoll_ctl()</code>函数，此函数将需要监听的数据添加到<code>rb_root</code>中去，并且对当前这些存在于红黑树的节点设置回调函数，（同时设置要监听什么类型的事件）当这些被监听的数据一旦准备完成，就会被调用，而调用的结果就是将红黑树的fd添加到list_head中去(但是此时并没有完成)</li>
+</ul>
+</li>
+</ul>
+<ol start="3">
+<li>当第二步完成后，就会调用<code>epoll_wait()</code>函数，这个函数会去校验是否有数据准备完毕（因为数据一旦准备就绪，就会被回调函数添加到<code>list_head</code>中），wait一段时间后(可配置)，如果等待超时，则返回无数据，如果有，则进一步判断当前是什么事件：</li>
+</ol>
+<ul>
+<li>如果是<strong>监听Socket</strong>的FD发生了<code>EPOLLIN</code>事件，则调用<code>accept()</code> 获取已建立的TCP连接，准备IO。</li>
+<li>如果是<strong>已连接Socket</strong>的<code>EPOLLIN</code>事件，则正常读取<code>socket</code>的数据</li>
+</ul>
+<p><strong>网络套接字</strong>：在使用 <code>epoll</code> 时，最常见的就是网络套接字（如 TCP 套接字）的数据就绪。具体来说，数据就绪意味着：</p>
+<ul>
+<li><strong>可读事件（<code>EPOLLIN</code>）</strong>：当套接字有数据可读时，<code>epoll_wait</code> 会返回，表明应用程序可以从套接字中读取数据。</li>
+<li><strong>可写事件（<code>EPOLLOUT</code>）</strong>：当套接字可写时，即缓冲区有足够空间发送数据时，<code>epoll_wait</code> 会返回，表明应用程序可以向套接字写入数据。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653902845082.png" alt="1653902845082"></p>
+<h3 id="信号驱动IO-Signal-Driven-IO"><a href="#信号驱动IO-Signal-Driven-IO" class="headerlink" title="信号驱动IO (Signal Driven IO)"></a>信号驱动IO (Signal Driven IO)</h3><p>信号驱动IO是与内核建立SIGIO的信号关联并设置回调，当内核有FD就绪时，会发出SIGIO信号通知用户，期间用户应用可以执行其它业务，无需阻塞等待。</p>
+<p>阶段一：</p>
+<ul>
+<li>用户进程调用sigaction，注册信号处理函数</li>
+<li>内核返回成功，开始监听FD</li>
+<li>用户进程不阻塞等待，可以执行其它业务</li>
+<li>当内核数据就绪后，回调用户进程的SIGIO处理函数</li>
+</ul>
+<p>阶段二：</p>
+<ul>
+<li>收到SIGIO回调信号</li>
+<li>调用recvfrom，读取</li>
+<li>内核将数据拷贝到用户空间</li>
+<li>用户进程处理数据</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653911776583.png" alt="1653911776583"></p>
+<p>当有大量IO操作时，信号较多，SIGIO处理函数不能及时处理可能导致信号队列溢出，而且内核空间与用户空间的频繁信号交互性能也较低。</p>
+<p>与NIO要做区分：NIO会一直空轮询，SIGIO只会询问一次。</p>
+<h3 id="异步IO-Asynchronous-IO"><a href="#异步IO-Asynchronous-IO" class="headerlink" title="异步IO (Asynchronous IO)"></a>异步IO (Asynchronous IO)</h3><p>这种方式，不仅仅是用户态在试图读取数据后，不阻塞，而且当内核的数据准备完成后，也不会阻塞</p>
+<p>他会由内核将所有数据处理完成后，由内核将数据写入到用户态中，然后才算完成，所以性能极高，不会有任何阻塞，全部都由内核完成，可以看到，异步IO模型中，用户进程在两个阶段都是非阻塞状态。</p>
+<p>缺陷：高并发下，内核中积累的IO任务很多，消耗太多系统资源从而导致崩溃，所以要求限流机制。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653911877542.png" alt="1653911877542"></p>
+<h3 id="五种IO模型对比"><a href="#五种IO模型对比" class="headerlink" title="五种IO模型对比"></a>五种IO模型对比</h3><p>最后用一幅图，来说明他们之间的区别</p>
+<p>同步IO or 异步IO 取决于从内核拷贝到用户空间时是否阻塞</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1653912219712.png" alt="1653912219712"></p>
+]]></content>
+      <categories>
+        <category>计网</category>
+      </categories>
+      <tags>
+        <tag>io</tag>
+        <tag>select/poll/epoll</tag>
+        <tag>socket</tag>
+      </tags>
   </entry>
 </search>
