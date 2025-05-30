@@ -4417,7 +4417,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-26 23:14:02" itemprop="dateModified" datetime="2025-05-26T23:14:02+08:00">2025-05-26</time>
+      <time title="修改时间：2025-05-30 21:04:32" itemprop="dateModified" datetime="2025-05-30T21:04:32+08:00">2025-05-30</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -4600,7 +4600,9 @@
 <p>像 <strong>Vector</strong> 这种，add、remove方法都是原子 操作，不会被打断，但也仅限于此，如果有个线程在遍历某个Vector、有个线程同时在add这个 Vector，99%的情况下都会出现ConcurrentModificationException，也就是fail-fast机制。HashTable也同理。StringBuffer 自带缓冲区，线程安全，性能较低。</p>
 <p><mark>ConcurrentHashMap<mark> 的复合操作：<code>if(map.containsKey(x)) map.put(x,1);</code> 不能保证原子性，需要使用内置的原子操作方法，如 <code>putIfAbsent()</code>。另外批量操作也不一定线程安全</p>
 <h3 id="线程不安全"><a href="#线程不安全" class="headerlink" title="线程不安全"></a>线程不安全</h3><p>ArrayList、LinkedList、HashMap等都是线程非安全的类 StringBuilder也不安全。完全不安全</p>
-<h2 id="线程互斥同步-Mutex-Synchronization"><a href="#线程互斥同步-Mutex-Synchronization" class="headerlink" title="线程互斥同步(Mutex Synchronization)"></a>线程互斥同步(Mutex Synchronization)</h2><h3 id="悲观、乐观锁"><a href="#悲观、乐观锁" class="headerlink" title="悲观、乐观锁"></a>悲观、乐观锁</h3><p><strong>乐观锁</strong>：CAS算法，共享资源修改之后跟修改之前做对比，如果一样就确认修改，不一样就作废，重新进行修改</p>
+<h2 id="线程互斥、同步-Mutex-Synchronization"><a href="#线程互斥、同步-Mutex-Synchronization" class="headerlink" title="线程互斥、同步(Mutex Synchronization)"></a>线程互斥、同步(Mutex Synchronization)</h2><p>互斥：多线程只能串行访问某个区域，这个区域就是互斥的区域，比如同步代码块以及lock、信号量</p>
+<p>同步：线程之间进行通信，互相配合完成任务。比如notify，await、或者 CyclicBarrier、CountDownLatch</p>
+<h3 id="悲观、乐观锁"><a href="#悲观、乐观锁" class="headerlink" title="悲观、乐观锁"></a>悲观、乐观锁</h3><p><strong>乐观锁</strong>：CAS算法，共享资源修改之后跟修改之前做对比，如果一样就确认修改，不一样就作废，重新进行修改</p>
 <p>主线程里调用子线程的join方法，表示主线程等待次线程执行完毕，再继续执行<a href="jetbrains://idea/navigate/reference?project=MyFirstProject&fqn=com.it.threadtest.GiftSender">赠送礼物案例</a> </p>
 <p><strong>悲观锁</strong>：直接把核心代码锁住，只要线程开始执行就加锁，线程安全,但并发性能差</p>
 <p>t1和t2两个子线程同时启动，调用start方法，t1，t2进入就绪状态，何时启动，启动顺序由调度器决定，启动以后，main,t1,t2各自执行互不影响，此时如果在子线程的start语句后调用子线程的join方法，t1.join表示主线程要在这一步暂停，直到t1执行完毕，但是t2不会受到任何影响，当t1执行完毕之后，再调用t2.join等待t2执行完毕，可能在t1执行完之前t2就完了，所以有时候t2不join也不会影响结果，但是最好还是加上</p>
