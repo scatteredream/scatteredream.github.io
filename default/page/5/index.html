@@ -2453,7 +2453,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-29 22:47:06" itemprop="dateModified" datetime="2025-05-29T22:47:06+08:00">2025-05-29</time>
+      <time title="修改时间：2025-05-31 00:37:27" itemprop="dateModified" datetime="2025-05-31T00:37:27+08:00">2025-05-31</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -2495,7 +2495,7 @@
 </blockquote>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029171133144.png" alt="image-20241029171133144"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241029191323110.png" alt="image-20241029191323110"></p>
-<h5 id="ROW"><a href="#ROW" class="headerlink" title="ROW"></a>ROW</h5><p>记录行数据修改之前和之后的数据</p>
+<h5 id="ROW（推荐）"><a href="#ROW（推荐）" class="headerlink" title="ROW（推荐）"></a>ROW（推荐）</h5><p>记录行数据修改之前和之后的数据</p>
 <p>Binlog日志中仅记录哪一条记录被修改了，修改成什么样了，会非常清楚的记录下每一行数据修改的细节，<strong>Master修改了哪些行，slave也直接修改对应行的数据</strong></p>
 <blockquote>
 <p>优点：row的日志内容会非常清楚的记录下每一行数据修改的细节，非常容易理解。而且不会出现某些特定情况下的存储过程和function，以及trigger的调用和出发无法被正确复制问题。</p>
@@ -3722,7 +3722,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-25 11:24:53" itemprop="dateModified" datetime="2025-05-25T11:24:53+08:00">2025-05-25</time>
+      <time title="修改时间：2025-05-31 00:37:05" itemprop="dateModified" datetime="2025-05-31T00:37:05+08:00">2025-05-31</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -3760,7 +3760,10 @@
 <p>MySQL优化的B+Tree：双向链表</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241008193116742-1728392950453-8.png" alt="image-20241008193116742"></p>
 <p>段-区-页-行</p>
-<h4 id="B-Tree-vs-B-Tree"><a href="#B-Tree-vs-B-Tree" class="headerlink" title="B+Tree vs. B-Tree"></a>B+Tree vs. B-Tree</h4><p>都比二叉树层级更少，搜索效率高。</p>
+<blockquote>
+<p>B+Tree vs. B-Tree</p>
+</blockquote>
+<p>都比二叉树层级更少，搜索效率高。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241011162503825.png" alt="image-20241011162503825"></p>
 <p>根据一页数据的大小能够得出一页中能储存几个指针，树高度为2，指向1171个节点，1171个节点一共有1171*16行数据。</p>
 <ul>
@@ -3781,7 +3784,7 @@
 
 
 
-<h3 id="SQL优化-性能指标"><a href="#SQL优化-性能指标" class="headerlink" title="SQL优化 性能指标"></a>SQL优化 性能指标</h3><h4 id="慢查询日志"><a href="#慢查询日志" class="headerlink" title="慢查询日志"></a>慢查询日志</h4><p>可以设置 <code>long_query_time</code> 参数，定义什么算作“慢查询”。</p>
+<h3 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h3><h4 id="慢查询日志"><a href="#慢查询日志" class="headerlink" title="慢查询日志"></a>慢查询日志</h4><p>可以设置 <code>long_query_time</code> 参数，定义什么算作“慢查询”。</p>
 <p>输出到文件或者表中</p>
 <h4 id="profiles"><a href="#profiles" class="headerlink" title="profiles"></a>profiles</h4><p>通过启用 <code>PROFILE</code>，可以获取查询的执行时间和资源消耗，包括 CPU 使用、锁等待、IO 等信息。</p>
 <h4 id="explain-语句-执行计划"><a href="#explain-语句-执行计划" class="headerlink" title="explain +语句 执行计划"></a>explain +语句 执行计划</h4><ul>
@@ -3818,7 +3821,7 @@
 <h4 id="前缀索引"><a href="#前缀索引" class="headerlink" title="前缀索引"></a>前缀索引</h4><p>搜索文本时对一些长字符数据没有必要把他们全部都创建索引，而只是截取一部分</p>
 <p>算出他们的选择性数据，方法：对email截取不同的长度，去重count再除以总数count</p>
 <p>前缀索引，查询字符串先截取前缀，根据前缀进行辅助查询，查到主键id就回表查询拿到整行数据，拿到整行数据以后再进行核实，看字段后半部分是否匹配。一定需要回表查询。</p>
-<h4 id="索引失效的几种情况"><a href="#索引失效的几种情况" class="headerlink" title="索引失效的几种情况"></a>索引失效的几种情况</h4><ol>
+<h4 id="索引失效"><a href="#索引失效" class="headerlink" title="索引失效"></a>索引失效</h4><ol>
 <li><p><strong>不遵循最左匹配（联合索引）</strong>：跳过某个，或者出现范围匹配，后边的失效。</p>
 <ul>
 <li><strong>模糊匹配、范围匹配</strong>：跟上面一样，</li>
@@ -3843,7 +3846,14 @@
 <li>字符串比较大小：不建议。</li>
 <li>key_len理论上越短越好</li>
 </ul>
-<h2 id="SQL-优化"><a href="#SQL-优化" class="headerlink" title="SQL 优化"></a>SQL 优化</h2><h3 id="SQL-优化-插入"><a href="#SQL-优化-插入" class="headerlink" title="SQL 优化 - 插入"></a>SQL 优化 - 插入</h3><ol>
+<h4 id="主键"><a href="#主键" class="headerlink" title="主键"></a>主键</h4><p><strong>只要索引是相邻的，那么对应的数据一定也是相邻地存放在磁盘上的</strong> 若表的主键不是顺序的id，而是无规律数据，比如字符串，InnoDB无法简单的把一行记录插入到索引的最后，而是需要找一个合适的位置（已有数据的中间位置），甚至产生大量的页分裂并且移动大量数据，在寻找合适位置进行插入时，目标页可能不在内存中，这就导致了大量的随机IO操作，影响插入效率。除此之外，大量的页分裂会导致大量的内存碎片。</p>
+<ol>
+<li>主键顺序插入</li>
+<li>主键自增 </li>
+<li>主键长度尽量小一些，不要用uuid或者身份证号</li>
+<li>避免在业务操作时修改主键</li>
+</ol>
+<h2 id="SQL-优化"><a href="#SQL-优化" class="headerlink" title="SQL 优化"></a>SQL 优化</h2><h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><ol>
 <li>一条insert插入多条（insert）<ol>
 <li>手动控制事务（事务较为耗费资源）</li>
 <li>主键顺序插入</li>
@@ -3851,25 +3861,18 @@
 </li>
 <li>load</li>
 </ol>
-<h3 id="SQL-优化-主键"><a href="#SQL-优化-主键" class="headerlink" title="SQL 优化 - 主键"></a>SQL 优化 - 主键</h3><p><strong>只要索引是相邻的，那么对应的数据一定也是相邻地存放在磁盘上的</strong> 若表的主键不是顺序的id，而是无规律数据，比如字符串，InnoDB无法简单的把一行记录插入到索引的最后，而是需要找一个合适的位置（已有数据的中间位置），甚至产生大量的页分裂并且移动大量数据，在寻找合适位置进行插入时，目标页可能不在内存中，这就导致了大量的随机IO操作，影响插入效率。除此之外，大量的页分裂会导致大量的内存碎片。</p>
-<ol>
-<li>主键顺序插入</li>
-<li>主键自增 </li>
-<li>主键长度尽量小一些，不要用uuid或者身份证号</li>
-<li>避免在业务操作时修改主键</li>
-</ol>
-<h3 id="多个条件-OR"><a href="#多个条件-OR" class="headerlink" title="多个条件 OR"></a>多个条件 OR</h3><p>OR 必须都有索引，要不白搭，因为如果前面的不成立，后面的没索引还是不走索引，那还不如一开始就不走索引。</p>
-<h3 id="SQL-优化-order-by"><a href="#SQL-优化-order-by" class="headerlink" title="SQL 优化 - order by"></a>SQL 优化 - order by</h3><ol>
+<h3 id="OR"><a href="#OR" class="headerlink" title="OR"></a>OR</h3><p>OR ，条件列必须都有索引，要不白搭，因为如果前面的不成立，后面的没索引还是不走索引，那还不如一开始就不走索引。</p>
+<h3 id="order-by"><a href="#order-by" class="headerlink" title="order by"></a>order by</h3><ol>
 <li>多个条件，使用联合索引，最左前缀</li>
 <li>覆盖查询，不然仍回表。</li>
 <li>一升一降，需要额外创建独立的索引。默认索引都是升序的</li>
 <li>增大sort_buffer_size(256k default)（不可避免使用filesort时，大数据量）</li>
 </ol>
-<h3 id="SQL-优化-group-by"><a href="#SQL-优化-group-by" class="headerlink" title="SQL 优化 - group by"></a>SQL 优化 - group by</h3><ol>
+<h3 id="group-by"><a href="#group-by" class="headerlink" title="group by"></a>group by</h3><ol>
 <li>多个条件，使用联合索引，最左前缀，需要都出现</li>
 <li>肯定是覆盖查询，不然报错</li>
 </ol>
-<h3 id="SQL-优化-limit"><a href="#SQL-优化-limit" class="headerlink" title="SQL 优化 - limit"></a>SQL 优化 - limit</h3><ol>
+<h3 id="limit-深度分页"><a href="#limit-深度分页" class="headerlink" title="limit 深度分页"></a>limit 深度分页</h3><ol>
 <li>覆盖索引加子查询，先覆盖查询主键，根据返回的数据进行select *  </li>
 </ol>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241015190857506.png" alt="image-20241015190857506"></p>
@@ -3879,7 +3882,7 @@
 <li><strong>覆盖索引</strong>: 通过索引直接获取所需字段，避免回表操作，减少 IO 开销，适合查询特定字段的场景。但当结果集较大时，MySQL 可能会选择全表扫描。</li>
 <li><strong>范围查询</strong>: 基于 ID 连续性进行分页，通过记录上一页最后一条记录的 ID 来获取下一页数据。适合 ID 连续且按 ID 查询的场景，但在 ID 不连续或需要按其他字段排序时存在局限。</li>
 </ol>
-<h3 id="SQL-优化-count-优化"><a href="#SQL-优化-count-优化" class="headerlink" title="SQL 优化 - count 优化"></a>SQL 优化 - count 优化</h3><ul>
+<h3 id="count"><a href="#count" class="headerlink" title="count"></a>count</h3><ul>
 <li><p><strong>MyISAM：可以直接读取</strong></p>
 </li>
 <li><p><strong>InnoDB：只能逐行读取，或者借助Redis等</strong></p>
@@ -3896,33 +3899,10 @@
 <li><p>另外，可以建立一些key_len比较小的二级索引，因为聚簇索引带整行数据，量大，IO也就多，二级索引只挂着聚簇的key可以更快查询。</p>
 </li>
 </ul>
-<h3 id="SQL-优化-update-优化"><a href="#SQL-优化-update-优化" class="headerlink" title="SQL 优化 - update 优化"></a>SQL 优化 - update 优化</h3><p>update利用了索引，行锁。</p>
-<p>如果没有利用索引，就要加表锁，因为行锁是根据索引加的，而且索引不能失效。</p>
-<h2 id="视图、存储过程、触发器"><a href="#视图、存储过程、触发器" class="headerlink" title="视图、存储过程、触发器"></a>视图、存储过程、触发器</h2><p>视图就是给子查询起了个名字，然后作为对象存储到数据库中</p>
+<h3 id="update"><a href="#update" class="headerlink" title="update"></a>update</h3><p>update利用了索引，行锁。如果没有利用索引，会全表扫描，扫过的每一行都加行锁。</p>
 <h2 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h2><h3 id="全局锁"><a href="#全局锁" class="headerlink" title="全局锁"></a>全局锁</h3><p>整个数据库的锁，用于全库备份</p>
 <h3 id="表级锁"><a href="#表级锁" class="headerlink" title="表级锁"></a>表级锁</h3><p>释放：事务提交</p>
-<h4 id="表锁"><a href="#表锁" class="headerlink" title="表锁"></a>表锁</h4><p>特点：手动开关</p>
-<h5 id="S-共享读锁"><a href="#S-共享读锁" class="headerlink" title="S 共享读锁"></a>S 共享读锁</h5><p>​    所有事务都能读，但都不能写</p>
-<h5 id="X-独占写锁"><a href="#X-独占写锁" class="headerlink" title="X 独占写锁"></a>X 独占写锁</h5><p>​    只有当前事务能读写，其他事务都不能读写 </p>
-<h4 id="元数据锁"><a href="#元数据锁" class="headerlink" title="元数据锁"></a>元数据锁</h4><p>特点：自动</p>
-<p>执行DML, DQL语句会自动加共享SHARED READ/WRITE锁，</p>
-<p>执行DDL语句会自动加EXCLUSIVE锁，与上述的锁不兼容。</p>
-<p><strong>锁的兼容性</strong>指的是不同类型的锁在同一数据对象（如表或行）上是否可以同时存在的特性，即两个或多个事务能否同时持有某种锁类型，而不会发生冲突或阻塞。</p>
-<p>一个事务进行读操作，自动给表加上了共享读锁，另一个事务要改变表结构，此时这个事务想加上独占写的元数据锁，但是因为互相不兼容，所以只能阻塞等待直到另一个事务提交</p>
-<h4 id="意向锁-解决行锁表锁冲突"><a href="#意向锁-解决行锁表锁冲突" class="headerlink" title="意向锁 解决行锁表锁冲突"></a>意向锁 解决行锁表锁冲突</h4><p>某个事务DML加行锁，另一个事务来加表锁的时候，要逐行扫描是否有行锁才能加上，性能较低。</p>
-<p>因此引入了意向锁，DML加行锁同时对表加了意向写锁(IX)，另一个事务想加表锁，但是IX和常规的表锁不兼容，所以会阻塞等待。</p>
-<p><strong>Intention Lock</strong></p>
-<h5 id="IX"><a href="#IX" class="headerlink" title="IX"></a><u>IX</u></h5><ul>
-<li><code>insert</code>、<code>update</code>、<code>delete </code>(DML自动添加)</li>
-<li><code>select...for update</code> (表示查询加行级排他锁)</li>
-</ul>
-<h5 id="IS"><a href="#IS" class="headerlink" title="IS"></a><u>IS</u></h5><ul>
-<li><code>select ... lock in share mode</code>(表示查询加行级共享锁)</li>
-</ul>
-<p>一旦事务提交了，意向共享锁、意向排他锁，都会自动释放。</p>
-<h5 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h5><p>IX：加行锁的同时会自动加IX</p>
-<p>IS：DQL后边加<code>Lock in share mode</code>表示手动加了IS</p>
-<h4 id="表锁兼容性矩阵"><a href="#表锁兼容性矩阵" class="headerlink" title="表锁兼容性矩阵"></a>表锁兼容性矩阵</h4><table>
+<table>
 <thead>
 <tr>
 <th></th>
@@ -3961,9 +3941,37 @@
 <td>O</td>
 </tr>
 </tbody></table>
-<h3 id="行级锁"><a href="#行级锁" class="headerlink" title="行级锁"></a>行级锁</h3><p>InnoDB存储引擎，并发度高</p>
+<h4 id="表锁"><a href="#表锁" class="headerlink" title="表锁"></a>表锁</h4><p>特点：手动开关</p>
+<p>S 共享读锁：所有事务都能读，但都不能写</p>
+<p>X 独占写锁：只有当前事务能读写，其他事务都不能读写 </p>
+<h4 id="元数据锁-DDL"><a href="#元数据锁-DDL" class="headerlink" title="元数据锁 DDL"></a>元数据锁 DDL</h4><p>特点：自动</p>
+<p>执行DML, DQL语句会自动加共享SHARED READ/WRITE锁，</p>
+<p>执行DDL语句会自动加EXCLUSIVE锁，与上述的锁不兼容。</p>
+<p><strong>锁的兼容性</strong>指的是不同类型的锁在同一数据对象（如表或行）上是否可以同时存在的特性，即两个或多个事务能否同时持有某种锁类型，而不会发生冲突或阻塞。</p>
+<p>一个事务进行读操作，自动给表加上了共享读锁，另一个事务要改变表结构，此时这个事务想加上独占写的元数据锁，但是因为互相不兼容，所以只能阻塞等待直到另一个事务提交</p>
+<h4 id="意向锁-解决行锁表锁冲突"><a href="#意向锁-解决行锁表锁冲突" class="headerlink" title="意向锁 解决行锁表锁冲突"></a>意向锁 解决行锁表锁冲突</h4><p>某个事务DML加行锁，另一个事务来加表锁的时候，要逐行扫描是否有行锁才能加上，性能较低。</p>
+<p>因此引入了意向锁，DML加行锁同时对表加了意向写锁(IX)，另一个事务想加表锁，但是IX和常规的表锁不兼容，所以会阻塞等待。</p>
+<p>Intention Lock</p>
+<p><u>IX</u> </p>
+<ul>
+<li><code>insert</code>、<code>update</code>、<code>delete </code>(DML自动添加)</li>
+<li><code>select...for update</code> (表示查询加行级排他锁)</li>
+</ul>
+<p><u>IS</u></p>
+<ul>
+<li><code>select ... lock in share mode</code>(表示查询加行级共享锁)</li>
+</ul>
+<p>一旦事务提交了，意向共享锁、意向排他锁，都会自动释放。</p>
+<p>总结</p>
+<ul>
+<li><p>IX：加行锁的同时会自动加IX</p>
+</li>
+<li><p>IS：DQL后边加<code>Lock in share mode</code>表示手动加了IS</p>
+</li>
+</ul>
+<h3 id="行级锁——InnoDB"><a href="#行级锁——InnoDB" class="headerlink" title="行级锁——InnoDB"></a>行级锁——InnoDB</h3><p>InnoDB存储引擎，并发度高</p>
 <p>行级锁是针对索引对行加的锁，事务提交后会释放</p>
-<h4 id="行锁"><a href="#行锁" class="headerlink" title="行锁"></a>行锁</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017194645333.png" alt="image-20241017194645333"></p>
+<h4 id="Record-Lock（RC）"><a href="#Record-Lock（RC）" class="headerlink" title="Record Lock（RC）"></a>Record Lock（RC）</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017194645333.png" alt="image-20241017194645333"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017194802298.png" alt="image-20241017194802298"></p>
 <p>DML自动加行级排他锁，自动加表级意向排他锁(IX)</p>
 <p>DQL+<code>for update</code> 加行级排他锁，自动加IX</p>
@@ -3973,41 +3981,40 @@
 <li><p>默认可重复读(RR)，使用 Next-Key 锁 进行搜索和索引扫描，防止幻读。</p>
 </li>
 <li><p>针对唯一索引进行检索，对已存在的记录等值匹配，自动优化为行锁（详见下文）</p>
-<ul>
-<li><p>当你执行以下查询时：</p>
+</li>
+</ul>
+<p>当你执行以下查询时：</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> email <span class="operator">=</span> <span class="string">&#x27;example@example.com&#x27;</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>;</span><br></pre></td></tr></table></figure>
 
 <ul>
-<li>数据库会使用唯一索引快速找到这条记录。</li>
-<li>然后，它会在找到的记录上加上行锁，确保其他事务无法修改或删除该行，直到当前事务提交。</li>
-<li>由于只锁定了这一行，而不是整个表，其他事务仍然可以并发读取或修改表中的其他记录。</li>
-</ul>
+<li><p>数据库会使用唯一索引快速找到这条记录。</p>
 </li>
-</ul>
+<li><p>然后，它会在找到的记录上加上行锁，确保其他事务无法修改或删除该行，直到当前事务提交。</p>
+</li>
+<li><p>由于只锁定了这一行，而不是整个表，其他事务仍然可以并发读取或修改表中的其他记录。</p>
 </li>
 <li><p><u>行锁是针对索引</u>加的，<strong>如果定位数据时不使用索引，</strong>如果此时加锁(除了普通的select查询都会加)那么会对表中所有记录都加上锁，此时<strong>升级为表锁</strong> </p>
 </li>
 </ul>
-<p>由于锁的兼容性，行锁会影响另一个事务的DML以及加后缀的DQL。同时也会影响普通的DQL，除非使用RU隔离级别，否则另一个事务的普通DQL也会阻塞</p>
-<h4 id="间隙、临键锁"><a href="#间隙、临键锁" class="headerlink" title="间隙、临键锁"></a>间隙、临键锁</h4><p>InnoDB 行锁是通过对索引数据页上的记录加锁实现的，MySQL InnoDB 支持三种行锁定方式：</p>
+<p>由于锁的兼容性，行锁会影响另一个事务的DML以及加后缀的DQL。同时也会影响普通的DQL，除非使用RU隔离级别，否则另一个事务的普通DQL也会阻塞。</p>
+<p>一般就是单条记录锁 RECORD LOCK。</p>
+<h4 id="Gap-Lock、Next-key-Lock（RR）"><a href="#Gap-Lock、Next-key-Lock（RR）" class="headerlink" title="Gap Lock、Next-key Lock（RR）"></a>Gap Lock、Next-key Lock（RR）</h4><p>InnoDB 行锁是通过对索引数据页上的记录加锁实现的，MySQL InnoDB 支持三种行锁定方式：</p>
 <ul>
 <li><strong>记录锁（Record Lock）</strong>：也被称为记录锁，属于单个行记录上的锁。</li>
 <li><strong>间隙锁（Gap Lock）</strong>：锁定一个记录之前的范围，不包括记录本身。防止其他事务<strong>插入</strong>间隙，间隙锁之间可以共存</li>
 <li><strong>临键锁（Next-Key Lock）</strong>：Record Lock + Gap Lock，锁定一个范围，包含记录本身，主要目的是为了解决幻读问题（MySQL 事务部分提到过）。记录锁只能锁住已经存在的记录，为了避免插入新记录，需要依赖间隙锁。</li>
 </ul>
 <p>在 InnoDB 默认的隔离级别 <strong>REPEATABLE-READ</strong> 下，行锁默认使用的是 <strong>Next-Key Lock</strong>。但是，如果操作的索引是唯一索引或主键的等值查询，InnoDB 会对 Next-Key Lock 进行优化，将其降级为 Record Lock 或 Gap Lock。</p>
-<p><strong>省流</strong>：</p>
 <ul>
-<li><p>查找过程中访问到的才会被加锁，遍历停止时访问的那个不符合条件的行也要加锁，默认加NextKeyLock。</p>
-</li>
-<li><p><strong>唯一索引的等值查询</strong>，存在加RecordLock，不存在加右边界的GapLock</p>
-</li>
-<li><p><strong>唯一索引的范围查询</strong> 或者 <strong>普通索引的查询</strong> 这些查询包含向右遍历，如果出现<strong>唯一索引的等值查询</strong>，加对应的RecordLock，其他被遍历到的都是Next-keyLock，出现正无穷加正无穷的Next-KeyLock</p>
-</li>
-<li><p>特别地，对于 <strong>唯一索引的范围查询</strong> 或者 <strong>普通索引等值查询</strong> ，遍历停止时访问的那个不符合条件的行，这一行的NextKeyLock会退化为GapLock</p>
+<li>防止幻读：查找过程中访问到的记录都会被加锁，遍历停止时访问的那个不符合条件的行也要加锁，默认加NextKeyLock。出现正无穷加正无穷的Next-KeyLock</li>
+<li>退化成Record：唯一索引等值匹配</li>
+<li>退化成Gap：<ul>
+<li>唯一索引范围查询、普通索引查询，遍历过程中第一个不符合条件的行加锁，但是退化成GapLock。</li>
+<li>等值查询，id = 9的值不存在，给离得最近的 id = 10 的记录加锁，退化成 GapLock</li>
+</ul>
 </li>
 </ul>
-<h3 id="行级锁-加锁范围验证"><a href="#行级锁-加锁范围验证" class="headerlink" title="行级锁 加锁范围验证"></a>行级锁 加锁范围验证</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017215201503.png" alt="image-20241017215201503"></p>
+<h4 id="加锁范围验证"><a href="#加锁范围验证" class="headerlink" title="加锁范围验证"></a>加锁范围验证</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017215201503.png" alt="image-20241017215201503"></p>
 <p>X 对应 默认的 Next-key Lock</p>
 <p>X, REC_NOT_GAP 对应 Record Lock</p>
 <p>X, GAP 对应 Gap Lock </p>
@@ -4015,13 +4022,22 @@
 
 
 
-<h4 id="主键等值查询-——-数据存在"><a href="#主键等值查询-——-数据存在" class="headerlink" title="主键等值查询 —— 数据存在"></a>主键等值查询 —— 数据存在</h4><p>查询 id = 10 REC_NOT_GAP</p>
+<blockquote>
+<p>主键等值查询 —— 数据存在</p>
+</blockquote>
+<p>查询 id = 10 REC_NOT_GAP</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017223439818.png" alt="image-20241017223439818"></p>
 <p>对主键等值加锁，且值存在，临键锁退化为Record，锁住10这条记录</p>
-<h4 id="主键等值查询-——-数据不存在"><a href="#主键等值查询-——-数据不存在" class="headerlink" title="主键等值查询 —— 数据不存在"></a>主键等值查询 —— 数据不存在</h4><p>查询 id = 9 GAP</p>
+<blockquote>
+<p>主键等值查询 —— 数据不存在</p>
+</blockquote>
+<p>查询 id = 9 GAP</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017223354241.png" alt="image-20241017223354241"></p>
 <p>对主键等值加锁，值不存在，临键锁退化为Gap，锁住了10之前的间隙</p>
-<h4 id="主键范围查询"><a href="#主键范围查询" class="headerlink" title="主键范围查询"></a>主键范围查询</h4><ol>
+<blockquote>
+<p>主键范围查询</p>
+</blockquote>
+<ol>
 <li>查找id&gt;=10 有10,11,12,15,20满足条件</li>
 </ol>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017224916640.png" alt="image-20241017224916640"></p>
@@ -4031,7 +4047,10 @@
 </ol>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017230538715.png" alt="image-20241017230538715"></p>
 <p>10是等值查询，退化Record，其他都是临键，查到15的时候不符合, 15退化为Gap</p>
-<h4 id="普通索引等值查询"><a href="#普通索引等值查询" class="headerlink" title="普通索引等值查询"></a>普通索引等值查询</h4><p>查询 a = 10 一共三条符合的记录 id = 10,11,12 </p>
+<blockquote>
+<p>普通索引等值查询</p>
+</blockquote>
+<p>查询 a = 10 一共三条符合的记录 id = 10,11,12 </p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017222539070.png" alt="image-20241017222539070"></p>
 <ul>
 <li>对于idx_t_a这个索引，加了四把锁，其中符合条件的3行都是nextKey(也就是默认的行锁)，检索到第一个不符合条件的行 （15,15）nextKey退化成GAP间隙</li>
@@ -4039,9 +4058,12 @@
 </ul>
 <p>不存在：查询 a = 9 只有Gap</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017235509444.png" alt="image-20241017235509444"></p>
-<h4 id="普通索引范围查询"><a href="#普通索引范围查询" class="headerlink" title="普通索引范围查询"></a>普通索引范围查询</h4><p>查询 a &gt;= 10</p>
+<blockquote>
+<p>普通索引范围查询</p>
+</blockquote>
+<p>查询 a &gt;= 10</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018000157308.png" alt="image-20241018000157308"></p>
-<h2 id="InnoDB"><a href="#InnoDB" class="headerlink" title="InnoDB"></a>InnoDB</h2><h3 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/Mindmap.png" alt="MindMap"></p>
+<h2 id="InnoDB"><a href="#InnoDB" class="headerlink" title="InnoDB"></a>InnoDB</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/Mindmap.png" alt="MindMap"></p>
 <h3 id="事务管理"><a href="#事务管理" class="headerlink" title="事务管理"></a>事务管理</h3><p>在事务开始前和结束后，数据库的状态必须一致。InnoDB 在事务提交时会检查所有约束（如外键、唯一性约束），确保数据的完整性和<strong>一致性</strong>。</p>
 <h4 id="RedoLog-持久性"><a href="#RedoLog-持久性" class="headerlink" title="RedoLog - 持久性"></a>RedoLog - 持久性</h4><ul>
 <li>产生：更新数据之后，事务提交之时</li>
@@ -4070,8 +4092,8 @@
 </ul>
 <p>表空间TableSpaces-&gt;段Segment-&gt;区Extent-&gt;页Page-&gt;行Row</p>
 <h3 id="MVCC-隔离性"><a href="#MVCC-隔离性" class="headerlink" title="MVCC - 隔离性"></a>MVCC - 隔离性</h3><p><strong>M</strong>ulti<strong>V</strong>ersion <strong>C</strong>oncurrency <strong>C</strong>ontrol</p>
-<h4 id="当前读"><a href="#当前读" class="headerlink" title="当前读"></a>当前读</h4><p>读取数据的当前版本（最新版本），读取时要加锁</p>
-<h4 id="快照读"><a href="#快照读" class="headerlink" title="快照读"></a>快照读</h4><p>读取的是记录数据的可见版本，不加锁</p>
+<p><strong>当前读</strong>：读取数据的当前版本（最新版本），读取时要加锁</p>
+<p><strong>快照读</strong>：读取的是记录数据的可见版本，不加锁</p>
 <ul>
 <li>Read Committed：每次select都生成一个快照读</li>
 <li>Repeatable Read：开启事务以后的首个select才是快照读</li>
@@ -4079,17 +4101,23 @@
 </ul>
 <p>MySQL用MVCC实现了一致性非锁定读，读操作只读该事务开始前的数据库的快照，也就是快照读（与当前读相对）</p>
 <p>事务隔离级别越低，对应的锁就越少，MySQL用MVCC减少了高并发情况下锁的数量，也就是说默认的RR对性能没有影响</p>
-<h4 id="隐藏字段"><a href="#隐藏字段" class="headerlink" title="隐藏字段"></a>隐藏字段</h4><p>TRX_ID 最后一次事务ID</p>
-<p>ROLL_PTR 指向undolog</p>
-<p>ROW_ID 如果没有主键会对每一行生成rowID</p>
-<h4 id="利用-UndoLog"><a href="#利用-UndoLog" class="headerlink" title="利用 UndoLog"></a>利用 UndoLog</h4><h5 id="生成UndoLog"><a href="#生成UndoLog" class="headerlink" title="生成UndoLog"></a>生成UndoLog</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018150130329.png" alt="image-20241018150130329"></p>
-<h5 id="版本链"><a href="#版本链" class="headerlink" title="版本链"></a>版本链</h5><p>事务对记录进行修改，会在Undolog生成对应的undo备份，事务对同一条记录进行修改，会在Undolog中生成一条版本链，链表尾部是最早的旧版本，链表头部是最新的旧版本，</p>
+<h4 id="利用-UndoLog-形成版本链"><a href="#利用-UndoLog-形成版本链" class="headerlink" title="利用 UndoLog 形成版本链"></a>利用 UndoLog 形成版本链</h4><blockquote>
+<p>隐藏字段：</p>
+<ul>
+<li>TRX_ID 最后一次事务ID</li>
+<li>ROLL_PTR 指向undolog</li>
+<li>ROW_ID 如果没有主键会对每一行生成rowID</li>
+</ul>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018150130329.png" alt="image-20241018150130329"></p>
+<p>事务对记录进行修改，会在Undolog生成对应的undo备份，事务对同一条记录进行修改，会在Undolog中生成一条版本链，链表尾部是最早的旧版本，链表头部是最新的旧版本，</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018151050435.png" alt="image-20241018151050435"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018151107149.png" alt="image-20241018151107149"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018151128340.png" alt="image-20241018151128340"></p>
 <h4 id="ReadView-amp-数据可见性算法"><a href="#ReadView-amp-数据可见性算法" class="headerlink" title="ReadView &amp; 数据可见性算法"></a>ReadView &amp; 数据可见性算法</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018161558601.png" alt="image-20241018161558601"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/trans_visible-ekj9bMvL.png" alt="trans_visible"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018205730125.png" alt="image-20241018205730125"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018161738996.png" alt="image-20241018161738996"></p>
-<h4 id="RC-amp-RR-解决并发事务引发的问题"><a href="#RC-amp-RR-解决并发事务引发的问题" class="headerlink" title="RC &amp; RR 解决并发事务引发的问题"></a>RC &amp; RR 解决并发事务引发的问题</h4><p><mark><u>1. MVCC 通过 ReadView 的数据可见性算法 只会读取其他事务已提交的信息，完全避免了脏读</u><mark> </p>
+<hr>
+<h2 id="MVCC-RC-amp-RR-如何解决事务并发问题？"><a href="#MVCC-RC-amp-RR-如何解决事务并发问题？" class="headerlink" title="MVCC: RC &amp; RR 如何解决事务并发问题？"></a>MVCC: RC &amp; RR 如何解决事务并发问题？</h2><p><mark><u>1. MVCC 通过 ReadView 的数据可见性算法 只会读取其他事务已提交的信息，完全避免了脏读</u></mark> </p>
 <p><strong>RC</strong>：避免脏读（读已提交）</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018155530221.png" alt="image-20241018155530221"></p>
 <p><code>mIDs</code>包含活跃事务，<code>maxID</code>当前最大事务ID+1，<code>minID</code>最小活跃事务ID，<code>trxID</code>当前所浏览版本所属的事务ID</p>
@@ -4106,7 +4134,7 @@
 <li><code>mIDs</code>为空，可读</li>
 </ol>
 <p><code>Read View</code>在SQL执行结束后自动销毁，下次生成新的</p>
-<p><mark><a target="_blank" rel="noopener" href="https://javaguide.cn/database/mysql/innodb-implementation-of-mvcc.html#mvcc-%E8%A7%A3%E5%86%B3%E4%B8%8D%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E9%97%AE%E9%A2%98">2. MVCC 通过设置同一事务复用 ReadView 完全避免了不可重复读问题 </a><mark> </p>
+<p><mark><a target="_blank" rel="noopener" href="https://javaguide.cn/database/mysql/innodb-implementation-of-mvcc.html#mvcc-%E8%A7%A3%E5%86%B3%E4%B8%8D%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E9%97%AE%E9%A2%98">2. MVCC 通过设置同一事务复用 ReadView 完全避免了不可重复读问题 </a></mark> </p>
 <p><strong>RR</strong>：注意——RR是可以读已提交的，RR是用来解决不可重复读的</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018155805136.png" alt="image-20241018155805136"></p>
 <p>同一个事务的<code>Read View</code>相同，后开启的事务修改肯定不会去读，只会按照同一个<code>Read View</code>读版本链</p>
@@ -4114,14 +4142,133 @@
 <li>事务5第一次读，事务3修改了但还没提交，最后选择事务2的版本，生成的<code>Read View</code>不会马上销毁</li>
 <li>事务5第二次读，复用之前的<code>Read View</code>，最重要的是记录了<strong>活跃事务列表</strong> <code>mIds</code>，即使事务3提交了，</li>
 </ul>
-<p><u><mark>3. MVCC 如何解决幻读问题？<mark></u> </p>
+<p><u><mark>3. MVCC 如何解决幻读问题？</mark></u> </p>
 <ol>
-<li>执行普通select语句，MVCC会使用快照读。RR 隔离级别只会在事务开启后的第一次查询生成 <code>Read View</code> ，并使用至事务提交。所以在生成 <code>Read View</code> 之后其它事务所做的更新、插入记录版本对当前事务并不可见，实现了可重复读和防止快照读下的 “幻读”。</li>
-<li>对于当前读，通过设置Next-Key Lock，将间隙也锁住，阻塞其他事务插入数据，防止插入，幻读也就不会出现。</li>
+<li>对于普通的select，MVCC会使用快照读。RR 隔离级别只会在事务开启后的第一次查询生成 <code>Read View</code> ，并使用至事务提交。所以在生成 <code>Read View</code> 之后其它事务所做的更新、插入记录版本对当前事务并不可见，实现了可重复读和防止快照读下的 “幻读”。</li>
 </ol>
+<blockquote>
+<p>RR 级别下，对于当前读，只要是根据索引访问过的行都会加临键锁，根据情况退化。幻读部分解决</p>
+</blockquote>
 <p>没法防止的幻读：</p>
 <p>事务A第一次查询id=5没查到，事务B此时插入了id=5并提交了，事务A为了维持可重复读第二次依然查不到5，但是此时事务A插入5会失败，update id = 5会成功，试图select for update也会成功，好像出现了幻觉，只能改变隔离模式为 Serializable </p>
 <p>MySQL 可重复读隔离级别并没有彻底解决幻读，只是很大程度上避免了幻读现象的发生，</p>
+<h2 id="为什么-MySQL-默认隔离级别为-RR？"><a href="#为什么-MySQL-默认隔离级别为-RR？" class="headerlink" title="为什么 MySQL 默认隔离级别为 RR？"></a>为什么 MySQL 默认隔离级别为 RR？</h2><blockquote>
+<p>一、<strong>基础概念对比</strong></p>
+</blockquote>
+<ol>
+<li><p><strong>RR（Repeatable Read，可重复读）</strong>  </p>
+<ul>
+<li><strong>核心特性</strong>：事务内首次读建立快照，后续读均基于此快照，避免不可重复读。  </li>
+<li><strong>锁机制</strong>：通过<strong>间隙锁（Gap Lock）</strong> 和 <strong>临键锁（Next-Key Lock）</strong> 解决幻读问题（如<code>SELECT ... FOR UPDATE</code>会锁定范围，阻止新数据插入）。  </li>
+<li><strong>适用场景</strong>：需强一致性的金融交易、对数据快照有严格要求的业务（如对账）。</li>
+</ul>
+</li>
+<li><p><strong>RC（Read Committed，读已提交）</strong>  </p>
+<ul>
+<li><strong>核心特性</strong>：每次读都获取最新已提交数据，允许不可重复读和幻读。  </li>
+<li><strong>锁机制</strong>：仅使用<strong>行锁（Record Lock）</strong>，无间隙锁，并发更高。  </li>
+<li><strong>适用场景</strong>：高并发写入场景（如电商库存扣减、社交动态更新）。</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>二、<strong>MySQL 默认选择 RR 的原因</strong></p>
+</blockquote>
+<ol>
+<li><strong>历史兼容性与主从复制安全（核心原因）</strong>  <ul>
+<li>MySQL 早期版本依赖 <strong>Statement-Based Replication（SBR）</strong> 的 binlog 格式。</li>
+<li>RC 级别，若事务中混合读写操作，SBR 可能因其他事务的提交导致主从数据不一致（如幻读未被记录）。  </li>
+<li>RR 级别通过<strong>快照隔离</strong>和<strong>间隙锁Gap Locl</strong>规避此问题，确保 binlog 重放结果一致。  </li>
+</ul>
+<blockquote>
+<p>💡 尽管现代 MySQL 推荐 <strong>Row-Based Replication（RBR）</strong>，也就是 ROW 模式的 binlog 解决此问题，但 RR 作为默认项延续至今。</p>
+</blockquote>
+</li>
+<li><strong>强一致性设计倾向，间隙锁能部分解决幻读问题</strong>  <ul>
+<li>InnoDB 引擎的 RR 通过 MVCC + 间隙锁实现<strong>伪串行化</strong>，提供比 SQL 标准更严格的隔离（解决幻读），降低业务复杂度。</li>
+</ul>
+</li>
+<li><strong>快照生成优化</strong>  <ul>
+<li>RR 下事务仅需在<strong>第一条读语句时生成一次快照</strong>，而 RC 需每次读都生成新快照，理论上 RR 的 MVCC 开销更低。</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>三、<strong>PostgreSQL/Oracle 默认选择 RC 的原因</strong></p>
+</blockquote>
+<ol>
+<li><p><strong>性能优先的设计哲学</strong>  </p>
+<ul>
+<li>RC 无间隙锁，<strong>写操作并发度显著更高</strong>。例如：  <ul>
+<li>事务 A 更新 <code>id&lt;10</code> 的记录时，事务 B 仍可插入 <code>id=5</code> 的新数据（PG/Oracle）。  </li>
+<li>在 MySQL RR 中，上述操作会被间隙锁阻塞。  </li>
+</ul>
+</li>
+<li>高并发场景下，RC 的<strong>死锁概率更低</strong>（减少锁竞争）。</li>
+</ul>
+</li>
+<li><p><strong>MVCC 实现差异</strong>  </p>
+<ul>
+<li>PostgreSQL/Oracle 的 MVCC 通过<strong>多版本堆存储</strong>实现，RC 下每条语句使用最新快照，更符合业务直觉（如实时查询余额）。  </li>
+<li>MySQL 的 RR 快照可能返回“过时”数据，需开发者显式加锁（<code>FOR UPDATE</code>）解决。</li>
+</ul>
+</li>
+<li><p><strong>标准遵循与生态适配</strong>  </p>
+<ul>
+<li>SQL 标准仅要求 RR 解决不可重复读，幻读允许存在。PG/Oracle 严格遵循此标准，而 MySQL 通过扩展锁机制超越标准。  </li>
+<li>Oracle 的“回滚段”设计和 PG 的“堆多版本”天然适配 RC，无需额外锁即可避免脏读。</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p><strong>总结：设计取舍决定默认选择</strong></p>
+</blockquote>
+<ul>
+<li><strong>MySQL 选 RR</strong>：<br><strong>牺牲部分并发性</strong>换取强一致性和历史兼容性，尤其适配 binlog 复制时代遗留问题。  </li>
+<li><strong>PG/Oracle 选 RC</strong>：<br><strong>优先吞吐量和响应速度</strong>，依赖 MVCC 和开发者处理边界一致性问题，贴合互联网高并发需求。  </li>
+</ul>
+<blockquote>
+<p>📌 <strong>实际建议</strong>：  </p>
+<ul>
+<li>若业务需高并发（如订单系统），即使使用 MySQL 也<strong>建议切为 RC</strong>（大厂常见操作）。  </li>
+<li>若需跨事务一致性（如银行转账），PG/Oracle 需显式使用 <code>SELECT FOR UPDATE</code> 或切 RR 级别。  </li>
+</ul>
+<p>两种选择无绝对优劣，本质是 <strong>“让数据库兜底一致性” vs “将一致性交给业务层”</strong> 的路径分野。</p>
+</blockquote>
+<h2 id="间隙锁的劣势：为什么一般生产环境要使用-RC？"><a href="#间隙锁的劣势：为什么一般生产环境要使用-RC？" class="headerlink" title="间隙锁的劣势：为什么一般生产环境要使用 RC？"></a>间隙锁的劣势：为什么一般生产环境要使用 RC？</h2><p><a target="_blank" rel="noopener" href="https://www.rectcircle.cn/posts/mysql-innodb%E9%94%81%E5%88%86%E6%9E%90/#4-%E7%BB%84%E5%90%88%E5%9B%9B-id%E6%97%A0%E7%B4%A2%E5%BC%95-rc">MySql-InnoDB锁分析 :: Rectcircle Blog</a> </p>
+<p>大厂在实践中普遍将 MySQL 的隔离级别设置为 <strong>读已提交</strong>，主要基于以下几个关键因素的权衡：</p>
+<ol>
+<li><strong>并发能力大幅升高</strong>：<ul>
+<li><p><strong>RC 没有间隙锁：</strong> 这是最核心的原因。在 RC 级别下没有间隙锁，<code>SELECT</code> 操作通常只使用<strong>记录锁</strong>，并且只在语句执行期间持有（具体是读取后立即释放，还是事务结束释放，取决于设置，但通常比 RR 短）。减少锁冲突直接意味着数据库可以处理更多的并发事务，尤其是在写密集型的应用场景（如电商扣库存、社交点赞评论、实时计数等）下，显著提升系统整体吞吐量。</p>
+</li>
+<li><p><strong>RR 的间隙锁：</strong> 在 RR 级别下，为了防止幻读，InnoDB 广泛使用<strong>GAP_LOCK</strong>和 <strong>next-key 锁</strong>。特别是在范围查询 (<code>SELECT ... WHERE col BETWEEN ...</code>) 或普通的（非唯一）索引查询时，会锁定住一个范围。这极大地增加了锁冲突的可能性。在高并发写入场景下，一个事务锁住一个间隙，会阻塞其他需要在该间隙内插入或更新记录的事务，导致严重的并发瓶颈。</p>
+</li>
+<li><p><strong>面对全表扫描，间隙锁的劣势</strong>：行锁是根据索引才能精确加的，<mark>如果条件列没有索引</mark>，SQL会走聚簇索引的全扫描进行过滤，由于过滤是由MySQL Server层面进行的。因此每条记录，无论是否满足条件，都会被逐行加X锁。</p>
+<ul>
+<li>RR 隔离级别下直接将所有行逐行加临键锁，也就是说会锁上聚簇索引内的所有间隙，杜绝所有的并发 DML 操作，也杜绝了当前读操作。「全表阻塞」</li>
+<li>RC 隔离级别下同样也是逐行加锁，为了效率考量，MySQL做了优化，<strong>检查后立即释放不匹配行的锁</strong>。最终持有的，是满足条件的记录上的锁。但是不满足条件的记录上的加锁/放锁动作不会省略。同时，优化也违背了2PL的约束。「短暂阻塞每行」</li>
+</ul>
+</li>
+<li><p><strong>死锁风险</strong>：间隙锁也是导致复杂死锁场景的常见原因。因为间隙锁锁定的不是具体的记录，而是一个范围，不同事务以不同顺序请求间隙锁时，很容易形成循环等待（死锁）。在 RC 级别下移除了间隙锁，死锁发生的频率通常会显著降低，系统运行更稳定，运维负担减轻。</p>
+</li>
+</ul>
+</li>
+<li><strong>业务场景的适配性：</strong><ul>
+<li><strong>短事务为主：</strong> 互联网大厂的核心业务逻辑通常设计为短小精悍的事务，执行速度快。在短事务场景下，RC 级别的“不可重复读”和“幻读”问题发生的概率相对较低，或者其影响在业务上是可以接受的。</li>
+<li><strong>读后即写模式：</strong> 很多业务操作是“读 -&gt; 计算/判断 -&gt; 写”。在 RC 级别下，读到的总是最新的已提交数据，通常更符合业务预期（例如，基于当前余额扣款、基于当前库存下单）。在 RR 级别下读到的可能是历史快照，有时反而不利于做出正确决策（虽然业务逻辑可以通过 <code>SELECT ... FOR UPDATE</code> 显式加锁来规避，但这又增加了锁开销）。</li>
+<li><strong>应用层容错：</strong> 大厂通常有比较完善的分布式系统设计和应用层逻辑来处理数据一致性问题（如幂等性设计、异步校验补偿、最终一致性方案）。对于 RC 下可能出现的“不可重复读”或“幻读”问题，如果对核心业务有影响，可以通过应用逻辑（如乐观锁、版本号检查）或数据库操作（如 <code>SELECT ... FOR UPDATE</code> 在需要时显式加锁）来规避，而不是依赖数据库默认的 RR 隔离级别提供的强保证。</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>大厂选择 RC 的核心驱动力是 <strong>在高并发、高性能要求下，牺牲一部分隔离性（避免不可重复读、幻读）来换取显著的性能提升（减少锁竞争、降低死锁、提高吞吐量）</strong>。</p>
+<ul>
+<li><strong>RR 的代价：</strong> 间隙锁带来的高锁冲突和高死锁率，在写密集型高并发场景下成为性能杀手。</li>
+<li><strong>RC 的收益：</strong> 移除间隙锁，极大缓解锁冲突和死锁，显著提升并发性能。</li>
+<li><strong>RC 的风险：</strong> 不可重复读、幻读。但在短事务、读后即写为主的业务场景下，这些风险发生的概率相对可控，或者可以通过应用层设计来有效规避。使用 ROW binlog 后，复制兼容性问题也不再是障碍。</li>
+</ul>
+</blockquote>
+<h2 id="视图、存储过程、触发器"><a href="#视图、存储过程、触发器" class="headerlink" title="视图、存储过程、触发器"></a>视图、存储过程、触发器</h2><p>视图就是给子查询起了个名字，然后作为对象存储到数据库中</p>
 
       
     </div>
