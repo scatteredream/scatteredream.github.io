@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -194,6 +194,553 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/18/git-usage/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/18/git-usage/" class="post-title-link" itemprop="url">git 使用总结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-18 00:00:00 / 修改时间：21:59:32" itemprop="dateCreated datePublished" datetime="2025-05-18T00:00:00+08:00">2025-05-18</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>第一次从远端复制项目： <code>git clone</code> GUI</p>
+<p>想让本地仓库关联到远程仓库：<code>git remote add</code> 远程-&gt;添加远程存储库</p>
+<p>更改加到暂存区：<code>git add</code>   GUI</p>
+<p>更改提交到本地仓库：<code>git commit -M &quot;first commit&quot;</code></p>
+<p>从本地仓库将提交推送到远程仓库：<code>git push</code></p>
+<p>合并 merge 保留分叉，在原来远端的分支生成一个新的 M 合并提交。</p>
+<p>变基 rebase 合并成线性</p>
+<p>在 <code>feature</code> 分支上执行 <code>git rebase main</code>，<code>feature</code> 分支的提交被重演到 <code>main</code>，形成新的提交，</p>
+<p>从远端拉取：<code>git pull</code> 默认会采用 merge 合并的方式，加<code>--rebase</code>改用 rebase 变基形式</p>
+<p>回滚更改：<code>git reset</code></p>
+<p>抓取/获取：<code>git fetch</code> 获取远程最新的提交，但是不合并，仅仅用作查看进度。</p>
+<p>最佳实践：</p>
+<p>fetch查看远端更改，看一下提交的内容以及结构，然后就可以 pull，这里可以选择 merge 或者 rebase 两种方式，都可以，注意处理冲突情况，在本地合并好就可以push到远端了。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/17/algorithm-leetcode-hot-100/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/17/algorithm-leetcode-hot-100/" class="post-title-link" itemprop="url">力扣热题100速通</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-17 00:00:00 / 修改时间：20:47:39" itemprop="dateCreated datePublished" datetime="2025-05-17T00:00:00+08:00">2025-05-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>转载自 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/458506664">力扣热题100 速通指南 - 小范同学</a> </p>
+<p>思路总结，用于复习。</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/two-sum/">1. 两数之和</a></p>
+<p>解法1：暴力遍历 O(N^2)</p>
+<p>解法2：字典。每遍历到一个数，先找目标值在不在字典里。若在，返回；若不在，当前数加入字典。</p>
+<p>解法3：排序 + 双指针 O(nlogn)</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/add-two-numbers/">2. 两数相加</a></p>
+<p>循环 while l1 or l2，adder1 = l1.val if l1 else 0，adder2也这样操作。循坏外设carry=0，当前位res = (adder1 + adder2) % 10，carry = (adder1 + adder2) // 10，新建一个节点保存当前res，后移。退出循环后如果有carry位就新建一个节点，如果没有就算。</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/">3. 无重复字符的最长子串</a></p>
+<p>同<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/zui-chang-bu-han-zhong-fu-zi-fu-de-zi-zi-fu-chuan-lcof/">剑指 Offer 48. 最长不含重复字符的子字符串</a></p>
+<p>解法1：dp+字典</p>
+<p>dp[i]表示以i结尾的最长不含重复字符的子字符串，字典记录字符s[i]上一次出现的位置下标（如果没有出现过，默认值-1）。特别注意，<strong>是上一次出现</strong>，不是上一次在滑动窗口中出现，虽然我们也可以用i - dp[i-1]得到左端点，但这样比较麻烦。</p>
+<p>判断上一次出现的位置是否在滑动窗口中：i-dict[i] &gt; dp[i-1]。前面这个数是[上一个s[i], s[i-1]]的长度，它大于dp[i-1]说明上一个s[i]在dp[i-1]左端点的左边</p>
+<p>转移方程：</p>
+<blockquote>
+<p>下面这样写是不对的，因为dict应该是上一次出现，而不是上一次在滑动窗口中出现。<br>dp[i] = dp[i-1] + 1 if nums[i] not in dict<br>dp[i] = i - dict[nums[i]] if nums[i] in dict</p>
+</blockquote>
+<p>正确的转移方程</p>
+<blockquote>
+<p>dp[i] = dp[i-1] + 1 i-dict[i] &gt; dp[i-1]<br>dp[i] = i - dict[nums[i]] else</p>
+</blockquote>
+<p>完事更新hash表。最后输出dp[]最大值</p>
+<p>解法2：双指针+字典，可以用双指针是因为我们发现右端点右移左端点也右移，有单调性。遍历right，left = max(left, dict[s.get(right, -1)]+1)，更新哈希表dict[s[right]] = right，更新结果res = max(res, right - left + 1)</p>
+<p>ps. k神答案里给的左边界是开区间。</p>
+<p>需要注意的是，由于ASCII码是0~127，所以两种解法空间复杂度是O(1)</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/median-of-two-sorted-arrays/">4. 寻找两个正序数组的中位数</a></p>
+<p>解法1：merge 时间空间都O(m+n)</p>
+<p>解法2：二分查找 O(log(m+n)) TODO</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-palindromic-substring/">5. 最长回文子串</a></p>
+<p>解法1：dp（不推荐）<br>由于回文串必须要左右对称，很明显一个状态变量已经无法描述问题，所以使用二维dp。dp[i][j]表示字符串s[i,j]是否是回文串，转移方程是 P(i,j)=P(i+1,j−1)∧(Si​==Sj​)<br>边界条件：长度为1的子串是回文串，长度为2的看这两个字符是否相同<br>递推：从长度为1的开始<br>记录结果：只要dp[i][j] == True，比较长度，若为最长则记录长度和下标<br>时间空间都是O(N^2)，因为要给每个状态计算转移方程</p>
+<p>解法2：中心扩展法（推荐）</p>
+<ol>
+<li>首先写一个中心扩展函数：输入扩展中心左右端点坐标，当左右端点相同时向外扩展，直到无法扩展时，输出最长扩展字串的左右端点</li>
+<li>按照“串中每一个点”，“串中每相邻一对点”作为扩展中心，开始扩展，一旦返回的子串长度大于最大长度，将其记录下来。</li>
+</ol>
+<p>时间O(N^2)：长度为1的回文中心有n个，长度为2的回文中心有(n-1)个，每个回文中心最多向外扩展n次<br>空间O(1)</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/regular-expression-matching/">10. 正则表达式匹配</a></p>
+<p>由于是评估整个串是否匹配，使用动态规划。由于模式串和文本串各自有一个指针，所以应该是二维dp：</p>
+<p>dp[i][j]表示文本串前i个位置，模式串前j个位置是否匹配。TODO</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/container-with-most-water/">11. 盛最多水的容器</a></p>
+<blockquote>
+<p>注意这道题和<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/trapping-rain-water/">42. 接雨水</a> 不同。本题是“板”，即相邻两板之间可以接水。42题是块，即相邻两块之间不能接雨水。这将引起x坐标计算的不同。</p>
+</blockquote>
+<p>这个问题是个具有单调性的问题，解法一定是首尾双指针。面积是(right - left) * min(height[left], height[right])</p>
+<blockquote>
+<p><strong>特别注意这里是right-left不是right-left+1</strong>，前者是right和left的间距，后者是left和right之间有几个数（包括端点）</p>
+</blockquote>
+<p>基本思想就<strong>是若向内移动长板，（由于min这部分要么变小要么不变）则面积一定缩小。若向内移动短板，它有可能变长，所以面积有可能变大。</strong></p>
+<p>那么我们就不断移动短板，一直算面积，直到双指针汇聚，所有算过的这些面积里面最大的就是结果。</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/3sum/">15. 三数之和</a></p>
+<p>TODO</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/">17. 电话号码的字母组合</a></p>
+<p>标准试探回溯法</p>
+<p>基本流程：找状态变量、明确退出条件、找选择列表、剪枝、做出选择并递归深入、撤销选择</p>
+<p>这里首先来个map，记录每个数字对应的字符们</p>
+<p>状态变量：电话号码的第几位curr。退出条件是curr=len(nums)，选择列表是迭代dict[curr]，不需要剪枝，做出选择是append当前字符并递归深入，撤销选择是pop当前元素</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/remove-nth-node-from-end-of-list/">19. 删除链表的倒数第 N 个结点</a></p>
+<p>很简单，快慢双指针</p>
+<p>需要注意的是退出条件。如果fast比slow快n步，fast是倒数第1个时slow是倒数第n个，此时fast.next==None，所以循环条件是while fast.next</p>
+<p>另外一种方法比较取巧，链表头部弄个哑节点，slow从哑节点启动，循环条件为while fast，这时候fast比slow快(n+1)步</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/valid-parentheses/">20. 有效的括号</a></p>
+<p>括号匹配问题。（由于需要倒序比较）使用栈。具体思路是：先建立一个左右括号匹配字典，遍历序列，如果遇到左括号就入栈，如果遇到右括号，若栈为空或者栈顶括号不与当前右括号匹配，返回false。最后来看栈是否为空。</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/merge-two-sorted-lists/">21. 合并两个有序链表</a></p>
+<p>mergesort的合并一步。没什么难的，就是while l1 and l2: 拼接最小的到新链表，退出循环后if l1就把l1拼后面，if l2就把l2拼后面，最后return dummy.next</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/generate-parentheses/">22. 括号生成</a></p>
+<p>试探回溯法入门题。先回忆一下步骤：确定状态变量、确定退出条件 、确定选择列表、剪枝、做出选择并深入、撤销选择。</p>
+<p>对这道题而言，由于我们要一个一个括号添加，而括号又分为左、右两种，因此以“左括号剩余个数”“右括号剩余个数”同时为状态变量。退出条件是左右括号个数均剩余为0。选择列表就是添加左括号or添加右括号。剪枝条件就是剩余左括号数大于剩余右括号数（说明已经摆放的右括号数大于已经摆放的左括号数），和剩余左右括号数小于0（说明有透支）</p>
+<p>时间复杂度：取决于有多少个组合<br>空间复杂度：递归栈最深为2n，所以是O(n)</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/merge-k-sorted-lists/">23. 合并K个升序链表</a></p>
+<p>方法1：以一个链表为结果链表，其他链表不断合并上来</p>
+<p>方法2：类似数组归并排序一样，对所有链表头节点组成的数组分而治之，链表两两合并，最终得到一个大链表</p>
+<p><strong>方法3（推荐）：</strong>使用堆。首先我们先把所有链表取出一个元素入堆（注意只有在if l的时候才入堆，要把空链表过滤掉），然后从堆里取出最值元素连在结果链表中，并将该元素的next节点入堆</p>
+<p>需要注意的一点是，入堆的元素需要是(l.val, l_index, l)这种tuple，因为同值的时候堆会按照第二个元素排序，所以第二个位置要放index。第三个位置放节点本身，这是为了找他在链表中的next节点用。</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/next-permutation/">31. 下一个排列</a></p>
+<p>左边找一个较小数，右边找一个较大数，交换，排序交换后较大数的右侧。</p>
+<p>具体而言：从右向左找第一个顺序对，其中较小那个就是我们需要的较小数。我们从这个数以右（从右向左，因为这个区间必然是大-&gt;小的）找第一个比他大的数，这个数就是较大数。交换这两个数，之后右边这个区间必然是逆序的，因此我们要翻转这个区间（首尾双指针）。</p>
+<p>另外注意，对于已经是最大排列的这种情况，没有第一步和第二步，只有翻转区间。因此我们在做第一步和第二步的时候要先检验下标是否合法。</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/search-in-rotated-sorted-array/">33. 搜索旋转排序数组</a></p>
+<p>这个题不同于剑指里的题，我们是搜索任意值target。但其基本思想一致，就是不断剔除单调区间。</p>
+<p>TODO</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/trapping-rain-water/">42. 接雨水</a></p>
+<blockquote>
+<p>注意这道题和<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/container-with-most-water/">11. 盛最多水的容器</a> 不同。11题是“板”，即相邻两板之间可以接水。而这道题是块，即相邻两块之间不能接雨水。这将引起x坐标计算的不同。</p>
+</blockquote>
+<p>解法1：最值数组。加和每个位置正上方能接雨水的位置。发现一个规律，每个位置正上方能够接雨水的数量是min(left[i], right[i]) - height[i]。所以就是要先构建左起最大高度数组left、右起最大高度数组right。时间复杂度O(n)，空间复杂度O(n)</p>
+<p>解法2：单调栈。逐层横向计算。利用单调栈，</p>
+<p>解法3：双指针。</p>
+<p>TODO</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/rotate-image/">48. 旋转图像</a></p>
+<p>解法1：推公式（麻烦）</p>
+<p>解法2：用翻转代替旋转。上下翻转一下，沿左上到右下的对角线翻转一下。</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/maximum-subarray/">53. 最大子数组和</a></p>
+<p>dp。由于要连续，dp[i]表示以当前字母结尾的连续子数组最大和。那么状态转移方程就是看上一个位置的dp数组是否为正，从而决定子数组要不要之前的部分，还是从当前部分重新开始，即：</p>
+<p>dp[i] = dp[i-1] + nums[i] if dp[i-1] &gt; 0<br>dp[i] = nums[i] else</p>
+<p>另外注意一个技巧：我们可以在递推计算dp数组的同时记录数组最大值，这样就避免了重复遍历dp数组。最大值变量初始值可以置为-inf或者num[0]，注意不能置为0因为数组内可能全是负数。</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/jump-game/">55. 跳跃游戏</a></p>
+<p>greedy TODO</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/merge-intervals/">56. 合并区间</a></p>
+<p>排序+遍历。<strong>注意原始数组可能并不是有序的，因此先sort</strong>(nums, key=lambda elem:elem[0])，然后遍历。</p>
+<ul>
+<li>其实这里要用栈来处理，因为我们总是在修改最后一个元素。</li>
+<li>遍历数据，如果栈不是空，pop出来一个元素，比较popped[1]和curr[0]，如果popped[1]&lt;curr[0]说明可以合并，新的左端点还是popped[0]，右端点是max(popped[1], curr[1])。</li>
+<li>除此之外（即popped[1]&gt;=curr[0]），说明不能合并，直接把curr加到结果里</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/climbing-stairs/">70. 爬楼梯</a></p>
+<p>很明显是dp。由于每次只能爬1或2个台阶，dp[i] = dp[i-1] + dp[i-2]</p>
+<p>需要注意的是边界条件。dp[0] = 0（没啥意义，数组里凑数的），dp[1] = 1，dp[2] = 2（因为不等于dp[0] + dp[1]）</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/edit-distance/">72. 编辑距离</a></p>
+<p>方法1：暴力递归。这个问题很显然可以通过减而治之的方式化成规模更小的问题：</p>
+<ul>
+<li>递归基：只要有一个串是空，返回另一个串的长度max(len(word1), len(word2))</li>
+<li>减而治之：<ul>
+<li>如果两个串末尾字符相同：可以转化为两个串都去掉尾字符得到的子问题</li>
+<li>如果两个串末尾字符不同：分为增（word2去掉尾）删（word1去掉尾）改（word1、word2都去尾）三种情况，那就是三个子问题中的最优者（min）得到的答案再+1</li>
+</ul>
+</li>
+</ul>
+<p><strong>方法2：动态规划（推荐）</strong></p>
+<p>首先由于有两个串，长度还不一定一样长，应该是一个二维dp问题。dp[i][j]表示word1的前i个字符转变为word2的前j个字符需要的最小操作数。<br><strong>边界条件：</strong>如果一个字符串是空，答案就应是另一个字符串的长度：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for i in range(len(word1)+1):</span><br><span class="line">    dp[i][0] = i</span><br><span class="line">for j in range(len(word2)+1):</span><br><span class="line">    dp[0][j] = j</span><br></pre></td></tr></table></figure>
+
+<p>转移方程：和上面递归一样分为两种情况：</p>
+<ul>
+<li>两子串尾字符相同（表达成条件就是i&gt;0 and j &gt; 0 and word1[i-1] == word2[j-1]）：两串各去掉尾字符结果不变，因此dp[i][j] = dp[i-1][j-1]</li>
+</ul>
+<blockquote>
+<p>注意这里的条件表达，dp[i][j]表示的是word1[0:i]与word2[0:j]（右边都是开区间），最后一个字符是word1[i-1]和word2[j-1]</p>
+</blockquote>
+<ul>
+<li>两子串尾字符不同：增、删、改三种情况</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">creat = dp[i][j-1] + 1</span><br><span class="line">delete = dp[i-1][j] + 1</span><br><span class="line">update = dp[i-1][j-1] + 1</span><br><span class="line">dp[i][j] = min(creat, min(delete, update))</span><br></pre></td></tr></table></figure>
+
+<p>返回：dp[-1][-1]</p>
+<p>时间、空间复杂度都是O(mn)</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/subsets/">78. 子集</a></p>
+<p>典型试探回溯。步骤：确定状态变量、确定结束条件、确定选择列表、剪枝、做出选择并递归深入、撤销选择</p>
+<p>状态变量是在数组内的位置，结束不做任何事情（因为每个选择都需要被记录，因此一进递归函数就记录，注意要深拷贝），选择列表是当前字符后的所有字符，不需要剪枝，选择就是append，深入，撤销pop</p>
+<p>复杂度？注意<strong>子集的数量是2^n</strong>，这是因为对于每个元素而言都有“在”和“不在”之一。我们每找到一个子集，需要O(n)时间将其拷贝进入结果，因此是O(n*2^n)</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/binary-tree-inorder-traversal/">94. 二叉树的中序遍历</a></p>
+<p>递归法就不说了</p>
+<p>迭代法：</p>
+<ul>
+<li>特殊情况：空树直接返回</li>
+<li>新建一个栈（用来保存待访问的根节点），新建一个curr节点并初始化为root（用来保存当前发现节点）</li>
+<li>当栈不空或curr不空时循环<ul>
+<li>如果curr节点存在，说明发现一个新节点，入栈并转向左子节点</li>
+<li>否则，说明已经向左走到了尽头，此时从栈中pop出一个节点访问，并转向右子节点</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">def inorderTraversal(self, root: TreeNode) -&gt; List[int]:</span><br><span class="line">        if not root: return []</span><br><span class="line">        res = []</span><br><span class="line">        s = []</span><br><span class="line">        curr = root</span><br><span class="line">        while s or curr:</span><br><span class="line">            if curr:</span><br><span class="line">                s.append(curr)</span><br><span class="line">                curr = curr.left</span><br><span class="line">            else:</span><br><span class="line">                curr = s.pop()</span><br><span class="line">                res.append(curr.val)</span><br><span class="line">                curr = curr.right</span><br><span class="line">        return res</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/unique-binary-search-trees/">96. 不同的二叉搜索树</a></p>
+<p>该问题有最有子结构性质，因为以一个点为根节点的二叉搜索树数量，等于其不同的左子树数*不同的右子树数。因此只要让所有的点依次成为根节点，然后求和即可。</p>
+<p>记G(i)为长度为i的序列有二叉搜索树的个数，则 G(i)=Σj=0iG(j−1)∗G(i−j)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">def numTrees(self, n: int) -&gt; int:</span><br><span class="line">        G = [0] * (n+1)</span><br><span class="line">        G[0] = 1</span><br><span class="line">        G[1] = 1</span><br><span class="line">        for i in range(2, n+1):</span><br><span class="line">            for j in range(i+1): # 注意这里不能错，上面是加到n这里必须是i+1</span><br><span class="line">                G[i] += G[j-1] * G[i-j]</span><br><span class="line">        return G[n]</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/validate-binary-search-tree/">98. 验证二叉搜索树</a></p>
+<p><strong>递归解法：</strong>记录中序遍历的前一个节点。全局变量self.pre = float(‘-inf’)，然后中序遍历。递归基返回True，进入左子树，当前节点比较，小于等于上一节点返回false，更新pre，进入右子树。递归回溯阶段返回左子树且右子树。<br>时间O(n)：因为每个节点最多被访问一次<br>空间O(n)：递归栈最深为整个树所有节点入栈（二叉树退化成链表）</p>
+<p><strong>迭代解法：</strong>中序遍历迭代，记录上一个节点，在访问当前节点时作验证，且更新上一个节点！<br>时间O(n)：因为每个节点最多被访问一次<br>空间O(n)：栈最深为整个树所有节点入栈（二叉树退化成链表）</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/symmetric-tree/">101. 对称二叉树</a></p>
+<p><strong>递归法：</strong></p>
+<p>双指针法。新定义一个递归函数，参数是两个指针。<br><strong>递归基：</strong>左右均空则返回true<br><strong>剪枝：</strong>左右一个空一个不空，或者左右值不相等返回false<br><strong>深入与回溯：</strong>深入左右，答案的and返回</p>
+<p><strong>迭代法：</strong></p>
+<p>层次遍历。当我们层次遍历的时候，一层的节点应该互为镜像。当一层只有两个节点的时候，他们应该相等。因此，如果我们层次遍历时对第一个节点的左右子节点正向入队，对第二个节点的左右子节点反向入队，则队列里相邻的两个节点都应该相等。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">check</span><span class="params">(TreeNode *u, TreeNode *v)</span> </span>&#123;</span><br><span class="line">        queue &lt;TreeNode*&gt; q;</span><br><span class="line">        q.<span class="built_in">push</span>(u); q.<span class="built_in">push</span>(v);</span><br><span class="line">        <span class="keyword">while</span> (!q.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">            u = q.<span class="built_in">front</span>(); q.<span class="built_in">pop</span>();</span><br><span class="line">            v = q.<span class="built_in">front</span>(); q.<span class="built_in">pop</span>();</span><br><span class="line">            <span class="keyword">if</span> (!u &amp;&amp; !v) <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">if</span> ((!u || !v) || (u-&gt;val != v-&gt;val)) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">            q.<span class="built_in">push</span>(u-&gt;left); </span><br><span class="line">            q.<span class="built_in">push</span>(v-&gt;right);</span><br><span class="line"></span><br><span class="line">            q.<span class="built_in">push</span>(u-&gt;right); </span><br><span class="line">            q.<span class="built_in">push</span>(v-&gt;left);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">isSymmetric</span><span class="params">(TreeNode* root)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">check</span>(root, root);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/binary-tree-level-order-traversal/">102. 二叉树的层序遍历</a></p>
+<p>需要确定层，可以通过记录队列元素的做法。具体而言，可以利用双层循环，外层while queue，内层for _ in range(len(queue))，因此每打印完一层就会退出内层，就可以append结果。</p>
+<p>记得<strong>from collections import deque</strong></p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/maximum-depth-of-binary-tree/">104. 二叉树的最大深度</a></p>
+<p>法1：自上而下计算</p>
+<p>法2：自下而上计算</p>
+<p>法3：层次遍历</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/flatten-binary-tree-to-linked-list/">114. 二叉树展开为链表</a></p>
+<p>解法1：保存结果至列表，然后对结果列表的元素进行修改</p>
+<blockquote>
+<p>需要注意的是解法2和3中，需要开一个变量保存遍历序列中的上一个节点。<strong>我们每遍历到一个节点时，要连接这个节点和上一个节点</strong>（因为下一个节点尚未访问，修改它风险太大）。也就是说我们修改的是curr.left和prev.right。<br><strong>对于curr.left:</strong> 在本题中是先序遍历，肯定是不能修改curr.left的因为visit到当前节点时左节点还没被发现呢，但好在我们不需要做双向链表，只需要将left指针置空，因此我们每访问到一个节点将prev.left置空就可以了。<br><strong>对于prev.right:</strong> 由于是先序遍历，上一节点的right是还没被发现的，不能直接修改，所以需要先备份它</p>
+</blockquote>
+<p>解法2（推荐）–迭代先序遍历：在迭代版本压栈的时候，先压右再压左，prev.right的引用已经在栈里了，可以修改了</p>
+<p>解法3（推荐）：递归先序遍历+存右节点引用：预先将prev.right的引用复制，因此可以修改。</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock/">121. 买卖股票的最佳时机</a></p>
+<p>使用股票问题通解</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-consecutive-sequence/">128. 最长连续序列</a></p>
+<p>解法1（暴力法，不合要求，仅提供思路）：<br>遍历序列，对每个元素num在序列中寻找num+1、num+2等，复杂度O(n^2)</p>
+<p>解法2：集合hash（推荐）<br>上面的解法有两点可以改进：</p>
+<ul>
+<li>对于查找num+1、num+2 … 的方式，暴力遍历过于低效，可以使用哈希替代</li>
+<li>不是每一个元素都需要成为查找的起点，只有每个连续序列的左端点应该成为查找起点。比如1234这个序列，以1开始查找234之后，就不要再以2开始查找34了。具体的办法就是仅有num-1不存在于序列中时（是连续序列左端点），才启动对num+1、num+2的查找</li>
+</ul>
+<p>所以具体做法就是：先把所有数加入set，然后开始对序列遍历，如果num-1在set中直接continue，否则开始记录长度并不断寻找num+1、num+2，直至num+n不在set中，此时将长度与最大长度对比</p>
+<p>解法3：字典hash</p>
+<p>basic idea：新来一个数，假如可以更新某个有序区间的长度，那一定与这个区间的端点相连。我们建立一个字典，字典中的每一个位置表示以该点为端点的区间最大的长度。</p>
+<p>具体做法：新建一个<strong>空字典</strong>，遍历序列，如果序列中元素在字典里则跳过，否则计算该点造成的连续区间长度：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">left_len = mp.get(num-1, 0)</span><br><span class="line">right_len = mp.get(num+1, 0)</span><br><span class="line">total_len = left_len + right_len + 1</span><br></pre></td></tr></table></figure>
+
+<p>然后更新左右端点的最大长度</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mp[num-left_len] = total_len</span><br><span class="line">mp[num] = total_len</span><br><span class="line">mp[num+right_len] = total_len</span><br></pre></td></tr></table></figure>
+
+<p>然后比较该长度与最大长度</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/single-number/">136. 只出现一次的数字</a></p>
+<p>位运算 所有数字异或一遍，留下来的就是只出现一次的数字</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/linked-list-cycle/">141. 环形链表</a></p>
+<p>本题只需要判断是否有环，不需要找环的位置</p>
+<p>快慢指针：慢指针一次一步，快指针一次两步。如果有环，二者终会相遇。</p>
+<p>注意循环条件是fast and fast.next因为fast每次走两步。而且如果fast.next不存在，说明也走到尽头了。</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/lru-cache/">146. LRU 缓存</a></p>
+<p>要自己实现一个双向链表。需要功能：添加到首部（添加节点用到）、删除节点（移动时用到）、删除尾部（超出容量、移动节点时用到）、移动到首部（访问时用到）</p>
+<p>TODO</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/maximum-product-subarray/">152. 乘积最大子数组</a></p>
+<p>dp。但需要注意，乘法不同于加法，一个负号就会使得最小值变成最大值。所以我们需要同时维护最小值数组和最大值数组。</p>
+<p>fmax[i]表示前i个数的最大乘积，fmin[i]表示前i个数的最小乘积。<br><strong>边界条件：</strong>fmax[0]和fmin[0]都是nums[0]</p>
+<p><strong>转移方程：</strong></p>
+<ul>
+<li>fmax[i]在fmax[i-1]*nums[i]、nums[i]、fmin[i-1]*nums[i]中取max</li>
+<li>fmin[i]在fmax[i-1]*nums[i]、nums[i]、fmin[i-1]*nums[i]中取min</li>
+</ul>
+<p><strong>返回：</strong>max(fmax)</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/min-stack/">155. 最小栈</a></p>
+<p>双栈，一个存数据，一个存最小值，同步压栈弹栈</p>
+<p><strong>简单方法：</strong>压栈时最小栈中压栈栈顶元素和将要入栈元素中的最小值。弹栈时最小栈和数据栈同时弹栈。</p>
+<p><strong>复杂方法：</strong>压栈时只有待入栈元素小于等于栈顶元素时入栈。弹栈时如果待弹栈元素大于最小栈栈顶则最小栈不弹栈。</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/intersection-of-two-linked-lists/">160. 相交链表</a></p>
+<p>解法1：栈</p>
+<p>开两个栈，两个链表分别入栈。当栈顶元素相同时pop，不同时停止pop，最后一个弹出的元素就是交点。</p>
+<p>解法2：双指针</p>
+<p>p1和p2共同前进，一旦自己为空就进入另一个链表，直至p1==p2</p>
+<p>解释：假设两链表的公共长度为c（可以为0），两链表本身长为a和b，公共节点为node（可以为none），那么p1和p2走到node时，各走了a-c+b和b-c+a，他们是相等的，所以一定是相遇了。此时返回p1或p2即可（如果没有交点，他们也同时为none）</p>
+<p>循环条件是p1 != p2，return p1或者return p2都可以</p>
+<blockquote>
+<p>另外注意：<strong>要允许p1、p2为None</strong>。None的下一个再接另一个链表的头节点</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/majority-element/">169. 多数元素</a></p>
+<p>摩尔投票。先判断为0，然后做加减。</p>
+<p>具体实现：遍历整个数组，每个元素的处理分为两个部分，<strong>第一部分是majority的赋值，第二部分是票数的计算</strong>：</p>
+<ul>
+<li>majority的赋值：当票数为0时将majority的值赋为当前元素。</li>
+<li>票数的计算：若当前元素==majority，则vote++，否则vote–</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/number-of-islands/">200. 岛屿数量</a></p>
+<p>dfs/bfs/并查集</p>
+<p>dfs：<br><strong>主函数：</strong>遍历整个矩阵，遇到1就count++，并发起一次dfs。<br><strong>dfs函数</strong>（只有一个作用就是尽可能多的把1置为0）：递归基：越界、当前是0，做出选择（当前位置置0），上下左右递归深入。</p>
+<p>ps. 注意置为0之后就不再置回1了，以避免重复计数</p>
+<p>bfs：关于bfs我们可以参考下这道题<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/01-matrix/">542. 01 矩阵</a> 。</p>
+<blockquote>
+<p>复习一下bfs的基本流程：首先找起点入队并标记发现状态启动bfs，然后队列中拿出一个节点作为当前节点，访问当前节点，<strong>将当前节点所有未发现的邻居入队并标记发现状态，同时标注邻居节点与当前节点的关系。</strong>所有节点有三种状态：未发现、已发现未访问（队列中，已标注发现状态）、已访问（所有邻居节点已入队，已标注当前节点与所有邻居节点的关系）</p>
+</blockquote>
+<p>TODO</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/reverse-linked-list/">206. 反转链表</a></p>
+<p>因为要修改当前节点的next指针，因此需要备份下一个节点的引用。同时因为要把当前节点的next指针指向上一节点，因此需要备份上一节点prev。最后的时候curr为空，返回prev</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/kth-largest-element-in-an-array/">215. 数组中的第K个最大元素</a></p>
+<p>虽然“第k”和“k个”看起来不同，但实际上等价于 <a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/zui-xiao-de-kge-shu-lcof/">剑指 Offer 40. 最小的k个数</a> ，这是因为我们使用的是快排找轴点，轴点一侧的数必然比他大/小。</p>
+<p>partition函数就是快排的partition。主函数可以按快排写，就是先partition再按照pivot递归二分（注意可以剪枝）。递归基是pivot==k（递归二分）。也可以直接迭代二分查找。partition函数在循环里，根据pivot与len-k的关系，做二分。</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/maximal-square/">221. 最大正方形</a></p>
+<p>易知，边长有最优子结构性质但面积没有。那么我们对变长dp，最后平方得面积。</p>
+<p>二维dp，dp[i][j]表示位置(i, j)为右下角点的最大正方形边长。易知边界条件为第一排和第一列为1或0（取决于矩阵在该点的值），状态转移方程是当matrix[i][j] == 1时有dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])+1，当matrix[i][j]==0时dp[i][j] = 0</p>
+<p><strong>注意这个转移方程要有三项！</strong>这是因为一个正方形左、上、左上三个位置有一个边长较小，都会影响到该正方形的边长。</p>
+<p>相似题<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/count-square-submatrices-with-all-ones/">1277. 统计全为 1 的正方形子矩阵</a> 。这个题是求子矩阵的个数。特点在于，<strong>对于以(i, j)为右下角的最大正方形边长就等于以(i, j)为右下角的正方形子矩阵个数</strong>，那么最后我们把所有的dp[i][j]加起来就ok</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/invert-binary-tree/">226. 翻转二叉树</a></p>
+<p>选择任何一种遍历即可，visit当前节点时候把左右子树做下交换，然后按照正常遍历的方式进行递归，最后返回一下root</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/palindrome-linked-list/">234. 回文链表</a></p>
+<p>解法1：复制到数组中，首尾双指针</p>
+<p>解法2：递归。但空间复杂度仍然没达标。</p>
+<p>递归深入的目的是从后向前遍历，再开一个全局变量p（初始化为head）从前往后遍历。具体实现而言：</p>
+<ul>
+<li>递归基：当前节点为空，返回true</li>
+<li>递归深入+剪枝：一旦上一层递归传出的结果是false，不再额外操作，直接返回false</li>
+<li>剪枝：如果p的值和当前层指针的值不同，直接返回false</li>
+<li>p前进</li>
+<li>返回true</li>
+</ul>
+<p>解法3：<strong>翻转链表（推荐）</strong></p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/move-zeroes/">283. 移动零</a></p>
+<p>类似<a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/diao-zheng-shu-zu-shun-xu-shi-qi-shu-wei-yu-ou-shu-qian-mian-lcof/">剑指 Offer 21. 调整数组顺序使奇数位于偶数前面</a></p>
+<p>其实就是快排的partition函数。partition函数有两种实现：快慢双指针和首尾双指针。由于需要保持相对顺序，那么只能用快慢双指针。</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/longest-increasing-subsequence/">300. 最长递增子序列</a></p>
+<p>这个题其实有难度。因为它要的是最长上升子序列的长度，新来一个字符他有可能跟之前的多个地方都构成新的上升子序列。所以直接dp需要两个for</p>
+<p><strong>解法1：dp</strong>。dp[i]表示以nums[i]结尾的最长上升子序列长度。</p>
+<ul>
+<li><strong>初始化（边界条件）：</strong>每个数自己组成一个上升子序列，所以dp[i]=1</li>
+<li><strong>状态转移：</strong>对于每一个数nums[i]，遍历j=0-&gt;i，如果nums[i]&gt;nums[j]说明能构成上升子序列且这个上升子序列结尾是nums[i]倒数第二个数是nums[j]，因此更新dp[i] = max(dp[i], dp[j]+1)</li>
+<li><strong>最后返回：</strong>max(dp)</li>
+</ul>
+<p>解法2：贪心</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/counting-bits/">338. 比特位计数</a></p>
+<p><strong>方法1：暴力遍历</strong></p>
+<p>对每一个数都计算一下1的个数。具体计算的方法是，利用n&amp;(n-1)可以消除最低位的1</p>
+<p>方法2：利用最高有效位做dp</p>
+<p>方法3：利用最低有效位做dp</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/find-all-numbers-disappeared-in-an-array/">448. 找到所有数组中消失的数字</a></p>
+<p>哈希计数：开一个长度为n的数组，遇到一个数就把他数组对应位置++，最后再遍历一遍这个数组，把为0的都添加到结果</p>
+<p>原地哈希计数：由于最大为n，那么我们遇到一个数就可以把它%n的对应位置的数+n。那么只要出现过，对应位置的数必然&gt;n，那么我们就把&lt;=n的数下标全作为结果。</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/hamming-distance/">461. 汉明距离</a></p>
+<p>异或，比特位计数</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/subarray-sum-equals-k/">560. 和为 K 的子数组</a></p>
+<p>首先想到双指针，但其实不对，因为数组不是排序的。因此考虑使用<strong>前缀和数组</strong>。</p>
+<p><strong>注意：快速实现滑动窗口累积值计算，要用前缀和数组！！！</strong></p>
+<p>先弄一个前缀和数组pre。我们发现区间(i, j]等于k只需要pre[j] - pre[i] == k，这就成了两数之和问题。我们弄个字典来放该位置之前pre[]所有的取值，key是取值，value是个数。每次我们先累加结果，再把当前pre更新到dict中</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/merge-two-binary-trees/">617. 合并二叉树</a></p>
+<p>这个题有个地方需要注意。当none了以后还需要访问其左右节点怎么办？答案是递归深入时做下判断。</p>
+<p>递归基：两个树都为none。处理当前节点：新建一个node，如果指针1不为空，加指针1.如果指针2不为空，加指针2.递归深入：当前节点的左右引用=递归进入左右子树。注意只有当前节点存在时传入curr.left或curr.right，<strong>如果当前节点不存在，传入None。</strong>返回：返回当前刚新建的节点</p>
+<p><a target="_blank" rel="noopener" href="https://leetcode-cn.com/problems/daily-temperatures/">739. 每日温度</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/447209490">小范同学：谈单调队列和单调栈</a> </p>
+<p>单调栈。<strong>注意单调栈、单调队列里放的都是下标！！</strong></p>
+<p>这道题求的是右边第一个更大值。用单调递增栈。</p>
+<p>具体而言，回忆下单调栈流程：遍历数组：当栈不空，或者当前元素比新来元素小，循环弹出当前元素，标记当前元素的结果为新来元素下标-当前元素下标。循环退出后压栈当前元素下标。数组遍历完后，栈中元素依次弹栈，结果标记为0</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/16/example-consumer-producer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/16/example-consumer-producer/" class="post-title-link" itemprop="url">生产者-消费者(有界缓冲区)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-16 00:00:00 / 修改时间：22:53:32" itemprop="dateCreated datePublished" datetime="2025-05-16T00:00:00+08:00">2025-05-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">BoundedBuffer</span>&lt;E&gt; &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">ReentrantLock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line">    <span class="keyword">final</span> <span class="type">Condition</span> <span class="variable">notFull</span>  <span class="operator">=</span> lock.newCondition(); </span><br><span class="line">    <span class="keyword">final</span> <span class="type">Condition</span> <span class="variable">notEmpty</span> <span class="operator">=</span> lock.newCondition(); </span><br><span class="line"> </span><br><span class="line">    <span class="keyword">final</span> Object[] items = <span class="keyword">new</span> <span class="title class_">Object</span>[<span class="number">100</span>];</span><br><span class="line">    <span class="type">int</span> putptr, takeptr, count;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">put</span><span class="params">(E x)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">      lock.lock();</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (count == items.length)</span><br><span class="line">          notFull.await();</span><br><span class="line">        items[putptr] = x;</span><br><span class="line">        <span class="keyword">if</span> (++putptr == items.length) putptr = <span class="number">0</span>;</span><br><span class="line">        ++count;</span><br><span class="line">        notEmpty.signal();</span><br><span class="line">      &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> E <span class="title function_">take</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">      lock.lock();</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (count == <span class="number">0</span>)</span><br><span class="line">          notEmpty.await();</span><br><span class="line">        <span class="type">E</span> <span class="variable">x</span> <span class="operator">=</span> (E) items[takeptr];</span><br><span class="line">        <span class="keyword">if</span> (++takeptr == items.length) takeptr = <span class="number">0</span>;</span><br><span class="line">        --count;</span><br><span class="line">        notFull.signal();</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">      &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2578,813 +3125,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/06/math-distribute-math-lattice/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/06/math-distribute-math-lattice/" class="post-title-link" itemprop="url">离散数学：格</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-06 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-06T00:00:00+08:00">2025-05-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-08 13:20:04" itemprop="dateModified" datetime="2025-05-08T13:20:04+08:00">2025-05-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/math/" itemprop="url" rel="index"><span itemprop="name">math</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dreamsrj/articles/17743445.html">07-格与布尔代数 - Dreamsrj - 博客园</a> </p>
-<h1 id="格及其判定"><a href="#格及其判定" class="headerlink" title="格及其判定"></a>格及其判定</h1><p>偏序集 (P, ≤)</p>
-<ul>
-<li>反身性：∀a∈P, a≤a</li>
-<li>反对称：a≤b且b≤a ⇒ a=b</li>
-<li>传递性：a≤b且b≤c ⇒ a≤c</li>
-</ul>
-<p><strong>格 (L, ∧, ∨)</strong></p>
-<ul>
-<li>定义：对任意a,b∈L, 最小上界a∨b和最大下界a∧b均存在</li>
-<li>最小上界：满足大于等于他们俩的最近的一个元素</li>
-<li>最大下界：满足小于等于他们俩的最近的一个元素</li>
-<li>等价公理：交换律、结合律、吸收律</li>
-</ul>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507153802250.png" alt="image-20250507153802250" style="zoom: 25%;" />
-
-<ul>
-<li>如图右下角 ，e和f之间没有最小上界，因此不是格</li>
-</ul>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507154055264.png" alt="image-20250507154055264" style="zoom: 25%;" />
-
-<ul>
-<li>ec无法找出。df无法找出</li>
-<li>幂集（所有子集构成的集合）上的包含关系是格</li>
-</ul>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507154417169.png" alt="image-20250507154417169" style="zoom: 25%;" />
-
-<p>格的判定技巧：最底层/最上层的两个元素之间完全没关系因此不可比较。存在多个上界或者多个下界。</p>
-<h2 id="子格、格同态"><a href="#子格、格同态" class="headerlink" title="子格、格同态"></a>子格、格同态</h2><p><strong>子格</strong></p>
-<ul>
-<li>H⊆L, 若(H,∨,∧)满足格的封闭性和公理，即为子格</li>
-<li>格L的非空子集S构成L的子格的条件：<strong>H对L的∨,∧运算<u>封闭</u>。</strong> 在原格中做运算的结果还在 H里面，那么就是封闭的</li>
-<li><strong>分配性可以继承，但是有补性不一定</strong>（有补性跟元素相关，少了一个元素可能就没有对应的补元了）</li>
-</ul>
-<p><strong>格同态</strong></p>
-<ul>
-<li>存在双射f:L→M, 满足f(a∨b)=f(a)∨f(b), f(a∧b)=f(a)∧f(b)</li>
-</ul>
-<h1 id="有补格"><a href="#有补格" class="headerlink" title="有补格"></a>有补格</h1><p><strong>有界格</strong>：格(L, ∧, ∨,O,I)</p>
-<ol>
-<li>格的全上界：对任意元素x，这个元素I都满足x&lt;=I</li>
-<li>格的全下界：对任意元素x，这个元素O都满足b&lt;=O</li>
-</ol>
-<p><strong>元素a的补元</strong>：有界格中，如果存在 b∈L，使得a和b的最大下界是0（全下界），a和b的最小上界是1（全上界）那么b为a的补元。因此8和1互为补元，24没有补元</p>
-<p>要么是全上界和全下界互为补元，要么是中间平行的这几个互为补元。</p>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507180654617.png" alt="image-20250507180654617" style="zoom:33%;" />
-
-<p><strong>有补格</strong>：每个元素都有至少一个补元。</p>
-<h1 id="分配格"><a href="#分配格" class="headerlink" title="分配格"></a>分配格</h1><p><strong>分配格</strong>：格的 ∧, ∨满足分配律。<strong>链</strong>、密集、命题格都是分配格</p>
-<ul>
-<li>判别：不存在钻石格或者五角格同构的子格</li>
-<li>四个元素及以下的都是分配格</li>
-<li>五个元素，除了五角格和钻石格，其他都是分配格</li>
-<li><strong>性质</strong>：支持消去律</li>
-<li><a target="_blank" rel="noopener" href="https://img2023.cnblogs.com/blog/1629163/202310/1629163-20231005154333651-1708543792.png"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1629163-20231005154333651-1708543792.png" alt="img" style="zoom:33%;" /></a>L1,L2L1,L2是分配格， L3(钻石格),L4(五角格)L3(钻石格),L4(五角格)不是分配格。</li>
-<li><a target="_blank" rel="noopener" href="https://img2023.cnblogs.com/blog/1629163/202310/1629163-20231005154340340-1628803049.png"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1629163-20231005154340340-1628803049.png" alt="img" style="zoom: 33%;" /></a>上述都不是分配格。 它们是钻石格或五角格的子格。</li>
-</ul>
-<h1 id="布尔代数"><a href="#布尔代数" class="headerlink" title="布尔代数"></a>布尔代数</h1><p><mark>布尔代数（布尔格）</mark>：如果<strong>有补格</strong>的∧, ∨满足分配律，那么他就是一个布尔格（布尔代数）<strong>每个元素有且只有唯一的一个补元</strong> </p>
-<img src="C:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20250507161010076.png" alt="image-20250507161010076" style="zoom:33%;" />
-
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507161155099.png" alt="image-20250507161155099" style="zoom:33%;" />
-
-<p>（2）两个元素的最小上界是全下界0，那么他们都是0。 由此可知 a和b’互为补元 b就是a </p>
-<p>性质：</p>
-<ul>
-<li><p><strong>双重性</strong>：任何布尔恒等式对偶仍成立</p>
-</li>
-<li><p><strong>Stone表征定理</strong>：每个布尔代数同构于某个集合代数的幂集（P(X), ∪, ∩, ᶜ）</p>
-</li>
-</ul>
-<p>模格</p>
-<ul>
-<li>x∨(y∧z)=(x∨y)∧z</li>
-<li>所有分配格都是模格，反过来不一定。</li>
-</ul>
-<p>对偶格：把一个格中的“$\vee$”和“$\wedge$”运算、以及“$\leq$”和“$\geq$”关系全部反向，得到的新格。它是从原格“逆向”得到的结构。</p>
-<ul>
-<li></li>
-</ul>
-<h1 id="题"><a href="#题" class="headerlink" title="题"></a>题</h1><ol>
-<li><strong>判定题</strong>：给出下列偏序集，判断是否构成格，并说明理由。<br> a. (所有自然数N, 整除关系)  b. (P({1,2,3}), ⊆)</li>
-<li><strong>等式证明</strong>：在任意格中证明：<br> a. (a∨b)∧(a∨c) = a∨(b∧c)<br> b. a∧(b∨c) ≥ (a∧b)∨(a∧c)</li>
-<li><strong>子格判别</strong>：设L是格，H={x∈L | x≥a}，证明H是L的子格</li>
-<li><strong>特殊格判别</strong>：给定有界格, 判断其是否为：<br> a. 分配格  b. 补格  c. 布尔格</li>
-<li><strong>有限布尔代数</strong>：列出所有阶为4的布尔代数，并验证它们满足补元律</li>
-</ol>
-<hr>
-<ol>
-<li><strong>判定题</strong>：<br> a. (N,|) 的上确界 gcd(m,n) 存在，下确界 lcm(m,n) 存在 ⇒ 是格<br> b. (P(X),⊆) 的∧=交集、∨=并集 ⇒ 是格</li>
-<li><strong>等式证明</strong>：<br> a. 左边 = (a∨b)∧(a∨c) = a∨(b∧c) （分配律）<br> b. 由吸收律和分配可得 ≥ 方向</li>
-<li><strong>子格判别</strong>：<ul>
-<li>H封闭：若x,y≥a，则x∨y≥a, x∧y≥a</li>
-<li>满足格公理</li>
-</ul>
-</li>
-<li><strong>特殊格判别</strong>：<ul>
-<li>分配：验证分配律是否在格中成立</li>
-<li>补格：对每个元素检查是否存在补元</li>
-<li>布尔格：同时满足上述两条</li>
-</ul>
-</li>
-<li><strong>阶4布尔代数</strong>：<ul>
-<li>同构于P({1,2})，元素{∅,{1},{2},{1,2}}，补元为集合补集</li>
-</ul>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/05/math-distribute-math-group/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/05/math-distribute-math-group/" class="post-title-link" itemprop="url">离散数学：群环域</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-05 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-05T00:00:00+08:00">2025-05-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-08 13:21:10" itemprop="dateModified" datetime="2025-05-08T13:21:10+08:00">2025-05-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/math/" itemprop="url" rel="index"><span itemprop="name">math</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dreamsrj/articles/17610183.html">06-代数系统的一般概念 - Dreamsrj - 博客园</a> </p>
-<h1 id="群、环、域"><a href="#群、环、域" class="headerlink" title="群、环、域"></a>群、环、域</h1><h2 id="特殊元"><a href="#特殊元" class="headerlink" title="特殊元"></a>特殊元</h2><p>幂等元：$a^2=e$ </p>
-<p>单位元：$ax=x$</p>
-<p>零元：$ax=a$</p>
-<p>逆元：$ab=e$</p>
-<h2 id="群的概念递进"><a href="#群的概念递进" class="headerlink" title="群的概念递进"></a>群的概念递进</h2><p><strong>广群</strong>：封闭</p>
-<p><strong>半群</strong>：封闭+可结合</p>
-<p><strong>独异点</strong>：封闭+可结合+有单位元</p>
-<p><strong>群</strong>：封闭+可结合+有单位元+所有元素有逆元</p>
-<p><strong>阿贝尔群</strong>：群+可交换</p>
-<h3 id="环、域的概念递进"><a href="#环、域的概念递进" class="headerlink" title="环、域的概念递进"></a>环、域的概念递进</h3><p>环：$(R,+,*)$ +是阿贝尔群，*是半群，并且*对+满足分配律</p>
-<p>域：$(F,+,*)$ 是一个乘法含有单位元的环，并且F扣去零之后就是乘法的阿贝尔群（整环 + 非零元都可逆。）</p>
-<p>整环：单位交换环，和域的区别是少了逆元（环 + <strong>无零因子</strong> + 交换 + 单位元。）</p>
-<h2 id="群的阶、元素的阶"><a href="#群的阶、元素的阶" class="headerlink" title="群的阶、元素的阶"></a>群的阶、元素的阶</h2><p>群的阶：里面有n个元素即为n阶群</p>
-<p>元素的阶：存在最小正整数k使得 $a^k=e$，那么a就为k阶元。</p>
-<ul>
-<li>一阶元：$a=e$，只有一个一阶元</li>
-<li><strong>二阶元：$a^2=e$，因此 $a=a^{-1}$，a和其逆元实际上是一个元素。</strong></li>
-<li><strong>二阶元以上：$a≠a^{-1}$，所以a和其逆元成对出现。</strong></li>
-<li><strong>推论：偶数阶的群，一定含有二阶元：二阶以上成对出现，一阶元只有一个，那么必定存在二阶元。</strong></li>
-</ul>
-<h2 id="子群、拉格朗日定理"><a href="#子群、拉格朗日定理" class="headerlink" title="子群、拉格朗日定理"></a>子群、拉格朗日定理</h2><p>平凡群：只有一个元素（单位元）是所有群的子群，同时也是循环群、阿贝尔群。</p>
-<p><strong>子群证明</strong>：</p>
-<ol>
-<li><strong>H是G非空子集</strong>。H通常是加了条件限定的，代入单位元证明其非空</li>
-<li><strong>H对于运算是封闭的</strong>。H的元素同样也是G的元素，同样具备G的特性，利用G的特性，证明H的元素符合之前的条件限定。逆元可以使用 $xy^{-1}$进行变换。</li>
-<li>H的非零元素都存在逆元</li>
-</ol>
-<p><strong>求所有子群</strong>：</p>
-<ul>
-<li>阶为1的子群：单位元</li>
-<li>阶为2的子群：单位元、平方等于单位元的元素。。。。</li>
-<li>阶为4的子群：单位元、四次放等于单位元的元素。。。。。</li>
-</ul>
-<p><strong>拉格朗日定理</strong>：对于有限群 G 和其子群 H，H 阶 必然是 G阶 的因子。陪集数量乘H阶=G阶</p>
-<ul>
-<li><strong>G的元素a，a 阶k 必然是 G阶n 的因子，并且 $a^n=e$（并不代表a是n阶元，因为n是k的倍数）</strong></li>
-<li><strong>若 ∣G∣= n，则 G 的子群的阶只能是 n 的约数。</strong><ul>
-<li>6-&gt; 子群阶只能是1,2,3,6</li>
-<li>8-&gt; 1,2,4,8</li>
-</ul>
-</li>
-<li>左右陪集阶为 H阶，左右陪集要么相同，要么不相交</li>
-<li>H，K为子群，H交K就是H,K的子集，所以H交K是 H 和 K 的因子，其能够整除HK的最大公因数。因为HK互质，所以 H交K只能是一阶</li>
-</ul>
-<h2 id="循环群"><a href="#循环群" class="headerlink" title="循环群"></a>循环群</h2><p>循环群：G中存在一个元素a，使得所有的元素都可以表达为 a 的幂次方的形式，那么a是群的生成元，G是循环群</p>
-<p>循环群的性质：</p>
-<ul>
-<li><strong>n 阶循环群，生成元也是 n阶元</strong>，即 $g^n=e$</li>
-<li>一定是阿贝尔群</li>
-<li>n 阶循环群，同构于$(N_n, +_n)$</li>
-<li>无限循环群，同构于$(I_n,+_n)$</li>
-</ul>
-<h2 id="群的性质总结"><a href="#群的性质总结" class="headerlink" title="群的性质总结"></a>群的性质总结</h2><p>群的性质：</p>
-<ul>
-<li>逆元和单位元唯一，没有零元</li>
-<li>$(a\times b)^{-1}=b^{-1}\times a^{-1}$ <strong>重要，证明题里面逆元出现</strong></li>
-<li><strong>支持左右消去</strong> ，方程一定可解</li>
-<li>每个元素在运算表的行/列必然出现且只会出现一次</li>
-<li>阶的性质<ul>
-<li><strong>素数阶群必是循环群，没有非平凡子群，并且除了单位元，剩下的全都是生成元。</strong></li>
-<li><strong>逆元和自己有着相同的阶数</strong></li>
-</ul>
-</li>
-</ul>
-<h2 id="群的同态"><a href="#群的同态" class="headerlink" title="群的同态"></a>群的同态</h2><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250507013240349.png" alt="image-20250507013240349" style="zoom:50%;" />
-
-<p>群的同态和同构：</p>
-<p>同态： $f(a*b) = f(a)+f(b)$ 如果是$f(ab)=f(a)f(b)$，那就是自同态。</p>
-<p>同构：f是双射的同态</p>
-<p>同态核K：S中那些经过映射之后变成 S’单位元的元素，如果只有S的单位元，说明是单射</p>
-<ul>
-<li><p>f(e) = e</p>
-</li>
-<li><p>证明题：对于 x∈K，f(x)=e，</p>
-</li>
-</ul>
-<p>证明自同构：</p>
-<ol>
-<li>f是双射<ol>
-<li>先证明是入射: 任取不相等的两个元素x1x2，f(x1) f(x2)肯定不相等</li>
-<li>再证明满射: 对于任意一个y，肯定有一个x∈G对应</li>
-</ol>
-</li>
-<li>f(xy)=f(x)f(y)</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/03/408-in-one/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/03/408-in-one/" class="post-title-link" itemprop="url">22408 分值</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-03 22:25:09" itemprop="dateCreated datePublished" datetime="2025-05-03T22:25:09+08:00">2025-05-03</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-05 12:50:11" itemprop="dateModified" datetime="2025-05-05T12:50:11+08:00">2025-05-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%80%83%E7%A0%94/" itemprop="url" rel="index"><span itemprop="name">考研</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="22408"><a href="#22408" class="headerlink" title="22408"></a>22408</h1><p>转自：<a target="_blank" rel="noopener" href="https://blog.csdn.net/smilehappiness/article/details/109964058">考研公共部分科目分支分布以及计算机408分值分布-CSDN博客</a> </p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>现在考研的竞争压力越来越大，这里，笔者也把考研中计算机的，408试卷分值分布做一个总结，方便以后考研的时候使用。</p>
-<h2 id="计算机4科分值分配比"><a href="#计算机4科分值分配比" class="headerlink" title="计算机4科分值分配比"></a>计算机4科分值分配比</h2><table>
-<thead>
-<tr>
-<th><strong>科目</strong></th>
-<th><strong>大概分值</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据结构</td>
-<td>45分</td>
-</tr>
-<tr>
-<td>计算机组成原理</td>
-<td>45分</td>
-</tr>
-<tr>
-<td>操作系统</td>
-<td>35分</td>
-</tr>
-<tr>
-<td>计算机网络</td>
-<td>25分</td>
-</tr>
-</tbody></table>
-<h2 id="408"><a href="#408" class="headerlink" title="408"></a>408</h2><p><strong>408考试中，分值总分150分，大致题型以及分值如下（仅供参考）：</strong></p>
-<h3 id="选择题-共80分"><a href="#选择题-共80分" class="headerlink" title="选择题 (共80分)"></a>选择题 (共80分)</h3><table>
-<thead>
-<tr>
-<th>选择题</th>
-<th>题目序号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据结构</td>
-<td>1~11</td>
-<td>11X2=22分</td>
-</tr>
-<tr>
-<td>计算机组成原理</td>
-<td>12~22</td>
-<td>11X2=22分</td>
-</tr>
-<tr>
-<td>操作系统</td>
-<td>23~32</td>
-<td>10X2=20分</td>
-</tr>
-<tr>
-<td>计算机网络</td>
-<td>33~40</td>
-<td>8X2=16分</td>
-</tr>
-</tbody></table>
-<h3 id="综合应用题-共70分"><a href="#综合应用题-共70分" class="headerlink" title="综合应用题 (共70分)"></a>综合应用题 (共70分)</h3><p>一共有41、42、43、44 、45、46 、47，共七个大题，<code>总分值70分</code><br><strong>21年考研大题41~47分值分布依次为：</strong>15、8、15、8、7、8、9</p>
-<p>正在备考的童鞋们，根据以上的分支分布，可以做一下复习侧重点呦</p>
-<h2 id="其他公共科目"><a href="#其他公共科目" class="headerlink" title="其他公共科目"></a>其他公共科目</h2><h3 id="英二"><a href="#英二" class="headerlink" title="英二"></a>英二</h3><p>英语二试题分四部分，共48题，总计<code>100分</code>，包括<code>英语知识运用</code>、<code>阅读理解</code>、<code>英译汉</code>和<code>写作</code>。</p>
-<p><strong>表格速览：</strong></p>
-<table>
-<thead>
-<tr>
-<th>题目类型</th>
-<th>题目序号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>英语知识运用</td>
-<td>1~20</td>
-<td>20X0.5=<code>10分</code></td>
-</tr>
-<tr>
-<td>阅读理解</td>
-<td>21~45</td>
-<td>25X2=<code>50分</code></td>
-</tr>
-<tr>
-<td>英译汉</td>
-<td>第三部分</td>
-<td><code>15分</code></td>
-</tr>
-<tr>
-<td>作文</td>
-<td>第四部分</td>
-<td><code>25分</code></td>
-</tr>
-</tbody></table>
-<h4 id="第一部分（英语知识运用）"><a href="#第一部分（英语知识运用）" class="headerlink" title="第一部分（英语知识运用）"></a>第一部分（英语知识运用）</h4><p>主要考查考生对英语知识的综合运用能力。共<code>20</code>小题，每小题<code>0.5</code>分，<code>共10分</code>。</p>
-<p>在一篇约350词的文章中留出20个空白，要求考生从每题给出的4个选项中选出最佳答案，使补全后的文章意思通顺、前后连贯、结构完整。</p>
-<h4 id="第二部分（阅读理解）"><a href="#第二部分（阅读理解）" class="headerlink" title="第二部分（阅读理解）"></a>第二部分（阅读理解）</h4><p>主要考查考生获取信息、理解文章、猜测重要生词词义并进行推断等方面的能力。该部分<code>由A、B两节组成</code>，共<code>25</code>小题，每小题<code>2</code>分，共<code>50</code>分。</p>
-<ul>
-<li><p><strong>A节(20小题)</strong><br>本部分为多项选择题。<code>共四篇文章</code>，总长度为1500词左右。<code>每篇文章设5题，共20题</code>。每小题2分，共40分。</p>
-</li>
-<li><p><strong>B节(5小题)</strong><br>本部分有两种备选题型。每次考试从这两种题型中选择其中的一种形式，或者两种形式的组合进行考查。本节文章设<code>5小题</code>，每小题2分，<code>共10分</code>。</p>
-<p>备选题型包括：<br><strong>1)多项对应</strong><br>本部分为一篇长度为450~550词的文章，试题内容分为左右两栏，左侧一栏为5道题目，右侧一栏为7个选项。要求考生在阅读后根据文章内容和左侧一栏中提供的信息从右侧一栏中的7个选项中选出对应的5项相关信息。</p>
-<p><strong>2)小标题对应</strong><br>在一篇长度为450~550词的文章前有7个概括句或小标题。这些文字或标题分别是对文章中某一部分的概括或阐述。要求考生根据文章内容和篇章结构从这7个选项中选出最恰当的5个概括句或小标题填入文章空白处。</p>
-</li>
-</ul>
-<h4 id="第三部分（英译汉）"><a href="#第三部分（英译汉）" class="headerlink" title="第三部分（英译汉）"></a>第三部分（英译汉）</h4><p>要求考生阅读、理解长度为150词左右的一个或几个英语段落，并将其全部译成汉语，<code>共15分</code>。</p>
-<h4 id="第四部分（写作）"><a href="#第四部分（写作）" class="headerlink" title="第四部分（写作）"></a>第四部分（写作）</h4><p>该部分由<code>A、B</code>两节组成，主要考查考生的书面表达能力。<code>共2题</code>，<code>25分</code>。</p>
-<ul>
-<li><strong>A节</strong><br>考生根据所给情景写出约100词(标点符号不计算在内)的应用性短文，包括私人和公务信函（常见的有：）、备忘录、报告等。共10分。</li>
-</ul>
-<p><strong>大致分类如下：</strong><br><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/8c5d133eb5d9b1deaa794f4441f60b77.png" alt="在这里插入图片描述"></p>
-<ul>
-<li><strong>B节</strong><br>要求考生根据所规定的情景或给出的提纲，写出一篇150词左右的英语说明文或议论文。提供情景的形式为图画、图表或文字。共15分。</li>
-</ul>
-<h3 id="政治分值分布"><a href="#政治分值分布" class="headerlink" title="政治分值分布"></a>政治分值分布</h3><p>政治部分分值，总共<code>100</code>分。</p>
-<table>
-<thead>
-<tr>
-<th>题目类型</th>
-<th>题目序号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>单项选择题</td>
-<td>1~16</td>
-<td>16X1=<code>16分</code></td>
-</tr>
-<tr>
-<td>多项选择题</td>
-<td>17~33</td>
-<td>17X2=<code>34分</code></td>
-</tr>
-<tr>
-<td>材料分析题</td>
-<td>共5个大题</td>
-<td>10X5=<code>50分</code></td>
-</tr>
-</tbody></table>
-<h3 id="数二"><a href="#数二" class="headerlink" title="数二"></a>数二</h3><p>数学部分分值，总共<code>150</code>分。</p>
-<table>
-<thead>
-<tr>
-<th>题目类型</th>
-<th>题目序号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>单项选择题</td>
-<td>1~10</td>
-<td>10X5=<code>50分</code></td>
-</tr>
-<tr>
-<td>填空题</td>
-<td>11~16</td>
-<td>16X5=<code>30分</code></td>
-</tr>
-<tr>
-<td>大题</td>
-<td>共6个大题</td>
-<td>1X10 + 5X12=<code>70分</code></td>
-</tr>
-</tbody></table>
-<p><strong>参考资料</strong>：<a target="_blank" rel="noopener" href="https://zhidao.baidu.com/question/12821750.html">https://zhidao.baidu.com/question/12821750.html</a></p>
-<p><code>注意：</code> <strong>以上总结仅供参考，实际还是以实际的考卷分值分布为准</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">希望笔者总结的分值分布，对小伙伴有所帮助~</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>写博客是为了记住自己容易忘记的东西，另外也是对自己工作的总结，希望尽自己的努力，做到更好，大家一起努力进步！</p>
-<p>如果有什么问题，欢迎大家评论，一起探讨</p>
-<p>给自己的梦想添加一双翅膀，让它可以在天空中自由自在的飞翔！</p>
-</blockquote>
-<h1 id="11408"><a href="#11408" class="headerlink" title="11408"></a>11408</h1><h2 id="408-1"><a href="#408-1" class="headerlink" title="408"></a>408</h2><table>
-<thead>
-<tr>
-<th>科目</th>
-<th>大致分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据结构</td>
-<td>45</td>
-</tr>
-<tr>
-<td>计算机组成原理</td>
-<td>45</td>
-</tr>
-<tr>
-<td>操作系统</td>
-<td>35</td>
-</tr>
-<tr>
-<td>计算机网络</td>
-<td>25</td>
-</tr>
-</tbody></table>
-<p>其中包括</p>
-<table>
-<thead>
-<tr>
-<th>科目</th>
-<th>题号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据结构</td>
-<td>1~11</td>
-<td>22</td>
-</tr>
-<tr>
-<td>计算机组成原理</td>
-<td>12~22</td>
-<td>22</td>
-</tr>
-<tr>
-<td>操作系统</td>
-<td>23~32</td>
-<td>20</td>
-</tr>
-<tr>
-<td>计算机网络</td>
-<td>33~40</td>
-<td>16</td>
-</tr>
-</tbody></table>
-<p>以及七3道综合应用题共70分</p>
-<h2 id="数一"><a href="#数一" class="headerlink" title="数一"></a>数一</h2><table>
-<thead>
-<tr>
-<th>科目</th>
-<th>大致分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>高等数学</td>
-<td>84</td>
-</tr>
-<tr>
-<td>线性代数</td>
-<td>33</td>
-</tr>
-<tr>
-<td>概率论与数理统计</td>
-<td>33</td>
-</tr>
-</tbody></table>
-<p>其中</p>
-<table>
-<thead>
-<tr>
-<th>题型</th>
-<th>高数</th>
-<th>线代</th>
-<th>概率</th>
-<th>题号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>选择题</td>
-<td>6</td>
-<td>2</td>
-<td>2</td>
-<td>1~10</td>
-<td>50</td>
-</tr>
-<tr>
-<td>填空题</td>
-<td>4</td>
-<td>1</td>
-<td>1</td>
-<td>11~16</td>
-<td>30</td>
-</tr>
-<tr>
-<td>计算题</td>
-<td>4</td>
-<td>1</td>
-<td>1</td>
-<td>17~22</td>
-<td>70</td>
-</tr>
-</tbody></table>
-<h2 id="英一"><a href="#英一" class="headerlink" title="英一"></a>英一</h2><table>
-<thead>
-<tr>
-<th>题型</th>
-<th>题号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>英语知识运用</td>
-<td>1~20</td>
-<td>10</td>
-</tr>
-<tr>
-<td>阅读理解</td>
-<td>21~50</td>
-<td>60</td>
-</tr>
-<tr>
-<td>写作</td>
-<td>51~52</td>
-<td>30</td>
-</tr>
-</tbody></table>
-<p>其中</p>
-<p>阅读理解<br>A、B、C三节组成，考查考生理解书面英语的能力。共30小题，每小题2分，共60分。</p>
-<p>A节(20小题)：主要考查考生理解主旨要义、具体信息、概念性含义，进行有关的判断、推理和引申，根据上下文推测生词的词义等能力。要求考生根据所提供的4篇(总长度约为1 600词)文章的内容，从每题所给出的4个选项中选出最佳答案。考生在答题卡1上作答。</p>
-<p>B节(5小题)：主要考查考生对诸如连贯性、一致性等语段特征以及文章结构的理解。本部分有3种备选题型。每次考试从这3种备选题型中选择一种进行考查。考生在答题卡1上作答。</p>
-<p>C节(5小题)：主要考查考生准确理解概念或结构较复杂的英语文字材料的能力。要求考生阅读一篇约400词的文章，并将其中5个画线部分(约150词)译成汉语，要求译文准确、完整、通顺。考生在答题卡2上作答。</p>
-<p>写作<br>该部分由A、B两节组成，主要考查考生的书面表达能力。共30分。</p>
-<p>A节：考生根据所给情景写出约100词(标点符号不计算在内)的应用性短文，包括私人和公务信函、备忘录、报告等。</p>
-<p>B节：考生根据提示信息写出一篇160~200词的短文(标点符号不计算在内)。提示信息的形式有主题句、写作提纲、规定情景、图、表等。考生在答题卡2上作答。共20分。 *硕士研究生入学考试将英译汉试题作为阅读理解的一部分，其目的是测试考生根据上下文准确理解概念或复杂结构并用汉语正确予以表达的能力。</p>
-<h2 id="政治"><a href="#政治" class="headerlink" title="政治"></a>政治</h2><table>
-<thead>
-<tr>
-<th>科目</th>
-<th>大致分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>马原</td>
-<td>24</td>
-</tr>
-<tr>
-<td>毛中特</td>
-<td>30</td>
-</tr>
-<tr>
-<td>近代史</td>
-<td>14</td>
-</tr>
-<tr>
-<td>思修</td>
-<td>16</td>
-</tr>
-</tbody></table>
-<p>其中</p>
-<table>
-<thead>
-<tr>
-<th>题型</th>
-<th>题号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>单选</td>
-<td>1~16</td>
-<td>16</td>
-</tr>
-<tr>
-<td>多选</td>
-<td>17~33</td>
-<td>34</td>
-</tr>
-<tr>
-<td>材料分析</td>
-<td>34~38</td>
-<td>50</td>
-</tr>
-</tbody></table>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/default/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/default/">1</a><span class="page-number current">2</span><a class="page-number" href="/default/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/default/page/9/">9</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/default/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/default/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/default/">1</a><span class="page-number current">2</span><a class="page-number" href="/default/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/default/page/10/">10</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/default/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

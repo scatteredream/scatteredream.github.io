@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Arvo:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="广告系统好的！我来从一个 Java 程序员 的角度，详细讲讲 DSP、SSP、Ad Exchange 这些广告行业的技术生态和背后的系统设计。 我会分成以下部分来讲： ✅ 广告技术生态整体结构 ✅ 每个环节的工作流程 ✅ Java 程序员需要掌握的关键点 ✅ 技术方案和落地要点  🌍 广告技术生态整体结构广告行业的核心目标： 让广告主的广告精准高效地展示给合适的用户，同时帮助媒体（如网站、App">
+<meta property="og:type" content="article">
+<meta property="og:title" content="广告概念">
+<meta property="og:url" content="http://scatteredream.github.io/2025/05/31/advertisemnt/index.html">
+<meta property="og:site_name" content="scatteredream&#39;s blog">
+<meta property="og:description" content="广告系统好的！我来从一个 Java 程序员 的角度，详细讲讲 DSP、SSP、Ad Exchange 这些广告行业的技术生态和背后的系统设计。 我会分成以下部分来讲： ✅ 广告技术生态整体结构 ✅ 每个环节的工作流程 ✅ Java 程序员需要掌握的关键点 ✅ 技术方案和落地要点  🌍 广告技术生态整体结构广告行业的核心目标： 让广告主的广告精准高效地展示给合适的用户，同时帮助媒体（如网站、App">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-05-31T12:26:25.946Z">
+<meta property="article:author" content="碎梦">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://scatteredream.github.io/2025/05/31/advertisemnt/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2025/05/31/advertisemnt/","path":"2025/05/31/advertisemnt/","title":"广告概念"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>广告概念 | scatteredream's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">scatteredream's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%BF%E5%91%8A%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.</span> <span class="nav-text">广告系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%8C%8D-%E5%B9%BF%E5%91%8A%E6%8A%80%E6%9C%AF%E7%94%9F%E6%80%81%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">🌍 广告技术生态整体结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%93%88-DSP%EF%BC%88Demand-Side-Platform%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">📈 DSP（Demand-Side Platform）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%93%A6-SSP%EF%BC%88Supply-Side-Platform%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">📦 SSP（Supply-Side Platform）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%94%97-Ad-Exchange%EF%BC%88%E5%B9%BF%E5%91%8A%E4%BA%A4%E6%98%93%E5%B9%B3%E5%8F%B0%EF%BC%89"><span class="nav-number">1.4.</span> <span class="nav-text">🔗 Ad Exchange（广告交易平台）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%F0%9F%92%A1-%E6%8A%80%E6%9C%AF%E6%96%B9%E6%A1%88%E8%90%BD%E5%9C%B0%E8%A6%81%E7%82%B9"><span class="nav-number">1.5.</span> <span class="nav-text">💡 技术方案落地要点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%9A%99-%E4%B8%80%E4%B8%AA%E7%AE%80%E5%8D%95%E7%9A%84-Java-%E6%8A%80%E6%9C%AF%E6%A0%88%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.6.</span> <span class="nav-text">⚙ 一个简单的 Java 技术栈示例</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="碎梦"
+      src="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+  <p class="site-author-name" itemprop="name">碎梦</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">128</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/31/advertisemnt/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="广告概念 | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          广告概念
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-31 00:00:00 / 修改时间：20:26:25" itemprop="dateCreated datePublished" datetime="2025-05-31T00:00:00+08:00">2025-05-31</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="广告系统"><a href="#广告系统" class="headerlink" title="广告系统"></a>广告系统</h1><p>好的！我来从一个 <strong>Java 程序员</strong> 的角度，详细讲讲 <strong>DSP、SSP、Ad Exchange</strong> 这些广告行业的技术生态和背后的系统设计。</p>
+<p>我会分成以下部分来讲：<br> ✅ 广告技术生态整体结构<br> ✅ 每个环节的工作流程<br> ✅ Java 程序员需要掌握的关键点<br> ✅ 技术方案和落地要点</p>
+<hr>
+<h2 id="🌍-广告技术生态整体结构"><a href="#🌍-广告技术生态整体结构" class="headerlink" title="🌍 广告技术生态整体结构"></a>🌍 广告技术生态整体结构</h2><p>广告行业的核心目标：<br> <strong>让广告主的广告精准高效地展示给合适的用户，同时帮助媒体（如网站、App）最大化广告收益。</strong></p>
+<p>涉及的主要角色：</p>
+<ul>
+<li><strong>广告主（Advertiser）</strong> → 提供广告预算、创意内容</li>
+<li><strong>DSP（需求方平台）</strong> → 代表广告主参与竞价</li>
+<li><strong>Ad Exchange（广告交易平台）</strong> → 公平的竞价撮合场所</li>
+<li><strong>SSP（供应方平台）</strong> → 代表媒体方卖出广告位</li>
+<li><strong>用户（Audience）</strong> → 接收广告展示</li>
+</ul>
+<p>数据流大致是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户访问页面 → SSP 发起广告请求 → Ad Exchange 广播请求 → DSP 返回竞价 → Ad Exchange 确定最高价 → SSP 返回广告素材 → 用户端展示广告</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="📈-DSP（Demand-Side-Platform）"><a href="#📈-DSP（Demand-Side-Platform）" class="headerlink" title="📈 DSP（Demand-Side Platform）"></a>📈 DSP（Demand-Side Platform）</h2><p><strong>作为广告需求方，DSP主要负责：</strong><br> 1️⃣ 接收 Ad Exchange 发来的广告请求（Bid Request）<br> 2️⃣ 根据广告主设定的策略和预算，进行竞价决策<br> 3️⃣ 返回竞价结果（Bid Response）<br> 4️⃣ 记录曝光（Impression）、点击（Click）、转化（Conversion）等效果数据</p>
+<p><strong>Java 程序员需要关注：</strong><br> ✅ 高并发请求处理：需要处理每秒成千上万次广告请求，可以使用 <strong>Netty、Vert.x、Spring WebFlux</strong> 构建高性能的异步服务<br> ✅ 竞价引擎：一般会有基于规则或机器学习的竞价逻辑，需要精心优化性能<br> ✅ 数据缓存：实时访问用户画像、广告主出价等信息，常用 <strong>Redis、Caffeine</strong><br> ✅ 日志与追踪：用 <strong>Kafka、Flume</strong> 采集曝光、点击、转化日志，供后续分析<br> ✅ 广告投放策略：可以涉及 <strong>预算分配、频次控制、目标受众匹配</strong></p>
+<hr>
+<h2 id="📦-SSP（Supply-Side-Platform）"><a href="#📦-SSP（Supply-Side-Platform）" class="headerlink" title="📦 SSP（Supply-Side Platform）"></a>📦 SSP（Supply-Side Platform）</h2><p><strong>作为广告供应方，SSP主要负责：</strong><br> 1️⃣ 管理媒体方的广告库存（广告位、展示机会）<br> 2️⃣ 将请求发送到 Ad Exchange<br> 3️⃣ 收集各 DSP 返回的竞价结果<br> 4️⃣ 选出最高价并返回广告素材</p>
+<p><strong>Java 程序员需要关注：</strong><br> ✅ 广告库存管理：广告位信息、展示频次、保底合同，需要设计灵活的库存管理系统<br> ✅ 请求调度：对接多个 Ad Exchange，处理并发和超时，需要优化网络调用和重试机制<br> ✅ 收益优化：用算法/策略决定什么时候走直销、什么时候走竞价，结合历史数据分析</p>
+<hr>
+<h2 id="🔗-Ad-Exchange（广告交易平台）"><a href="#🔗-Ad-Exchange（广告交易平台）" class="headerlink" title="🔗 Ad Exchange（广告交易平台）"></a>🔗 Ad Exchange（广告交易平台）</h2><p><strong>作为中立的交易所，Ad Exchange主要负责：</strong><br> 1️⃣ 接收 SSP 的广告请求<br> 2️⃣ 广播给多个 DSP 请求竞价<br> 3️⃣ 收集竞价响应，确定最终赢者<br> 4️⃣ 将素材和投放结果反馈给 SSP</p>
+<p><strong>Java 程序员需要关注：</strong><br> ✅ 高性能分发：毫秒级处理、低延迟广播请求，通常基于 <strong>高性能网络框架、异步非阻塞IO</strong><br> ✅ 实时竞价（RTB）算法：快速比价、过滤不合规的竞价<br> ✅ 日志和数据流：用 <strong>Kafka</strong> 等做实时流处理，为后续效果分析提供数据<br> ✅ 系统可用性：涉及资金和业务核心，必须有 <strong>高可用架构、容错机制</strong></p>
+<hr>
+<h2 id="💡-技术方案落地要点"><a href="#💡-技术方案落地要点" class="headerlink" title="💡 技术方案落地要点"></a>💡 技术方案落地要点</h2><p>对于 Java 程序员，实际参与广告技术项目时，可以从以下几个角度入手：<br> ✅ 熟悉 <strong>微服务架构</strong>，因为广告系统几乎都是分布式服务（投放、日志、竞价、监测、报表等模块分开）<br> ✅ 掌握 <strong>消息队列</strong>（Kafka、Pulsar），用于日志、监测、异步任务<br> ✅ 掌握 <strong>高性能开发</strong>（Netty、异步IO、并发优化、对象池等）<br> ✅ 了解 <strong>实时流处理</strong>（Flink、Spark Streaming），用来处理曝光、点击等数据<br> ✅ 掌握 <strong>缓存和分布式存储</strong>，广告请求中需要快速查用户画像、广告主信息，延迟必须低<br> ✅ 有一定 <strong>算法和策略设计能力</strong>，参与预算管理、竞价算法、频控、流量分配等模块</p>
+<hr>
+<h2 id="⚙-一个简单的-Java-技术栈示例"><a href="#⚙-一个简单的-Java-技术栈示例" class="headerlink" title="⚙ 一个简单的 Java 技术栈示例"></a>⚙ 一个简单的 Java 技术栈示例</h2><table>
+<thead>
+<tr>
+<th>模块</th>
+<th>技术选型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>请求接收</td>
+<td>Netty / Spring WebFlux</td>
+</tr>
+<tr>
+<td>缓存</td>
+<td>Redis / Caffeine</td>
+</tr>
+<tr>
+<td>日志收集</td>
+<td>Kafka / Flume</td>
+</tr>
+<tr>
+<td>流处理</td>
+<td>Flink / Spark Streaming</td>
+</tr>
+<tr>
+<td>数据存储</td>
+<td>MySQL / ClickHouse / Elasticsearch</td>
+</tr>
+<tr>
+<td>配置管理</td>
+<td>Nacos / Apollo</td>
+</tr>
+<tr>
+<td>服务治理</td>
+<td>Spring Cloud / Dubbo</td>
+</tr>
+</tbody></table>
+<hr>
+<p>如果你感兴趣，我还能帮你写一套：<br> ✅ <strong>DSP高并发广告请求接收模块（Java代码示例）</strong><br> ✅ <strong>广告日志Kafka生产者的代码模板</strong><br> ✅ <strong>一个简单的预算管理类（包含线程安全和高性能考虑）</strong></p>
+<p>要哪个？或者你还有具体问题，直接跟我说！我可以帮你拆解具体的场景或代码实现。😄</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/05/31/iot-design/" rel="prev" title="物联网毕设构思">
+                  <i class="fa fa-angle-left"></i> 物联网毕设构思
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">碎梦</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/scatteredream" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

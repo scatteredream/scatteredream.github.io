@@ -34372,4 +34372,458 @@ return 0;
         <category>算法</category>
       </categories>
   </entry>
+  <entry>
+    <title>广告概念</title>
+    <url>/2025/05/31/advertisemnt/</url>
+    <content><![CDATA[<h1 id="广告系统"><a href="#广告系统" class="headerlink" title="广告系统"></a>广告系统</h1><p>好的！我来从一个 <strong>Java 程序员</strong> 的角度，详细讲讲 <strong>DSP、SSP、Ad Exchange</strong> 这些广告行业的技术生态和背后的系统设计。</p>
+<p>我会分成以下部分来讲：<br> ✅ 广告技术生态整体结构<br> ✅ 每个环节的工作流程<br> ✅ Java 程序员需要掌握的关键点<br> ✅ 技术方案和落地要点</p>
+<hr>
+<h2 id="🌍-广告技术生态整体结构"><a href="#🌍-广告技术生态整体结构" class="headerlink" title="🌍 广告技术生态整体结构"></a>🌍 广告技术生态整体结构</h2><p>广告行业的核心目标：<br> <strong>让广告主的广告精准高效地展示给合适的用户，同时帮助媒体（如网站、App）最大化广告收益。</strong></p>
+<p>涉及的主要角色：</p>
+<ul>
+<li><strong>广告主（Advertiser）</strong> → 提供广告预算、创意内容</li>
+<li><strong>DSP（需求方平台）</strong> → 代表广告主参与竞价</li>
+<li><strong>Ad Exchange（广告交易平台）</strong> → 公平的竞价撮合场所</li>
+<li><strong>SSP（供应方平台）</strong> → 代表媒体方卖出广告位</li>
+<li><strong>用户（Audience）</strong> → 接收广告展示</li>
+</ul>
+<p>数据流大致是：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">用户访问页面 → SSP 发起广告请求 → Ad Exchange 广播请求 → DSP 返回竞价 → Ad Exchange 确定最高价 → SSP 返回广告素材 → 用户端展示广告</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="📈-DSP（Demand-Side-Platform）"><a href="#📈-DSP（Demand-Side-Platform）" class="headerlink" title="📈 DSP（Demand-Side Platform）"></a>📈 DSP（Demand-Side Platform）</h2><p><strong>作为广告需求方，DSP主要负责：</strong><br> 1️⃣ 接收 Ad Exchange 发来的广告请求（Bid Request）<br> 2️⃣ 根据广告主设定的策略和预算，进行竞价决策<br> 3️⃣ 返回竞价结果（Bid Response）<br> 4️⃣ 记录曝光（Impression）、点击（Click）、转化（Conversion）等效果数据</p>
+<p><strong>Java 程序员需要关注：</strong><br> ✅ 高并发请求处理：需要处理每秒成千上万次广告请求，可以使用 <strong>Netty、Vert.x、Spring WebFlux</strong> 构建高性能的异步服务<br> ✅ 竞价引擎：一般会有基于规则或机器学习的竞价逻辑，需要精心优化性能<br> ✅ 数据缓存：实时访问用户画像、广告主出价等信息，常用 <strong>Redis、Caffeine</strong><br> ✅ 日志与追踪：用 <strong>Kafka、Flume</strong> 采集曝光、点击、转化日志，供后续分析<br> ✅ 广告投放策略：可以涉及 <strong>预算分配、频次控制、目标受众匹配</strong></p>
+<hr>
+<h2 id="📦-SSP（Supply-Side-Platform）"><a href="#📦-SSP（Supply-Side-Platform）" class="headerlink" title="📦 SSP（Supply-Side Platform）"></a>📦 SSP（Supply-Side Platform）</h2><p><strong>作为广告供应方，SSP主要负责：</strong><br> 1️⃣ 管理媒体方的广告库存（广告位、展示机会）<br> 2️⃣ 将请求发送到 Ad Exchange<br> 3️⃣ 收集各 DSP 返回的竞价结果<br> 4️⃣ 选出最高价并返回广告素材</p>
+<p><strong>Java 程序员需要关注：</strong><br> ✅ 广告库存管理：广告位信息、展示频次、保底合同，需要设计灵活的库存管理系统<br> ✅ 请求调度：对接多个 Ad Exchange，处理并发和超时，需要优化网络调用和重试机制<br> ✅ 收益优化：用算法/策略决定什么时候走直销、什么时候走竞价，结合历史数据分析</p>
+<hr>
+<h2 id="🔗-Ad-Exchange（广告交易平台）"><a href="#🔗-Ad-Exchange（广告交易平台）" class="headerlink" title="🔗 Ad Exchange（广告交易平台）"></a>🔗 Ad Exchange（广告交易平台）</h2><p><strong>作为中立的交易所，Ad Exchange主要负责：</strong><br> 1️⃣ 接收 SSP 的广告请求<br> 2️⃣ 广播给多个 DSP 请求竞价<br> 3️⃣ 收集竞价响应，确定最终赢者<br> 4️⃣ 将素材和投放结果反馈给 SSP</p>
+<p><strong>Java 程序员需要关注：</strong><br> ✅ 高性能分发：毫秒级处理、低延迟广播请求，通常基于 <strong>高性能网络框架、异步非阻塞IO</strong><br> ✅ 实时竞价（RTB）算法：快速比价、过滤不合规的竞价<br> ✅ 日志和数据流：用 <strong>Kafka</strong> 等做实时流处理，为后续效果分析提供数据<br> ✅ 系统可用性：涉及资金和业务核心，必须有 <strong>高可用架构、容错机制</strong></p>
+<hr>
+<h2 id="💡-技术方案落地要点"><a href="#💡-技术方案落地要点" class="headerlink" title="💡 技术方案落地要点"></a>💡 技术方案落地要点</h2><p>对于 Java 程序员，实际参与广告技术项目时，可以从以下几个角度入手：<br> ✅ 熟悉 <strong>微服务架构</strong>，因为广告系统几乎都是分布式服务（投放、日志、竞价、监测、报表等模块分开）<br> ✅ 掌握 <strong>消息队列</strong>（Kafka、Pulsar），用于日志、监测、异步任务<br> ✅ 掌握 <strong>高性能开发</strong>（Netty、异步IO、并发优化、对象池等）<br> ✅ 了解 <strong>实时流处理</strong>（Flink、Spark Streaming），用来处理曝光、点击等数据<br> ✅ 掌握 <strong>缓存和分布式存储</strong>，广告请求中需要快速查用户画像、广告主信息，延迟必须低<br> ✅ 有一定 <strong>算法和策略设计能力</strong>，参与预算管理、竞价算法、频控、流量分配等模块</p>
+<hr>
+<h2 id="⚙-一个简单的-Java-技术栈示例"><a href="#⚙-一个简单的-Java-技术栈示例" class="headerlink" title="⚙ 一个简单的 Java 技术栈示例"></a>⚙ 一个简单的 Java 技术栈示例</h2><table>
+<thead>
+<tr>
+<th>模块</th>
+<th>技术选型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>请求接收</td>
+<td>Netty / Spring WebFlux</td>
+</tr>
+<tr>
+<td>缓存</td>
+<td>Redis / Caffeine</td>
+</tr>
+<tr>
+<td>日志收集</td>
+<td>Kafka / Flume</td>
+</tr>
+<tr>
+<td>流处理</td>
+<td>Flink / Spark Streaming</td>
+</tr>
+<tr>
+<td>数据存储</td>
+<td>MySQL / ClickHouse / Elasticsearch</td>
+</tr>
+<tr>
+<td>配置管理</td>
+<td>Nacos / Apollo</td>
+</tr>
+<tr>
+<td>服务治理</td>
+<td>Spring Cloud / Dubbo</td>
+</tr>
+</tbody></table>
+<hr>
+<p>如果你感兴趣，我还能帮你写一套：<br> ✅ <strong>DSP高并发广告请求接收模块（Java代码示例）</strong><br> ✅ <strong>广告日志Kafka生产者的代码模板</strong><br> ✅ <strong>一个简单的预算管理类（包含线程安全和高性能考虑）</strong></p>
+<p>要哪个？或者你还有具体问题，直接跟我说！我可以帮你拆解具体的场景或代码实现。😄</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>ARTHAS</title>
+    <url>/2025/05/24/jvm-arthas/</url>
+    <content><![CDATA[<p>Arthas: </p>
+<p>Arthas是一款阿里巴巴开源的 Java 线上诊断工具，功能非常强大，可以解决很多线上不方便解决的问题。Arthas诊断使用的是命令行交互模式，支持JDK6+，Linux、Mac、Windows 操作系统，命令还支持使用 tab 键对各种信息的自动补全，诊断起来非常利索。</p>
+<ul>
+<li>从官网可以知道Arthas有以下一些特征</li>
+<li>检查是否加载了类，或在哪里加载了类。（对于解决jar文件冲突很有用）</li>
+<li>反编译一个类以确保代码按预期运行。</li>
+<li>查看类加载器统计信息，例如，类加载器的数量，每个类加载器加载的类的数量，类加载器的层次结构，可能的类加载器泄漏等。</li>
+<li>查看方法调用详细信息，例如方法参数，返回对象，引发的异常等。</li>
+<li>检查指定方法调用的堆栈跟踪。当开发人员想知道所述方法的调用者时，这很有用。</li>
+<li>跟踪方法调用以查找慢速子调用。</li>
+<li>监视方法调用统计信息，例如qps，rt，成功率等。</li>
+<li>监视系统指标，线程状态和cpu使用情况，gc统计信息等。</li>
+<li>支持命令行交互模式，并启用了自动完成功能。</li>
+<li>支持telnet和websocket，可通过命令行和浏览器启用本地和远程诊断。</li>
+<li>支持分析器/火焰图</li>
+<li>支持JDK 6+。</li>
+<li>支持Linux / Mac / Windows。</li>
+</ul>
+<p>thread: cpu占用情况</p>
+<p>thread 73: 检查 id 73 的线程栈，</p>
+<p>LINUX 原生：</p>
+<p>top  ps  jstack jps</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>物联网毕设构思</title>
+    <url>/2025/05/31/iot-design/</url>
+    <content><![CDATA[<table>
+<thead>
+<tr>
+<th>层次</th>
+<th>具体内容</th>
+<th>技术选型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ZigBee 节点</strong></td>
+<td>ZigBee 模块（如 XBee、CC2530）采集车内环境数据，定时发送到网关</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>网关边缘端</strong></td>
+<td>树莓派/工控机用 Java 实现：ZigBee 协议解析、数据缓存、预处理（异常检测、局部计算）使用 MQTT/HTTP 向后端推送</td>
+<td>Java + jSerialComm（串口库） + Eclipse Paho（MQTT 客户端）</td>
+</tr>
+<tr>
+<td><strong>后端服务</strong></td>
+<td>Spring Boot 构建 RESTful API，接收网关推送的数据，存入数据库；提供前端查询接口</td>
+<td>Spring Boot + Spring Web</td>
+</tr>
+<tr>
+<td><strong>数据库</strong></td>
+<td>MySQL（车辆基础信息）、InfluxDB（时序数据，如速度、温度、油量变化）</td>
+<td>Spring Data JPA + MySQL + InfluxDB</td>
+</tr>
+<tr>
+<td><strong>前端</strong></td>
+<td>Vue 搭建 Web 页面，显示实时数据和历史趋势；开发 Flutter 跨平台应用</td>
+<td>Flutter 用 <code>mqtt_client</code> 或 <code>http</code> 库连接后端。WebSocket 实时推送</td>
+</tr>
+</tbody></table>
+<h1 id="系统功能"><a href="#系统功能" class="headerlink" title="系统功能"></a>系统功能</h1><p><strong>远程控制</strong>（前端app控制后端）</p>
+<ul>
+<li>✅ 远程开锁 / 解锁</li>
+<li>✅ 远程启动 / 熄火</li>
+<li>✅ 远程空调 / 制热启动</li>
+<li>✅ 远程开关充电、查看充电状态</li>
+<li>✅ 远程寻车（闪灯、鸣笛）</li>
+</ul>
+<p>📊 <strong>历史与分析</strong></p>
+<ul>
+<li>✅ 历史行驶轨迹（某段时间内 GPS 路线）</li>
+<li>✅ 历史速度曲线、能耗曲线</li>
+<li>✅ 历史报警记录（超速、急刹车、碰撞、胎压异常）</li>
+</ul>
+<p>⚠ <strong>异常与报警</strong></p>
+<ul>
+<li>✅ 实时推送：车门未锁、胎压低、碰撞报警</li>
+<li>✅ 消息中心：历史报警记录</li>
+<li>✅ Flutter 本地通知或 App 内消息提醒</li>
+</ul>
+<p>🔧 <strong>车辆管理</strong></p>
+<ul>
+<li>✅ 车辆绑定 / 多车切换</li>
+<li>✅ 基本信息：车牌号、型号、VIN、出厂时间</li>
+<li>✅ 远程升级（仅展示为功能，毕业设计中可省略实现）</li>
+</ul>
+<hr>
+<ul>
+<li>✨ 为什么选用 ZigBee 而不是 WiFi、蓝牙（功耗、组网能力）</li>
+<li>✨ 边缘计算做了哪些处理（减轻云端压力、实时响应）</li>
+<li>✨ 系统架构设计的合理性（分层、解耦、可扩展性）</li>
+<li>✨ 实际测试（比如模拟多个 ZigBee 节点、测试边缘侧响应速度）</li>
+</ul>
+<h1 id="硬件层（车载设备模拟）"><a href="#硬件层（车载设备模拟）" class="headerlink" title="硬件层（车载设备模拟）"></a>硬件层（车载设备模拟）</h1><ul>
+<li>✅ 实时车辆位置（GPS 定位 + 地图显示）</li>
+<li>✅ 当前车速、里程、剩余电量 / 油量</li>
+<li>✅ 车内温度、胎压、碰撞状态</li>
+<li>✅ 车门、车窗、后备箱、充电口状态（开/关/异常）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>要素</th>
+<th>模拟方法</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>车速</strong></td>
+<td>用一个旋转编码器（模拟轮速），或直接 MCU 中用程序生成速度值</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>总里程</strong></td>
+<td>MCU 内部累加（速度 × 时间），输出里程值</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>温度</strong></td>
+<td>接温度传感器（如 <strong>DS18B20</strong>），或程序内写死模拟数据</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>油量/电量</strong></td>
+<td>接<strong>可调电位器</strong>模拟传感器输入，或 MCU 内部计算</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>碰撞</strong></td>
+<td>用<strong>震动传感器</strong>（震动检测模块 SW-420），或按键模拟</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>定位</strong></td>
+<td>如果需要 GPS，可<strong>加个 GPS 模块</strong>（或直接用 MCU 固定值模拟）</td>
+<td></td>
+</tr>
+<tr>
+<td>Arduino Uno</td>
+<td>控制核心，生成模拟数据，驱动传感器，组装数据包，通过串口发给 <strong>ZigBee 模块</strong>（XBee、CC2530）</td>
+<td></td>
+</tr>
+<tr>
+<td>Zigbee 模块</td>
+<td>XBee，无线发送数据到网关，与网关 ZigBee 模块建立网络（自组网或点对点）</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="通信技术选型"><a href="#通信技术选型" class="headerlink" title="通信技术选型"></a>通信技术选型</h2><p>ZigBee 的特点：</p>
+<ol>
+<li> ✅ 低功耗</li>
+<li> ✅ 低速率（最大 250 kbps）</li>
+<li> ✅ 短距离（几十米，室内更稳定）</li>
+<li> ✅ 点对点 / 星型 / Mesh 网络</li>
+</ol>
+<p>但它 <strong>主要用于家庭、工业短距无线</strong>，比如：智能家居（灯、传感器、窗帘）、工厂自动化（温湿度、振动监测）、小型物联网场景（传感器网络）</p>
+<p>在车联网（特别是商用/工业级）场景，ZigBee <strong>并不主流</strong>，原因：</p>
+<ul>
+<li> ❌ 车速快、移动性强，ZigBee 不稳定</li>
+<li> ❌ 带宽太小，不适合传视频、图片等</li>
+<li> ❌ 没有直接连接互联网能力，需要网关中转</li>
+</ul>
+<blockquote>
+<p>业内车联网实践用什么？</p>
+</blockquote>
+<p>车联网（V2X, Vehicle-to-Everything）主流通信技术：</p>
+<ul>
+<li> ✅ <strong>蜂窝网络（4G/5G）</strong> → 广域通信、直连云端</li>
+<li> ✅ <strong>Wi-Fi / DSRC（专用短程通信）</strong> → 车-车、车-路直接通信</li>
+<li> ✅ <strong>蓝牙</strong> → 车内设备短距通信（手机、耳机、娱乐系统）</li>
+<li> ✅ <strong>CAN 总线 / LIN 总线</strong> → 车内模块互联（仪表盘、发动机、ECU）</li>
+<li> ✅ <strong>以太网（车载以太网）</strong> → 高速数据、ADAS 系统</li>
+</ul>
+<h2 id="命令处理"><a href="#命令处理" class="headerlink" title="命令处理"></a>命令处理</h2><p>Java后端服务收到前端的JSON请求（controller），<code>&#123;&quot;deviceId&quot;: &quot;car-001&quot;,  &quot;action&quot;: &quot;SET_SPEED&quot;, &quot;value&quot;: 50&#125;</code>，翻译成对应的命令<code>action+value</code>（映射成底层的二进制包、AT 指令或其他节点协议格式），根据deviceId找路由到对应的网关，给硬件层发送对应的数据到串口。发送到Java边缘计算网关，网关再通过串口发送给节点。</p>
+<ul>
+<li>后端发出命令：<code>0xA1 0x32</code> 表示 <code>SETSPEED 50</code> <ul>
+<li><code>0xA1</code> 表示“设置速度”</li>
+<li><code>0x32</code> 表示 50（十进制）</li>
+</ul>
+</li>
+<li>解析命令类型和参数，调用对应的控制函数</li>
+</ul>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> MOTOR_PIN 9</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Serial.<span class="built_in">begin</span>(<span class="number">9600</span>);      <span class="comment">// 初始化串口</span></span><br><span class="line">  <span class="built_in">pinMode</span>(MOTOR_PIN, OUTPUT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">//检查串口缓存区里有没有收到完整指令（2 字节）</span></span><br><span class="line">  <span class="keyword">if</span> (Serial.<span class="built_in">available</span>() &gt;= <span class="number">2</span>) &#123;</span><br><span class="line">    byte command = Serial.<span class="built_in">read</span>();   <span class="comment">// 读取1个命令字节</span></span><br><span class="line">    byte value = Serial.<span class="built_in">read</span>();     <span class="comment">// 读取1个值字节</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (command == <span class="number">0xA1</span>) &#123;          <span class="comment">// 设置速度命令</span></span><br><span class="line">      <span class="built_in">setMotorSpeed</span>(value);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 你可以扩展更多命令，例如开灯、关灯、测温等</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">setMotorSpeed</span><span class="params">(byte speed)</span> </span>&#123;</span><br><span class="line">  <span class="type">int</span> pwmValue = <span class="built_in">map</span>(speed, <span class="number">0</span>, <span class="number">100</span>, <span class="number">0</span>, <span class="number">255</span>);  </span><br><span class="line">    <span class="comment">// 将 0~100 映射到 PWM 范围，然后</span></span><br><span class="line">  <span class="built_in">analogWrite</span>(MOTOR_PIN, pwmValue);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 回传网关</span></span><br><span class="line">Serial.<span class="built_in">write</span>(<span class="number">0xC1</span>);            <span class="comment">// 回传温度命令</span></span><br><span class="line">Serial.<span class="built_in">write</span>(currentTemp);     <span class="comment">// 回传温度值</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>命令字节</th>
+<th>参数值</th>
+<th>对应函数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>设置速度</td>
+<td>0xA1</td>
+<td>0~100</td>
+<td><code>setMotorSpeed()</code></td>
+</tr>
+<tr>
+<td>打开前灯</td>
+<td>0xB1</td>
+<td>1（开），0（关）</td>
+<td><code>setFrontLight()</code></td>
+</tr>
+<tr>
+<td>读取温度</td>
+<td>0xC1</td>
+<td>无</td>
+<td><code>sendTemperature()</code>（回传数据）</td>
+</tr>
+<tr>
+<td>设置方向</td>
+<td>0xD1</td>
+<td>0=左, 1=右, 2=直行</td>
+<td><code>setDirection()</code></td>
+</tr>
+</tbody></table>
+<h3 id="控制硬件的原理"><a href="#控制硬件的原理" class="headerlink" title="控制硬件的原理"></a>控制硬件的原理</h3><p>Arduino 是一个单片机开发板，它的 <strong>GPIO（通用输入输出引脚）</strong> 可以输出两种信号：<br> ✅ <strong>数字信号（0 或 1，HIGH 或 LOW）</strong><br> ✅ <strong>模拟信号（实际上是 PWM，模拟电压效果）</strong></p>
+<p>比如：</p>
+<ul>
+<li><code>digitalWrite(pin, HIGH)</code> → 给引脚拉高电平（5V）</li>
+<li><code>analogWrite(pin, value)</code> → 输出 PWM 信号，模拟“中间值”（比如 2.5V）</li>
+</ul>
+<p>这些信号接到外接硬件（如电机驱动板、继电器、LED、蜂鸣器等），就能驱动实际动作。</p>
+<p>例如 Arduino → 电机驱动芯片（如 L298N、TB6612，因为单片机供电能力太弱）→ 小车电机</p>
+<blockquote>
+<p>以 L298N 为例：</p>
+<ul>
+<li><strong>IN1/IN2</strong> → 接 Arduino 的数字引脚，用于控制转向（前/后）<ul>
+<li>驱动芯片内部的 H 桥电路根据 IN1/IN2 决定电流方向 → 控制电机前进/后退</li>
+</ul>
+</li>
+<li><strong>ENA（使能）</strong> → 接 Arduino 的 PWM 引脚，用于控制速度（调速）<ul>
+<li>PWM 占空比越高 → 平均电压越高 → 电机转速越快</li>
+</ul>
+</li>
+</ul>
+<p>Arduino 程序：</p>
+<ul>
+<li><code>digitalWrite(IN1, HIGH); digitalWrite(IN2, LOW);</code> → 电机正转</li>
+<li><code>analogWrite(ENA, pwmValue);</code> → 电机调速</li>
+</ul>
+<p>实际上，setMotorSpeed() 就是给 ENA 发送 PWM 信号。Arduino 发出的 PWM 信号 ≠ 直接供电，而是作为“调速指令”给驱动模块，驱动模块放大后再去推电机。</p>
+</blockquote>
+<h3 id="analogWrite-向针脚写入PWM值"><a href="#analogWrite-向针脚写入PWM值" class="headerlink" title="analogWrite() 向针脚写入PWM值"></a>analogWrite() 向针脚写入PWM值</h3><p>向针脚写入一个逻辑值 (<a href="https://assiss.github.io/arduino-zhcn/cn/Tutorial/PWM.html">PWM wave</a>). 可以用来点亮LED灯,调整其亮度或者驱动一个电机,控制其转速. 调用<strong>analogWrite()<strong>函数后, 对应的针脚会输出一个稳定的,指定占空比的方波.(在这个针脚下一次调用</strong>analogWrite()</strong> ,或者调用**digitalRead()**或者 <strong>digitalWrite()</strong>,针脚的输出会改变为相应的函数执行), PWM信号的频率近乎于490Hz.</p>
+<p>在大多数的Arduino板上(MCU为 ATmega168 or ATmega328), 函数起作用的针脚为 3, 5, 6, 9, 10, 和 11. 在 Arduino Mega板上, 起作用的针脚为 2 到 13. 老一点的Arduino 板,MCU是 ATmega8 的,analogWrite()只支持针脚9, 10, and 11. 在执行analogWrite()之前,不需要调用pinMode()函数把针脚设置成输出模式。下面是通过电位器控制led亮灭。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> ledPin = <span class="number">9</span>;      <span class="comment">// LED 连接至针脚 9</span></span><br><span class="line"><span class="type">int</span> analogPin = <span class="number">3</span>;   <span class="comment">// 电位器连接至针脚3</span></span><br><span class="line"><span class="type">int</span> val = <span class="number">0</span>;         <span class="comment">// 定义一个变量存储读取的值</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">setup</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">pinMode</span>(ledPin, OUTPUT);   <span class="comment">// 把针脚设置成输出</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">loop</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  val = <span class="built_in">analogRead</span>(analogPin);   <span class="comment">// 读取输入</span></span><br><span class="line">  <span class="built_in">analogWrite</span>(ledPin, val / <span class="number">4</span>);  </span><br><span class="line">    <span class="comment">// 模拟量值为 0 到 1023, analogWrite 输出量值范围是 0 到 255</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="软硬件协同"><a href="#软硬件协同" class="headerlink" title="软硬件协同"></a>软硬件协同</h3><p>实现可以通过读取命令、或者直接电位器调节的方式设置模块。</p>
+<ul>
+<li>电位器接入 Arduino/ESP32 的 <strong>ADC（模拟输入）引脚</strong></li>
+<li>电机驱动板的调速（ENA 引脚）接到 Arduino 的 <strong>PWM（模拟输出）引脚</strong></li>
+</ul>
+<p>MCU pwm值来源两个：一个是电位器，再有一个就是串口命令。原来串口命令能覆盖电位器，但是电位器发生明显变化也会反过来覆盖。</p>
+<table>
+<thead>
+<tr>
+<th>元件</th>
+<th>接法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>电位器（中间脚）</td>
+<td>接 Arduino 的 A0（模拟输入引脚）</td>
+</tr>
+<tr>
+<td>电位器（两边脚）</td>
+<td>接 5V 和 GND</td>
+</tr>
+<tr>
+<td>L298N ENA</td>
+<td>接 Arduino 的 D9（PWM 输出引脚）</td>
+</tr>
+<tr>
+<td>L298N IN1/IN2</td>
+<td>接 Arduino 的 D7/D8（方向控制）</td>
+</tr>
+<tr>
+<td>电机</td>
+<td>接 L298N OUT1/OUT2</td>
+</tr>
+<tr>
+<td>电源</td>
+<td>给 L298N 单独供电（电机电流大时需分开供电）</td>
+</tr>
+</tbody></table>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">int</span> potPin = A0;      <span class="comment">// 电位器</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> pwmPin = <span class="number">9</span>;       <span class="comment">// PWM 输出</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> in1Pin = <span class="number">7</span>, in2Pin = <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> pwmValue = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> lastPotValue = <span class="number">0</span>;</span><br><span class="line"><span class="type">bool</span> usePotControl = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> potThreshold = <span class="number">5</span>;  <span class="comment">// 电位器变化的触发阈值</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">setup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Serial.<span class="built_in">begin</span>(<span class="number">9600</span>);</span><br><span class="line">  <span class="built_in">pinMode</span>(pwmPin, OUTPUT);</span><br><span class="line">  <span class="built_in">pinMode</span>(in1Pin, OUTPUT);</span><br><span class="line">  <span class="built_in">pinMode</span>(in2Pin, OUTPUT);</span><br><span class="line">  <span class="built_in">digitalWrite</span>(in1Pin, HIGH);</span><br><span class="line">  <span class="built_in">digitalWrite</span>(in2Pin, LOW);</span><br><span class="line"></span><br><span class="line">  lastPotValue = <span class="built_in">analogRead</span>(potPin);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">// 读取当前电位器值</span></span><br><span class="line">  <span class="type">int</span> potValue = <span class="built_in">analogRead</span>(potPin);</span><br><span class="line">  <span class="type">int</span> potMapped = <span class="built_in">map</span>(potValue, <span class="number">0</span>, <span class="number">1023</span>, <span class="number">0</span>, <span class="number">255</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 检测电位器是否有明显变化</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">abs</span>(potValue - lastPotValue) &gt; potThreshold) &#123;</span><br><span class="line">    usePotControl = <span class="literal">true</span>;  <span class="comment">// 硬件优先</span></span><br><span class="line">  &#125;</span><br><span class="line">  lastPotValue = potValue;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 监听串口命令（SET 0~255 / FORCE）</span></span><br><span class="line">  <span class="keyword">if</span> (Serial.<span class="built_in">available</span>()) &#123;</span><br><span class="line">    String cmd = Serial.<span class="built_in">readStringUntil</span>(<span class="string">&#x27;\n&#x27;</span>);</span><br><span class="line">    <span class="keyword">if</span> (cmd.<span class="built_in">startsWith</span>(<span class="string">&quot;SET &quot;</span>)) &#123;</span><br><span class="line">      <span class="type">int</span> val = cmd.<span class="built_in">substring</span>(<span class="number">4</span>).<span class="built_in">toInt</span>();</span><br><span class="line">      pwmValue = <span class="built_in">constrain</span>(val, <span class="number">0</span>, <span class="number">255</span>);</span><br><span class="line">      usePotControl = <span class="literal">false</span>;  <span class="comment">// 串口命令优先</span></span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cmd.<span class="built_in">startsWith</span>(<span class="string">&quot;FORCE&quot;</span>)) &#123;</span><br><span class="line">      usePotControl = <span class="literal">false</span>;  <span class="comment">// 强制回串口模式</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 根据当前优先权，决定输出</span></span><br><span class="line">  <span class="keyword">if</span> (usePotControl) &#123;</span><br><span class="line">    pwmValue = potMapped;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">analogWrite</span>(pwmPin, pwmValue);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">delay</span>(<span class="number">10</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>✅ <strong>加遥控/蓝牙/Wi-Fi</strong> → 软件可以覆盖掉硬件值（比如远程命令优先）</li>
+<li> ✅ <strong>加启动平滑曲线</strong> → 防止突然全速，保护电机</li>
+<li> ✅ <strong>加速度、刹车控制</strong> → 除了速度，还能控制响应曲线</li>
+<li> ✅ <strong>加显示屏/LED</strong> → 显示当前速度百分比、方向状态</li>
+<li>✅ <strong>加入状态反馈</strong> → MCU 回发当前状态到远程端（比如当前速度）</li>
+<li>✅ <strong>支持更多命令</strong> → 不止调速，还能远程换方向、启停</li>
+</ul>
+<h1 id="网关（边缘计算-数据汇集）"><a href="#网关（边缘计算-数据汇集）" class="headerlink" title="网关（边缘计算+数据汇集）"></a>网关（边缘计算+数据汇集）</h1><p>✅ <strong>Java 边缘计算</strong>（网关）：</p>
+<ul>
+<li><p><strong>网关侧硬件设计</strong></p>
+<ul>
+<li>树莓派 / 工控机 + ZigBee 接收模块（用 USB ZigBee 模块，或直接插在串口）</li>
+<li>Java 程序跑在网关，接收 ZigBee 数据包、解析、做边缘处理、转发给后端</li>
+</ul>
+</li>
+<li><p>串口通信：<code>jSerialComm</code> 或 <code>RXTX</code> 库</p>
+</li>
+<li><p>边缘计算：对采集数据做简单聚合、报警（如速度异常）</p>
+</li>
+<li><p>本地缓存：可用 <code>Ehcache</code>、<code>Caffeine</code></p>
+</li>
+<li><p>通过 HTTP/MQTT（用 Eclipse Paho 客户端库） 上传给后端服务</p>
+</li>
+</ul>
+<h1 id="后端（云服务器）"><a href="#后端（云服务器）" class="headerlink" title="后端（云服务器）"></a>后端（云服务器）</h1><p>✅ <strong>Java 后端服务</strong>：</p>
+<ul>
+<li>Spring Boot + Spring Web + Spring Data JPA/MyBatis</li>
+<li>定时任务、报警推送（可整合 WebSocket）</li>
+<li>存数据库（MySQL / PostgreSQL）：车辆、历史记录、报警、用户等表</li>
+<li>提供 RESTful 接口供前端查询</li>
+<li>支持 WebSocket / 推送：实时报警、状态更新</li>
+</ul>
+<h1 id="前端（跨平台移动端、uniapp）"><a href="#前端（跨平台移动端、uniapp）" class="headerlink" title="前端（跨平台移动端、uniapp）"></a>前端（跨平台移动端、uniapp）</h1><p>✅ <strong>前端</strong>：Flutter</p>
+<ul>
+<li><p>登录/注册（Flutter 接后端接口）</p>
+</li>
+<li><p>实时车况显示（定时轮询 REST 接口，或者采用 WebSocket）[实时数据 InfluxDB]</p>
+</li>
+<li><p>历史数据展示（速度、油量、温度曲线，用 <code>fl_chart</code> 或 <code>syncfusion_flutter_charts</code>）[历史数据 MySQL]</p>
+</li>
+<li><p>异常报警（Flutter 本地通知、界面红色高亮、声音提醒）</p>
+</li>
+<li><p>实时推送（如 WebSocket）→ 后端用 <code>spring-boot-starter-websocket</code>，Flutter 用 <code>web_socket_channel</code> </p>
+</li>
+<li><p>状态管理：<code>provider</code>、<code>riverpod</code> 或 <code>bloc</code></p>
+</li>
+<li><p>实时数据：<code>mqtt_client</code> 或用定时轮询 HTTP</p>
+</li>
+<li><p>地图：<code>flutter_map</code>（开源）或 Google Maps 插件</p>
+</li>
+<li><p>图表：<code>fl_chart</code> 或 <code>syncfusion_flutter_charts</code></p>
+</li>
+<li><p>本地通知：<code>flutter_local_notifications</code></p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>界面</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>登录界面</td>
+<td>用户输入手机号 / 密码，调用后端接口登录</td>
+</tr>
+<tr>
+<td>主界面</td>
+<td>地图 + 车状态概览（位置、剩余油量、电池、电压、胎压、温度）</td>
+</tr>
+<tr>
+<td>远程控制界面</td>
+<td>按钮（开锁、上锁、闪灯、鸣笛、开空调、关空调）</td>
+</tr>
+<tr>
+<td>历史数据界面</td>
+<td>折线图（速度、油量、行驶里程），地图轨迹</td>
+</tr>
+<tr>
+<td>报警 / 消息中心</td>
+<td>列表（时间、类型、状态），可点击查看详情</td>
+</tr>
+<tr>
+<td>设置界面</td>
+<td>车辆信息、账号信息、退出登录</td>
+</tr>
+</tbody></table>
+]]></content>
+  </entry>
 </search>
