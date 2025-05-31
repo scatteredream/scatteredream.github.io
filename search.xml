@@ -28861,10 +28861,11 @@ return 0;
 <h4 id="Gap-Lock、Next-key-Lock（RR）"><a href="#Gap-Lock、Next-key-Lock（RR）" class="headerlink" title="Gap Lock、Next-key Lock（RR）"></a>Gap Lock、Next-key Lock（RR）</h4><p>InnoDB 行锁是通过对索引数据页上的记录加锁实现的，MySQL InnoDB 支持三种行锁定方式：</p>
 <ul>
 <li><strong>记录锁（Record Lock）</strong>：也被称为记录锁，属于单个行记录上的锁。</li>
-<li><strong>间隙锁（Gap Lock）</strong>：锁定一个记录之前的范围，不包括记录本身。防止其他事务<strong>插入</strong>间隙，间隙锁之间可以共存</li>
+<li><strong>间隙锁（Gap Lock）</strong>：锁定一个记录之前的范围，不包括记录本身。防止其他事务<strong>插入</strong>间隙，间隙锁之间可以共存。</li>
 <li><strong>临键锁（Next-Key Lock）</strong>：Record Lock + Gap Lock，锁定一个范围，包含记录本身，主要目的是为了解决幻读问题（MySQL 事务部分提到过）。记录锁只能锁住已经存在的记录，为了避免插入新记录，需要依赖间隙锁。</li>
 </ul>
 <p>在 InnoDB 默认的隔离级别 <strong>REPEATABLE-READ</strong> 下，行锁默认使用的是 <strong>Next-Key Lock</strong>。但是，如果操作的索引是唯一索引或主键的等值查询，InnoDB 会对 Next-Key Lock 进行优化，将其降级为 Record Lock 或 Gap Lock。</p>
+<p><strong>当前读加锁（Select for update/update）</strong>：</p>
 <ul>
 <li>防止幻读：查找过程中访问到的记录都会被加锁，遍历停止时访问的那个不符合条件的行也要加锁，默认加NextKeyLock。出现正无穷加正无穷的Next-KeyLock</li>
 <li>退化成Record：唯一索引等值匹配</li>
@@ -28873,6 +28874,11 @@ return 0;
 <li>等值查询，id = 9的值不存在，给离得最近的 id = 10 的记录加锁，退化成 GapLock</li>
 </ul>
 </li>
+</ul>
+<p><strong>插入操作加锁</strong>：</p>
+<ul>
+<li>插入处存在间隙锁，则加一个插入意向锁（与间隙锁不兼容），加锁失败导致阻塞。</li>
+<li>插入唯一索引已经存在了记录，则根据索引类型是否为主键加锁，主键加记录锁，二级索引加临键锁。</li>
 </ul>
 <h4 id="加锁范围验证"><a href="#加锁范围验证" class="headerlink" title="加锁范围验证"></a>加锁范围验证</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241017215201503.png" alt="image-20241017215201503"></p>
 <p>X 对应 默认的 Next-key Lock</p>
@@ -28923,6 +28929,41 @@ return 0;
 </blockquote>
 <p>查询 a &gt;= 10</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018000157308.png" alt="image-20241018000157308"></p>
+<h3 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a><span id="deadlock">死锁</span></h3><h4 id="死锁场景：插入"><a href="#死锁场景：插入" class="headerlink" title="死锁场景：插入"></a>死锁场景：插入</h4><p>阻塞的根本原因：DML操作之前加锁，但是现有的锁和要加的锁不兼容。</p>
+<h5 id="当前读间隙锁与插入意向锁的冲突"><a href="#当前读间隙锁与插入意向锁的冲突" class="headerlink" title="当前读间隙锁与插入意向锁的冲突"></a>当前读间隙锁与插入意向锁的冲突</h5><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/字节mysql面试题.png" alt="字节mysql面试题" style="zoom:50%;" />
+
+<ul>
+<li>time1: id=25不存在，锁住了30之前的间隙</li>
+<li>time2: id=26不存在，锁住了30之前的间隙。跟之前的是互相兼容的。</li>
+<li>time3: 插入id=25，遇到time2的间隙锁，它本身想上一个插入意向锁（特殊的间隙锁，看作是点），但是插入意向锁跟原来的time2间隙锁（间隙）并不兼容，因此 insert 操作阻塞，这个插入意向锁的状态为wait表示并未获得。</li>
+<li>time4: 插入id=26，遇到time1的间隙锁，阻塞原因同上。</li>
+</ul>
+<blockquote>
+<p>每插入一条新记录，都需要看一下待插入记录的下一条记录上是否已经被加了间隙锁，如果已加间隙锁，此时会生成一个插入意向锁(Insert Intention Lock)，然后锁的状态设置为等待状态(PS:MySQL加锁时，是先生成锁结构，然后设置锁的状态，如果锁状态是等待状态，并不是意味着事务成功获取到了锁，只有当锁状态为正常状态时，才代表事务成功获取到了锁)，现象就是 Insert 语句会被阻塞。</p>
+</blockquote>
+<p>互相等待对方的间隙锁释放，满足四个条件造成死锁。</p>
+<hr>
+<h5 id="插入操作导致唯一键冲突"><a href="#插入操作导致唯一键冲突" class="headerlink" title="插入操作导致唯一键冲突"></a>插入操作导致唯一键冲突</h5><p>还有一种情况：插入已经存在的唯一索引</p>
+<ul>
+<li>如果是主键冲突，会给原来已经存在的记录加记录锁 （record）</li>
+<li>如果是唯一键（二级索引）冲突，会给原来已经存在的记录加临键锁</li>
+</ul>
+<h4 id="数据库层面解决方案"><a href="#数据库层面解决方案" class="headerlink" title="数据库层面解决方案"></a>数据库层面解决方案</h4><p>互斥、循环等待、非抢占、持有并等待。</p>
+<blockquote>
+<p>数据库层面</p>
+</blockquote>
+<ol>
+<li>设置事务等待锁的超时时间（tryLock）破坏 <strong>非抢占</strong> 条件。<ol>
+<li><code>innodb_lock_wait_timeout</code> 默认 50s</li>
+<li><code>Lock wait timeout exceeded; try restarting transaction</code></li>
+</ol>
+</li>
+<li>主动死锁检测。发现死锁就回滚某个事务，不要互相阻塞<ol>
+<li><code>innodb_deadlock_detect</code> on</li>
+<li><code>Deadlock found when trying to get lock; try restarting transaction</code></li>
+</ol>
+</li>
+</ol>
 <h2 id="InnoDB"><a href="#InnoDB" class="headerlink" title="InnoDB"></a>InnoDB</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/Mindmap.png" alt="MindMap"></p>
 <h3 id="事务管理"><a href="#事务管理" class="headerlink" title="事务管理"></a>事务管理</h3><p>在事务开始前和结束后，数据库的状态必须一致。InnoDB 在事务提交时会检查所有约束（如外键、唯一性约束），确保数据的完整性和<strong>一致性</strong>。</p>
 <h4 id="RedoLog-持久性"><a href="#RedoLog-持久性" class="headerlink" title="RedoLog - 持久性"></a>RedoLog - 持久性</h4><ul>
@@ -28972,12 +29013,17 @@ return 0;
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018150130329.png" alt="image-20241018150130329"></p>
 <p>事务对记录进行修改，会在Undolog生成对应的undo备份，事务对同一条记录进行修改，会在Undolog中生成一条版本链，链表尾部是最早的旧版本，链表头部是最新的旧版本，</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018151050435.png" alt="image-20241018151050435"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018151107149.png" alt="image-20241018151107149"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018151128340.png" alt="image-20241018151128340"></p>
-<h4 id="ReadView-amp-数据可见性算法"><a href="#ReadView-amp-数据可见性算法" class="headerlink" title="ReadView &amp; 数据可见性算法"></a>ReadView &amp; 数据可见性算法</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018161558601.png" alt="image-20241018161558601"></p>
+<h4 id="ReadView-amp-数据可见性算法"><a href="#ReadView-amp-数据可见性算法" class="headerlink" title="ReadView &amp; 数据可见性算法"></a>ReadView &amp; 数据可见性算法</h4><blockquote>
+<p>ReadView 用于从版本链上获取符合条件的版本，通过 <code>change_visible(trxid,table_name)</code> 里面的数据可见性算法，返回这个版本是否对当前的事务可见。</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018161558601.png" alt="image-20241018161558601"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/trans_visible-ekj9bMvL.png" alt="trans_visible"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018205730125.png" alt="image-20241018205730125"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018161738996.png" alt="image-20241018161738996"></p>
 <hr>
-<h2 id="MVCC-RC-amp-RR-如何解决事务并发问题？"><a href="#MVCC-RC-amp-RR-如何解决事务并发问题？" class="headerlink" title="MVCC: RC &amp; RR 如何解决事务并发问题？"></a>MVCC: RC &amp; RR 如何解决事务并发问题？</h2><p><mark><u>1. MVCC 通过 ReadView 的数据可见性算法 只会读取其他事务已提交的信息，完全避免了脏读</u></mark> </p>
+<h2 id="RC-amp-RR-如何解决事务隔离并发问题？"><a href="#RC-amp-RR-如何解决事务隔离并发问题？" class="headerlink" title="RC &amp; RR 如何解决事务隔离并发问题？"></a>RC &amp; RR 如何解决事务隔离并发问题？</h2><h3 id="RC-避免脏读"><a href="#RC-避免脏读" class="headerlink" title="RC 避免脏读"></a>RC 避免脏读</h3><blockquote>
+<p><mark>MVCC 通过 ReadView 的数据可见性算法 只会读取其他事务已提交的信息，完全避免了脏读</mark> </p>
+</blockquote>
 <p><strong>RC</strong>：避免脏读（读已提交）</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018155530221.png" alt="image-20241018155530221"></p>
 <p><code>mIDs</code>包含活跃事务，<code>maxID</code>当前最大事务ID+1，<code>minID</code>最小活跃事务ID，<code>trxID</code>当前所浏览版本所属的事务ID</p>
@@ -28994,51 +29040,42 @@ return 0;
 <li><code>mIDs</code>为空，可读</li>
 </ol>
 <p><code>Read View</code>在SQL执行结束后自动销毁，下次生成新的</p>
-<p><mark><a href="https://javaguide.cn/database/mysql/innodb-implementation-of-mvcc.html#mvcc-%E8%A7%A3%E5%86%B3%E4%B8%8D%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E9%97%AE%E9%A2%98">2. MVCC 通过设置同一事务复用 ReadView 完全避免了不可重复读问题 </a></mark> </p>
+<h3 id="RR-解决不可重复读"><a href="#RR-解决不可重复读" class="headerlink" title="RR 解决不可重复读"></a>RR 解决不可重复读</h3><blockquote>
+<p><mark><a href="https://javaguide.cn/database/mysql/innodb-implementation-of-mvcc.html#mvcc-%E8%A7%A3%E5%86%B3%E4%B8%8D%E5%8F%AF%E9%87%8D%E5%A4%8D%E8%AF%BB%E9%97%AE%E9%A2%98">MVCC 通过设置同一事务复用 ReadView 完全避免了不可重复读问题 </a></mark> </p>
+</blockquote>
 <p><strong>RR</strong>：注意——RR是可以读已提交的，RR是用来解决不可重复读的</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241018155805136.png" alt="image-20241018155805136"></p>
 <p>同一个事务的<code>Read View</code>相同，后开启的事务修改肯定不会去读，只会按照同一个<code>Read View</code>读版本链</p>
 <ul>
 <li>事务5第一次读，事务3修改了但还没提交，最后选择事务2的版本，生成的<code>Read View</code>不会马上销毁</li>
-<li>事务5第二次读，复用之前的<code>Read View</code>，最重要的是记录了<strong>活跃事务列表</strong> <code>mIds</code>，即使事务3提交了，</li>
+<li>事务5第二次读，复用之前的<code>Read View</code>，最重要的是记录了<strong>活跃事务列表</strong> <code>mIds</code>，即使事务3提交了，也对事务5快照读没影响。</li>
 </ul>
-<p><u><mark>3. MVCC 如何解决幻读问题？</mark></u> </p>
-<ol>
-<li>对于普通的select，MVCC会使用快照读。RR 隔离级别只会在事务开启后的第一次查询生成 <code>Read View</code> ，并使用至事务提交。所以在生成 <code>Read View</code> 之后其它事务所做的更新、插入记录版本对当前事务并不可见，实现了可重复读和防止快照读下的 “幻读”。</li>
-</ol>
-<blockquote>
-<p>RR 级别下，对于当前读，只要是根据索引访问过的行都会加临键锁，根据情况退化。幻读部分解决</p>
+<h3 id="RR-“部分”解决幻读"><a href="#RR-“部分”解决幻读" class="headerlink" title="RR “部分”解决幻读"></a>RR “部分”解决幻读</h3><blockquote>
+<p><mark>RR 级别下，MySQL 如何解决幻读问题？</mark> </p>
 </blockquote>
-<p>没法防止的幻读：</p>
-<p>事务A第一次查询id=5没查到，事务B此时插入了id=5并提交了，事务A为了维持可重复读第二次依然查不到5，但是此时事务A插入5会失败，update id = 5会成功，试图select for update也会成功，好像出现了幻觉，只能改变隔离模式为 Serializable </p>
-<p>MySQL 可重复读隔离级别并没有彻底解决幻读，只是很大程度上避免了幻读现象的发生，</p>
-<h2 id="为什么-MySQL-默认隔离级别为-RR？"><a href="#为什么-MySQL-默认隔离级别为-RR？" class="headerlink" title="为什么 MySQL 默认隔离级别为 RR？"></a>为什么 MySQL 默认隔离级别为 RR？</h2><blockquote>
-<p>一、<strong>基础概念对比</strong></p>
-</blockquote>
-<ol>
-<li><p><strong>RR（Repeatable Read，可重复读）</strong>  </p>
+<p>MySQL 可重复读隔离级别并没有彻底解决幻读，只是很大程度上避免了幻读现象的发生。</p>
 <ul>
-<li><strong>核心特性</strong>：事务内首次读建立快照，后续读均基于此快照，避免不可重复读。  </li>
-<li><strong>锁机制</strong>：通过<strong>间隙锁（Gap Lock）</strong> 和 <strong>临键锁（Next-Key Lock）</strong> 解决幻读问题（如<code>SELECT ... FOR UPDATE</code>会锁定范围，阻止新数据插入）。  </li>
-<li><strong>适用场景</strong>：需强一致性的金融交易、对数据快照有严格要求的业务（如对账）。</li>
+<li>对于快照读，快照读不看最新版本，只看最开始生成的那个快照，所以天然避免了幻读。</li>
+<li>对于当前读，<strong>包括select for update和update</strong>。只要是根据索引访问过的行都会加临键锁，根据情况退化成间隙锁或者记录锁。</li>
 </ul>
-</li>
-<li><p><strong>RC（Read Committed，读已提交）</strong>  </p>
-<ul>
-<li><strong>核心特性</strong>：每次读都获取最新已提交数据，允许不可重复读和幻读。  </li>
-<li><strong>锁机制</strong>：仅使用<strong>行锁（Record Lock）</strong>，无间隙锁，并发更高。  </li>
-<li><strong>适用场景</strong>：高并发写入场景（如电商库存扣减、社交动态更新）。</li>
-</ul>
-</li>
-</ol>
 <blockquote>
-<p>二、<strong>MySQL 默认选择 RR 的原因</strong></p>
+<p>如果快照读和当前读（比如update）混合使用：</p>
 </blockquote>
+<ul>
+<li><p>A 快照读未加锁，B 此时插入并提交。</p>
 <ol>
+<li>A update 新插入的数据，形成新的版本版本(TRX_ID=A事务ID)，快照读从版本链里筛选版本的依据就是 ReadView，虽然 ReadView 还在复用，但根据数据可见性算法，事务A自己的更新操作肯定是对自己可见的(<code>trxid == m_creator_trx_id</code>)，因此发生了幻读</li>
+<li>A 当前读，肯定会读到新插入的数据。</li>
+</ol>
+</li>
+<li><p>解决办法，开启事务尽快进行当前读，加间隙锁。</p>
+</li>
+</ul>
+<h2 id="为什么-MySQL-默认隔离级别为-RR？"><a href="#为什么-MySQL-默认隔离级别为-RR？" class="headerlink" title="为什么 MySQL 默认隔离级别为 RR？"></a>为什么 MySQL 默认隔离级别为 RR？</h2><ol>
 <li><strong>历史兼容性与主从复制安全（核心原因）</strong>  <ul>
 <li>MySQL 早期版本依赖 <strong>Statement-Based Replication（SBR）</strong> 的 binlog 格式。</li>
 <li>RC 级别，若事务中混合读写操作，SBR 可能因其他事务的提交导致主从数据不一致（如幻读未被记录）。  </li>
-<li>RR 级别通过<strong>快照隔离</strong>和<strong>间隙锁Gap Locl</strong>规避此问题，确保 binlog 重放结果一致。  </li>
+<li>RR 级别通过<strong>快照隔离</strong>和<strong>间隙锁</strong>规避此问题，确保 binlog 重放结果一致。  </li>
 </ul>
 <blockquote>
 <p>💡 尽管现代 MySQL 推荐 <strong>Row-Based Replication（RBR）</strong>，也就是 ROW 模式的 binlog 解决此问题，但 RR 作为默认项延续至今。</p>
@@ -29053,10 +29090,7 @@ return 0;
 </ul>
 </li>
 </ol>
-<blockquote>
-<p>三、<strong>PostgreSQL/Oracle 默认选择 RC 的原因</strong></p>
-</blockquote>
-<ol>
+<h2 id="为什么-PostgreSQL-Oracle-默认-RC？"><a href="#为什么-PostgreSQL-Oracle-默认-RC？" class="headerlink" title="为什么 PostgreSQL/Oracle 默认 RC？"></a>为什么 PostgreSQL/Oracle 默认 RC？</h2><ol>
 <li><p><strong>性能优先的设计哲学</strong>  </p>
 <ul>
 <li>RC 无间隙锁，<strong>写操作并发度显著更高</strong>。例如：  <ul>
@@ -29095,10 +29129,9 @@ return 0;
 </ul>
 <p>两种选择无绝对优劣，本质是 <strong>“让数据库兜底一致性” vs “将一致性交给业务层”</strong> 的路径分野。</p>
 </blockquote>
-<h2 id="间隙锁的劣势：为什么一般生产环境要使用-RC？"><a href="#间隙锁的劣势：为什么一般生产环境要使用-RC？" class="headerlink" title="间隙锁的劣势：为什么一般生产环境要使用 RC？"></a>间隙锁的劣势：为什么一般生产环境要使用 RC？</h2><p><a href="https://www.rectcircle.cn/posts/mysql-innodb%E9%94%81%E5%88%86%E6%9E%90/#4-%E7%BB%84%E5%90%88%E5%9B%9B-id%E6%97%A0%E7%B4%A2%E5%BC%95-rc">MySql-InnoDB锁分析 :: Rectcircle Blog</a> </p>
+<h2 id="为什么-MySQL-生产环境要使用-RC？"><a href="#为什么-MySQL-生产环境要使用-RC？" class="headerlink" title="为什么 MySQL 生产环境要使用 RC？"></a>为什么 MySQL 生产环境要使用 RC？</h2><p><a href="https://www.rectcircle.cn/posts/mysql-innodb%E9%94%81%E5%88%86%E6%9E%90/#4-%E7%BB%84%E5%90%88%E5%9B%9B-id%E6%97%A0%E7%B4%A2%E5%BC%95-rc">MySql-InnoDB锁分析 :: Rectcircle Blog</a> </p>
 <p>大厂在实践中普遍将 MySQL 的隔离级别设置为 <strong>读已提交</strong>，主要基于以下几个关键因素的权衡：</p>
-<ol>
-<li><strong>并发能力大幅升高</strong>：<ul>
+<h3 id="并发能力大幅升高（无间隙锁）"><a href="#并发能力大幅升高（无间隙锁）" class="headerlink" title="并发能力大幅升高（无间隙锁）"></a>并发能力大幅升高（无间隙锁）</h3><h4 id="RR-间隙锁的劣势"><a href="#RR-间隙锁的劣势" class="headerlink" title="RR 间隙锁的劣势"></a>RR 间隙锁的劣势</h4><ul>
 <li><p><strong>RC 没有间隙锁：</strong> 这是最核心的原因。在 RC 级别下没有间隙锁，<code>SELECT</code> 操作通常只使用<strong>记录锁</strong>，并且只在语句执行期间持有（具体是读取后立即释放，还是事务结束释放，取决于设置，但通常比 RR 短）。减少锁冲突直接意味着数据库可以处理更多的并发事务，尤其是在写密集型的应用场景（如电商扣库存、社交点赞评论、实时计数等）下，显著提升系统整体吞吐量。</p>
 </li>
 <li><p><strong>RR 的间隙锁：</strong> 在 RR 级别下，为了防止幻读，InnoDB 广泛使用<strong>GAP_LOCK</strong>和 <strong>next-key 锁</strong>。特别是在范围查询 (<code>SELECT ... WHERE col BETWEEN ...</code>) 或普通的（非唯一）索引查询时，会锁定住一个范围。这极大地增加了锁冲突的可能性。在高并发写入场景下，一个事务锁住一个间隙，会阻塞其他需要在该间隙内插入或更新记录的事务，导致严重的并发瓶颈。</p>
@@ -29112,14 +29145,11 @@ return 0;
 <li><p><strong>死锁风险</strong>：间隙锁也是导致复杂死锁场景的常见原因。因为间隙锁锁定的不是具体的记录，而是一个范围，不同事务以不同顺序请求间隙锁时，很容易形成循环等待（死锁）。在 RC 级别下移除了间隙锁，死锁发生的频率通常会显著降低，系统运行更稳定，运维负担减轻。</p>
 </li>
 </ul>
-</li>
-<li><strong>业务场景的适配性：</strong><ul>
+<h4 id="RR-死锁场景"><a href="#RR-死锁场景" class="headerlink" title="RR 死锁场景"></a><a href="#deadlock">RR 死锁场景</a></h4><h3 id="业务场景对隔离级别要求低"><a href="#业务场景对隔离级别要求低" class="headerlink" title="业务场景对隔离级别要求低"></a>业务场景对隔离级别要求低</h3><ul>
 <li><strong>短事务为主：</strong> 互联网大厂的核心业务逻辑通常设计为短小精悍的事务，执行速度快。在短事务场景下，RC 级别的“不可重复读”和“幻读”问题发生的概率相对较低，或者其影响在业务上是可以接受的。</li>
 <li><strong>读后即写模式：</strong> 很多业务操作是“读 -&gt; 计算/判断 -&gt; 写”。在 RC 级别下，读到的总是最新的已提交数据，通常更符合业务预期（例如，基于当前余额扣款、基于当前库存下单）。在 RR 级别下读到的可能是历史快照，有时反而不利于做出正确决策（虽然业务逻辑可以通过 <code>SELECT ... FOR UPDATE</code> 显式加锁来规避，但这又增加了锁开销）。</li>
 <li><strong>应用层容错：</strong> 大厂通常有比较完善的分布式系统设计和应用层逻辑来处理数据一致性问题（如幂等性设计、异步校验补偿、最终一致性方案）。对于 RC 下可能出现的“不可重复读”或“幻读”问题，如果对核心业务有影响，可以通过应用逻辑（如乐观锁、版本号检查）或数据库操作（如 <code>SELECT ... FOR UPDATE</code> 在需要时显式加锁）来规避，而不是依赖数据库默认的 RR 隔离级别提供的强保证。</li>
 </ul>
-</li>
-</ol>
 <blockquote>
 <p>大厂选择 RC 的核心驱动力是 <strong>在高并发、高性能要求下，牺牲一部分隔离性（避免不可重复读、幻读）来换取显著的性能提升（减少锁竞争、降低死锁、提高吞吐量）</strong>。</p>
 <ul>
