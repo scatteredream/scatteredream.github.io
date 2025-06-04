@@ -4078,10 +4078,10 @@ return 0;
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213134804005.png" alt="image-20241213134804005"><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213135215659.png" alt="image-20241213135215659"></p>
 <h5 id="实际的32位和64位页表"><a href="#实际的32位和64位页表" class="headerlink" title="实际的32位和64位页表"></a>实际的32位和64位页表</h5><p>在32位处理器中，采用4KB的page大小，则虚拟地址中低12位为offest，剩下高20位给页表，<strong>分成两级</strong>，每个级别占10个bit（10+10）。为什么32位系统的页表每级占10位，每个页的大小被设定为<code>4KB</code>而不是2KB或者8KB？</p>
 <p>如果index为10位，则其可索引的范围是1024个entris，32位系统中，每级页表的每个entry的大小为4个字节，则每个页表的大小刚好是4KB。页表首地址也是要按页对齐的，如果占不满一个页，页中剩下的空间也就浪费了。80386引入<a href="https://zhida.zhihu.com/search?content_id=102569108&content_type=Article&match_order=1&q=%E5%88%86%E9%A1%B5%E6%9C%BA%E5%88%B6&zhida_source=entity">分页机制</a>的时候应该就考虑过把页设置为多大是最合适的，显然4KB的页大小对内存的利用是最充分的。1024 * 4 = 4 K</p>
-<p><img src="https://i.stack.imgur.com/R19zY.png" alt="memory management - Why 32-bit Windows can maximum have 16TB Page File ..."></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250604222248102.png" alt="image-20250604222248102"></p>
 <p>为什么64位系统的页表<strong>每级占9位</strong>呢？为了和硬件配合，基于i386编写的linux也采用4KB的页大小作为<a href="https://zhida.zhihu.com/search?content_id=102569108&content_type=Article&match_order=1&q=%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86&zhida_source=entity">内存管理</a>的基本单位。处理器进入64位时代后，其实可以不再使用4KB作为一个页帧的大小，但可能为了提供硬件的向前兼容性以及和操作系统的兼容性吧，大部分64位处理器依然使用4KB作为默认的页大小（ARMv8-A还支持16KB和64KB的页大小）。因为64位系统中，每级页表的每个entry的大小为8个字节，如果index为9位，则每个页表的大小也刚好是4KB。</p>
 <p>512 * 8 = 4K </p>
-<p><img src="https://i.sstatic.net/Bswtz.png" alt="img"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250604222330846.png" alt="image-20250604222330846"></p>
 <h4 id="TLB-控制流"><a href="#TLB-控制流" class="headerlink" title="TLB 控制流"></a>TLB 控制流</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241213141353216.png" alt="image-20241213141353216"></p>
 <p>依然是先查TLB，TLB没有再查页表，先用PDBR加偏移 算出PDE的物理地址得到PTE所在的PFN，找到PTE之后根据PTE里面的PFN加偏移算出真实的物理地址。</p>
 <h3 id="倒排页表（Inverted-Page-Table）"><a href="#倒排页表（Inverted-Page-Table）" class="headerlink" title="倒排页表（Inverted Page Table）"></a>倒排页表（Inverted Page Table）</h3><p>PowerPC</p>
@@ -26783,6 +26783,15 @@ return 0;
 <p>@Autowired 来自 Spring 框架，而 @Resource 来自于（Java）JSR-250；</p>
 <p>@Autowired 只支持设置 1 个参数，而 @Resource 支持设置 7 个参数；</p>
 <p>@Autowired 既支持构造方法注入，又支持属性注入和 Setter 注入，而 @Resource 只支持属性注入和 Setter 注入；</p>
+<h5 id="为什么属性注入不推荐使用-Autowired"><a href="#为什么属性注入不推荐使用-Autowired" class="headerlink" title="为什么属性注入不推荐使用 @Autowired"></a>为什么属性注入不推荐使用 @Autowired</h5><ol>
+<li>@Autowired 注解注入依赖容器，单元测试不如setter和构造器方便。</li>
+<li>无法实现不可变性：final 属性不支持 @Autowired 注解。</li>
+<li>Autowired默认按照type，如果有两个相同type的bean，就会报错，不如 @Resource</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// setter........</span></span><br><span class="line"><span class="meta">@Autowired(required = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setUserService</span><span class="params">(UserService userService)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.userService = userService;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// constructor..........</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MyController</span><span class="params">(UserService userService)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.userService = userService;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
 <h4 id="简单类型注入依赖-Value"><a href="#简单类型注入依赖-Value" class="headerlink" title="简单类型注入依赖@Value"></a>简单类型注入依赖@Value</h4><p>需要注入的属性上 写value</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020011954765.png" alt="image-20241020011954765"></p>
 <h4 id="导入配置文件-PropertySource"><a href="#导入配置文件-PropertySource" class="headerlink" title="导入配置文件@PropertySource"></a>导入配置文件@PropertySource</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020011844984.png" alt="image-20241020011844984"></p>
@@ -33386,97 +33395,135 @@ return 0;
 <li><strong>减少无效遍历</strong>：epoll 使用事件驱动（ep_poll_callback）的机制，内核里维护了一个「链表」来记录就绪事件，只将有事件发生的 fd 传递给应用程序，不需要像 select/poll 那样轮询扫描整个集合（包含有和无事件的 fd），大大提高了检测的效率。</li>
 </ul>
 <h5 id="流程-1"><a href="#流程-1" class="headerlink" title="流程"></a>流程</h5><p>创建eventpoll结构，主要包含以下三个结构：</p>
-<p>0、<code>wait_queue_head_t wq</code> 用于 <code>epoll_wait</code> 阻塞等待事件发生。</p>
-<p>1、<code>rb_root rb_root</code> 用于快速查找文件描述符，存储所有注册的 <code>epitem</code>。</p>
-<p>2、<code>list_head rdllist</code>  存储已触发的事件，<code>epoll_wait</code> 通过它返回事件。</p>
+<h6 id="eventpoll-数据结构"><a href="#eventpoll-数据结构" class="headerlink" title="eventpoll 数据结构"></a><code>eventpoll</code> 数据结构</h6><p>0、<code>wait_queue_head_t wq</code> 用于 <code>epoll_wait</code> 阻塞等待事件的进程task链表。</p>
+<blockquote>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> __<span class="title">wait_queue_head</span> &#123;</span></span><br><span class="line">    <span class="type">spinlock_t</span> lock;      <span class="comment">// 保护等待队列的自旋锁</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">task_list</span>;</span> <span class="comment">// 等待队列中的进程链表</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> __<span class="title">wait_queue_head</span> <span class="title">wait_queue_head_t</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p>自旋锁是为了 <strong>在高并发或中断环境中，安全地操作等待队列链表，防止竞态条件</strong>。</p>
+<p>不用 mutex：因为这些操作有时发生在 <strong>中断上下文</strong> 或 <strong>原子上下文</strong> 中，这时不能睡眠，而 mutex 可能会导致阻塞，而 <strong>spinlock 是忙等非阻塞的原语，适用于这种场景</strong>。</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/983db0e2b75d1cdae847f663b2d90a77.jpeg" alt="img"></p>
+<p>1、<code>rb_root rb_root</code> 存储所有注册的 <code>epitem</code>。</p>
+<p>2、<code>list_head rdllist</code>  存储已触发的<code>epitem</code>，<code>epoll_wait</code> 通过它返回事件。</p>
 <blockquote>
 <p><code>epitem</code>：表示 <code>epoll</code> 监视的 <strong>单个文件描述符</strong>，它既是 <strong>红黑树的节点</strong>，也是 <strong>双向链表的节点</strong>。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epitem</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rb_node</span> <span class="title">rbn</span>;</span>         <span class="comment">// 红黑树节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">rdllink</span>;</span>   <span class="comment">// 双向链表节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">event</span>;</span>   <span class="comment">// 存储用户注册的事件</span></span><br><span class="line">    <span class="type">int</span> fd;                     <span class="comment">// 关联的文件描述符</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epitem</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rb_node</span> <span class="title">rbn</span>;</span>      <span class="comment">// 红黑树节点（用于存储在 epoll 的红黑树中）</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">rdllink</span>;</span><span class="comment">// 就绪链表节点，指向本 epitem 所在的就绪链表</span></span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_filefd</span> <span class="title">ffd</span>;</span> <span class="comment">// 包含 file 和 fd 的组合（file 指针用于 I/O 操作）</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">eventpoll</span> *<span class="title">ep</span>;</span>    <span class="comment">// 指向所属的 epoll 实例（eventpoll 结构）</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">event</span>;</span><span class="comment">// 用户关心的事件和相关数据（EPOLLIN、EPOLLOUT 等）</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">pwqlist</span>;</span> <span class="comment">// 与 poll waitqueue 的挂钩（callback 使用）</span></span><br><span class="line">    <span class="type">wait_queue_entry_t</span> wait;<span class="comment">// 等待队列 entry，包含 ep_poll_callback</span></span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">file</span>;</span>              <span class="comment">// 被监视的 file 指针，和 ffd.file 一致</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">user_struct</span> *<span class="title">user</span>;</span>     <span class="comment">// 指向用户结构，用于统计资源限制</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">fllink</span>;</span><span class="comment">// file -&gt; epitem 反向链表（epoll_flush → file → epitem）</span></span><br><span class="line">    </span><br><span class="line">    u64 ttid;<span class="comment">// 线程 ID（用于支持多线程的 EPOLLONESHOT）</span></span><br><span class="line">    u32 nwait; <span class="comment">// 当前挂载的等待队列数目（多个设备会使用多个 wait_queue）</span></span><br><span class="line">    u32 wakeup_source;<span class="comment">// 作为唤醒来源标识（通常用于 PM）</span></span><br><span class="line"></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> revents;    <span class="comment">// 实际发生的事件（由 poll 返回）</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p><code>epoll_event</code>：在 <code>epoll</code> 中，事件（event）是通过 <code>epoll_event</code> 结构体来定义和处理的。<code>epoll</code> 的事件分类主要基于 I/O 操作的类型（例如：可读、可写等），它们可以通过 <code>epoll_ctl</code> 函数注册，之后通过 <code>epoll_wait</code> 等函数来等待这些事件的发生。</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> &#123;</span></span><br><span class="line">    <span class="type">uint32_t</span> events;  <span class="comment">/* 事件类型 */</span></span><br><span class="line">    <span class="type">epoll_data_t</span> data; <span class="comment">/* 用户数据 */</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">union</span> <span class="title">epoll_data</span> &#123;</span></span><br><span class="line">    <span class="type">void</span> *ptr;    <span class="comment">/* 指针 */</span></span><br><span class="line">    <span class="type">int</span> fd;       <span class="comment">/* 文件描述符 */</span></span><br><span class="line">    <span class="type">uint32_t</span> u32; <span class="comment">/* 32 位整数 */</span></span><br><span class="line">    <span class="type">uint64_t</span> u64; <span class="comment">/* 64 位整数 */</span></span><br><span class="line">&#125; <span class="type">epoll_data_t</span>;</span><br><span class="line"><span class="comment">// 使用例------</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">ev</span>;</span></span><br><span class="line">ev.events = EPOLLIN | EPOLLET;</span><br><span class="line">ev.data.fd = sockfd; <span class="comment">// 关联文件描述符</span></span><br><span class="line">epoll_ctl(epfd, EPOLL_CTL_ADD, sockfd, &amp;ev);</span><br></pre></td></tr></table></figure>
 </blockquote>
-<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241114221957536.png" alt="image-20241114221957536" style="zoom: 80%;" />
+<h6 id="epoll-ctl"><a href="#epoll-ctl" class="headerlink" title="epoll_ctl"></a><code>epoll_ctl</code></h6><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241114221957536.png" alt="image-20241114221957536" style="zoom: 80%;" />
 
-<p>3、<code>epoll_ctl(epfd, EPOLL_CTL_ADD, sockfd, &amp;ev)</code>：将要监听的 fd 以及要监听的事件类型封装成 <code>epitem</code>，作为节点添加到红黑树，设置 <code>ep_poll_callback</code>回调函数，这个函数会在监听到fd发生对应的事件时触发，并把 fd 对应的 <code>epitem</code>  添加到就绪链表中。</p>
+<p><code>epoll_ctl(epfd, EPOLL_CTL_ADD, sockfd, &amp;ev)</code>：将要监听的 fd 以及要监听的<code>epoll_event</code>封装成 <code>epitem</code>，作为节点添加到红黑树。并且将 <code>epitem</code>对应的等待队列项(<code>wait_queue_entry</code>)加到内核驱动程序管理的的 fd 等待队列，设置好回调函数<code>ep_poll_callback</code>。</p>
 <blockquote>
-<p>回调函数：将函数作为参数传入，Java中是函数式接口的实现类，C中是函数指针</p>
-<p>事件驱动：以状态的转换作为事件发生的标志，事件发生会触发回调函数的执行。而事件是多种多样的，这就要求执行的函数不能写死，需要实现充分的解耦</p>
-<p><a href="https://www.runoob.com/w3cnote/c-callback-function.html">C 语言回调函数详解 | 菜鸟教程 (runoob.com)</a> </p>
+<p>回调函数：将函数作为参数传入，Java中是函数式接口的实现类，C中是函数指针，主要目的就是为了解耦</p>
+<p>事件驱动：以状态的转换作为事件发生的标志，事件发生会触发回调函数的执行。而事件是多种多样的，这就要求执行的函数不能写死，需要实现充分的解耦 <a href="https://www.runoob.com/w3cnote/c-callback-function.html">C 语言回调函数详解 | 菜鸟教程 (runoob.com)</a> </p>
 </blockquote>
-<p>4、<code>epoll_wait(epfd, events, 10, 5000)</code>：最多监听 10 个事件，超时时间 5 秒。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">events</span>[10];</span> <span class="comment">// 存储触发的事件</span></span><br><span class="line"><span class="type">int</span> nfds = epoll_wait(epfd, events, <span class="number">10</span>, <span class="number">5000</span>); <span class="comment">// 最多监听 10 个事件，超时时间 5 秒</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (nfds &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    perror(<span class="string">&quot;epoll_wait failed&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; nfds; i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (events[i].events &amp; EPOLLIN) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;文件描述符 %d 可读\n&quot;</span>, events[i].data.fd);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>内核驱动程序管理——FD 级别的等待队列：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">wait_queue_entry</span> <span class="title">wait_queue_entry_t</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">wait_queue_entry</span> &#123;</span></span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> flags;     <span class="comment">// 等待者标志，如 WQ_FLAG_EXCLUSIVE</span></span><br><span class="line">    <span class="type">void</span> *private;          <span class="comment">// 指向私有数据，这里是 epitem</span></span><br><span class="line">    <span class="type">wait_queue_func_t</span> func; <span class="comment">// 回调函数，通常是 ep_poll_callback</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">entry</span>;</span> <span class="comment">// 链表节点，用于挂载在等待队列里</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
+<ul>
+<li>通过 <code>epoll_ctl</code> 为监听的 fd 创建 <code>epitem</code> </li>
+<li>每个<code>epitem</code>里对应一个 fd 的<code>wait_queue_entry</code> ，这个队列项会被<strong>注册到该文件描述符本身在内核驱动程序（如 socket）中维护的等待队列头</strong>上。</li>
+<li>当这个 fd 上发生 I/O 事件（例如 socket 接收到数据包）时，内核驱动程序会调用 <code>__wake_up_common()</code> 遍历 fd 的等待队列，调用挂载在<code>wait_queue_entry</code>上的func也就是<code>ep_poll_callback</code>回调函数。</li>
+</ul>
+</blockquote>
+<h6 id="epoll-wait睡眠等待前"><a href="#epoll-wait睡眠等待前" class="headerlink" title="epoll_wait睡眠等待前"></a><code>epoll_wait</code>睡眠等待前</h6><p><code>epoll_wait(epfd, events, 10, 5000)</code>：最多监听 10 个事件，超时时间 5 秒。</p>
+<blockquote>
 <p>在用户态需要创建一个空的<code>events</code>数组传给 <code>epoll_wait</code>，触发事件时回调函数会把 fd 对应的 <code>epitem</code> 添加到<code>list_head</code>中去。调用<code>epoll_wait</code>时检查<code>list_head</code>是否为空，当然这个过程需要参考配置的等待时间，可以等一定时间，也可以一直等。</p>
-<p>根据内核的 poll 机制，epoll 需要为每个监听的 fd 构造一个 epoll entry(设置关心的事件以及回调函数)作为等待队列成员睡眠在每个 fd 的等待队列，以便 fd 上的事件就绪时可以通过回调函数通知。无事件的时候，多个进程 task 调用<code>epoll_wait</code>睡眠在 epoll 的 wq 睡眠队列上。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">events</span>[10];</span> <span class="comment">// 存储触发的事件</span></span><br><span class="line"><span class="type">int</span> nfds = epoll_wait(epfd, events, <span class="number">10</span>, <span class="number">5000</span>); <span class="comment">// 最多监听 10 个事件，超时时间 5 秒</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (nfds &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    perror(<span class="string">&quot;epoll_wait failed&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(EXIT_FAILURE);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; nfds; i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (events[i].events &amp; EPOLLIN) &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;文件描述符 %d 可读\n&quot;</span>, events[i].data.fd);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>递归链：</p>
+<ul>
+<li><p><code>epoll_wait-&gt;ep_poll-&gt;有事件ep_send_events|无事件task睡眠,被唤醒后ep_send_events</code></p>
+</li>
+<li><p><code>ep_send_events-&gt;ep_scan_ready_list-&gt;ep_send_events_proc</code></p>
+</li>
+</ul>
+<p>epoll 的 task 等待队列 <code>wait_queue_head_t wq</code>：epoll 作为进程 task 的中间层，它需要有一个等待队列 <code>wq</code> 给 task。在没事件来 epoll_wait 的时候来睡眠等待(epoll fd 本身也是一个 fd，它和其他 fd 一样也有内核驱动管理的等待队列，作为 poll 机制被 poll 的时候睡眠等待的地方)。</p>
+<blockquote>
+<p><code>ep_poll</code>: 在<code>epoll_wait</code>里调用，<code>ep_events_available(ep)</code>检查当前就绪链表是否为空。</p>
+<ul>
+<li>如果有事件发生就直接走到下面的<code>ep_send_events</code>处上报事件给用户。</li>
+<li>无事件时，当前的进程 task 睡眠在 epoll 的 wq 睡眠队列上。</li>
+</ul>
+</blockquote>
 <ol>
-<li>这个时候一个请求RQ_1上来，listen fd 这个时候就绪，开始唤醒其对应的睡眠队列上的 epoll entry，并执行之前 epoll 注册的回调函数 <code>ep_poll_callback</code>。</li>
-<li><code>ep_poll_callback</code>主要做两件事情：(1) 发生的事件是 epoll entry 关心的，则将<code>epitem</code>挂载到epoll的就绪链表并进入(2)，否则结束。(2)如果当前等待队列<code>wq</code>不为空，则唤醒睡眠在<code>wq</code>上睡眠的task(唤醒一个还是多个，是区分epoll的ET模式还是LT模式)。</li>
-<li><code>epoll_wait</code>被唤醒继续执行，在<code>ep_poll</code>中调用<code>ep_send_events</code>将 fd 相关的<code>epoll_event</code>和数据拷贝到用户空间传进来的<code>events</code>数组里，这个时候就需要遍历 epoll 的<strong>就绪链表</strong>以便收集进程监控的多个fd的<code>epoll_event</code>和数据上报给用户进程（在<code>ep_scan_ready_list</code>中完成） 将数据放入到<code>events</code>数组中，并且返回就绪的fd数量，用户态的此时收到响应后，从<code>events</code>中拿到fd，去调用 <code>accept()</code>或者<code>read()</code>。</li>
+<li>一个请求RQ_1上来，listen fd 就绪，执行之前注册的回调函数 <code>ep_poll_callback</code>。</li>
+<li><code>ep_poll_callback</code>主要做两件事情：(1) 发生的事件是 epoll entry 关心的，则将<code>epitem</code>挂载到 epoll 的就绪链表并进入(2)，否则结束。(2)如果当前 task 等待队列<code>wq</code>不为空，则唤醒睡眠在<code>wq</code>上睡眠的task(唤醒一个还是多个，是区分epoll的ET模式还是LT模式)。</li>
 </ol>
+<blockquote>
+<p>如果<code>epoll_ctl</code>时加 <code>EPOLLEXCLUSIVE</code>，通过 <code>ep_poll</code>，task 是 排他(带 <code>WQ_FLAG_EXCLUSIVE</code>标记)加入到 epoll 的等待队列 <code>wq</code> 的。也就是说，在 <code>ep_poll_callback</code>回调中，只会唤醒一个 task。</p>
+</blockquote>
+<h6 id="epoll-wait被唤醒后-ep-send-events"><a href="#epoll-wait被唤醒后-ep-send-events" class="headerlink" title="epoll_wait被唤醒后: ep_send_events"></a><code>epoll_wait</code>被唤醒后: <code>ep_send_events</code></h6><p><code>ep_send_events</code>可以是被唤醒者执行，也可以是 <code>ep_poll</code>发现就绪链表非空直接goto。</p>
+<p>唤醒者：<code>ep_poll_callback</code>（内核驱动程序） 或 <code>ep_scan_ready_list</code>（被唤醒者链式唤醒其他睡眠的）</p>
+<p>task 从<code>wq</code>被唤醒后继续执行<code>ep_poll</code>，调用<code>ep_send_events</code>将 fd 相关的<code>epoll_event</code>和数据拷贝到用户空间传进来的<code>events</code>数组里，这个时候就需要遍历 epoll 的<strong>就绪链表</strong>以便收集进程监控的多个fd的<code>epoll_event</code>和数据上报给用户进程（在<code>ep_scan_ready_list</code>中完成） 将数据放入到<code>events</code>数组中，并且返回就绪的fd数量，用户态的此时收到响应后，从<code>events</code>中拿到fd，去调用 <code>accept()</code>或者<code>read()</code>。</p>
 <blockquote>
 <p><code>ep_scan_ready_list</code></p>
 <ul>
 <li>所有的 <code>epitem</code> 都转移到 txlist , 而 eventpoll 结构体上的 rdllist 被清空了。</li>
-<li><code>ep_send_events_proc</code> 遍历 txlist，<a href="#etlt">详见下文ET/LT区别</a>。</li>
-<li>没有处理完的 <code>epitem</code> 重新插入到 <code>rdllist</code>，如果此时的 <code>rdllist</code> 非空，直接唤醒。</li>
+<li><code>ep_send_events_proc</code> 遍历 txlist，<a href="#etlt">详见下文ET/LT区别</a>。遍历过程中，对于每个epitem收集其返回的events，如果没收集到event，则继续处理其他epi，收集到event就将当前epi的事件和用户传入的数据都copy给用户空间。每次copy完成后判断如果是在LT模式，则将当前epi重新放回epoll结构体的ready list。没有处理好的 <code>epitem</code>会重新插入到 <code>rdllist</code>。</li>
+<li>遍历完成后，如果此时的 <code>rdllist</code> 非空，并且task队列也非空，那么唤醒正在等待的task。<ul>
+<li><span id="chainwake">task A 被回调函数唤醒</span>，执行完遍历、发送的工作之后，如果 ready list 不为空，则继续唤醒epoll睡眠队列wq上的其他 task B。task B 从 epoll_wait 醒来继续前行，重复上述流程，继续唤醒wq上的其他task C，这样链式唤醒下去。</li>
+</ul>
+</li>
 </ul>
 </blockquote>
-<p>总流程：</p>
-<ol>
-<li>遍历并清空epoll结构体的ready list：遍历过程中，对于每个epitem收集其返回的events，如果没收集到event，则继续处理其他epi，收集到event就将当前epi的事件和用户传入的数据都copy给用户空间。完成后判断如果是在LT模式，则将当前epi重新放回epoll结构体的ready list。</li>
-<li>唤醒工作：如果ready list不为空，则继续唤醒epoll睡眠队列wq上的其他task B。task B从epoll_wait醒来继续前行，重复上面的流程，继续唤醒wq上的其他task C，这样链式唤醒下去。</li>
-</ol>
-<h5 id="ET-边沿触发-和-LT-水平触发"><a href="#ET-边沿触发-和-LT-水平触发" class="headerlink" title="ET(边沿触发)和 LT(水平触发)"></a>ET(边沿触发)和 LT(水平触发)</h5><p>当FD有数据可读时，我们调用epoll_wait（或者select、poll）可以得到通知。但是事件通知的模式有两种：</p>
+<h5 id="ep-scan-ready-list-ET-LT"><a href="#ep-scan-ready-list-ET-LT" class="headerlink" title="ep_scan_ready_list ET/LT"></a><code>ep_scan_ready_list</code> ET/LT</h5><blockquote>
+<p>Ref: </p>
+<ul>
+<li><a href="https://zhuanlan.zhihu.com/p/385410196">深入浅出 Linux 惊群：现象、原因和解决方案 - 知乎 (zhihu.com)</a></li>
+<li><a href="https://mp.weixin.qq.com/s/xxjCrFH1361iG-srfNL9_Q">再谈 Linux epoll 惊群问题的原因和解决方案 (qq.com)</a> </li>
+<li><a href="https://zhuanlan.zhihu.com/p/671209993">Linux内核源码【epoll-LT/ET模式区别】 - 知乎</a> </li>
+</ul>
+</blockquote>
+<p>当FD有数据可读时，我们调用epoll_wait（或者select、poll）可以得到通知。但是事件通知的模式有两种：</p>
 <ul>
 <li>Level Triggered：简称 LT，也叫做水平触发。只要某个FD中有数据可读，每次调用<code>epoll_wait</code>都会被通知。</li>
 <li>Edge Triggered：简称 ET，也叫做边沿触发。只有在某个FD状态变化时调用<code>epoll_wait</code>才会被通知。</li>
 </ul>
-<p>假设一个客户端socket对应的FD已经注册到了epoll实例中，客户端socket发送了2kb的数据，服务端调用epoll_wait，得到通知说FD就绪，服务端从FD读取了1kb数据回到步骤3（再次调用epoll_wait，形成循环）。如果采用LT模式，因为FD中仍有1kb数据，则回到第3步依然会返回结果，并且得到通知；如果采用ET模式，因为一开始已经消费了FD可读事件，此后FD状态并没有「变化」，因此epoll_wait也不会触发回调，数据无法读取，客户端响应就会超时。</p>
-<p>通过 ep_poll，task 是 排他(带 <code>WQ_FLAG_EXCLUSIVE</code>标记)加入到 epoll 的等待队列 <code>wq</code> 的。也就是说，在 <code>ep_poll_callback</code>回调中，只会唤醒一个 task。</p>
-<p>LT 的语义：如果事件来了，不管来了几个，只要仍然有未处理的事件，epoll都会通知。</p>
-<p>epoll_wait刚刚取到事件的时候的时候，不可能马上就调用accept去处理，事实上，epoll_wait里面的ep_poll中还没返回，这个时候显然符合“仍然有未处理的事件”这个条件，为了实现 LT 语义，需要通知别的同样阻塞在同一个epoll句柄睡眠队列上的进程。</p>
-<p>在一个 epoll 上睡眠的多个 task，如果在一个 LT 模式下的 fd 的事件上来，会唤醒 epoll 睡眠队列上的所有 task，而 ET 模式下，仅仅唤醒一个 task。</p>
+<p>假设一个客户端socket对应的FD已经注册到了epoll实例中，客户端socket发送了2kb的数据，服务端调用epoll_wait，得到通知说FD就绪，服务端从FD读取了1kb数据回到步骤3（再次调用epoll_wait，形成循环）。如果采用LT模式，因为FD中仍有1kb数据，则回到第3步依然会返回结果，并且得到通知；如果采用ET模式，因为一开始已经消费了FD可读事件，此后FD状态并没有「变化」，因此也不会触发callback加到就绪链表里，自然也就不会出现在events数组里，实现 ET 语义。</p>
 <blockquote>
 <p>LT 语义的实现需要依赖以下两个机制：</p>
 </blockquote>
-<h6 id="ep-send-events-proc-LT-将-fd-重新加到链表"><a href="#ep-send-events-proc-LT-将-fd-重新加到链表" class="headerlink" title="ep_send_events_proc: LT 将 fd 重新加到链表"></a><span id="etlt"><code>ep_send_events_proc</code>: LT 将 fd 重新加到链表</span></h6><p>递归逐渐深入：<code>ep_send_events-&gt;ep_scan_ready_list-&gt;ep_send_events_proc</code></p>
+<h6 id="ep-send-events-proc-遍历时把节点加回去"><a href="#ep-send-events-proc-遍历时把节点加回去" class="headerlink" title="ep_send_events_proc: 遍历时把节点加回去"></a><span id="etlt"><code>ep_send_events_proc</code>: 遍历时把节点加回去</span></h6><p>递归逐渐深入：<code>ep_send_events-&gt;ep_scan_ready_list-&gt;ep_send_events_proc</code></p>
 <ol>
 <li>从链表里移除就绪的 <code>epitem</code> 并获取对应事件。睡眠 entry 的回调函数的触发只是通知有“事件”，具体需要通过<code>ep_item_poll(epi, &amp;pt, 1)</code>获取，返回相应的事件掩码<code>revents</code>。</li>
 <li>将当前发生的事件<code>revents</code>和用户当时传入的event数据部分copy到用户空间<code>events</code>数组。如果拷贝过程未顺利完成 则终止遍历过程，将当前<code>epitem</code>重新加回就绪链表，剩下的也会在<code>ep_scan_ready_list</code>中重新放回就绪链表，直接返回。</li>
 <li>copy 完成之后，如果是 LT 模式，还会将这个 <code>epitem</code> 重新加回到 eventpoll 结构体里的 rdllist 中去：</li>
 </ol>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (!(epi-&gt;event.events &amp; EPOLLET)) &#123;</span><br><span class="line">    list_add_tail(&amp;epi-&gt;rdllink, &amp;ep-&gt;rdllist);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// ep_send_events_proc</span></span><br><span class="line"><span class="comment">/* 遍历处理 txlist（原 ep-&gt;rdllist 数据）就绪队列结点，</span></span><br><span class="line"><span class="comment">     * 获取事件拷贝到用户空间。 */</span></span><br><span class="line">list_for_each_entry_safe(epi, tmp, head, rdllink) &#123;</span><br><span class="line">    <span class="keyword">if</span> (esed-&gt;res &gt;= esed-&gt;maxevents) <span class="keyword">break</span>;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">/* 先从就绪队列中删除 epi，如果是 lt</span></span><br><span class="line"><span class="comment">     * 模式，就绪事件还没处理完，再把它添加回去。 */</span></span><br><span class="line">    list_del_init(&amp;epi-&gt;rdllink);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 获取 epi 对应 fd 的就绪事件。 */</span></span><br><span class="line">    revents = ep_item_poll(epi, &amp;pt, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (!revents) &#123;</span><br><span class="line">        <span class="comment">/* 如果没有就绪事件就返回（这时候，epi 已经从就绪队列中删除了。） */</span></span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 内核空间通过 __put_user 向用户空间拷贝传递数据。 */</span></span><br><span class="line">    <span class="keyword">if</span> (__put_user(revents, &amp;uevent-&gt;events) ||</span><br><span class="line">        __put_user(epi-&gt;event.data, &amp;uevent-&gt;data)) &#123;</span><br><span class="line">        <span class="comment">/* 如果拷贝失败，将 epi 重新保存回就绪队列，以便下一次处理。 */</span></span><br><span class="line">        list_add(&amp;epi-&gt;rdllink, head);</span><br><span class="line">        ep_pm_stay_awake(epi);</span><br><span class="line">        <span class="keyword">if</span> (!esed-&gt;res) &#123;</span><br><span class="line">            esed-&gt;res = -EFAULT;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* 增加成功处理就绪事件的个数。 */</span></span><br><span class="line">    esed-&gt;res++;</span><br><span class="line">    uevent++;</span><br><span class="line">    <span class="keyword">if</span> (epi-&gt;event.events &amp; EPOLLONESHOT)</span><br><span class="line">        <span class="comment">/* #define EP_PRIVATE_BITS (EPOLLWAKEUP | EPOLLONESHOT | EPOLLET |</span></span><br><span class="line"><span class="comment">         * EPOLLEXCLUSIVE) */</span></span><br><span class="line">        epi-&gt;event.events &amp;= EP_PRIVATE_BITS;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (!(epi-&gt;event.events &amp; EPOLLET)) &#123;</span><br><span class="line">        <span class="comment">/* lt 模式，重新将前面从就绪队列删除的 epi 添加回去。</span></span><br><span class="line"><span class="comment">         * 等待下一次 epoll_wait 调用，重新走上面的逻辑。</span></span><br><span class="line"><span class="comment">         * et 模式，前面从就绪队列里删除的 epi 将不会被重新添加，</span></span><br><span class="line"><span class="comment">         * 直到用户关注的事件再次发生。*/</span></span><br><span class="line">        list_add_tail(&amp;epi-&gt;rdllink, &amp;ep-&gt;rdllist);</span><br><span class="line">        ep_pm_stay_awake(epi);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h6 id="ep-scan-ready-list-遍历完若链表非空则唤醒等待者"><a href="#ep-scan-ready-list-遍历完若链表非空则唤醒等待者" class="headerlink" title="ep_scan_ready_list: 遍历完若链表非空则唤醒等待者"></a><code>ep_scan_ready_list</code>: 遍历完若链表非空则唤醒等待者</h6><p>ET 结合NIO能够确保一次性读完Socket中的数据，减少epoll_wait的调用次数，提高效率</p>
-<p>LT 因为会保留就绪链表上的节点，因此多个进程阻塞在epoll_wait的系统调用时，会将他们全部唤醒，即惊群。</p>
-<p><a href="https://zhuanlan.zhihu.com/p/385410196">深入浅出 Linux 惊群：现象、原因和解决方案 - 知乎 (zhihu.com)</a></p>
-<p><a href="https://mp.weixin.qq.com/s/xxjCrFH1361iG-srfNL9_Q">再谈 Linux epoll 惊群问题的原因和解决方案 (qq.com)</a> </p>
+<blockquote>
+<p><code>ep_item_poll</code>获取具体的事件类型，用于写回到 <code>epitem</code>的events属性中。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">__poll_t</span> <span class="title function_">ep_item_poll</span><span class="params">(<span class="keyword">struct</span> eventpoll *ep, <span class="keyword">struct</span> epitem *epi, poll_table *pt)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">file</span> =</span> epi-&gt;ffd.file;</span><br><span class="line">    <span class="type">__poll_t</span> res;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (epi-&gt;ffd.revents) &#123;</span><br><span class="line">        res = epi-&gt;ffd.revents;</span><br><span class="line">        epi-&gt;ffd.revents = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用底层设备（比如 socket、pipe、tty 等）的 poll 实现，核心.</span></span><br><span class="line">    res = vfs_poll(file, pt); </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> res &amp; epi-&gt;event.events;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<p>LT：第一次 epoll_wait，fd1 就绪，加到 events 数组里，用户调用系统调用从fd1读取：</p>
+<ul>
+<li>假如一次性读完，fd1 此时变成未就绪，但是还待在就绪链表里，等待下一次 epoll_wait 时，ep_poll 发现有就绪的，然后开始遍历，遍历的时候先把链表节点断开，然后通过 <code>ep_item_poll</code>检查具体是什么事件，发现并没有可读的事件，直接 continue，不会加回去。</li>
+<li>假如第二次epoll_wait的时候还是可读的，依然会通知，实现 LT 的语义。</li>
+</ul>
+<p>ET：必须一次性读完，否则后面再进行 epoll_wait肯定是读不到的。</p>
+<h6 id="ET-使新的就绪事件能快速被处理"><a href="#ET-使新的就绪事件能快速被处理" class="headerlink" title="ET 使新的就绪事件能快速被处理"></a>ET 使新的就绪事件能快速被处理</h6><p>ET 结合NIO能够确保一次性读完Socket中的数据，减少epoll_wait的调用次数，提高效率。注意必须确保一次性读完。</p>
+<p>另外，LT 马上加回去的行为也有影响：数据从内核拷贝到用户空间后，内核不会重新将就绪事件节点添加回就绪队列，当事件在用户空间处理完后，用户空间根据需要重新将这个事件通过 epoll_ctl 添加回就绪队列（又或者这个节点因为有新的数据到来，重新触发了就绪事件而被添加）。从节点被删除到重新添加，这中间的过程是比较“漫长”的，所以新来的其它事件节点能排在旧的节点前面，能快速处理。</p>
+<p>不要小看这个处理时序，在高并发系统里，海量事件，每个后来者都希望自己的事件快点被处理，而 et 模式可以一定程度上提高新事件被处理的速度。</p>
+<p>同时如果我们仔细观察服务程序的 listen 接口，它有一个 backlog 参数，代表 listen socket 就绪链接的已完成队列的长度，这说明队列是有限制的，当它满了就会返回错误给客户端，所以完全队列的数据当然越快得到处理越好。</p>
+<p>所以我们可以观察一下 nginx 的 epoll_ctl 系统调用，除了 listen socket 的操作是 lt 模式，其它的 socket 处理几乎所有都是 et 模式。</p>
+<h6 id="遍历完若链表非空则唤醒等待task-gt-LT-惊群"><a href="#遍历完若链表非空则唤醒等待task-gt-LT-惊群" class="headerlink" title="遍历完若链表非空则唤醒等待task-&gt; LT 惊群"></a>遍历完若链表非空则唤醒等待task-&gt; LT 惊群</h6><p>LT 因为会保留就绪链表上的节点，因此多个进程阻塞在epoll_wait的系统调用时。epoll_wait刚刚取到事件的时候的时候，不可能马上就调用accept去处理，事实上，epoll_wait里面的ep_poll中还没返回，这个时候显然符合“仍然有未处理的事件”这个条件，LT 语义规定，需要通知别的同样阻塞在同一个epoll句柄睡眠队列上的进程 (wq)。</p>
+<p>非排它式全部唤醒肯定会有多task一起被唤醒的问题，<a href="#chainwake">排它式唤醒(EPOLLEXCLUSIVE since 4.5)一定程度上可以缓解</a>，但 LT 仍然有连环唤醒的问题。这些情况有可能是用户不愿意看到的。</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// ep_scan_ready_list 遍历完成之后...(这将是LT惊群的根源)</span></span><br><span class="line"><span class="comment">// 1. LT 始终会加到链表里  2. 拷贝过程不顺利也会有残留 [语义: 现在仍有未处理的事件]</span></span><br><span class="line"><span class="comment">// 如果“就绪链表”上仍有未处理的epi，且有进程睡眠在wq，则唤醒。</span></span><br><span class="line"><span class="keyword">if</span> (!list_empty(&amp;ep-&gt;rdllist)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (waitqueue_active(&amp;ep-&gt;wq))</span><br><span class="line">        wake_up_locked(&amp;ep-&gt;wq);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h5 id="惊群（thundering-herd）"><a href="#惊群（thundering-herd）" class="headerlink" title="惊群（thundering herd）"></a>惊群（thundering herd）</h5><p>当有多个进程或线程在等待同一个事件（比如同一个 socket 上的 <code>accept</code>，或 <code>epoll</code>/<code>select</code> 事件），一旦事件发生，<strong>所有等待的进程或线程都被唤醒</strong>，但最终只有一个能真正处理这个事件，其余的唤醒都是<strong>无效唤醒</strong>，白白消耗了 CPU 资源。这样一来，唤醒和竞争的成本非常高，尤其在高并发场景下，<strong>频繁唤醒多个进程/线程</strong> 会导致性能大幅下降。这就是所谓的 <strong>thundering herd（惊群效应）</strong>：</p>
+<h6 id="惊群（thundering-herd）是问题吗？"><a href="#惊群（thundering-herd）是问题吗？" class="headerlink" title="惊群（thundering herd）是问题吗？"></a>惊群（thundering herd）是问题吗？</h6><p>当有多个进程或线程在等待同一个事件（比如同一个 socket 上的 <code>accept</code>），一旦事件发生，<strong>所有等待的进程或线程都被唤醒</strong>，但最终只有一个能真正处理这个事件，其余的唤醒都是<strong>无效唤醒</strong>，白白消耗了 CPU 资源。这样一来，唤醒和竞争的成本非常高，尤其在高并发场景下，<strong>频繁唤醒多个进程/线程</strong> 会导致性能大幅下降。这就是所谓的 <strong>thundering herd（惊群效应）</strong>。</p>
+<p>很多时候，我们并不是害怕”惊群”，我们怕的”惊群”之后，做了很多无用功。相反在一个异常繁忙，并发请求很多的服务器上，为了能够及时处理到来的请求，我们希望能有多”惊群”就多”惊群”，因为根本做不了无用功，请求多到都来不及处理。</p>
 <ul>
 <li>多进程服务器（如 Nginx、Apache）使用 <code>accept</code> 等待客户端连接。</li>
 <li>一个新连接到来时，所有阻塞在 <code>accept</code> 的进程都被唤醒。</li>
 <li>但操作系统只允许一个进程成功 <code>accept</code>，其余进程会发现 <code>accept</code> 返回 <code>EAGAIN</code> 或直接失败，然后又继续休眠等待下次唤醒。</li>
 </ul>
-<p>惊群出现的常见位置</p>
-<ul>
-<li><p><code>accept</code></p>
-</li>
-<li><p><code>epoll_wait</code>（旧内核，水平LT触发时容易）</p>
-</li>
-<li><p><code>select</code> / <code>poll</code>（本身也是 LT 触发）</p>
-</li>
-<li><p>多线程下等待互斥锁、条件变量</p>
-</li>
-</ul>
-<blockquote>
-<p>解决方案</p>
-</blockquote>
 <p>1️⃣ <strong>多进程 <code>accept</code>：</strong></p>
 <ul>
-<li>Linux 2.6 以后引入 <code>SO_REUSEPORT</code>，让每个进程拥有独立的监听 socket，避免惊群。</li>
+<li>Linux 3.9 以后引入 <code>SO_REUSEPORT</code>，避免accept惊群。允许多个socket bind/listen在相同的IP，相同的TCP/UDP端口，让每个进程拥有独立的监听 socket，目的是同一个IP、PORT的请求在多个listen socket间负载均衡，安全上，监听相同IP、PORT的socket只能位于同一个用户下。</li>
 <li>使用 <code>accept</code> 锁：自己用互斥锁mutex保护 <code>accept</code>，保证同一时刻只有一个进程调用。</li>
 </ul>
 <p>2️⃣ <strong>epoll 驱动：</strong></p>
@@ -33488,8 +33535,7 @@ return 0;
 <ul>
 <li>优化锁设计，减少竞争区域或用条件变量精准唤醒。</li>
 </ul>
-<h5 id="epoll-事件分类"><a href="#epoll-事件分类" class="headerlink" title="epoll 事件分类"></a>epoll 事件分类</h5><p><code>epoll</code> 支持多种事件类型，主要有以下几种：</p>
-<ol>
+<h5 id="epoll-标志位"><a href="#epoll-标志位" class="headerlink" title="epoll 标志位"></a>epoll 标志位</h5><h6 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h6><ol>
 <li><strong><code>EPOLLIN</code> - 可读事件</strong></li>
 </ol>
 <ul>
@@ -33544,10 +33590,8 @@ return 0;
 <li><p><strong>适用场景</strong>：当连接被关闭，或者流中的另一端挂起时，<code>epoll</code> 会触发此事件。</p>
 </li>
 <li><p><strong>使用场景</strong>：客户端或服务器检测到连接关闭时，通常会处理此事件并清理资源。</p>
-<p><strong>例子</strong>：</p>
-<ul>
-<li>当客户端断开连接时，服务器会收到 <code>EPOLLHUP</code> 事件。此时，服务器应关闭对应的 socket。</li>
-</ul>
+</li>
+<li><p><strong>例子</strong>：当客户端断开连接时，服务器会收到 <code>EPOLLHUP</code> 事件。此时，服务器应关闭对应的 socket。</p>
 </li>
 </ul>
 <ol start="5">
@@ -33559,6 +33603,20 @@ return 0;
 <li><strong>使用场景</strong>：与 <code>EPOLLHUP</code> 类似，应用程序通常通过这个事件来检测到对端已关闭连接，并可以进行相应处理。</li>
 </ul>
 <ol start="6">
+<li><strong><code>EPOLLPRI</code> - 优先事件</strong></li>
+</ol>
+<ul>
+<li><strong>描述</strong>：表示文件描述符上发生了高优先级的事件。通常这种事件的优先级高于常规的 I/O 事件。</li>
+<li><strong>适用场景</strong>：通常用于处理信号量、优先级消息队列等场景。</li>
+</ul>
+<ol start="7">
+<li><strong><code>EPOLLWAKEUP</code> - 唤醒事件</strong></li>
+</ol>
+<ul>
+<li><strong>描述</strong>：表示 <code>epoll</code> 实例在事件等待期间需要被唤醒。</li>
+<li><strong>适用场景</strong>：适用于在多线程环境中希望从 <code>epoll_wait()</code> 等待事件的线程外部唤醒的情况。</li>
+</ul>
+<h6 id="触发类型"><a href="#触发类型" class="headerlink" title="触发类型"></a>触发类型</h6><ol>
 <li><strong><code>EPOLLET</code> - 边缘触发（Edge Triggered）</strong></li>
 </ol>
 <ul>
@@ -33566,7 +33624,7 @@ return 0;
 <li><strong>适用场景</strong>：在高性能场景中使用，可以避免对文件描述符的重复检查。应用程序需要保证不会丢失事件，并且需要轮询所有事件，直到事件处理完成。</li>
 <li><strong>使用场景</strong>：通常与 <code>EPOLLIN</code>、<code>EPOLLOUT</code> 等事件一同使用。</li>
 </ul>
-<ol start="7">
+<ol start="2">
 <li><strong><code>EPOLLONESHOT</code> - 单次触发</strong></li>
 </ol>
 <ul>
@@ -33574,20 +33632,9 @@ return 0;
 <li><strong>适用场景</strong>：用于那些只需要处理一次事件的场景，如处理某个特定的请求，处理完后不再关心该文件描述符。</li>
 <li><strong>使用场景</strong>：一般用于一个事件只处理一次的情况，可以减少事件触发的次数，提高效率。</li>
 </ul>
-<ol start="8">
-<li><strong><code>EPOLLPRI</code> - 优先事件</strong></li>
+<ol start="3">
+<li><code>EPOLLEXCLUSIVE</code>- 如果想使用排他唤醒，在 Linux 4.5 及以后的内核版本中，可通过<code>EPOLL_CTL</code>对需要监控的文件描述符（fd）设置<code>EPOLLEXCLUSIVE</code>标记来实现，这样 wq 唤醒只会唤醒一个用WQ_FLAG_EXCLUSIVE 标记的 task。</li>
 </ol>
-<ul>
-<li><strong>描述</strong>：表示文件描述符上发生了高优先级的事件。通常这种事件的优先级高于常规的 I/O 事件。</li>
-<li><strong>适用场景</strong>：通常用于处理信号量、优先级消息队列等场景。</li>
-</ul>
-<ol start="9">
-<li><strong><code>EPOLLWAKEUP</code> - 唤醒事件</strong></li>
-</ol>
-<ul>
-<li><strong>描述</strong>：表示 <code>epoll</code> 实例在事件等待期间需要被唤醒。</li>
-<li><strong>适用场景</strong>：适用于在多线程环境中希望从 <code>epoll_wait()</code> 等待事件的线程外部唤醒的情况。</li>
-</ul>
 <p><strong>组合使用的方式</strong></p>
 <p><code>epoll</code> 事件通常可以组合使用，以满足更复杂的场景。例如，应用程序可以同时监视 <strong><code>EPOLLIN</code></strong> 和 **<code>EPOLLOUT</code>**，这样就可以同时处理读和写事件。</p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">ev</span>;</span></span><br><span class="line">ev.events = EPOLLIN | EPOLLOUT | EPOLLERR;  <span class="comment">// 监听读、写和错误事件</span></span><br><span class="line">ev.data.fd = fd;</span><br><span class="line">epoll_ctl(epoll_fd, EPOLL_CTL_ADD, fd, &amp;ev);</span><br></pre></td></tr></table></figure>
@@ -33599,10 +33646,8 @@ return 0;
 </ol>
 <ul>
 <li>红黑树（为空）：<code>rb_root</code> 用来去记录需要被监听的 FD(Socket)</li>
-<li>链表（为空）：<code>list_head</code>，用来存放已就绪 FD<ul>
+<li>链表（为空）：<code>list_head</code>，用来存放已就绪 FD</li>
 <li>创建好了之后，会去调用<code>epoll_ctl()</code>函数，此函数将需要监听的数据添加到<code>rb_root</code>中去，并且对当前这些存在于红黑树的节点设置回调函数，（同时设置要监听什么类型的事件）当这些被监听的数据一旦准备完成，就会被调用，而调用的结果就是将红黑树的fd添加到list_head中去(但是此时并没有完成)</li>
-</ul>
-</li>
 </ul>
 <ol start="3">
 <li>当第二步完成后，就会调用<code>epoll_wait()</code>函数，这个函数会去校验是否有数据准备完毕（因为数据一旦准备就绪，就会被回调函数添加到<code>list_head</code>中），wait一段时间后(可配置)，如果等待超时，则返回无数据，如果有，则进一步判断当前是什么事件：</li>

@@ -1032,7 +1032,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-29 17:49:00" itemprop="dateModified" datetime="2025-05-29T17:49:00+08:00">2025-05-29</time>
+      <time title="修改时间：2025-06-04 17:00:37" itemprop="dateModified" datetime="2025-06-04T17:00:37+08:00">2025-06-04</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1212,6 +1212,15 @@
 <p>@Autowired 来自 Spring 框架，而 @Resource 来自于（Java）JSR-250；</p>
 <p>@Autowired 只支持设置 1 个参数，而 @Resource 支持设置 7 个参数；</p>
 <p>@Autowired 既支持构造方法注入，又支持属性注入和 Setter 注入，而 @Resource 只支持属性注入和 Setter 注入；</p>
+<h5 id="为什么属性注入不推荐使用-Autowired"><a href="#为什么属性注入不推荐使用-Autowired" class="headerlink" title="为什么属性注入不推荐使用 @Autowired"></a>为什么属性注入不推荐使用 @Autowired</h5><ol>
+<li>@Autowired 注解注入依赖容器，单元测试不如setter和构造器方便。</li>
+<li>无法实现不可变性：final 属性不支持 @Autowired 注解。</li>
+<li>Autowired默认按照type，如果有两个相同type的bean，就会报错，不如 @Resource</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// setter........</span></span><br><span class="line"><span class="meta">@Autowired(required = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setUserService</span><span class="params">(UserService userService)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.userService = userService;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// constructor..........</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MyController</span><span class="params">(UserService userService)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.userService = userService;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
 <h4 id="简单类型注入依赖-Value"><a href="#简单类型注入依赖-Value" class="headerlink" title="简单类型注入依赖@Value"></a>简单类型注入依赖@Value</h4><p>需要注入的属性上 写value</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020011954765.png" alt="image-20241020011954765"></p>
 <h4 id="导入配置文件-PropertySource"><a href="#导入配置文件-PropertySource" class="headerlink" title="导入配置文件@PropertySource"></a>导入配置文件@PropertySource</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020011844984.png" alt="image-20241020011844984"></p>
