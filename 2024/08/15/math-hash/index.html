@@ -40,8 +40,10 @@
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241111133059526.png">
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241111133111464.png">
 <meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241111133418275.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250605232127505.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250605223715973.png">
 <meta property="article:published_time" content="2024-08-14T16:00:00.000Z">
-<meta property="article:modified_time" content="2025-04-27T03:25:31.508Z">
+<meta property="article:modified_time" content="2025-06-05T15:39:28.691Z">
 <meta property="article:author" content="碎梦">
 <meta property="article:tag" content="一致性哈希">
 <meta property="article:tag" content="布隆过滤器">
@@ -263,7 +265,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-04-27 11:25:31" itemprop="dateModified" datetime="2025-04-27T11:25:31+08:00">2025-04-27</time>
+      <time title="修改时间：2025-06-05 23:39:28" itemprop="dateModified" datetime="2025-06-05T23:39:28+08:00">2025-06-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -442,15 +444,29 @@
 <p>插入数据时顺便将数据键添加进布隆过滤器中，会根据n个哈希函数计算出n个索引，随后将这些索引位置1，因为哈希函数存在碰撞的可能，所以要计算出多个哈希值，图中使用了3个哈希值，fullstack和semlinker出现了完全重复，这就导致了误判。</p>
 <p><strong>布隆过滤器说某个元素存在，小概率会误判。布隆过滤器说某个元素不在，那么这个元素一定不在</strong> </p>
 <p>如果哈希运算后任何一个索引位为0，则肯定不存在，否则可能存在</p>
-<h4 id="误判率"><a href="#误判率" class="headerlink" title="误判率"></a>误判率</h4><p>幸运的是，布隆过滤器有一个可预测的误判率（FPP）：</p>
+<h4 id="误判率"><a href="#误判率" class="headerlink" title="误判率"></a>误判率</h4><p>幸运的是，布隆过滤器有一个可预测的误判率（fpp）：</p>
 <img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241111133418275.png" alt="image-20241111133418275" style="zoom: 33%;" />
 
 <ul>
 <li>n 是已经添加元素的数量；</li>
 <li>k 哈希的次数；</li>
 <li>m 布隆过滤器的长度（如比特数组的大小）；</li>
+<li>下图为 (k,fpp) 的关系图，m固定，随着 k 的增大，fpp先增大后减小，最小值出现在 k = m ln2 / n。<ul>
+<li>插入n也就是<code>expectedInsertions</code>多了，要想维持原来的 <code>fpp</code>，就必须增大 k 来减少哈希冲突，或者增大m</li>
 </ul>
+</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250605232127505.png" alt="image-20250605232127505"></p>
 <p>极端情况下，当布隆过滤器没有空闲空间时（满），每一次查询都会返回 true 。这也就意味着 m 的选择取决于期望预计添加元素的数量 n ，并且 m 需要远远大于 n 。</p>
+<ul>
+<li><p><strong><code>expectedInsertions</code> 越大</strong>，为了保持相同的 <code>fpp</code>，所需的 bit 数组也越长（<code>m</code> 增大）。</p>
+</li>
+<li><p><strong><code>fpp</code> 越小</strong>（越精确），需要更多的 bit 数组和哈希函数来降低冲突风险。</p>
+</li>
+<li><p><code>expectedInsertions</code> 和 <code>fpp</code> 是你在初始化布隆过滤器时必须设定的两个指标，系统根据这两个值计算出 <code>m</code> 和 <code>k</code>。</p>
+</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250605223715973.png" alt="image-20250605223715973"></p>
 <h4 id="最佳实践：Guava"><a href="#最佳实践：Guava" class="headerlink" title="最佳实践：Guava"></a>最佳实践：Guava</h4><p>guava的布隆过滤器直接使用即可</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建布隆过滤器对象</span></span><br><span class="line">BloomFilter&lt;Integer&gt; filter = BloomFilter.create(</span><br><span class="line">    Funnels.integerFunnel(),</span><br><span class="line">    <span class="number">1500</span>,</span><br><span class="line">    <span class="number">0.01</span>);</span><br><span class="line"><span class="comment">// 判断指定元素是否存在</span></span><br><span class="line">System.out.println(filter.mightContain(<span class="number">1</span>));</span><br><span class="line">System.out.println(filter.mightContain(<span class="number">2</span>));</span><br><span class="line"><span class="comment">// 将元素添加进布隆过滤器</span></span><br><span class="line">filter.put(<span class="number">1</span>);</span><br><span class="line">filter.put(<span class="number">2</span>);</span><br><span class="line">System.out.println(filter.mightContain(<span class="number">1</span>));</span><br><span class="line">System.out.println(filter.mightContain(<span class="number">2</span>));</span><br></pre></td></tr></table></figure>
 
