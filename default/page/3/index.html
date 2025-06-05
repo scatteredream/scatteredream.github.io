@@ -1950,7 +1950,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-29 23:25:30" itemprop="dateModified" datetime="2025-05-29T23:25:30+08:00">2025-05-29</time>
+      <time title="修改时间：2025-06-05 14:02:25" itemprop="dateModified" datetime="2025-06-05T14:02:25+08:00">2025-06-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1982,6 +1982,15 @@
 <li>集成 SpringBoot。通过<a href="#annotation">自定义注解</a>，提供者自动扫描并注册服务 Bean，消费者自动注入<a href="#proxy">代理对象</a>。自定义 starter 实现<a href="#autoconfig">自动装配</a>。</li>
 <li>参考 Dubbo 实现 <a href="#spi">SPI</a>，支持<a href="#spi1">序列化</a>、<a href="#spi2">服务发现</a>等的动态扩展，实现与类型解耦的<a href="#cache">单例缓存</a>，减少大量冗余的对象创建。</li>
 </ul>
+<h2 id="为什么做-RPC"><a href="#为什么做-RPC" class="headerlink" title="为什么做 RPC"></a>为什么做 RPC</h2><p>1、首先，目前的应用大部分都是分布式/微服务架构，通常各个模块之间都是通过RPC来进行调用的，所以我认为自己写一个RPC项目可以有更加深入的理解RPC的一个原理；</p>
+<p>2、其次的话，在写RPC项目的过程中，学会了对Zookeeper、Netty的使用，包括对动态代理、负载均衡、序列化算法的实现，以及对SpringBoot框架的扩展和自动配置的理解。</p>
+<h2 id="RPC-优化瓶颈"><a href="#RPC-优化瓶颈" class="headerlink" title="RPC 优化瓶颈"></a>RPC 优化瓶颈</h2><ol>
+<li>网络传输</li>
+<li>序列化：CPU密集型操作——复杂序列化格式（如XML）或大数据量会消耗大量CPU资源，增加延迟。二进制更加高效 <u>Kryo</u></li>
+<li>客户端策略：熔断与重试引入额外开销，负载均衡不均匀。<u>一致性哈希</u></li>
+<li>资源管理、内存泄漏：高并发内存分配导致频繁GC，停顿时间过长，<u>单例池</u></li>
+<li>协议设计、编解码：底层可用 HTTP/2。低效的消息边界解析会增加CPU消耗。<u>lengthBasedFrameDecoder</u></li>
+</ol>
 <h2 id="Netty-NIO"><a href="#Netty-NIO" class="headerlink" title="Netty/NIO"></a>Netty/NIO</h2><p>Java NIO（New I/O）是 Java 1.4 引入的非阻塞 I/O API，提供了基于通道（Channel）、缓冲区（Buffer）和选择器（Selector）的异步非阻塞编程模型。它允许单线程处理多个连接，显著提升了高并发场景下的性能。</p>
 <p>Netty 是基于 Java NIO 构建的高性能网络编程框架，它简化了 NIO 的复杂操作，提供了更易用的 API，同时解决了 NIO 编程中的许多陷阱（如断连重连、半包读写、心跳处理等）。Netty 广泛应用于各类高性能网络应用，如分布式系统中的 RPC 框架、游戏服务器等。</p>
 <ul>

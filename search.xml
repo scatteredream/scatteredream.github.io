@@ -23236,6 +23236,26 @@ return 0;
 </ul>
 </li>
 </ul>
+<table>
+<thead>
+<tr>
+<th>使用目的</th>
+<th>推荐结构</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>需要支持删除、插入频繁、对空间要求低的系统（如缓存服务）</td>
+<td><strong>计数布隆过滤器</strong></td>
+</tr>
+<tr>
+<td>对空间敏感，插入元素不频繁且查询频繁的系统</td>
+<td><strong>布谷鸟过滤器</strong></td>
+</tr>
+<tr>
+<td>追求查询性能、误判率低，且不怕插入时的复杂性</td>
+<td><strong>布谷鸟过滤器</strong></td>
+</tr>
+</tbody></table>
 <p><strong>缓存击穿</strong>：一个被高并发访问并且缓存重建业务较复杂的key突然失效了，无数的请求访问会在瞬间给数据库带来巨大的冲击。常见的解决方案有两种：</p>
 <ul>
 <li>互斥锁 MUTEX。线程 1 未命中，拿到锁去<strong>同步地重建缓存</strong>，线程 2 此时也紧随其后，拿不到锁就重复查询缓存。直到重建完成，线程 2 就能拿到重建的缓存值。优点是<strong>一致性可以确保</strong>，缺点是重建期间其他的线程会一直<strong>同步递归调用</strong>。</li>
@@ -24831,6 +24851,15 @@ return 0;
 <li>集成 SpringBoot。通过<a href="#annotation">自定义注解</a>，提供者自动扫描并注册服务 Bean，消费者自动注入<a href="#proxy">代理对象</a>。自定义 starter 实现<a href="#autoconfig">自动装配</a>。</li>
 <li>参考 Dubbo 实现 <a href="#spi">SPI</a>，支持<a href="#spi1">序列化</a>、<a href="#spi2">服务发现</a>等的动态扩展，实现与类型解耦的<a href="#cache">单例缓存</a>，减少大量冗余的对象创建。</li>
 </ul>
+<h2 id="为什么做-RPC"><a href="#为什么做-RPC" class="headerlink" title="为什么做 RPC"></a>为什么做 RPC</h2><p>1、首先，目前的应用大部分都是分布式/微服务架构，通常各个模块之间都是通过RPC来进行调用的，所以我认为自己写一个RPC项目可以有更加深入的理解RPC的一个原理；</p>
+<p>2、其次的话，在写RPC项目的过程中，学会了对Zookeeper、Netty的使用，包括对动态代理、负载均衡、序列化算法的实现，以及对SpringBoot框架的扩展和自动配置的理解。</p>
+<h2 id="RPC-优化瓶颈"><a href="#RPC-优化瓶颈" class="headerlink" title="RPC 优化瓶颈"></a>RPC 优化瓶颈</h2><ol>
+<li>网络传输</li>
+<li>序列化：CPU密集型操作——复杂序列化格式（如XML）或大数据量会消耗大量CPU资源，增加延迟。二进制更加高效 <u>Kryo</u></li>
+<li>客户端策略：熔断与重试引入额外开销，负载均衡不均匀。<u>一致性哈希</u></li>
+<li>资源管理、内存泄漏：高并发内存分配导致频繁GC，停顿时间过长，<u>单例池</u></li>
+<li>协议设计、编解码：底层可用 HTTP/2。低效的消息边界解析会增加CPU消耗。<u>lengthBasedFrameDecoder</u></li>
+</ol>
 <h2 id="Netty-NIO"><a href="#Netty-NIO" class="headerlink" title="Netty/NIO"></a>Netty/NIO</h2><p>Java NIO（New I/O）是 Java 1.4 引入的非阻塞 I/O API，提供了基于通道（Channel）、缓冲区（Buffer）和选择器（Selector）的异步非阻塞编程模型。它允许单线程处理多个连接，显著提升了高并发场景下的性能。</p>
 <p>Netty 是基于 Java NIO 构建的高性能网络编程框架，它简化了 NIO 的复杂操作，提供了更易用的 API，同时解决了 NIO 编程中的许多陷阱（如断连重连、半包读写、心跳处理等）。Netty 广泛应用于各类高性能网络应用，如分布式系统中的 RPC 框架、游戏服务器等。</p>
 <ul>
@@ -26026,8 +26055,77 @@ return 0;
 <li>准确性高，目前大多数性能压测都是使用jmh</li>
 <li>缺点就是代码入侵</li>
 </ul>
+<h1 id="压测优化"><a href="#压测优化" class="headerlink" title="压测优化"></a>压测优化</h1><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250605135734528.png" alt="image-20250605135734528"></p>
+<p>优化点1 hessian的 ByteArrayOutputStream 局部缓存（ThreadLocal），将会显著减少 GC 压力，提升吞吐。</p>
+<p>优化点2 线程池调优，Dubbo内部进行了很多线程池调优。</p>
+<p>优化点3 零拷贝，但是性能几乎不变。（WHY？）</p>
+<h1 id="问题的解决"><a href="#问题的解决" class="headerlink" title="问题的解决"></a>问题的解决</h1><h2 id="序列化-1"><a href="#序列化-1" class="headerlink" title="序列化"></a>序列化</h2><ol>
+<li><pre><code>Kryo线程不安全，因此要放到 ThreadLocal，并且要提前把嵌套在序列化内部的类注册到Kryo上。[KryoSerialization.java](https://github.com/scatteredream/netty-rpc/blob/ec9b3e776668a05be14ed7fa4db583af176cb81c/rpc-framework-core/src/main/java/com/wxy/rpc/core/serialization/impl/KryoSerialization.java#L29)
+</code></pre>
+</li>
+<li><pre><code>Gson原生不能序列化class对象，需要注册一个TypeAdapter完成 JsonElement 和 Class 对象的互转 [ClassCodec.java](https://github.com/scatteredream/netty-rpc/blob/ec9b3e776668a05be14ed7fa4db583af176cb81c/rpc-framework-core/src/main/java/com/wxy/rpc/core/serialization/impl/JsonSerialization.java#L24)
+</code></pre>
+</li>
+<li><pre><code>Protostuff提前分配好Buffer，避免每次进行序列化都需要重新分配buffer内存空间。[ProtoStuffSerialization.java](https://github.com/scatteredream/netty-rpc/blob/ec9b3e776668a05be14ed7fa4db583af176cb81c/rpc-framework-core/src/main/java/com/wxy/rpc/core/serialization/impl/ProtostuffSerialization.java#L23)
+</code></pre>
+</li>
+<li><pre><code>Hessian可以把ByteArrayOutputStream和BAIS放到ThreadLocal进行复用，不要每次都new。
+</code></pre>
+</li>
+</ol>
+<h2 id="SPI"><a href="#SPI" class="headerlink" title="SPI"></a>SPI</h2><ol>
+<li><pre><code>建立双向的映射关系：[SerializationFactory.java](https://github.com/scatteredream/netty-rpc/blob/ec9b3e776668a05be14ed7fa4db583af176cb81c/rpc-framework-core/src/main/java/com/wxy/rpc/core/serialization/SerializationFactory.java#30)
+</code></pre>
+</li>
+</ol>
+<p><strong>Serialization：</strong>调用者发消息的时候需要根据Properties构建MessageHeader，在header里面序列化方式是一个byte(type)，因此需要构建一个<strong>nameToTypeMap</strong>。而在真正进行序列化的时候需要根据消息头的byte获取到其实例对象，实例对象通过SpiExtensionFactory进行获取，又需要name作为参数。因此需要<strong>typeToNameMap</strong>。最终的解决方案是在静态代码块中使用反射框架Reflections进行操作，方便地找到所有Serialization的子类。</p>
+<ol start="2">
+<li><pre><code>面向对象：[ServiceDiscovery.java](https://github.com/scatteredream/netty-rpc/blob/ec9b3e776668a05be14ed7fa4db583af176cb81c/rpc-framework-core/src/main/java/com/wxy/rpc/core/discovery/ServiceDiscovery.java) [ServiceRegistry.java](https://github.com/scatteredream/netty-rpc/blob/ec9b3e776668a05be14ed7fa4db583af176cb81c/rpc-framework-core/src/main/java/com/wxy/rpc/core/registry/ServiceRegistry.java)
+</code></pre>
+</li>
+</ol>
+<p><strong>ServiceDiscovery/Registry从接口改换成抽象类</strong>：两边都需要启动客户端，原来的想法是从实现类的有参构造注入ip，<strong>注入的同时启动客户端</strong>，这样确实可以直接根据Properties提供对应的注入好的对象，但是这样就不支持动态扩展了，因为SPI的ExtensionLoader只支持无参构造。</p>
+<p>那么就想着用一个方法注入（没错就是setter），但是问题来了，接口只支持常量，如果你在接口里面定义一个setter肯定是没办法注入的，那在实现类里通过setter注入呢？可以是可以了，但是你在实际使用的时候肯定都是拿着ServiceDiscovery对象（多态），因此父类对象没法调用子类的setter。</p>
+<p>所以说最后就利用抽象类的特性：抽象程度不如接口那么高，正好可以定义一个变量，父类里面实现setter的，子类就可以通过setter注入IP地址，同时不影响多态。</p>
+<ol start="3">
+<li><pre><code>SPI：ExtensionLoader的实现
+</code></pre>
+</li>
+</ol>
+<p>有点绕：我们需要通过父类/接口的class来构造对应的ExtensionLoader，这应该是一个单例，所以需要使用我们构造的Holder进行获取（classToLoaderMap.computeIfAbsent）。</p>
+<p>得到之后就根据key来获取对应实例，从<strong>keyToInstanceMap</strong>.computeIfAbsent(key,()-&gt;<strong>createExtension(key)</strong>)）里面拿取。这就走到了下一步，我们首先应该将key和对应的class做好映射，即<strong>keyToClassMap</strong>，那么这就需要我们从文件里读取对应的键值对，然后通过等号右边的全限定名，class.forName 获取class对象，装满keyToClassMap。</p>
+<p>映射做好了，拿到class对象：</p>
+<p><strong>classToInstanceMap</strong>.computeIfAbsent(clazz,k-&gt;clazz.getDeclaredConstructor().newInstance()); （这个结果赋值给extension）</p>
+<p>至此，<strong>createExtension</strong>返回了(T) extension，填充到<strong>keyToInstanceMap</strong>里面</p>
+<h2 id="负载均衡的实现"><a href="#负载均衡的实现" class="headerlink" title="负载均衡的实现"></a>负载均衡的实现</h2><p>一致性哈希</p>
+<h2 id="Spring自定义注解"><a href="#Spring自定义注解" class="headerlink" title="Spring自定义注解"></a>Spring自定义注解</h2><p>bean定义的扫描：自定义registrar、里面用扫描器扫描。</p>
+<h2 id="Arthas"><a href="#Arthas" class="headerlink" title="Arthas"></a>Arthas</h2><h3 id="检测-CPU-飙高"><a href="#检测-CPU-飙高" class="headerlink" title="检测 CPU 飙高"></a>检测 CPU 飙高</h3><p>thread 查看仪表板</p>
+<p>thread 73 查看 tid=73的线程，查看调用栈，定位到死循环cpu飙高。</p>
+<h3 id="监控方法调用"><a href="#监控方法调用" class="headerlink" title="监控方法调用"></a>监控方法调用</h3><p><code>watch com.example.MyService doSomething &#39;&#123;params, returnObj, cost&#125;&#39; -x 3</code></p>
+<ul>
+<li>这条命令是在不打断程序运行的前提下，<strong>偷偷看一下这个方法到底接收了什么参数、返回了什么结果、用了多久</strong>。中间是个ognl表达式</li>
+</ul>
+<p><code>doSomething(&quot;张三&quot;, 18);</code>:</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">@WatchCondition:</span> <span class="string">class=com.example.MyService,</span> <span class="string">method=doSomething</span></span><br><span class="line"><span class="string">ts=2024-06-05</span> <span class="number">15</span><span class="string">:20:00;</span> [<span class="string">cost=12ms</span>]</span><br><span class="line"><span class="string">params[0]:</span> <span class="string">&quot;张三&quot;</span></span><br><span class="line"><span class="string">params[1]:</span> <span class="number">18</span></span><br><span class="line"><span class="attr">returnObj:</span> <span class="string">&quot;Hello 张三, age: 18&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>trace com.example.MyService doSomething</code></p>
+<ul>
+<li>查看方法内部每一层的调用耗时，找性能瓶颈</li>
+</ul>
+<p><code>tt -t com.example.MyService doSomething</code></p>
+<ul>
+<li>记录并回放方法调用</li>
+</ul>
+<p>ognl 表达式可以实时修改变量。</p>
+<h3 id="排查-JVM"><a href="#排查-JVM" class="headerlink" title="排查 JVM"></a>排查 JVM</h3><ul>
+<li>dashboard (Thread GC 内存)</li>
+<li>jvm 查看 jvm 配置</li>
+<li>vmoption -l 查看jvm XX 参数</li>
+</ul>
+<h3 id="类加载情况"><a href="#类加载情况" class="headerlink" title="类加载情况"></a>类加载情况</h3><p>是否加载、类加载器是否冲突、加载了几个版本</p>
+<p><code>sc -d com.example.MyService</code></p>
 <h1 id="差异化"><a href="#差异化" class="headerlink" title="差异化"></a>差异化</h1><p>在自定义 RPC 框架时，与 Dubbo 这样的成熟框架实现差异化需要从设计理念、功能特性、适用场景等多个维度进行创新。以下是一些可能的差异化方向，分为核心优化、扩展场景和新兴技术整合三类：</p>
-<h2 id="核心架构与性能优化"><a href="#核心架构与性能优化" class="headerlink" title="核心架构与性能优化"></a><strong>核心架构与性能优化</strong></h2><ol>
+<h2 id="核心架构与性能优化"><a href="#核心架构与性能优化" class="headerlink" title="核心架构与性能优化"></a>核心架构与性能优化</h2><ol>
 <li><p><strong>更轻量的设计</strong></p>
 <ul>
 <li><strong>去中心化架构</strong>：Dubbo 依赖注册中心（如 Zookeeper、Nacos），可设计为无注册中心的点对点通信（如基于 DNS 或静态配置），降低运维复杂度。</li>
@@ -26049,8 +26147,7 @@ return 0;
 </ul>
 </li>
 </ol>
-<hr>
-<h2 id="垂直场景深度适配"><a href="#垂直场景深度适配" class="headerlink" title="垂直场景深度适配"></a><strong>垂直场景深度适配</strong></h2><ol>
+<h2 id="垂直场景深度适配"><a href="#垂直场景深度适配" class="headerlink" title="垂直场景深度适配"></a>垂直场景深度适配</h2><ol>
 <li><p><strong>边缘计算与弱网络</strong></p>
 <ul>
 <li><strong>断网自治模式</strong>：服务节点离线时自动切换为本地存根（如基于 SQLite 缓存），适合移动端/边缘设备。</li>
@@ -26070,8 +26167,7 @@ return 0;
 </ul>
 </li>
 </ol>
-<hr>
-<h2 id="开发体验与可观测性"><a href="#开发体验与可观测性" class="headerlink" title="开发体验与可观测性"></a><strong>开发体验与可观测性</strong></h2><ol>
+<h2 id="开发体验与可观测性"><a href="#开发体验与可观测性" class="headerlink" title="开发体验与可观测性"></a>开发体验与可观测性</h2><ol>
 <li><p><strong>开发者友好设计</strong></p>
 <ul>
 <li><strong>DSL 定义接口</strong>：类似 Kotlin 的 suspend RPC 函数，生成客户端代码，避免手动定义 Stub。</li>
@@ -26091,8 +26187,7 @@ return 0;
 </ul>
 </li>
 </ol>
-<hr>
-<h2 id="差异化对比表示例"><a href="#差异化对比表示例" class="headerlink" title="差异化对比表示例"></a><strong>差异化对比表示例</strong></h2><table>
+<h2 id="差异化对比表示例"><a href="#差异化对比表示例" class="headerlink" title="差异化对比表示例"></a>差异化对比表示例</h2><table>
 <thead>
 <tr>
 <th>特性</th>
@@ -26126,7 +26221,7 @@ return 0;
 <td>内置请求重放与 IDE 集成</td>
 </tr>
 </tbody></table>
-<h2 id="实施建议"><a href="#实施建议" class="headerlink" title="实施建议"></a><strong>实施建议</strong></h2><ol>
+<h2 id="实施建议"><a href="#实施建议" class="headerlink" title="实施建议"></a>实施建议</h2><ol>
 <li><strong>优先聚焦痛点场景</strong>：例如选择 Dubbo 在 IoT 领域资源占用高的短板，针对性优化。</li>
 <li><strong>兼容性设计</strong>：提供 Dubbo 协议适配层，降低迁移成本。</li>
 <li><strong>开源社区策略</strong>：差异化功能作为扩展插件（如 WASM 运行时），吸引特定场景用户。</li>
