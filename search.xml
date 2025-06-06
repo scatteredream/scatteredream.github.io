@@ -18897,6 +18897,95 @@ return 0;
 </ul>
 <h4 id="单核-CPU-多线程"><a href="#单核-CPU-多线程" class="headerlink" title="单核 CPU 多线程"></a>单核 CPU 多线程</h4><p>对于 IO 密集型，效率明显提高，因为线程切换带来的收益可以抵消代价</p>
 <p>对于计算密集型，频繁的上下文切换开销很大</p>
+<h3 id="不用多线程如何应对高并发"><a href="#不用多线程如何应对高并发" class="headerlink" title="不用多线程如何应对高并发"></a>不用多线程如何应对高并发</h3><h4 id="协程（Coroutine）与纤程（Fiber）"><a href="#协程（Coroutine）与纤程（Fiber）" class="headerlink" title="协程（Coroutine）与纤程（Fiber）"></a>协程（Coroutine）与纤程（Fiber）</h4><p><strong>核心优势</strong>：用户态轻量级线程，切换成本极低（纳秒级），单进程可创建数万协程。</p>
+<p><strong>Go 语言的 Goroutine</strong></p>
+<ul>
+<li>特点：<ul>
+<li>由 Go runtime 调度，比系统线程（OS Thread）轻量 1000 倍以上。</li>
+<li>自动处理 I/O 阻塞，当 Goroutine 遇到网络请求时，runtime 会暂停该协程并调度其他协程。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleRequest</span><span class="params">(conn net.Conn)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 非阻塞处理请求，Goroutine自动切换</span></span><br><span class="line">    buf := <span class="built_in">make</span>([]<span class="type">byte</span>, <span class="number">1024</span>)</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        n, err := conn.Read(buf)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123; <span class="keyword">break</span> &#125;</span><br><span class="line">        <span class="comment">// 处理请求...</span></span><br><span class="line">        conn.Write([]<span class="type">byte</span>(<span class="string">&quot;Response&quot;</span>))</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    ln, _ := net.Listen(<span class="string">&quot;tcp&quot;</span>, <span class="string">&quot;:8080&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        conn, _ := ln.Accept()</span><br><span class="line">        <span class="keyword">go</span> handleRequest(conn) <span class="comment">// 每个请求一个Goroutine，无需手动管理线程</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="事件驱动跟非阻塞IO"><a href="#事件驱动跟非阻塞IO" class="headerlink" title="事件驱动跟非阻塞IO"></a>事件驱动跟非阻塞IO</h4><p>明确定义 Reactor、Handler、多路复用器等组件    聚焦于 I/O 事件处理（网络编程、服务器架构）</p>
+<p><strong>核心思想</strong>：通过事件循环监听多个 I/O 事件，配合非阻塞操作实现单线程处理大量连接。</p>
+<ol>
+<li><strong>Reactor 模式的单线程实现</strong><ul>
+<li><strong>案例</strong>：Redis 的单线程事件循环<br>Redis 通过<code>epoll</code>（Linux）或<code>kqueue</code>（BSD）多路复用器监听所有客户端连接，事件触发时直接在主线程处理请求，避免多线程切换开销。</li>
+<li>关键技术：<ul>
+<li>非阻塞套接字（<code>socket.setblocking(false)</code>）</li>
+<li>事件多路复用器（<code>select/poll/epoll</code>）</li>
+<li>单线程事件循环（持续监听事件队列）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Node.js 的事件驱动模型</strong><ul>
+<li>基于 V8 引擎的单线程架构，通过事件循环处理 HTTP 请求、数据库操作等异步任务。</li>
+<li><strong>适用场景</strong>：I/O 密集型服务（如 API 网关、实时通信），避免 CPU 密集型任务阻塞事件循环。</li>
+</ul>
+</li>
+</ol>
+<p>Netty（网络框架）、Redis 事件循环</p>
+<blockquote>
+<ol>
+<li><strong>单 Reactor 单线程</strong><ul>
+<li>Reactor 和 Handler 在同一个线程中运行，适合简单场景。</li>
+<li><strong>缺点</strong>：Handler 阻塞会影响整个系统。</li>
+<li>案例：redis早期</li>
+</ul>
+</li>
+<li><strong>单 Reactor 多线程</strong><ul>
+<li>Reactor 单线程监听事件，将事件分发给线程池中的 Handler 处理。</li>
+<li><strong>案例</strong>：早期 Nginx 的事件处理模型。</li>
+</ul>
+</li>
+<li>多 reactor。<ul>
+<li><strong>Nginx 的进程模型</strong><ul>
+<li><strong>架构</strong>：1 个 master 进程 + N 个 worker 进程（通常等于 CPU 核心数）</li>
+<li>核心机制：<ul>
+<li>每个 worker 进程是单线程，内部通过<code>epoll</code>处理数万连接。</li>
+<li>master 进程负责管理 worker 进程，接收新连接后通过 “惊群效应” 优化分发给某一 worker。</li>
+</ul>
+</li>
+<li><strong>优势</strong>：避免多线程锁竞争，利用多核 CPU，单 worker 进程故障不影响整体服务。</li>
+</ul>
+</li>
+<li><strong>Redis 6.0 后的多 Reactor 优化</strong><ul>
+<li>早期版本采用单 Reactor 单线程，6.0 引入多 Reactor 线程处理网络 I/O，计算仍在主线程。</li>
+<li><strong>配置示例</strong>：<code>io-threads-do-reads yes</code> + <code>io-threads 4</code>（4 个 Reactor 线程），提升多核利用率。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>主从 Reactor 多线程</strong><ul>
+<li>主 Reactor 处理客户端连接事件，从 Reactor 处理 I/O 事件，Handler 由线程池处理。</li>
+<li><strong>案例</strong>：Netty 的 NioEventLoopGroup 机制，提升多核 CPU 利用率。</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<h4 id="硬件层面应对：负载均衡"><a href="#硬件层面应对：负载均衡" class="headerlink" title="硬件层面应对：负载均衡"></a><strong>硬件层面应对：负载均衡</strong></h4><p>通过反向代理或负载均衡器（如 nginx、LVS、F5）将并发请求分发到多个后端实例：</p>
+<ul>
+<li>即使单个实例是单线程，也可以多个实例协作完成高并发处理</li>
+</ul>
+<h4 id="限流-排队模型-MQ"><a href="#限流-排队模型-MQ" class="headerlink" title="限流 + 排队模型 (MQ)"></a>限流 + 排队模型 (MQ)</h4><p>在单线程系统中可以借助<strong>队列+令牌桶/漏桶算法</strong>来限流，应对高并发：</p>
+<ul>
+<li>高并发请求先排队，如：<ul>
+<li><code>Disruptor</code> 环形队列（虽然它本身常用于多线程，但也可单线程使用）</li>
+<li><code>BlockingQueue</code> + 单线程处理（如单线程消费任务）</li>
+</ul>
+</li>
+<li>超出容量则立即失败或拒绝服务</li>
+</ul>
+<p><strong>典型应用</strong>：消息队列（MQ）内部其实就是单线程顺序处理</p>
+<h4 id="数据库层优化"><a href="#数据库层优化" class="headerlink" title="数据库层优化"></a><strong>数据库层优化</strong></h4><ul>
+<li>大部分业务高并发是数据库成为瓶颈</li>
+<li>即使是单线程服务，只要合理做缓存（如 Redis）、预计算、降级，也能支撑较高的 QPS</li>
+</ul>
 <h3 id="易混淆"><a href="#易混淆" class="headerlink" title="易混淆"></a>易混淆</h3><h4 id="并发-并行"><a href="#并发-并行" class="headerlink" title="并发/并行"></a>并发/并行</h4><ul>
 <li>运行的程序就是一个独立的进程</li>
 <li><strong>并发</strong>：CPU轮询执行每个线程，切换速度快，感觉线程在同时和执行，这就是<strong>并发</strong></li>
@@ -20230,6 +20319,87 @@ return 0;
 </ul>
 <p>另外一种就是编译完之后，手动删除了 class 字节码，再运行肯定就找不到了</p>
 <p><code>ClassNotFoundException</code>: 受检异常，JVM 尝试去加载一个实际在 classpath 并不存在的类。通常由显式调用 Class.forName() 等方法加载类时抛出。</p>
+<h1 id="泛型-类型擦除"><a href="#泛型-类型擦除" class="headerlink" title="泛型 类型擦除"></a>泛型 类型擦除</h1><p> <code>public &lt;R, ID&gt; R getAvoidHotspotInvalidUsingMutex(String keyPrefix, ID id, Class&lt;R&gt; clazz, Function&lt;ID, R&gt; dbFallback) &#123;&#125;</code></p>
+<table>
+<thead>
+<tr>
+<th>泛型声明方式</th>
+<th>擦除后的类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&lt;T&gt;</code></td>
+<td><code>Object</code></td>
+<td>无上界时默认擦除为 Object</td>
+</tr>
+<tr>
+<td><code>&lt;T extends Number&gt;</code></td>
+<td><code>Number</code></td>
+<td>擦除为上界类型</td>
+</tr>
+<tr>
+<td><code>List&lt;String&gt;</code></td>
+<td><code>List</code></td>
+<td>泛型参数全部擦除</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>泛型信息</th>
+<th>编译后保留？</th>
+<th>能否在运行时获取？</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>类型参数（如 T）</td>
+<td>❌ 被擦除</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>字段/方法的泛型签名</td>
+<td>✅ Signature 属性中</td>
+<td>✅（通过反射）</td>
+</tr>
+<tr>
+<td>实例化泛型的类型信息</td>
+<td>❌（如 List）</td>
+<td>❌</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Box</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="keyword">public</span> T value;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Box</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> Object value;</span><br><span class="line">&#125;<span class="comment">//.class 文件中会额外保留一段 Signature 信息：Signature: LBox&lt;TT;&gt;;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以用 <code>javap -verbose</code> 或反射 API 展示泛型签名的字节码内容</p>
+<p>如在代码中定义<code>List&lt;Object&gt;</code>和<code>List&lt;String&gt;</code>等类型，在编译后都会变成<code>List</code>，<a href="https://zhida.zhihu.com/search?content_id=165127076&content_type=Article&match_order=1&q=JVM&zhida_source=entity">JVM</a>看到的只是List，而由泛型附加的类型信息对JVM是看不到的。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;  </span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;  </span><br><span class="line"></span><br><span class="line">        ArrayList&lt;String&gt; list1 = <span class="keyword">new</span> <span class="title class_">ArrayList</span>();  </span><br><span class="line">        list1.add(<span class="string">&quot;1&quot;</span>); <span class="comment">//编译通过  </span></span><br><span class="line">        list1.add(<span class="number">1</span>); <span class="comment">//编译错误  </span></span><br><span class="line">        <span class="type">String</span> <span class="variable">str1</span> <span class="operator">=</span> list1.get(<span class="number">0</span>); <span class="comment">//返回类型就是String  </span></span><br><span class="line"></span><br><span class="line">        <span class="type">ArrayList</span> <span class="variable">list2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;String&gt;();  </span><br><span class="line">        list2.add(<span class="string">&quot;1&quot;</span>); <span class="comment">//编译通过  </span></span><br><span class="line">        list2.add(<span class="number">1</span>); <span class="comment">//编译通过  </span></span><br><span class="line">        <span class="type">Object</span> <span class="variable">object</span> <span class="operator">=</span> list2.get(<span class="number">0</span>); <span class="comment">//返回类型就是Object  </span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;String&gt;().add(<span class="string">&quot;11&quot;</span>); <span class="comment">//编译通过  </span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;String&gt;().add(<span class="number">22</span>); <span class="comment">//编译错误  </span></span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">str2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;String&gt;().get(<span class="number">0</span>); <span class="comment">//返回类型就是String  </span></span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>类型检查就是针对引用的，谁是一个引用，用这个引用调用泛型方法，就会对这个引用调用的方法进行类型检测，而无关它真正引用的对象。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">ArrayList&lt;Object&gt; list1 = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;Object&gt;();  </span><br><span class="line">list1.add(<span class="keyword">new</span> <span class="title class_">Object</span>());  </span><br><span class="line">list1.add(<span class="keyword">new</span> <span class="title class_">Object</span>());  </span><br><span class="line">ArrayList&lt;String&gt; list2 = list1; <span class="comment">//编译错误</span></span><br></pre></td></tr></table></figure>
+
+<p>实际上，在第4行代码的时候，就会有编译错误。那么，我们先假设它编译没错。那么当我们使用<code>list2</code>引用用<code>get()</code>方法取值的时候，返回的都是<code>String</code>类型的对象（上面提到了，类型检测是根据引用来决定的），可是它里面实际上已经被我们存放了<code>Object</code>类型的对象，这样就会有<code>ClassCastException</code>了。所以为了避免这种极易出现的错误，Java不允许进行这样的引用传递。（这也是泛型出现的原因，就是为了解决类型转换的问题，我们不能违背它的初衷）。</p>
+<h2 id="自动类型转换"><a href="#自动类型转换" class="headerlink" title="自动类型转换"></a>自动类型转换</h2><p>因为类型擦除的问题，所以所有的泛型类型变量最后都会被替换为原始类型。</p>
+<p>既然都被替换为原始类型，那么为什么我们在获取的时候，不需要进行强制类型转换呢？</p>
+<p>看下<code>ArrayList.get()</code>方法：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">public E get(int index) &#123;  </span><br><span class="line"></span><br><span class="line">    RangeCheck(index);  </span><br><span class="line"></span><br><span class="line">    return (E) elementData[index];  </span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，在<code>return</code>之前，会根据泛型变量进行强转。假设泛型类型变量为<code>Date</code>，虽然泛型信息会被擦除掉，但是会将<code>(E) elementData[index]</code>，编译为<code>(Date)elementData[index]</code>。所以我们不用自己进行强转。当存取一个泛型域时也会自动插入强制类型转换。假设<code>Pair</code>类的<code>value</code>域是<code>public</code>的，那么表达式：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">Date date = pair.value;</span><br></pre></td></tr></table></figure>
+
+<p>也会自动地在结果字节码中插入强制类型转换。</p>
+<h2 id="instanceof"><a href="#instanceof" class="headerlink" title="instanceof"></a>instanceof</h2><p>因为类型擦除之后，<code>ArrayList&lt;String&gt;</code>只剩下原始类型，泛型信息<code>String</code>不存在了。</p>
+<p>那么，编译时进行类型查询的时候使用下面的方法是错误的</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">if( arrayList instanceof ArrayList&lt;String&gt;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="泛型在静态方法和静态类中的问题"><a href="#泛型在静态方法和静态类中的问题" class="headerlink" title="泛型在静态方法和静态类中的问题"></a>泛型在静态方法和静态类中的问题</h2><p>泛型类中的静态方法和静态变量不可以使用泛型类所声明的泛型类型参数</p>
+<p>举例说明：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">public class Test2&lt;T&gt; &#123;    </span><br><span class="line">    public static T one;   //编译错误    </span><br><span class="line">    public static  T show(T one)&#123; //编译错误    </span><br><span class="line">        return null;    </span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为泛型类中的泛型参数的实例化是在定义对象的时候指定的，而静态变量和静态方法不需要使用对象来调用。对象都没有创建，如何确定这个泛型参数是何种类型，所以当然是错误的。</p>
+<p>但是要注意区分下面的一种情况：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">public class Test2&lt;T&gt; &#123;    </span><br><span class="line"></span><br><span class="line">    public static &lt;T &gt;T show(T one)&#123; //这是正确的    </span><br><span class="line">        return null;    </span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为这是一个泛型方法，在泛型方法中使用的T是自己在方法中定义的 T，而不是泛型类中的T。</p>
 ]]></content>
       <categories>
         <category>jvm</category>
@@ -22826,7 +22996,7 @@ return 0;
 </blockquote>
 <p><mark>登录功能</mark>：使用 redis token + 拦截器，<u>登录滑动窗口限流</u>。</p>
 <p><a href="#cache">商户缓存</a>：进入主页，先从Redis中读出商户分类信息，若Redis中为空则向MySQL中读取，并写入Redis中。主页店铺分类信息为常用信息，应使用Redis避免频繁读取数据库，然后就是缓存的使用，延迟双删 + (canal+MQ 监控 binlog 异步重试删除)。</p>
-<p><a href="#seckill"><mark>秒杀</mark></a>：先用令牌桶进行限流，放行之后异步下单，先运行Lua脚本：先判断库存够不够，再判断是否下过单，若未下过单，才能扣减redis库存和sadd成员，判定具备购买资格。</p>
+<p><a href="#seckill"><mark>秒杀</mark></a>：先用令牌桶进行限流，放行之后异步下单，先运行Lua脚本：先判断库存够不够，再判断是否下过单，若未下过单，才能扣减redis库存和sadd成员，判定具备购买资格。「Lua执行过程中如果错误或是宕机，无法回滚，因此跟acid的原子性不一样」</p>
 <p><strong>订单预扣兜底</strong>：可以lua脚本里面写一条预扣订单记录和zset补偿订单id表，定时任务扫描补偿表回滚。lua 脚本生成一个全局id作为订单id，存到补偿zset里。一开始订单状态肯定是pending。</p>
 <p><strong>MQ</strong>：MQ 处理成功则设置 status = success，失败则 status = failed 然后提前回滚库存相关，不管怎么样，成功或者失败都会把zset里的order_id给删掉，这样补偿zset里的id肯定都是pending状态了。（LUA2）</p>
 <p><strong>定时任务</strong>：订单状态肯定都是pending，那么把这些超时的设置 status = failed，然后都给回滚掉，最后删除zset里的order_id。（LUA3）</p>
@@ -23745,13 +23915,20 @@ return 0;
 <p>使用缓存的情况下，吞吐量为2177个请求每秒：</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1599136392397-image.png" alt="img"></p>
 <hr>
-<p>在1c4g1m带宽的云数据库上，<strong>设置商品数量5000个，同时并发访问10000次</strong>。数据库直接被打挂</p>
+<p>在1c4g1m带宽的云数据库上，<strong>设置商品数量5000个，同时并发访问10000次</strong>。数据库直接被打挂：</p>
+<p>Caused by: java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not available, request timed out after 30073ms. </p>
+<p>表明 HikariCP 连接池在 30073 毫秒（约 30 秒）内未能获取到可用的数据库连接，从而导致请求超时。</p>
+<p>连接池配置不合理/数据库负载过高 <a href="https://blog.csdn.net/qq_32495261/article/details/117689255">解决方法</a></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/5718317-1ce7a79e5b9c9e93.png" alt="image"></p>
 <p>我们改成1000个线程并发，商品库存为500个，<strong>使用常规的非异步下单接口</strong>，吞吐量37.3：</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/5718317-b90a65d09f68c8f7.png" alt="image"></p>
 <p>对比1000个线程并发，<strong>使用异步订单接口</strong>：吞吐量 600</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/5718317-f5f703025a2fe0f0.png" alt="image"></p>
+<p>RabbitMQ：</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/5718317-440730e106c71864.png" alt="image"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/5718317-440730e106c71864.png" alt="image"></p>
+<p>库存耗尽的时候的日志快照：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250606134815284.png" alt="image-20250606134815284"></p>
 ]]></content>
       <categories>
         <category>项目</category>
