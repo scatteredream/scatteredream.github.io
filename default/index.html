@@ -166,13 +166,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-count">93</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -732,6 +732,144 @@
 <td>车辆信息、账号信息、退出登录</td>
 </tr>
 </tbody></table>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/31/zhihu-springboot-test/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/31/zhihu-springboot-test/" class="post-title-link" itemprop="url">全链路压测优化GC参数</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-05-31 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-31T00:00:00+08:00">2025-05-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-06 22:20:29" itemprop="dateModified" datetime="2025-06-06T22:20:29+08:00">2025-06-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/zhihu/" itemprop="url" rel="index"><span itemprop="name">zhihu</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>在实际工作中，经常会需要进行在<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=%E5%85%A8%E9%93%BE%E8%B7%AF%E5%8E%8B%E6%B5%8B&zhida_source=entity">全链路压测</a>，优化 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=GC%E5%8F%82%E6%95%B0&zhida_source=entity">GC参数</a>，优化 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=JVM+%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D&zhida_source=entity">JVM 内存分配</a>。</p>
+<p>当知道 1 次 RPC 请求和 Http 请求需要的堆内存大小后，你可以精确地计算：指定的并发量之下，系统需申请多少堆内存。同时结合 JVM <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=%E6%96%B0%E7%94%9F%E4%BB%A3%E5%A0%86%E5%A4%A7%E5%B0%8F&zhida_source=entity">新生代堆大小</a>，就能推算出 1 分钟发生多少次 GC，这个 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=GC%E9%A2%91%E7%8E%87&zhida_source=entity">GC频率</a>是否过于频繁？从而针对性的优化。</p>
+<p>我们希望 1 次 Rpc、Http 请求申请堆内存足够少，这样可减少 GC 导致的系统停顿，提高系统性能，单机可以支撑更高的并发量。</p>
+<p>1次 Http 请求，申请多少堆内存？</p>
+<p>1 次 RPC 请求，申请多少堆内存？</p>
+<p>如果不亲自实验，无法得出结论。</p>
+<h2 id="1-实验思路"><a href="#1-实验思路" class="headerlink" title="1. 实验思路"></a><strong>1. 实验思路</strong></h2><h3 id="关键动作"><a href="#关键动作" class="headerlink" title="关键动作"></a><strong>关键动作</strong></h3><ol>
+<li>创建<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=SpringBoot&zhida_source=entity">SpringBoot</a>新应用(版本<code>2.5.4</code>)。</li>
+<li>新增 Post 接口，供 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=JMeter&zhida_source=entity">JMeter</a> 调用。</li>
+<li>JMeter（开源压测工具）新建测试计划。每个线程执行2000 次Http接口调用，共10 个线程，总调用 20000 次。</li>
+<li>SpringBoot 打印 GC 详细日志，记录GC 前后，新生代申请了多少内存。</li>
+</ol>
+<p>Jmeter 调用 20000 次 Http 接口以后，通过手动 GC 的方式触发 GC，通过 GC 详细日志计算压测期间新生代堆内存增长量。（对象基本分配在新生代）</p>
+<h2 id="2-SpringBoot-声明-Http-接口"><a href="#2-SpringBoot-声明-Http-接口" class="headerlink" title="2. SpringBoot 声明 Http 接口"></a><strong>2. SpringBoot 声明 Http 接口</strong></h2><p>如下代码声明了一个 Post接口 create；创建了 Get 接口，用于触发GC。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestController</span> &#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">private</span> <span class="type">AtomicLong</span> <span class="variable">count</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AtomicLong</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">   <span class="meta">@ResponseBody</span></span><br><span class="line">   <span class="meta">@RequestMapping(value = &quot;create&quot;, method = RequestMethod.POST)</span></span><br><span class="line">   <span class="keyword">public</span> String <span class="title function_">create</span><span class="params">(<span class="meta">@RequestBody</span> Order order)</span> &#123;</span><br><span class="line">      <span class="comment">//log.warn(&quot;收到提单请求 cnt&#123;&#125;:&#123;&#125;&quot;, count.getAndIncrement(), order);</span></span><br><span class="line">      <span class="keyword">return</span> <span class="string">&quot;ok&quot;</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@ResponseBody</span></span><br><span class="line">   <span class="meta">@RequestMapping(value = &quot;gc&quot;, method = RequestMethod.GET)</span></span><br><span class="line">   <span class="keyword">public</span> String <span class="title function_">gc</span><span class="params">()</span> &#123;</span><br><span class="line">      System.gc();</span><br><span class="line">      <span class="keyword">return</span> <span class="string">&quot;ok&quot;</span>;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-JMeter-新建测试计划"><a href="#3-JMeter-新建测试计划" class="headerlink" title="3. JMeter 新建测试计划"></a><strong>3. JMeter 新建测试计划</strong></h2><h3 id="3-1-新增线程组"><a href="#3-1-新增线程组" class="headerlink" title="3.1 新增线程组"></a><strong>3.1 新增线程组</strong></h3><p>新建线程组，选择 10 个线程，每个线程循环 2000次。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-5d9d9fa448616508fa7a9c56f813e893_1440w.webp" alt="img"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-ae94445a6a75a61e820a52e65df1dc54_1440w.webp" alt="img"></p>
+<h3 id="3-2-新建-Http-默认值"><a href="#3-2-新建-Http-默认值" class="headerlink" title="3.2 新建 Http 默认值"></a><strong>3.2 新建 Http 默认值</strong></h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-64ba1f2c3a1eca7d2fa8a8bc63f210ad_1440w.webp" alt="img"></p>
+<h3 id="3-3-新建请求头"><a href="#3-3-新建请求头" class="headerlink" title="3.3 新建请求头"></a><strong>3.3 新建请求头</strong></h3><p>由于请求体是 JSON，所以新增请求头 Content-Type</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-7510127e1f61c1f513e287c5907dec04_1440w.webp" alt="img"></p>
+<h3 id="3-4-新建-Http-请求"><a href="#3-4-新建-Http-请求" class="headerlink" title="3.4 新建 Http 请求"></a><strong>3.4 新建 Http 请求</strong></h3><p>请求中指定 Url 和 请求体</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-d6686ab8e643e3965a9090179e126511_1440w.webp" alt="img"></p>
+<h2 id="4-实验过程"><a href="#4-实验过程" class="headerlink" title="4. 实验过程"></a><strong>4. 实验过程</strong></h2><h3 id="4-1-启动-SpringBoot应用"><a href="#4-1-启动-SpringBoot应用" class="headerlink" title="4.1 启动 SpringBoot应用"></a><strong>4.1 启动 SpringBoot应用</strong></h3><p>堆内存大小 4G，其中新生代内存 2G。<code>SurivivorRadio=8</code>，即每个 Surivivor 占比新生代 1/10。</p>
+<p>指定GC日志位置：<code>-Xloggc:/Users/testUser/log/gc.log</code></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">java -server </span><br><span class="line">-Xmx4g -Xms4g -XX:SurvivorRatio=8 -Xmn2g</span><br><span class="line">-XX:MetaspaceSize=512m -XX:MaxMetaspaceSize=1g -XX:MaxDirectMemorySize=1g </span><br><span class="line">-XX:+HeapDumpOnOutOfMemoryError -XX:+PrintGCCause -XX:+PrintGCDetails </span><br><span class="line">-XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution </span><br><span class="line">-XX:+UnlockDiagnosticVMOptions -XX:ParGCCardsPerStrideChunk=32768 </span><br><span class="line">-XX:+PrintCommandLineFlags -XX:+UseConcMarkSweepGC -XX:+UseParNewGC </span><br><span class="line">-XX:ParallelCMSThreads=6 -XX:+CMSClassUnloadingEnabled </span><br><span class="line">-XX:+UseCMSCompactAtFullCollection -XX:+CMSParallelInitialMarkEnabled </span><br><span class="line">-XX:+CMSParallelRemarkEnabled -XX:+CMSScavengeBeforeRemark -XX:+PrintHeapAtGC </span><br><span class="line">-XX:CMSFullGCsBeforeCompaction=1 -XX:CMSInitiatingOccupancyFraction=70 </span><br><span class="line">-XX:+UseCMSInitiatingOccupancyOnly -XX:+PrintReferenceGC  </span><br><span class="line">-XX:+ParallelRefProcEnabled -XX:ReservedCodeCacheSize=256M </span><br><span class="line">-Xloggc:/Users/testUser/log/gc.log</span><br><span class="line">-jar target/activiti-0.0.1-SNAPSHOT.jar</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-2-多次手动-GC"><a href="#4-2-多次手动-GC" class="headerlink" title="4.2 多次手动 GC"></a><strong>4.2 多次手动 GC</strong></h3><p>由于JVM 启动过程中，需要加载大量对象，所以我们在压测之前先手动 GC，清理一下存量对象。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8080/gc</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-3-Jmeter-启动压测"><a href="#4-3-Jmeter-启动压测" class="headerlink" title="4.3 Jmeter 启动压测"></a><strong>4.3 Jmeter 启动压测</strong></h3><p>执行 JMeter压测计划，每次执行会调用 20000 次，</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-01e19093ebe98a61a006882fd7ab05d2_1440w.webp" alt="img"></p>
+<h3 id="4-4-GC-日志解读"><a href="#4-4-GC-日志解读" class="headerlink" title="4.4 GC 日志解读"></a><strong>4.4 GC 日志解读</strong></h3><p>GC 以后，新生代 Eden 区已使用内存为 0。GC 前 Eden区大小就是 20000 次 Http 调用所申请的内存总和！</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-184e3d1df97081f9ae9b757c14d7b333_1440w.webp" alt="img"></p>
+<h2 id="5-实验结果"><a href="#5-实验结果" class="headerlink" title="5. 实验结果"></a><strong>5. 实验结果</strong></h2><p>SpringBoot 在处理 Http 请求时，即使请求体相对较小，<strong>平均每次 Http 调用仍会申请约 34 K 的堆内存</strong>。这一点显得尤为突出，因为请求体仅包含 50 个字符，远远未达到 1K 大小。</p>
+<p>然而，每次 Http 请求所消耗的内存却依然高达 34K。这可能是由于在 SpringBoot 的内部处理流程中需要创建多个对象，这些对象的总内存占用显著高于请求体本身。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;userId&quot;: 32898493, &quot;productId&quot;:39043, &quot;detail&quot;: &quot;&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在调整 Http 请求后，如将 detail 字段设置为 1200 个字符时，每次 Http 调用平均占用堆内存为 36K。两次实验结果间的差异为 2K，这与 1200 个字符占用的内存大小基本持平（需考虑一定的误差）。</p>
+<p><strong>这表明 SpringBoot 内部未进行多次请求体拷贝。</strong></p>
+<h3 id="5-1-添加日志打印"><a href="#5-1-添加日志打印" class="headerlink" title="5.1 添加日志打印"></a><strong>5.1 添加日志打印</strong></h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">log.warn(&quot;收到提单请求 cnt&#123;&#125;:&#123;&#125;&quot;, count.getAndIncrement(), order);</span><br></pre></td></tr></table></figure>
+
+<p>在打印请求日志后，单次 Http 请求的平均内存使用量达到了 56 KB，比之前增加了整整 20 KB。</p>
+<p>然而，当我移除 detail 字段后，单次请求的内存使用骤降至 35.7 KB。</p>
+<p>这表明，当日志量较小时，打印日志对内存占用的影响较小。但随着日志大小的增加，内存占用显著上升，这可能触发更频繁地GC，最终导致系统性能明显下降。</p>
+<p>因此，建议各位严格控制单条日志的大小，以优化内存使用和系统性能。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-3602e22b4df0e789f597d9d5400defb9_1440w.webp" alt="img"></p>
+<p><strong>6. 真实的数据</strong></p>
+<p>根据以上实验结果可得出结论：单次 HTTP 请求消耗约34KB内存，这并不意味着所有SpringBoot应用的内存消耗都是如此。由于实验所用的代码相对简单，因此34KB可能是内存消耗的最小值。</p>
+<p>举例来说，在我司的线上环境中，<strong>单次RPC请求的内存消耗在 0.5MB 到 1MB 之间</strong>，内存占用量相对较大。</p>
+<p>这是因为复杂的基础架构、复杂的业务逻辑、复杂的流程、多次下游调用、多次SQL 调用、多次缓存调用、日志打印等等 均需要消耗大量的内存！</p>
+<p>在此之前，我一直对新生代 Eden 区高达 5G 的情况下，仍每分钟进行 1-2 次 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=young+GC&zhida_source=entity">young GC</a> 感到困惑。</p>
+<p>经过粗略计算后发现，如果每次请求消耗 0.5M 内存，当单台服务器每秒并发度达到 500 次时，每分钟需要分配的内存高达 15G。因此，至少需要进行3次 young GC 才能满足需求。</p>
 
       
     </div>
@@ -2638,371 +2776,6 @@
 </ul>
 </li>
 </ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/20/jdk-proxy-reflection/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/20/jdk-proxy-reflection/" class="post-title-link" itemprop="url">反射、动态代理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-20 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-20T00:00:00+08:00">2025-05-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-29 22:39:51" itemprop="dateModified" datetime="2025-05-29T22:39:51+08:00">2025-05-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/jdk/" itemprop="url" rel="index"><span itemprop="name">jdk</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Reflection"><a href="#Reflection" class="headerlink" title="Reflection"></a>Reflection</h1><p>加载类，允许用编程的方式，解剖类中的各种成分（万物皆对象）比如ide中创建一个对象，对象引用后加一个点就能显示可以调用的方法，说明这个类实现的方法已经提前加载好了。</p>
-<p>反射（Reflection）是计算机编程中的一种机制，允许程序在运行时动态地检查、修改或调用其自身的结构或行为。它打破了传统静态代码的编译时绑定限制，使程序能够获取类、方法、属性等元信息，并动态操作它们。</p>
-<h2 id="load"><a href="#load" class="headerlink" title="load"></a>load</h2><ol>
-<li><p>加载类，获取 <code>Class</code> 对象</p>
-<ul>
-<li><code>Class c = 类名.class</code> </li>
-<li><code>Class.forName(全名)</code>  </li>
-<li><code>Class c = 对象.getClass()</code> </li>
-<li><code>getName() 全名带包名 getSimpleName() 简名</code></li>
-<li><code>getMethod() getConstructor() getField()</code> </li>
-</ul>
-</li>
-<li><p>获取类的构造器 <code>Constructor</code> 对象，主调是 <code>Class 对象</code></p>
-<ul>
-<li><code>getConstructors</code> 只有 public <strong>返回数组</strong></li>
-<li><code>getDeclaredConstructors</code> 存在就能拿到</li>
-<li><code>getConstructor(形参的类型对象)</code> 只有public 拿一个</li>
-<li><code>getDeclaredConstructor(形参的类型对象)</code> 存在就能拿到 拿1个</li>
-</ul>
-<ul>
-<li>下面的主调是构造器对象</li>
-<li><code>getParameterCount</code>几个参数</li>
-<li><code>newInstance(...参数)</code> 返回<code>object</code> 强转为对象，如果私有构造器会报错</li>
-<li><code>setAccessible(true)</code> 暴力反射，禁止检查访问权限</li>
-</ul>
-</li>
-<li><p>获取类的成员变量 <code>Field</code> 对象</p>
-<ul>
-<li><code>getFields</code> <code>getDeclaredFields</code> </li>
-<li><code>getField(name)</code> <code>getDeclaredField(name)</code></li>
-<li>下面主调是<code>Field</code>对象</li>
-<li><code>set(对象, 值)</code> <code>get(对象)</code> 赋值 取值</li>
-<li><code>setAccessible</code> 暴力反射</li>
-</ul>
-</li>
-<li><p>获取类的成员方法 <code>Method</code> 对象</p>
-<ul>
-<li><code>getMethods</code> <code>getDeclaredMethods</code></li>
-<li><code>getMethod(name, String.class, int.class) </code>返回值</li>
-<li>下面主调是<code>method</code></li>
-<li><code>getName getParameterConut getReturnType</code></li>
-<li><code>invoke(对象, 参数)</code> 返回object 强转为返回值类型</li>
-<li><code>setAccesible</code></li>
-</ul>
-</li>
-</ol>
-<h2 id="作用、应用场景"><a href="#作用、应用场景" class="headerlink" title="作用、应用场景"></a>作用、应用场景</h2><ul>
-<li>得到类的全部成分</li>
-<li>做框架、解耦代码、提高通用性</li>
-<li>支持注解处理、AOP</li>
-<li>IDE代码分析、断点调试依赖反射</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240920001226903.png" alt="image-20240920001226903"></p>
-<p>接收任意对象，接到对象，用反射获取class对象，获取全部成员变量，遍历他们，把他们的属性写出到文件中</p>
-<p>劣势：</p>
-<ul>
-<li>破坏封装性+反射代码需更高权限，可能引发安全漏洞（如通过反射调用<code>System.exit</code>）</li>
-<li>性能开销大，反射调用涉及动态解析类型和方法，比直接调用慢数倍</li>
-<li>代码可读性差，逻辑通常冗长且难以静态分析，增加维护成本。</li>
-<li>编译时检查失效：错误（如方法名拼写错误）在运行时才暴露，增加调试难度。</li>
-</ul>
-<h1 id="代理模式（Proxy-Pattern）"><a href="#代理模式（Proxy-Pattern）" class="headerlink" title="代理模式（Proxy Pattern）"></a>代理模式（Proxy Pattern）</h1><blockquote>
-<p>为什么要用代理模式</p>
-</blockquote>
-<ul>
-<li><strong>中介隔离作用</strong>：在某些情况下，一个客户类<strong>不想或者不能直接引用一个委托对象</strong>，而代理类对象可以在客户类和委托对象之间起到中介的作用，<strong>其特征是代理类和委托类实现相同的接口。</strong></li>
-<li><strong>开闭原则，增加功能</strong>：<strong>真正的业务功能还是由委托类来实现</strong>，但是可以在业务功能执行的前后加入一些公共的服务。例如我们想<strong>给项目加入缓存、日志</strong>这些功能，我们就可以使用代理类来完成，而没必要打开已经封装好的委托类。</li>
-</ul>
-<p>代理模式包含如下角色：</p>
-<ul>
-<li>Subject（抽象主题角色）：定义代理类和真实主题的公共对外方法，也是代理类代理真实主题的方法；</li>
-<li>RealSubject（真实主题角色）：真正实现业务逻辑的类；</li>
-<li>Proxy（代理主题角色）：用来代理和封装真实主题；</li>
-</ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250529222121439.png" alt="image-20250529222121439"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250529222209026.png" alt="image-20250529222209026"></p>
-<blockquote>
-<p>装饰器模式<strong>在 JDK 中通过包装对象实现功能扩展，典型如 I/O 流的多层装饰和集合的功能增强，具有灵活、可复用的特点。然而代理模式关注于控制对对象的访问。</strong></p>
-</blockquote>
-<ul>
-<li>使用代理模式的时候，<strong>我们常常在一个代理类中创建一个对象的实例</strong>。</li>
-<li>当我们使用装饰器模式的时候，我们通常的做法是<strong>将原始对象作为一个参数传给装饰者的构造器</strong>。</li>
-<li>典型：IO流中的流装饰器(数据流、缓冲流)、Collections工具类中为集合添加额外功能、打印流提供格式化输出或者更加灵活的文本输出</li>
-<li>宗旨：组合优于继承，避免类爆炸</li>
-</ul>
-<blockquote>
-<p>适配器模式主要解决接口不兼容问题，如流转换、事件监听简化等，通过 “转换” 让不同接口协同工作。</p>
-</blockquote>
-<ul>
-<li>InputStreamReader 将 InputStream 转换为 Reader</li>
-<li>AWT中<code>MouseAdapter</code>、<code>KeyAdapter</code> 等抽象类实现了对应事件接口的所有方法（空实现），开发者只需要重写MouseAdaptor中需要的方法，不用重写所有方法（实现Listener接口所有方法）</li>
-<li><code>Enumeration</code> 是早期 JDK 的迭代接口，<code>Iterator</code> 是更现代的接口。</li>
-</ul>
-<h2 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h2><p>在程序运行前就已经存在代理类的字节码文件，代理类和真实主题角色的关系在运行前就确定了。</p>
-<p>是<strong>由程序员创建或特定工具自动生成源代码</strong>，在对其编译。在程序员运行之前，代理类.class文件就已经被创建了。</p>
-<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h1><p>为什么类可以动态的生成？这涉及到Java虚拟机的<strong>类加载机制</strong> </p>
-<blockquote>
-<p>Java虚拟机类加载过程主要分为五个阶段：加载、验证、准备、解析、初始化。其中加载阶段需要完成以下3件事情：</p>
-<ol>
-<li>通过一个类的全限定名来获取定义此类的二进制字节流</li>
-<li>将这个字节流所代表的静态存储结构（字节码）转化为方法区的运行时数据结构（运行时常量池）</li>
-<li>在内存中生成一个代表这个类的 java.lang.Class 对象，作为方法区这个类的各种元数据访问入口。</li>
-</ol>
-<p>由于虚拟机规范对这3点要求并不具体，所以实际的实现是非常灵活的，关于第1点，获取类的二进制字节流（class字节码）就有很多途径：</p>
-<ol>
-<li>从ZIP包获取，这是JAR、EAR、WAR等格式的基础</li>
-<li>从网络中获取，典型的应用是 Applet</li>
-<li>运行时计算生成，这种场景使用最多的是动态代理技术，在 java.lang.reflect.Proxy 类中，就是用了 ProxyGenerator.generateProxyClass 来为特定接口生成形式为 *$Proxy 的代理类的二进制字节流</li>
-<li>由其它文件生成，典型应用是JSP，即由JSP文件生成对应的Class类</li>
-<li>从数据库中获取等等</li>
-</ol>
-<p>所以，动态代理就是想办法，根据接口或目标对象，计算出代理类的字节码，然后再加载到JVM中使用。</p>
-</blockquote>
-<p><strong>动态代理又有两种典型的实现方式：JDK动态代理和CGLib动态代理</strong></p>
-<ul>
-<li><strong>通过实现接口的方式</strong> -&gt; JDK动态代理</li>
-<li><strong>通过继承类的方式</strong> -&gt; CGLIB动态代理</li>
-</ul>
-<p>框架的核心技术，一个类有很多方法，需要加载资源，而代理可以代替类执行这些操作。</p>
-<p>Spring AOP技术使用了JDK动态代理和CGLIB动态代理两种方式，在不改变原始方法的前提下对功能进行增强。</p>
-<h2 id="JDK-动态代理——反射"><a href="#JDK-动态代理——反射" class="headerlink" title="JDK 动态代理——反射"></a>JDK 动态代理——反射</h2><ul>
-<li><p><strong>JDK动态代理</strong>：反射调用有一定性能开销，但初始化较快</p>
-</li>
-<li><p>JDK原生的实现方式，需要被代理的目标类必须实现接口。因为这个技术要求<strong>代理对象和目标对象实现同样的接口</strong>，目标对象和代理对象是平等地位的。</p>
-</li>
-</ul>
-<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>对于一个UserServiceImpl，要生成它的代理对象，为了能创建一个跟UserServiceImpl拥有同名方法的代理Proxy，<mark>这个类必须实现一个接口UserService，并且拥有Impl的全部方法</mark>，然后把Impl传给生成代理的方法。</p>
-<p>接口能将原来的实现对象的方法抽象化（或者部分抽象） 方便代理进行重写，代理重写完具体的执行逻辑，返回的还是这个接口的实现对象，相当于是把原来的实现对象包装了一下，完美地把对象的职责转移到了代理身上，业务对象。减少代码冗余和多余的资源调用</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Subject</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">request</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RealSubject</span> <span class="keyword">implements</span> <span class="title class_">Subject</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">request</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Real request&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JdkProxy</span> <span class="keyword">implements</span> <span class="title class_">InvocationHandler</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Object target;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">bind</span><span class="params">(Object target)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.target = target;</span><br><span class="line">        <span class="keyword">return</span> Proxy.newProxyInstance(</span><br><span class="line">            target.getClass().getClassLoader(),</span><br><span class="line">            target.getClass().getInterfaces(),</span><br><span class="line">            <span class="built_in">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// proxy 是动态生成的代理类的实例，method是对应方法，args是方法参数</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Before JDK proxy&quot;</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> method.invoke(target, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;After JDK proxy&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">        <span class="type">Subject</span> <span class="variable">proxy</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JdkProxy</span>().bind(<span class="keyword">new</span> <span class="title class_">RealSubject</span>());</span><br><span class="line">        proxy.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ul>
-<li>基于Java反射机制实现，内存中动态生成一个代理类</li>
-<li>要求目标类必须实现至少一个接口</li>
-<li>在运行时动态生成接口的实现类（匿名类）</li>
-</ul>
-<p>流程：<mark>通过 Proxy.newProxyInstance() 创建代理对象</mark> </p>
-<ul>
-<li>动态生成的代理类特征：<ul>
-<li>由JDK内部的 ProxyGenerator 生成（final），通过反射获取要实现的方法的 Method 对象。</li>
-<li>继承了 <code>java.lang.reflect.Proxy</code> 类，类名通常格式为<code>$ProxyN</code>(N为数字)：实现了指定接口的所有方法。方法的实现会调用 InvocationHandler 的<code>invoke(proxy,method,args)</code>，也就是AOP切面逻辑。<ul>
-<li>proxy 就是 this，代理类的实例</li>
-<li>在这个invoke内部跟被代理对象<code>target</code>相关的只有 <code>method.invoke(target,args)</code>，其他逻辑都是增强行为。但是 Proxy 类内部并不存在被代理对象，因此如果需要生成真正的代理对象，<code>target</code> 的注入应该从InvocationHandler的实现类入手，跟代理类没关系。</li>
-</ul>
-</li>
-<li>内存中动态生成代理类的字节码。默认情况下，这些动态生成的代理类不会被保存到磁盘。但可以通过设置系统属性<code>sun.misc.ProxyGenerator.saveGeneratedFiles</code>为<code>true</code>来保存生成的.class文件。</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">$Proxy0</span> <span class="keyword">extends</span> <span class="title class_">Proxy</span> <span class="keyword">implements</span> <span class="title class_">TargetInterface</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m1;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m2;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m3;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            m1 = Class.forName(<span class="string">&quot;java.lang.Object&quot;</span>).getMethod(<span class="string">&quot;equals&quot;</span>, ...);</span><br><span class="line">            m2 = Class.forName(<span class="string">&quot;java.lang.Object&quot;</span>).getMethod(<span class="string">&quot;toString&quot;</span>, ...);</span><br><span class="line">            m3 = Class.forName(<span class="string">&quot;com.dream.service.TargetInterface&quot;</span>).getMethod(<span class="string">&quot;targetMethod&quot;</span>, ...);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;...&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> $Proxy0(InvocationHandler h) &#123;</span><br><span class="line">        <span class="built_in">super</span>(h);</span><br><span class="line">    &#125; <span class="comment">// Proxy 父类有一个 protected 的 InvocationHandler 成员变量 h</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="type">boolean</span> <span class="title function_">equals</span><span class="params">(Object var1)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> (Boolean) <span class="built_in">super</span>.h.invoke(<span class="built_in">this</span>, m1, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;var1&#125;); </span><br><span class="line">            <span class="comment">// 转发到InvocationHandler</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;...&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> String <span class="title function_">toString</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> (String) <span class="built_in">super</span>.h.invoke(<span class="built_in">this</span>, m2, <span class="literal">null</span>); </span><br><span class="line">            <span class="comment">// 转发到InvocationHandler</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;...&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">targetMethod</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="built_in">super</span>.h.invoke(<span class="built_in">this</span>, m3, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;name&#125;); </span><br><span class="line">            <span class="comment">// 转发到InvocationHandler</span></span><br><span class="line">        &#125; <span class="keyword">catch</span> (...) &#123;...&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 其他方法...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
-
-
-
-<h2 id="CGLIB-动态代理——ASM字节码框架"><a href="#CGLIB-动态代理——ASM字节码框架" class="headerlink" title="CGLIB 动态代理——ASM字节码框架"></a>CGLIB 动态代理——ASM字节码框架</h2><ul>
-<li><p><strong>CGLIB</strong>：生成字节码初始化较慢，但后续调用性能更好</p>
-</li>
-<li><p>通过<strong>继承被代理的目标类</strong>实现代理，所以不需要目标类实现接口。</p>
-</li>
-</ul>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>cglib<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>cglib-nodeps<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>3.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RealService</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">request</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Real service&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CglibProxy</span> <span class="keyword">implements</span> <span class="title class_">MethodInterceptor</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">getProxy</span><span class="params">(Class clazz)</span> &#123;</span><br><span class="line">        <span class="type">Enhancer</span> <span class="variable">enhancer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Enhancer</span>();</span><br><span class="line">        enhancer.setSuperclass(clazz);</span><br><span class="line">        enhancer.setCallback(<span class="built_in">this</span>);</span><br><span class="line">        <span class="keyword">return</span> enhancer.create();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// obj 是代理类的实例对象, methodProxy 是核心的方法代理，可以看到这里并未使用反射的method调用</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">intercept</span><span class="params">(Object obj, Method method, Object[] args, MethodProxy proxy)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Before CGLIB proxy&quot;</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> proxy.invokeSuper(obj, args);</span><br><span class="line">        System.out.println(<span class="string">&quot;After CGLIB proxy&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">        <span class="type">RealService</span> <span class="variable">proxy</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CglibProxy</span>().getProxy(RealService.class);</span><br><span class="line">        proxy.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h3><p><strong>CGLIB 通过动态生成一个需要被代理类的子类（即被代理类作为父类），该子类重写被代理类的所有不是 final 修饰的方法，并在子类中采用方法拦截的技术拦截父类所有的方法调用，进而织入横切逻辑，</strong> 目标对象是代理对象的父类。</p>
-<ul>
-<li>基于ASM字节码操作框架实现。<ul>
-<li><strong>ASM框架</strong>：一个轻量级Java字节码操作和分析框架</li>
-<li><strong>直接生成.class文件结构</strong>：比JDK反射方式更底层，性能更好，不过初始化需要的时间更长</li>
-</ul>
-</li>
-<li>通过继承目标类来生成其子类，不需要目标类实现接口<ul>
-<li><strong>避免反射开销</strong>：生成的方法调用是直接调用，而非反射调用。</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>ASM从类文件中读入信息后，能够改变类行为，分析类信息，甚至能够根据用户要求生成新类。</p>
-<p>ASM相对于其他类似工具如BCEL、SERP、Javassist、CGLIB，它的最大的优势就在于其性能更高，其jar包仅30K。Hibernate和Spring都使用了cglib代理，而cglib底层使用的是ASM，可见ASM在各种开源框架都有广泛的应用。<a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/935647#slide-12">【设计模式自习室】详解代理模式-阿里云开发者社区</a> </p>
-<p>ASM 字节码框架动态生成字节码的步骤：<a target="_blank" rel="noopener" href="https://blog.csdn.net/xifeijian/article/details/83246240">字节码实践 – 使用 ASM 实现 AOP_jdk.internal.org.objectweb.asm?-CSDN博客</a> </p>
-<ol>
-<li><strong>创建ClassWriter</strong>：使用ASM的ClassWriter开始构建类结构</li>
-<li><strong>定义类信息</strong>：设置版本号、访问修饰符、类名(继承目标类)</li>
-<li><strong>添加字段</strong>：生成用于存储 MethodInterceptor 的字段</li>
-<li><strong>方法生成</strong>：<ul>
-<li>对于每个非final方法，生成两个版本：<ul>
-<li>覆盖，也就是重写的方法(调用拦截器)</li>
-<li>直接调用父类方法的”fast”版本(避免反射)</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><strong>添加构造函数</strong>：初始化MethodInterceptor字段</li>
-<li><strong>类加载</strong>：使用自定义的ClassLoader加载生成的字节码</li>
-</ol>
-</blockquote>
-<p>生成的代理类class如下特征：</p>
-<ul>
-<li><p>由ASM字节码操作框架生成</p>
-</li>
-<li><p>类名格式：<code>OriginalClass$$EnhancerByCGLIB$$&lt;随机字符&gt;</code></p>
-</li>
-<li><p>继承自目标类，包含一个MethodInterceptor类型字段</p>
-</li>
-<li><p>重写父类的同名方法，同时有一个<strong>直接调用</strong>父类方法的fast方法。</p>
-</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 生成的代理类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SampleService$$EnhancerByCGLIB$$1234abcd</span> <span class="keyword">extends</span> <span class="title class_">SampleService</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> MethodInterceptor interceptor;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Method CGLIB$save$<span class="number">0</span>$Method; </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> MethodProxy CGLIB$save$<span class="number">0</span>$Proxy;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="comment">// 初始化方法引用和方法代理</span></span><br><span class="line">        CGLIB$save$<span class="number">0</span>$Method = ReflectUtils.findMethods(<span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;save&quot;</span>,<span class="string">&quot;()V&quot;</span>&#125;, ...)[<span class="number">0</span>];</span><br><span class="line">        CGLIB$save$<span class="number">0</span>$Proxy = MethodProxy.create(SampleService.class, SampleService$$EnhancerByCGLIB$$1234abcd.class, <span class="string">&quot;()V&quot;</span>, <span class="string">&quot;save&quot;</span>, <span class="string">&quot;CGLIB$save$0&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 生成的fast方法</span></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">void</span> CGLIB$save$<span class="number">0</span>() &#123;</span><br><span class="line">        <span class="built_in">super</span>.save(); <span class="comment">// 直接调用父类方法</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 重写的方法</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">save</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">MethodInterceptor</span> <span class="variable">tmp</span> <span class="operator">=</span> interceptor;</span><br><span class="line">        <span class="keyword">if</span> (tmp != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 调用拦截器</span></span><br><span class="line">            tmp.intercept(<span class="built_in">this</span>, CGLIB$save$<span class="number">0</span>$Method, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;&#125;, CGLIB$save$<span class="number">0</span>$Proxy);</span><br><span class="line">            <span class="comment">// CGLIB$save$0$Method是 Method, Object result = method.invoke(obj, args) 使用反射调用</span></span><br><span class="line">            <span class="comment">// CGLIB$save$0$Proxy是 MethodProxy, Object result = proxy.invokeSuper(obj, args) 可以看出没有使用反射调用</span></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">super</span>.save(); <span class="comment">// 无拦截器时直接调用父类</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>MethodProxy：是 <strong>CGLIB 提供的优化版代理对象</strong>，类型是 <code>net.sf.cglib.proxy.MethodProxy</code>。</p>
-<p>它的作用主要是：提供一个高效的、直接调用 <strong>super 方法</strong> 的方式。</p>
-<ul>
-<li>它可以用 <code>proxy.invokeSuper(obj, args)</code> 来调用被代理类的 <strong>父类方法</strong>，避免了反射带来的性能损耗。<ul>
-<li>主要是为代理类和目标类各自生成 FastClass，fastClass 通过方法索引直接定位方法，跳过了反射查找。<a target="_blank" rel="noopener" href="https://github.com/cglib/cglib/blob/9d67875290d269c9b1ff5e4f4bc578a9f05c392e/cglib/src/main/java/net/sf/cglib/proxy/MethodProxy.java#L224">源码</a></li>
-</ul>
-</li>
-<li>它内部直接生成了字节码调用，所以比 <code>method.invoke</code> 快很多。</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>比较点</th>
-<th>Method</th>
-<th>MethodProxy</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>通用性</td>
-<td>适用所有类、接口</td>
-<td>仅适用 CGLIB 代理子类</td>
-</tr>
-<tr>
-<td>反射能力</td>
-<td>可以操作注解、参数、返回值等</td>
-<td>主要用作高效 super 调用，不提供反射功能</td>
-</tr>
-<tr>
-<td>调用范围</td>
-<td>任意方法（只要有 Method 对象）</td>
-<td>只能调用当前拦截方法对应的父类实现</td>
-</tr>
-<tr>
-<td>性能</td>
-<td>反射调用，较慢</td>
-<td>字节码生成，高效调用</td>
-</tr>
-<tr>
-<td>接口代理可用性</td>
-<td>可以</td>
-<td>不适用（只在继承结构上用）</td>
-</tr>
-</tbody></table>
-<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><h3 id="静态代理优缺点"><a href="#静态代理优缺点" class="headerlink" title="静态代理优缺点"></a>静态代理优缺点</h3><ul>
-<li><p>优点：可以做到<strong>在符合开闭原则的情况下</strong>对目标对象进行功能扩展。</p>
-</li>
-<li><p>缺点：当需要代理多个类的时候，由于代理对象要实现与目标对象一致的接口，有两种方式：</p>
-</li>
-<li><p>只维护一个代理类，由这个代理类实现多个接口，但是这样就<strong>导致代理类过于庞大</strong></p>
-</li>
-<li><p>新建多个代理类，每个目标对象对应一个代理类，但是这样会<strong>产生过多的代理类</strong></p>
-</li>
-</ul>
-<h3 id="JDK动态代理优缺点"><a href="#JDK动态代理优缺点" class="headerlink" title="JDK动态代理优缺点"></a>JDK动态代理优缺点</h3><ul>
-<li>优势：虽然相对于静态代理，动态代理大大减少了我们的开发任务，同时减少了对业务接口的依赖，降低了耦合度。</li>
-<li>劣势：<strong>只能对接口进行代理</strong>，使用反射调用原方法，性能稍弱</li>
-</ul>
-<h3 id="CGLIB动态代理优缺点"><a href="#CGLIB动态代理优缺点" class="headerlink" title="CGLIB动态代理优缺点"></a>CGLIB动态代理优缺点</h3><p><strong>CGLIB性能比JDK性能更高</strong>，但是<strong>CGLIB创建对象所花费的时间却比JDK多得多</strong>。</p>
-<ul>
-<li>所以<strong>对于单例的对象，因为无需频繁创建对象，用CGLIB合适</strong>，反之使用JDK方式要更为合适一些。</li>
-<li>同时由于CGLib由于是采用动态创建子类的方法，对于final修饰的方法无法进行代理。</li>
-</ul>
-<ol>
-<li><strong>构造函数限制</strong>：代理类会调用父类的默认构造函数</li>
-<li><strong>体积较大</strong>：相比JDK代理生成的字节码更复杂</li>
-<li><strong>初始化开销</strong>：首次生成代理类时需要较多时间</li>
-</ol>
-<p>CGLIB的字节码生成机制虽然复杂，但提供了比JDK动态代理更灵活和高效的代理方式，特别适合需要代理普通Java类(而非接口)的场景。</p>
 
       
     </div>
