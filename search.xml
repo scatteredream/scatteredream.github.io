@@ -677,48 +677,6 @@
       </tags>
   </entry>
   <entry>
-    <title>虚拟机</title>
-    <url>/2025/01/20/408-OS-%E8%99%9A%E6%8B%9F%E6%9C%BA/</url>
-    <content><![CDATA[<h1 id="Hypervisor-VMM"><a href="#Hypervisor-VMM" class="headerlink" title="Hypervisor (VMM)"></a>Hypervisor (VMM)</h1><p>Hypervisor 是一种运行在基础硬件和操作系统之间的中间软件层，可允许多个操作系统和应用共享硬件。也可叫做虚拟机监视器，即 VMM（ virtual machine monitor ）。（操作系统的操作系统）</p>
-<p>动机：</p>
-<ol>
-<li>提高硬件的利用率，一套硬件跑多个操作系统</li>
-<li>方便多平台软件的开发与调试</li>
-</ol>
-<ul>
-<li>当服务器启动并执行 Hypervisor 时，它会加载所有虚拟机客户端的操作系统同时会分配给每一台虚拟机适量的内存，CPU，网络和磁盘。它允许多个操作系统（称为<strong>Guest OS</strong>）在同一台物理机器（称为<strong>Host</strong>）上同时运行，每个操作系统被隔离在独立的虚拟机中。</li>
-<li>Hypervisor 负责资源分配，如 CPU、内存和存储，协调着这些硬件资源的访问，而且在各个虚拟机之间施加防护，处理虚拟机之间的通信和安全隔离。</li>
-</ul>
-<h2 id="Classification"><a href="#Classification" class="headerlink" title="Classification"></a>Classification</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/VMwarevsKVM1.png" alt="KVM vs VMware – Uma comparação de Hypervisors - Wintech"></p>
-<ul>
-<li><p><strong>Type 1 (裸机型):</strong> 直接运行在物理硬件上，例如 VMware ESXi、Microsoft Hyper-V、KVM。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/virtual-machine-diagram.svg" alt="体系结构图，显示 VM 如何运行完整的操作系统（独立于主机操作系统）"></p>
-<p>KVM (Kernel-Based Virtual Machine) 是 x86 硬件上 Linux 的完整虚拟化解决方案。它由提供核心虚拟化基础设施的可加载内核模块 kvm.ko 和处理器特定模块 kvm-intel.ko 或 kvm-amd.ko 组成。采用硬件辅助虚拟化技术 Intel-VT、AMD-V，内存的相关如 Intel 的 EPT 和 AMD 的 RVI 技术</p>
-</li>
-<li><p><strong>Type 2 (托管型):</strong> 运行在操作系统之上，例如 VMware Workstation、Oracle VirtualBox。</p>
-</li>
-<li><p><strong>QEMU</strong>: </p>
-<ul>
-<li><p>最初 <strong>QEMU</strong>(Quick Emulator)是一个系统模拟器，它可以在一种体系结构的系统上模拟另一种体系结构的系统。不但模拟 CPU，还模拟各种外设。其中 CPU 的模拟主要是通过指令翻译的方式，所以速度比较慢：</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/e45iakbuhu.jpeg" alt="img"></p>
-</li>
-<li><p>KVM 只靠上面的两个内核模块不能创建完整的虚拟机，KVM 是一种中间件，属于 Linux 的内核模块，将 Linux 变成一个 Hypervisor，可以虚拟化 CPU 和内存，在系统需要虚拟化功能的时候，内核把 KVM 模块调入内存中运行。但用户无法直接控制内核，所以需要一个处于内核和用户之间的一个桥梁 QEMU。KVM 团队 fork 了 QEMU 作为用户态的部分，一起实现了虚拟机(QEMU 模拟系统的其他组件如磁盘等；KVM 模拟 CPU 和内存)。</p>
-</li>
-<li><p>从 KVM 的角度看，它的用户态部分在 QEMU 里，一起虚拟出完整 Guest OS；</p>
-</li>
-<li><p>从 QEMU 的角度看，它有一个 Virtualization 模式，就是使用 KVM 来模拟 CPU 内存网络，实现加速。QEMU 通过 KVM 的用户态部分访问 KVM 的内核态部分。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/kvm-qemu-1735307591402-91.png" alt="figure1"></p>
-</li>
-</ul>
-</li>
-</ul>
-<p>某些文献中，VMM 特指 Type 2 Hypervisor 中用于模拟 CPU 指令集和设备驱动的核心软件组件，特别是在微内核环境中，对 Hypervisor 和 VMM 进行了区分。在那里，两个组件形成了某个系统的整体虚拟化堆栈。 Hypervisor 指的是内核空间功能，VMM 指的是用户空间功能。具体来说，在这些上下文中，Hypervisor 是实现虚拟化基础设施的微内核，由于技术原因必须在内核空间中运行，例如 Intel VMX。实现虚拟化机制的微内核也称为微管理程序。将此术语应用到 Linux 中，KVM 是一个 Hypervisor，而 QEMU 是利用 KVM 作为 Hypervisor 的 VMM。</p>
-<h2 id="CPU-Virtualization"><a href="#CPU-Virtualization" class="headerlink" title="CPU Virtualization"></a>CPU Virtualization</h2><h2 id="Memory-Virtualization"><a href="#Memory-Virtualization" class="headerlink" title="Memory Virtualization"></a>Memory Virtualization</h2>]]></content>
-      <categories>
-        <category>OS</category>
-      </categories>
-  </entry>
-  <entry>
     <title>并发</title>
     <url>/2025/01/24/408-OS-%E5%B9%B6%E5%8F%91/</url>
     <content><![CDATA[<h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1><h2 id="Thread-并行最小单位"><a href="#Thread-并行最小单位" class="headerlink" title="Thread: 并行最小单位"></a>Thread: 并行最小单位</h2><h3 id="和进程的区别"><a href="#和进程的区别" class="headerlink" title="和进程的区别"></a>和进程的区别</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241221230956042.png" alt="image-20241221230956042"></p>
@@ -3765,7 +3723,7 @@ return 0;
 <h1 id="Memory-Virtualization"><a href="#Memory-Virtualization" class="headerlink" title="Memory Virtualization"></a>Memory Virtualization</h1><h2 id="每个程序员都应该知道的时延"><a href="#每个程序员都应该知道的时延" class="headerlink" title="每个程序员都应该知道的时延"></a>每个程序员都应该知道的时延</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/687474703a2f2f692e696d6775722e636f6d2f6b307431652e706e67" alt="img"></p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">L1 cache reference ......................... 0.5 ns</span><br><span class="line">Branch mispredict ............................ 5 ns</span><br><span class="line">L2 cache reference ........................... 7 ns</span><br><span class="line">Mutex lock/unlock ........................... 25 ns</span><br><span class="line">Main memory reference ...................... 100 ns             </span><br><span class="line">Compress 1 KB with Zippy ................. 3,000 ns  =       3 µs</span><br><span class="line">Send 2 KB over 1 Gbps network ........... 20,000 ns  =      20 µs</span><br><span class="line">SSD random read ........................ 150,000 ns  =     150 µs</span><br><span class="line">Read 1 MB sequentially from memory ..... 250,000 ns  =     250 µs</span><br><span class="line">Round trip within same datacenter ...... 500,000 ns  =     500 µs  =  0.5 ms</span><br><span class="line">Read 1 MB sequentially from SSD ...... 1,000,000 ns  =   1,000 µs  =    1 ms</span><br><span class="line">Disk seek ........................... 10,000,000 ns  =  10,000 µs  =   10 ms</span><br><span class="line">Read 1 MB sequentially from disk .... 20,000,000 ns  =  20,000 µs  =   20 ms</span><br><span class="line">Send packet CA-&gt;Netherlands-&gt;CA .... 150,000,000 ns  = 150,000 µs  =  150 ms</span><br></pre></td></tr></table></figure>
 
-<h2 id="地址空间、分段（segmentation）"><a href="#地址空间、分段（segmentation）" class="headerlink" title="地址空间、分段（segmentation）"></a>地址空间、分段（segmentation）</h2><p><img src="https://upload.wikimedia.org/wikipedia/commons/7/70/VirtualMem01.png" alt="img"></p>
+<h2 id="虚拟地址空间"><a href="#虚拟地址空间" class="headerlink" title="虚拟地址空间"></a>虚拟地址空间</h2><p><img src="https://upload.wikimedia.org/wikipedia/commons/7/70/VirtualMem01.png" alt="img"></p>
 <p><strong>地址空间</strong>：程序认为自己独占了这片内存空间，以为自己是连续的内存空间。低位是代码，堆往上递增，栈往下反向增长。</p>
 <p>实际上是在物理内存中申请了一片连续的内存空间分配给进程，进程根据指令寻址的时候，操作系统将虚拟地址 <strong>重定位</strong> 到真正的物理地址。虚拟地址从0开始，因此虚拟地址实际上就是物理地址的偏移量。直接打印指针变量的值是虚拟地址而不是物理地址。</p>
 <h3 id="虚拟内存的作用"><a href="#虚拟内存的作用" class="headerlink" title="虚拟内存的作用"></a>虚拟内存的作用</h3><p><strong>隔离进程</strong>：物理内存通过虚拟地址空间访问，虚拟地址空间与进程一一对应。每个进程都认为自己拥有了整个物理内存，进程之间彼此隔离，一个进程中的代码无法更改正在由另一进程或操作系统使用的物理内存。</p>
@@ -3774,8 +3732,6 @@ return 0;
 <p><strong>多个进程共享物理内存</strong>：进程在运行过程中，会加载许多操作系统的动态库。这些库对于每个进程而言都是公用的，它们在内存中实际只会加载一份，这部分称为共享内存。</p>
 <p><strong>提高内存使用安全性</strong>：控制进程对物理内存的访问，隔离不同进程的访问权限，提高系统的安全性。</p>
 <p><strong>提供更大的可使用内存空间</strong>：可以让程序拥有超过系统物理内存大小的可用内存空间。这是因为当物理内存不够用时，可以利用磁盘充当，将物理内存页（通常大小为 4 KB）保存到磁盘文件（会影响读写速度），数据或代码页会根据需要在物理内存与磁盘之间移动。</p>
-<hr>
-<p>著作权归JavaGuide(javaguide.cn)所有 基于MIT协议 原文链接：<a href="https://javaguide.cn/cs-basics/operating-system/operating-system-basic-questions-02.html">https://javaguide.cn/cs-basics/operating-system/operating-system-basic-questions-02.html</a></p>
 <h3 id="重定位（relocation）"><a href="#重定位（relocation）" class="headerlink" title="重定位（relocation）"></a>重定位（relocation）</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241210205158811.png" alt="image-20241210205158811"></p>
 <p><code>Virtual Address + Base = Physical Address</code> </p>
 <p><strong>静态重定位</strong>：用软件实现，直接将指令中的虚拟地址用计算的真实物理地址覆盖。</p>
@@ -3809,7 +3765,7 @@ return 0;
 <li>抛出异常（内存访问越界、非法指令）时执行特定的处理代码</li>
 </ul>
 <p><strong>地址空间的不足</strong>：内部碎片（inner fragment）栈和堆之间未使用的空间也分配给整个地址空间，浪费较大</p>
-<h3 id="分段"><a href="#分段" class="headerlink" title="分段"></a>分段</h3><h4 id="segmentation"><a href="#segmentation" class="headerlink" title="segmentation"></a>segmentation</h4><p><strong>段式管理</strong>：以段(—段连续的物理内存)的形式管理/分配物理内存。应用程序的虚拟地址空间被分为大小不等的段，段是有实际意义的，每个段定义了一组逻辑信息，例如有主程序段 MAIN、子程序段 X、数据段 D 及栈段 S 等。然后给每个段都配一对基址寄存器和界限寄存器。</p>
+<h2 id="分段"><a href="#分段" class="headerlink" title="分段"></a>分段</h2><h3 id="segmentation"><a href="#segmentation" class="headerlink" title="segmentation"></a>segmentation</h3><p><strong>段式管理</strong>：以段(—段连续的物理内存)的形式管理/分配物理内存。应用程序的虚拟地址空间被分为大小不等的段，段是有实际意义的，每个段定义了一组逻辑信息，例如有主程序段 MAIN、子程序段 X、数据段 D 及栈段 S 等。然后给每个段都配一对基址寄存器和界限寄存器。</p>
 <p>例：0-16KB的虚拟地址空间，虚拟地址14位，高2位为段号，低12位为最大4KB的段空间。虚拟地址 = 段号 + 偏移 </p>
 <figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="comment">// get top 2 bits of 14-bit VA</span></span><br><span class="line">Segment = (VirtualAddress &amp; SEG_MASK) &gt;&gt; SEG_SHIFT</span><br><span class="line"><span class="comment">// now get offset</span></span><br><span class="line">Offset = VirtualAddress &amp; OFFSET_MASK</span><br><span class="line"><span class="keyword">if</span> (Offset &gt;= Bounds[Segment])</span><br><span class="line">	RaiseException(PROTECTION_FAULT)<span class="comment">//抛出异常</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">	PhysAddr = Base[Segment] + Offset<span class="comment">//基址+偏移</span></span><br><span class="line">	Register = AccessMemory(PhysAddr)<span class="comment">//访存</span></span><br></pre></td></tr></table></figure>
 
@@ -3848,13 +3804,13 @@ return 0;
 </tr>
 </tbody></table>
 <p>现在要判断虚拟地址15KB的真实地址：<code>11 11 00000 00000</code> 可见段号为 11，偏移 3 KB，栈空间反向增长，最大段空间为 4 KB，实际上就是计算15KB离全1有多远：3KB - 4KB = -1 KB,因此在基址寄存器减1KB即为实际物理地址。</p>
-<h5 id="用于保护的额外状态字"><a href="#用于保护的额外状态字" class="headerlink" title="用于保护的额外状态字"></a>用于保护的额外状态字</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241211001125226.png" alt="image-20241211001125226"></p>
-<h5 id="分段的问题"><a href="#分段的问题" class="headerlink" title="分段的问题"></a>分段的问题</h5><ul>
+<h4 id="用于保护的额外状态字"><a href="#用于保护的额外状态字" class="headerlink" title="用于保护的额外状态字"></a>用于保护的额外状态字</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241211001125226.png" alt="image-20241211001125226"></p>
+<h4 id="分段的问题"><a href="#分段的问题" class="headerlink" title="分段的问题"></a>分段的问题</h4><ul>
 <li><strong>外部碎片</strong>：每个分段的大小不一致，因此产生了大小不一致的碎片，无法使空间得到有效利用。</li>
 <li><strong>不支持稀疏的大堆</strong>：Another problem is that some segments could have a larger size and since this segment can’t be “broken” into smaller pieces, it must be fully allocated in memory. 分段大小是固定的，并不能将其拆成小段，申请了一段物理内存，寄存器的基址和界限已经确定好，这部分物理空间就不能再由其他的进程使用了，因此不支持按需分配。</li>
 <li>Segments of unequal size not suited as well for swapping.</li>
 </ul>
-<h5 id="段表：更细粒度的分段"><a href="#段表：更细粒度的分段" class="headerlink" title="段表：更细粒度的分段"></a>段表：更细粒度的分段</h5><p>细粒度分段需要进一步硬件支持，并且在内存中存储 段表 （segment table）</p>
+<h4 id="段表：更细粒度的分段"><a href="#段表：更细粒度的分段" class="headerlink" title="段表：更细粒度的分段"></a>段表：更细粒度的分段</h4><p>细粒度分段需要进一步硬件支持，并且在内存中存储 段表 （segment table）</p>
 <p>分段机制下的虚拟地址由两部分组成：</p>
 <ul>
 <li><strong>段号</strong>：标识着该虚拟地址属于整个虚拟地址空间中的哪一个段。</li>
@@ -35769,5 +35725,906 @@ return 0;
       <categories>
         <category>zhihu</category>
       </categories>
+  </entry>
+  <entry>
+    <title>OS 期末复习</title>
+    <url>/2025/06/08/408-OS-Review/</url>
+    <content><![CDATA[<blockquote>
+<p><a href="https://scatteredream.github.io/2025/01/06/408-OS-Boot/">操作系统启动 CPU模式 | scatteredream’s blog</a></p>
+<p><a href="https://scatteredream.github.io/2025/01/20/408-OS-%E8%99%9A%E6%8B%9F%E6%9C%BA/">虚拟机 | scatteredream’s blog</a></p>
+<p><a href="https://scatteredream.github.io/2024/11/30/408-OS-Linux/">Linux 基本命令 | scatteredream’s blog</a></p>
+</blockquote>
+<h1 id="进程、线程管理"><a href="#进程、线程管理" class="headerlink" title="进程、线程管理"></a>进程、线程管理</h1><p><a href="https://scatteredream.github.io/2025/01/18/408-OS-%E8%99%9A%E6%8B%9F%E5%8C%96/#CPU-Virtualization">虚拟化#CPU-Virtualization | scatteredream’s blog</a></p>
+<p>进程的组成：code，data(static, heap, stack)，PCB</p>
+<p>特征：动态性、独立性、异步性。（不共享）</p>
+<p>PCB：和进程的生命周期相同</p>
+<ul>
+<li>上下文（寄存器信息，主要是SP(栈)和IP(指令)，以及一些通用寄存器）、</li>
+<li>进程当前状态</li>
+<li>进程的地址空间、打开的文件、PID、内核栈、中断信息、父进程。</li>
+</ul>
+<p>PCB 不采用静态分配(固定大小数组)灵活性差。难以应对进程动态创建/销毁，现代系统普遍采用<strong>动态链表</strong>或<strong>索引表</strong>。</p>
+<p>PID 定位 PCB Hash表</p>
+<table>
+<thead>
+<tr>
+<th>原语名称</th>
+<th>英文名 / 表示</th>
+<th>作用说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>创建进程</td>
+<td><code>create</code> / <code>fork()</code></td>
+<td>创建一个新进程</td>
+</tr>
+<tr>
+<td>撤销进程</td>
+<td><code>exit</code> / <code>terminate</code></td>
+<td>结束当前进程</td>
+</tr>
+<tr>
+<td>阻塞进程</td>
+<td><code>block</code></td>
+<td>使当前进程进入等待（不参与调度）</td>
+</tr>
+<tr>
+<td>唤醒进程</td>
+<td><code>wakeup</code></td>
+<td>使某个等待的进程重新进入就绪状态</td>
+</tr>
+<tr>
+<td>进程切换</td>
+<td><code>dispatch</code> / <code>schedule</code></td>
+<td>把 CPU 切换给另一个进程</td>
+</tr>
+</tbody></table>
+<p>OS 对进程的操作：</p>
+<ul>
+<li><strong>fork</strong>：复制一个和父进程一样的子进程（子进程直接从fork返回然后继续执行）子进程的内存空间和父进程是独立的，并且变量的值大部分一样。遵循 COW 原则，推迟甚至避免了大量复制</li>
+<li><strong>wait</strong>：子进程创建后，根据OS调度（schedule）决定先后顺序，wait可以使父进程等子进程执行完再开始运行</li>
+<li><strong>exec</strong>：当前进程不想运行和之前一样的代码，可以调用exec加参数运行其他代码，新的程序会替代原来进程的所有信息，因此exec后边的代码是不会被执行的。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608215235926.png" alt="image-20250608215235926"></p>
+<p>READY：新建时进程所需资源已全部分配 或者 阻塞时事件发生。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608214700023.png" alt="image-20250608214700023"></p>
+<p>Redirecting：</p>
+<ul>
+<li>shell的基本原理就是主进程fork wait 子进程这边exec 运行其他程序，运行完成主进程wait结束，继续进行其他操作</li>
+<li><strong>输出重定向</strong>（redirecting）：默认输出就是标准输出流，如果你想重定向到一个文件，应当关闭stdout然后重新打开一个你想要的文件描述符。</li>
+<li><strong>管道</strong>（pipe）：也类似与输出重定向，上一个的输出无缝作为下一个的输入</li>
+</ul>
+<p>线程 THREAD：同一进程中的各线程可共享该进程所拥有的资源。如具有相同的进程地址空间、访问进程所拥有的已打开文件等。</p>
+<ul>
+<li>Thread 作为 CPU 调度单位，也是并行的最小单位。Process 作为资源分配的单位。</li>
+<li>同一个进程的线程共享大部分资源，可以访问进程的code和data</li>
+<li>thread-local 只有 tcb、寄存器、栈等</li>
+<li>线程的创建和切换更加轻量</li>
+<li>IPC 必须通过内核保证，线程通信因为有很多共享的所以可以不通过内核</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608221712079.png" alt="image-20250608221712079"></p>
+<h1 id="进程的交互"><a href="#进程的交互" class="headerlink" title="进程的交互"></a>进程的交互</h1><h2 id="互斥与同步"><a href="#互斥与同步" class="headerlink" title="互斥与同步"></a>互斥与同步</h2><p><a href="https://scatteredream.github.io/2025/01/24/408-OS-%E5%B9%B6%E5%8F%91/">并发 | scatteredream’s blog</a> </p>
+<h2 id="IPC"><a href="#IPC" class="headerlink" title="IPC"></a>IPC</h2><blockquote>
+<p>管道（Pipe）</p>
+</blockquote>
+<ol>
+<li>它是半双工的（即数据只能在一个方向上流动），具有固定的读端和写端。</li>
+<li>它只能用于具有亲缘关系的进程之间的通信（也是父子进程或者兄弟进程之间）。</li>
+<li>它可以看成是一种特殊的文件，对于它的读写也可以使用普通的read、write 等函数。但是它不是普通的文件，并不属于其他任何文件系统，并且只存在于内存中。</li>
+</ol>
+<p>当一个管道建立时，它会创建两个文件描述符：<code>fd[0]</code>为读而打开，<code>fd[1]</code>为写而打开。</p>
+<p>调用 pipe 的进程接着调用 fork，这样就创建了父进程与子进程之间的 IPC 通道。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/abeda97ed8d909980e1183629f516dee.png" alt="img"></p>
+<p>Bash: <code>cat story.txt | wc</code> <code>cat *.txt | grep hello | wc -l</code></p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">fork(); exec(<span class="string">&quot;cat&quot;</span>)</span><br><span class="line">fork(); exec(<span class="string">&quot;wc&quot;</span>)</span><br><span class="line">forl(); exec(<span class="string">&quot;grep&quot;</span>)</span><br><span class="line">pipe(cat_output_fd, grep_input_fd);</span><br><span class="line">pipe(grep_output_fd, wc_input_fd);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="type">pid_t</span> pid = fork();</span><br><span class="line"><span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// 子进程中，执行新程序</span></span><br><span class="line">    execl(<span class="string">&quot;/bin/ls&quot;</span>, <span class="string">&quot;ls&quot;</span>, <span class="string">&quot;-l&quot;</span>, (<span class="type">char</span>*) <span class="literal">NULL</span>);</span><br><span class="line">    <span class="comment">// 如果 exec 执行成功，下面不会被执行</span></span><br><span class="line">    perror(<span class="string">&quot;exec failed&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 父进程中，等待子进程</span></span><br><span class="line">    wait(<span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>信号（SIGNAL）</p>
+</blockquote>
+<p>操作系统通过向进程发送信号，使其异步地执行指定的处理函数（或默认操作）。</p>
+<table>
+<thead>
+<tr>
+<th>信号名</th>
+<th>数字</th>
+<th>含义</th>
+<th>默认操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SIGINT</code></td>
+<td>2</td>
+<td>来自终端的中断（Ctrl+C）</td>
+<td>终止</td>
+</tr>
+<tr>
+<td><code>SIGTERM</code></td>
+<td>15</td>
+<td>请求终止进程（kill 默认）</td>
+<td>终止</td>
+</tr>
+<tr>
+<td><code>SIGKILL</code></td>
+<td>9</td>
+<td>强制终止进程（不可捕获）</td>
+<td>终止</td>
+</tr>
+<tr>
+<td><code>SIGSTOP</code></td>
+<td>19</td>
+<td>暂停进程（不可捕获）</td>
+<td>暂停</td>
+</tr>
+<tr>
+<td><code>SIGCONT</code></td>
+<td>18</td>
+<td>继续执行一个暂停的进程</td>
+<td>继续执行</td>
+</tr>
+<tr>
+<td><code>SIGCHLD</code></td>
+<td>17</td>
+<td>子进程状态改变</td>
+<td>忽略 / 捕获</td>
+</tr>
+<tr>
+<td><code>SIGHUP</code></td>
+<td>1</td>
+<td>终端挂起</td>
+<td>终止</td>
+</tr>
+<tr>
+<td><code>SIGSEGV</code></td>
+<td>11</td>
+<td>段错误（非法内存访问）</td>
+<td>终止并core</td>
+</tr>
+</tbody></table>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">kill</span> -SIGINT &lt;pid&gt;      <span class="comment"># 向某个进程发送 SIGINT</span></span><br><span class="line"><span class="built_in">kill</span> -9 &lt;pid&gt;           <span class="comment"># 强制终止进程（SIGKILL）</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">kill(pid, SIGTERM);     <span class="comment">// 向指定进程发送信号</span></span><br><span class="line">raise(SIGINT);          <span class="comment">// 向自己发送信号</span></span><br></pre></td></tr></table></figure>
+
+<p>信号是异步的，随时可能打断程序执行。每个进程对信号有三种处理方式：<code>SIGKILL</code> 和 <code>SIGSTOP</code> 不能被捕获、阻塞或忽略。</p>
+<ol>
+<li><strong>默认处理</strong>（默认动作，如终止）</li>
+<li><strong>捕获信号</strong>（注册一个处理函数）</li>
+<li><strong>忽略信号</strong>（某些信号不能被忽略）</li>
+</ol>
+<blockquote>
+<p><a href="https://blog.csdn.net/qq_34144916/article/details/81184434#t11">消息队列</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://blog.csdn.net/qq_34144916/article/details/81184434#t15">信号量</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://blog.csdn.net/qq_34144916/article/details/81184434#t19">共享内存（Shared Memory）</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://scatteredream.github.io/2025/05/29/net-io-socket/#%E5%AE%9A%E4%B9%89">Socket 编程 | scatteredream’s blog</a></p>
+</blockquote>
+<h2 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608234254047.png" alt="image-20250608234254047"></p>
+<p>死锁检测——资源分配图</p>
+<h1 id="Trade-off"><a href="#Trade-off" class="headerlink" title="Trade-off"></a>Trade-off</h1><p><strong>空间换时间</strong>：磁盘缓冲区、PCB FCB inode、prefetch、Spooling、缓冲池。</p>
+<p><strong>时间换空间</strong>：虚拟存储器通过消耗一定的额外时间（<strong>缺页中断</strong>处理时间、等请求分页系统中独有操作的时间），来达到扩大内存的逻辑空间的目的，从而给用户提供超过内存大小的进程逻辑空间。</p>
+<h1 id="调度策略"><a href="#调度策略" class="headerlink" title="调度策略"></a>调度策略</h1><h2 id="作业调度"><a href="#作业调度" class="headerlink" title="作业调度"></a>作业调度</h2><p>周转时间 = 完成时间 - 到达时间</p>
+<p>带权周转时间 = 周转时间 ÷ 执行时间</p>
+<ul>
+<li><strong>FCFS</strong>：先到先得，计算密集型会阻塞io密集型，降低效率</li>
+<li><strong>SJF</strong>：Shortest Job First 最短工作优先，<u>同时到达</u>，先进行最短的工作</li>
+<li><strong>STCF</strong>：Shortest Time-to-Complete First 最短完成时间优先，针对<u>随时到达</u>的情况，到达时比较里完成还有多少时间，首次出现了任务切换的概念。</li>
+<li><strong>RR</strong>：Round-Robin 轮转，运行一个任务到时间片就切换到下一个任务（context switch）</li>
+<li><strong>MLFQ</strong>：Multi-Level Feedback Queue，多级反馈队列<ul>
+<li>设置不同的优先级，每个任务刚到达都是最高级。</li>
+<li>级别低的任务必须先让级别高的执行完。</li>
+<li>相同级别的任务轮转执行（RR）。</li>
+<li>在同一个优先级执行时间达到阈值就降低优先级：防止高优先级一直占据CPU<ul>
+<li>如果采用对每次执行单独计时的方法可能会有恶意占据CPU的情况发生</li>
+</ul>
+</li>
+<li>每隔一段时间就重置所有任务的优先级为最高：防止低优先级的任务饥饿。</li>
+</ul>
+</li>
+</ul>
+<h2 id="磁盘调度"><a href="#磁盘调度" class="headerlink" title="磁盘调度"></a>磁盘调度</h2><ul>
+<li>SSTF：最短寻道时间。驱动程序无法看到具体的磁道只能看到块地址；饥饿</li>
+<li>NBF：最近块。饥饿</li>
+<li>SCAN：双向扫描。</li>
+<li>Circular-SCAN：只进行单向扫描的SCAN</li>
+<li>LOOK：SCAN 如果扫描方向上没有了访问请求，立即掉头往回扫描。</li>
+<li>Circular-LOOK：C-SCAN 改进，原理同上，只不过是立即从头开始扫描</li>
+</ul>
+<h1 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h1><p><a href="https://scatteredream.github.io/2025/01/18/408-OS-%E8%99%9A%E6%8B%9F%E5%8C%96/#Memory-Virtualization">虚拟化#Memory Virtualization | scatteredream’s blog</a> </p>
+<ul>
+<li>虚拟地址的作用</li>
+<li>内存分配:<ul>
+<li>机制：空闲空间链表节点的分割与合并</li>
+<li>物理：Buddy, SLAB「内存池」<ul>
+<li>空闲空间的管理：内存紧缩，<u>free list</u>(best fit、first fit、next fit、bitmap，内存池)</li>
+</ul>
+</li>
+<li>虚拟：mmap malloc brk</li>
+</ul>
+</li>
+<li>虚拟地址的翻译（重定位）<ul>
+<li>段式 base+bound, bound varies from each other</li>
+<li>页式 fixed bound，</li>
+<li>段页式 </li>
+<li>多级页表 fill one page with one table, hi-level table points to low-level table</li>
+<li>TLB：翻译缓存</li>
+</ul>
+</li>
+<li>Swap：将物理内存看作虚拟内存的缓存<ul>
+<li>机制：Page Fault &amp; Disk I/O </li>
+<li>策略：<ul>
+<li>是否需要SWAP？物理内存充足就没必要开启</li>
+<li>具体换<strong>出</strong>哪一页？LRU, FIFO, Random, Second Chance, LRU-K, 2Q, Clock</li>
+<li>何时换<strong>出</strong>？被动watermark、主动swappiness&gt;0</li>
+<li>一次 I/O 换<strong>出</strong>多少页？ clustering</li>
+<li>何时换<strong>入</strong>？lazy aka. <u>demand paging(请求调入)</u></li>
+<li>一次 I/O 只换<strong>入</strong>一页<strong>吗</strong>？prefetching(预取)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h1><blockquote>
+<p>文件系统 </p>
+</blockquote>
+<ul>
+<li>定义：OS中与管理文件有关的软件和数据结构称为文件系统。它负责为用户建立、撤销、读写、修改和复制文件，还负责完成文件的按名存取和存取控制等。</li>
+<li>文件系统功能：<ol>
+<li>定义文件逻辑结构：实现文件的按名存取；</li>
+<li>定义文件的物理结构：文件信息在存储设备上的存放方式</li>
+<li>文件信息的描述和管理：文件目录管理</li>
+<li>合理地存放文件：对磁盘等辅助存储空间进行统一管理</li>
+<li>实现文件信息的查找</li>
+<li>完成文件的共享与保护</li>
+</ol>
+</li>
+</ul>
+<h2 id="文件、记录和数据项"><a href="#文件、记录和数据项" class="headerlink" title="文件、记录和数据项"></a>文件、记录和数据项</h2><ul>
+<li>对记录式文件，操作系统为用户存取文件信息的最小单位是（记录）</li>
+<li>由字符序列组成，文件内的信息不再划分结构，这是指（流式文件）</li>
+<li>数据库文件的逻辑结构形式是（记录式文件）</li>
+<li>逻辑文件是（从用户观点看）的文件组织形式。</li>
+<li>文件的存储方法依赖于（文件的物理结构、存放文件的存储设备的特性）</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231625487.png" alt="image-20250608231625487"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231633336.png" alt="image-20250608231633336"></p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230151762.png" alt="image-20250608230151762" style="zoom:50%;" />
+
+<h2 id="层次结构"><a href="#层次结构" class="headerlink" title="层次结构"></a>层次结构</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231527443.png" alt="image-20250608231527443"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230354877.png" alt="image-20250608230354877"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230413290.png" alt="image-20250608230413290"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230429042.png" alt="image-20250608230429042"></p>
+<h2 id="分配策略"><a href="#分配策略" class="headerlink" title="分配策略"></a>分配策略</h2><h3 id="文件块分配（物理结构）"><a href="#文件块分配（物理结构）" class="headerlink" title="文件块分配（物理结构）"></a>文件块分配（物理结构）</h3><p>文件物理结构（文件块分配）</p>
+<ul>
+<li><p>连续（Contiguous Allocation）：磁盘上<strong>连续分配</strong>。记录文件只需起始块号和长度。「老式系统、CD-ROM 文件系统」</p>
+</li>
+<li><p>链接（Linked Allocation）：「FAT 文件系统（变种）」</p>
+<ul>
+<li>FAT 表（File Allocation Table）：<strong>不需要在每个块中嵌入指针</strong>，可以将 FAT 缓存在内存中，加快速度；</li>
+<li>FAT 表中集中记录每个块的指针，FAT 表中块号对应的内容是下一个块号。5-9-14 对应的内容分别是 9-14-0(EOF)</li>
+<li>起始块记录在目录项中，系统顺着 FAT 表查找整个文件。</li>
+<li>文件碎片严重（不连续）FAT 表越大，加载越耗内存；</li>
+</ul>
+</li>
+<li><p><strong>索引结构（Indexed Allocation）</strong>：每个文件分配一个<strong>索引块</strong>（或多个索引块），块中记录文件数据块地址。</p>
+<ul>
+<li><p>UNIX（如 ext2、ext3、ext4）使用 inode，Windows NT 的 NTFS 使用 MFT</p>
+</li>
+<li><p><strong>单级索引</strong>：索引块直接记录所有数据块。</p>
+</li>
+<li><p><strong>多级索引</strong>（例如 Unix inode）：</p>
+<ul>
+<li>实现对大文件的支持。</li>
+<li>直接指针 + 间接指针（一级、二级、三级等）如下为 ext2 结构</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>指针类型</th>
+<th>指向内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>12 个直接块指针</td>
+<td>直接指向数据块</td>
+</tr>
+<tr>
+<td>1 个一级间接指针</td>
+<td>指向一个块，块中存放数据块地址</td>
+</tr>
+<tr>
+<td>1 个二级间接指针</td>
+<td>指向一个块，块中是一级指针块地址</td>
+</tr>
+<tr>
+<td>1 个三级间接指针</td>
+<td>指向块 → 二级块 → 一级块 → 数据块地址</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>inode</th>
+<th>FAT</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>类型</td>
+<td>索引结构（混合索引）</td>
+<td>链式结构（集中表）</td>
+</tr>
+<tr>
+<td>访问方式</td>
+<td>多级指针，支持随机访问</td>
+<td>顺链访问，随机访问慢</td>
+</tr>
+<tr>
+<td>碎片控制</td>
+<td>更好（可配合预分配策略）</td>
+<td>容易碎片化</td>
+</tr>
+<tr>
+<td>稳定性</td>
+<td>更强（结构分散）</td>
+<td>FAT 表损坏易导致全盘不可用</td>
+</tr>
+</tbody></table>
+<h3 id="空闲分配"><a href="#空闲分配" class="headerlink" title="空闲分配"></a>空闲分配</h3><ul>
+<li><p>连续（Bitmap）：容易寻找连续空闲块。占空间（对于大磁盘，位图也大），并且需要加载整个bitmap</p>
+</li>
+<li><p>链接：每个空闲块中记录下一个空闲块的地址。查找连续空闲块效率低；</p>
+</li>
+<li><p>空闲表：用一张表记录每一个空闲块号或空闲块段。可以快速定位，但是表会占空间。</p>
+</li>
+<li><p>成组链接：空闲块分组管理，一个块记录多个空闲块地址 + 下一组入口地址。</p>
+<ul>
+<li>综合了“链接法”的简单与“表法”的批量管理优势。</li>
+<li>假设每组记录 4 个空闲块地址 + 下一个组的地址（总共可以在一个块中记录 5 个地址）</li>
+<li>每次取空闲块：<ul>
+<li>优先用当前组的 4 个空闲块；</li>
+<li>当前组用完后，读取“下一组地址”所指向的块，加载新的一组空闲块信息。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[ 块100 ]：&#123; 下一个组地址 = 200, 空闲块地址 = 101, 102, 103, 104 &#125;  </span><br><span class="line">[ 块200 ]：&#123; 下一个组地址 = 300, 空闲块地址 = 201, 202, 203, 204 &#125;  </span><br><span class="line">[ 块300 ]：&#123; 下一个组地址 = 0（无下一组）, 空闲块地址 = 301, 302, 303, 304 &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>空闲区间法（Extent-based Free Space Management）<ul>
+<li>记录空闲区域的起始地址 + 长度（适合连续空闲块）</li>
+<li>适合大块文件系统，空间利用率高。但是不适合高度碎片化的场景。</li>
+</ul>
+</li>
+</ul>
+<h2 id="文件共享"><a href="#文件共享" class="headerlink" title="文件共享"></a>文件共享</h2><p>静态文件共享</p>
+<ul>
+<li>绕弯路法：</li>
+<li>连访法：</li>
+<li>基于基本文件目录共享法：</li>
+<li>基于索引节点共享：</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231332461.png" alt="image-20250608231332461"></p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230514727.png" alt="image-20250608230514727" style="zoom:67%;" />
+
+
+
+<h2 id="文件保护"><a href="#文件保护" class="headerlink" title="文件保护"></a>文件保护</h2><p>访问类型：Read、Write、eXecute、修改访问权限</p>
+<p>访问控制：</p>
+<ul>
+<li>用户范围类型：指定用户、用户组、任意用户</li>
+<li>访问类型和用户范围的组合：<ul>
+<li>访问矩阵</li>
+<li>存取控制表</li>
+</ul>
+</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231226427.png" alt="image-20250608231226427" style="zoom: 33%;" />
+
+
+
+<h1 id="设备管理"><a href="#设备管理" class="headerlink" title="设备管理"></a>设备管理</h1><p>IO控制技术：</p>
+<ul>
+<li>轮询、中断、DMA、通道</li>
+</ul>
+<h2 id="缓冲"><a href="#缓冲" class="headerlink" title="缓冲"></a>缓冲</h2><ul>
+<li>目的：缓解CPU和外设的速度不匹配、实现并行、减少中断次数、提高效率</li>
+<li>方式：单缓冲、双缓冲、环形缓冲、缓冲池</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608224100649.png" alt="image-20250608224100649"></p>
+<h2 id="设备分配"><a href="#设备分配" class="headerlink" title="设备分配"></a>设备分配</h2><h3 id="原则"><a href="#原则" class="headerlink" title="原则"></a>原则</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608224304923.png" alt="image-20250608224304923" style="zoom:80%;" />
+
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608224501939.png" alt="image-20250608224501939"></p>
+<h3 id="SPOOLing"><a href="#SPOOLing" class="headerlink" title="SPOOLing"></a>SPOOLing</h3><p>假脱机（Simultaneous Peripheral Operations On-Line）将独占设备虚拟成共享设备。</p>
+<p><strong>SPOOLing 是一种“以磁盘作为中介缓冲”的技术</strong>，用于协调低速外设（如打印机、CD机、磁带机）与高速 CPU 之间的速度差异。</p>
+<p>通俗解释：你在电脑上点了<strong>多份文档打印</strong>，这些文档不是立即送到打印机，而是<strong>先被缓存在磁盘的“打印队列”中</strong>。打印机慢慢地、一份一份地取出来打印，CPU 不必等待外设。</p>
+<table>
+<thead>
+<tr>
+<th>应用场景</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>打印系统</td>
+<td>用户打印文档时，任务先存入“打印队列”，再由打印机按序执行，打印机这种独占设备变成共享设备</td>
+</tr>
+<tr>
+<td>批处理系统</td>
+<td>作业先存储在磁盘等待调度再运行</td>
+</tr>
+<tr>
+<td>多用户系统</td>
+<td>多用户提交任务，SPOOLing 使多个用户“看起来像同时在打印”</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>⚠️注意：SPOOLing 是<strong>磁盘级缓冲机制</strong>，区别于内存级的缓存和缓冲。</p>
+</blockquote>
+<p>SPOOLing 的运行流程</p>
+<ol>
+<li>用户程序提交 I/O 请求（如打印）；</li>
+<li>操作系统将请求信息写入<strong>磁盘上的缓冲区（SPOOL区）</strong>；</li>
+<li>外设空闲时，从磁盘中取出任务执行；</li>
+<li>任务完成后反馈状态（如打印完成、打印失败等）。</li>
+</ol>
+<p>SPOOLing 利用了 <strong>多道程序设计的思想</strong>：多个程序同时驻留内存，通过<strong>I/O 与 CPU 并行执行</strong>来提高资源利用率，实现设备的请求排队与管理，支持多用户共享外设。</p>
+<h2 id="磁盘"><a href="#磁盘" class="headerlink" title="磁盘"></a>磁盘</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608225011060.png" alt="image-20250608225011060"></p>
+<p>磁盘调度见之前的。</p>
+]]></content>
+      <categories>
+        <category>OS</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>虚拟机</title>
+    <url>/2025/01/20/408-OS-Virtual-Machine/</url>
+    <content><![CDATA[<h1 id="Hypervisor-VMM"><a href="#Hypervisor-VMM" class="headerlink" title="Hypervisor (VMM)"></a>Hypervisor (VMM)</h1><p>Hypervisor 是一种运行在基础硬件和操作系统之间的中间软件层，可允许多个操作系统和应用共享硬件。也可叫做虚拟机监视器，即 VMM（ virtual machine monitor ）。（操作系统的操作系统）</p>
+<p>动机：</p>
+<ol>
+<li>提高硬件的利用率，一套硬件跑多个操作系统</li>
+<li>方便多平台软件的开发与调试</li>
+</ol>
+<ul>
+<li>当服务器启动并执行 Hypervisor 时，它会加载所有虚拟机客户端的操作系统同时会分配给每一台虚拟机适量的内存，CPU，网络和磁盘。它允许多个操作系统（称为<strong>Guest OS</strong>）在同一台物理机器（称为<strong>Host</strong>）上同时运行，每个操作系统被隔离在独立的虚拟机中。</li>
+<li>Hypervisor 负责资源分配，如 CPU、内存和存储，协调着这些硬件资源的访问，而且在各个虚拟机之间施加防护，处理虚拟机之间的通信和安全隔离。</li>
+</ul>
+<h2 id="Classification"><a href="#Classification" class="headerlink" title="Classification"></a>Classification</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/VMwarevsKVM1.png" alt="KVM vs VMware – Uma comparação de Hypervisors - Wintech"></p>
+<ul>
+<li><p><strong>Type 1 (裸机型):</strong> 直接运行在物理硬件上，例如 VMware ESXi、Microsoft Hyper-V、KVM。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/virtual-machine-diagram.svg" alt="体系结构图，显示 VM 如何运行完整的操作系统（独立于主机操作系统）"></p>
+<p>KVM (Kernel-Based Virtual Machine) 是 x86 硬件上 Linux 的完整虚拟化解决方案。它由提供核心虚拟化基础设施的可加载内核模块 kvm.ko 和处理器特定模块 kvm-intel.ko 或 kvm-amd.ko 组成。采用硬件辅助虚拟化技术 Intel-VT、AMD-V，内存的相关如 Intel 的 EPT 和 AMD 的 RVI 技术</p>
+</li>
+<li><p><strong>Type 2 (托管型):</strong> 运行在操作系统之上，例如 VMware Workstation、Oracle VirtualBox。</p>
+</li>
+<li><p><strong>QEMU</strong>: </p>
+<ul>
+<li><p>最初 <strong>QEMU</strong>(Quick Emulator)是一个系统模拟器，它可以在一种体系结构的系统上模拟另一种体系结构的系统。不但模拟 CPU，还模拟各种外设。其中 CPU 的模拟主要是通过指令翻译的方式，所以速度比较慢：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/e45iakbuhu.jpeg" alt="img"></p>
+</li>
+<li><p>KVM 只靠上面的两个内核模块不能创建完整的虚拟机，KVM 是一种中间件，属于 Linux 的内核模块，将 Linux 变成一个 Hypervisor，可以虚拟化 CPU 和内存，在系统需要虚拟化功能的时候，内核把 KVM 模块调入内存中运行。但用户无法直接控制内核，所以需要一个处于内核和用户之间的一个桥梁 QEMU。KVM 团队 fork 了 QEMU 作为用户态的部分，一起实现了虚拟机(QEMU 模拟系统的其他组件如磁盘等；KVM 模拟 CPU 和内存)。</p>
+</li>
+<li><p>从 KVM 的角度看，它的用户态部分在 QEMU 里，一起虚拟出完整 Guest OS；</p>
+</li>
+<li><p>从 QEMU 的角度看，它有一个 Virtualization 模式，就是使用 KVM 来模拟 CPU 内存网络，实现加速。QEMU 通过 KVM 的用户态部分访问 KVM 的内核态部分。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/kvm-qemu-1735307591402-91.png" alt="figure1"></p>
+</li>
+</ul>
+</li>
+</ul>
+<p>某些文献中，VMM 特指 Type 2 Hypervisor 中用于模拟 CPU 指令集和设备驱动的核心软件组件，特别是在微内核环境中，对 Hypervisor 和 VMM 进行了区分。在那里，两个组件形成了某个系统的整体虚拟化堆栈。 Hypervisor 指的是内核空间功能，VMM 指的是用户空间功能。具体来说，在这些上下文中，Hypervisor 是实现虚拟化基础设施的微内核，由于技术原因必须在内核空间中运行，例如 Intel VMX。实现虚拟化机制的微内核也称为微管理程序。将此术语应用到 Linux 中，KVM 是一个 Hypervisor，而 QEMU 是利用 KVM 作为 Hypervisor 的 VMM。</p>
+<h2 id="CPU-Virtualization"><a href="#CPU-Virtualization" class="headerlink" title="CPU Virtualization"></a>CPU Virtualization</h2><h2 id="Memory-Virtualization"><a href="#Memory-Virtualization" class="headerlink" title="Memory Virtualization"></a>Memory Virtualization</h2>]]></content>
+      <categories>
+        <category>OS</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>OS 虚拟化</title>
+    <url>/2025/06/08/408-OS-%E6%8C%81%E4%B9%85%E5%8C%96/</url>
+    <content><![CDATA[<h1 id="I-O-设备"><a href="#I-O-设备" class="headerlink" title="I/O 设备"></a>I/O 设备</h1><h2 id="I-O-系统架构演进"><a href="#I-O-系统架构演进" class="headerlink" title="I/O 系统架构演进"></a>I/O 系统架构演进</h2><h3 id="传统系统"><a href="#传统系统" class="headerlink" title="传统系统"></a>传统系统</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216183418923-1734346411610-1.png" alt="image-20241216183418923"></p>
+<p>CPU通过专用的内存总线连接到内存，通过通用I/O总线(如PCI)连接到显卡等高性能设备，通过外围总线连接到低速的设备(USB Flash, 磁盘驱动器 )，因为光速的限制以及各种物理因素，越快的总线越短，造价也贵，因此离CPU越远的设备性能越低。</p>
+<h3 id="现代系统"><a href="#现代系统" class="headerlink" title="现代系统"></a>现代系统</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216185046235.png" alt="image-20241216185046235"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1024px-Motherboard_diagram.svg-1734348489593-5.png" alt="undefined"></p>
+<p>在现代系统架构中，有更多的点对点连接到 CPU，PCIe 显卡总线和内存专用总线速度相近，以提供更高的显示性能，CPU通过 <strong>DMI</strong> 连接到一颗 I/O 芯片，所有其他外设通过各种总线连接到这颗I/O芯片</p>
+<h2 id="标准-I-O-系统"><a href="#标准-I-O-系统" class="headerlink" title="标准 I/O 系统"></a>标准 I/O 系统</h2><h3 id="设备结构"><a href="#设备结构" class="headerlink" title="设备结构"></a>设备结构</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216193431840.png" alt="image-20241216193431840"></p>
+<p>分为接口和内部两部分，接口用来和外界进行数据交流；内部是设备自有的处理系统，含有CPU、内存以及其他芯片，现代的 RAID 控制器中包含很多行固件(filmware，设备中的软件)。</p>
+<h3 id="控制方式"><a href="#控制方式" class="headerlink" title="控制方式"></a>控制方式</h3><h4 id="轮询-polling"><a href="#轮询-polling" class="headerlink" title="轮询(polling)"></a>轮询(polling)</h4><p>接口分为状态、指令、数据寄存器，在设备空闲时传给设备数据(如果主CPU参与了数据移动，就称为 <strong>PIO</strong>, Programmed I/O)与指令，在设备就绪的时候由设备内部的处理系统进行操作，在完成之前CPU一直等待。也叫程序查询。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">While (STATUS == BUSY)</span><br><span class="line">	; // 等待设备就绪</span><br><span class="line">Write data to DATA register</span><br><span class="line">Write command to COMMAND register</span><br><span class="line">	(starts the device and executes the command)</span><br><span class="line">While (STATUS == BUSY)</span><br><span class="line">	; // 等待设备完成此次I/O任务</span><br></pre></td></tr></table></figure>
+
+<h4 id="中断-interrupt"><a href="#中断-interrupt" class="headerlink" title="中断(interrupt)"></a>中断(interrupt)</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216195356310.png" alt="image-20241216195356310"></p>
+<p><strong>轮询的问题</strong>：CPU花费大量时间进行等待，浪费时间。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216195414131.png" alt="image-20241216195414131"></p>
+<p><strong>中断</strong>：CPU发出请求，发起IO的进程阻塞，然后就切换上下文到其他进程，当设备完成IO就向CPU抛出一个硬件中断，CPU跳转到操作系统的中断服务程序，发起IO的进程变为就绪，由操作系统调度。也就是重叠(Overlap)</p>
+<p><strong>中断的代价：</strong>但是，对于高性能的设备，I/O 处理的速度可以很快，中断因为要切换上下文，也是存在成本的，如果在短时间内出现大量中断，可能出现活锁，系统过载</p>
+<p><strong>中断的优化</strong>：</p>
+<ul>
+<li><p>使用混合策略：先轮询一小段时间，到时间再切换到其他进程</p>
+</li>
+<li><p>Web 服务器的网络端突然遇到高并发的情况，偶尔使用轮询可以减小切换带来的副作用</p>
+</li>
+<li><p>合并中断(coalescing)</p>
+</li>
+</ul>
+<h4 id="DMA-Direct-Memory-Access"><a href="#DMA-Direct-Memory-Access" class="headerlink" title="DMA(Direct Memory Access)"></a>DMA(Direct Memory Access)</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216201210900.png" alt="image-20241216201210900"></p>
+<p>轮询、中断都属于 PIO，有一个开销很大的步骤：CPU 要把指令和数据从内存拷贝到磁盘，拷贝完才能切换上下文，而磁盘所属的外部总线速率很慢，因此这里是一个瓶颈。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216202811882.png" alt="image-20241216202811882"></p>
+<p>DMA 引擎是一个特殊设备，内部有处理机，可以协调完成内存和设备之间的数据传递，无需 CPU。而 OS 会提供一片专属的连续物理内存供 DMA 使用，告诉要拷贝内存的地址，拷贝大小以及目标设备。此后就是 DMA 的工作了，完成之后抛出中断给CPU。</p>
+<h3 id="OS-与设备"><a href="#OS-与设备" class="headerlink" title="OS 与设备"></a>OS 与设备</h3><h4 id="访问设备寄存器"><a href="#访问设备寄存器" class="headerlink" title="访问设备寄存器"></a>访问设备寄存器</h4><ol>
+<li>使用明确的特定 I/O 指令（特权指令）</li>
+<li>Memory-mapped I/O 把设备的寄存器映射到虚拟地址中，硬件会直接跟寄存器通信，而不是通过主存</li>
+</ol>
+<h4 id="驱动程序"><a href="#驱动程序" class="headerlink" title="驱动程序"></a>驱动程序</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216205354583.png" alt="image-20241216205354583"></p>
+<ul>
+<li><p>应用程序通过 POSIX API 和最上层的文件系统交互，但他们都不知道磁盘的具体类型，所有底层协议接口的区别都抽象为了块接口(Block Interface)</p>
+</li>
+<li><p>根据协议划分的底层接口(Specific Block Interface)也是抽象出来的，为了兼容性屏蔽掉了一些区别，SCSI 的报错信息很丰富，而 ATA/IDE 很简单，这就导致 SCSI 的附加信息不能起作用</p>
+</li>
+<li><p>操作系统通过驱动程序(Device Driver)控制最底层的硬件交互。</p>
+</li>
+</ul>
+<p>驱动程序面向特定的寄存器和特定的 I/O 地址编程：</p>
+<ol>
+<li>请求排队，等待就绪，正式发送请求，把数据和指令写到磁盘寄存器，然后进程休眠</li>
+<li>设备再次就绪会发出中断，操作系统负责响应：接收数据并唤醒进程，其中如果请求队列不为空，就继续发送请求</li>
+<li>会使用锁机制确保数据一致性</li>
+</ol>
+<h2 id="磁盘驱动器-HDD"><a href="#磁盘驱动器-HDD" class="headerlink" title="磁盘驱动器(HDD)"></a>磁盘驱动器(HDD)</h2><p>Hard Disk Drive</p>
+<h3 id="机械结构"><a href="#机械结构" class="headerlink" title="机械结构"></a>机械结构</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241217135035184.png" alt="image-20241217135035184"></p>
+<ul>
+<li><strong>扇区</strong>（Sectors）：磁盘存储数据的基本结构，扇区 512 B 大小</li>
+<li><strong>盘片</strong>：磁盘的盘片可以划分为多个扇区，盘片绕<strong>中轴</strong>由电机驱动旋转</li>
+<li><strong>磁道</strong>：扇区呈圆形分布，围一圈就是一个磁道，一个盘片上有很多磁道</li>
+<li><strong>磁头</strong>：负责访问扇区，由一个磁臂驱动，在磁道之间移动</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241217135215631.png" alt="image-20241217135215631"></p>
+<ul>
+<li><strong>磁道偏斜</strong>：</li>
+<li><strong>缓存</strong>（track buffer）：驱动器可能会一次读取一个磁道所有的扇区</li>
+</ul>
+<h3 id="I-O-参数"><a href="#I-O-参数" class="headerlink" title="I/O 参数"></a>I/O 参数</h3><ul>
+<li><p><strong>每分钟转速</strong>：5,000 RPM~ 15,000 RPM 用 60s 相除即为周期 $T$</p>
+</li>
+<li><p><strong>旋转延迟</strong>(rotation)：磁头只能等待扇区转过来才能读取，在 $[0,T]$ 之间，平均需要 $\frac{T}{2}$ 时间</p>
+</li>
+<li><p><strong>寻道时间</strong>(seek)：磁头移动到正确磁道才能正确访问扇区，平均寻道时间为最大寻道时间的三分之一</p>
+</li>
+</ul>
+<p>$$<br>\sum_{x=0}^{N}\sum_{y=0}^{N}|x-y|=<br>\int_0^{N}\int_0^{N}|x-y|dxdy<br>$$</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241217133655708.png" alt="image-20241217133655708" style="zoom: 40%;" />
+$$
+总寻道距离为 \frac{N^3}{3},一次寻道的平均距离=\frac{N}{3}
+$$
+![image-20241217135359356](https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241217135359356.png)
+
+<p><strong>随机访问和顺序访问：</strong></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241217135637529.png" alt="image-20241217135637529"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241217135701360.png" alt="image-20241217135701360"></p>
+<p>随机访问花费在<strong>寻道</strong>和<strong>等待旋转</strong>的时间<strong>占IO总时间比例</strong>较大（导致随机 I/O 耗时的主要成本）</p>
+<h3 id="磁盘调度算法"><a href="#磁盘调度算法" class="headerlink" title="磁盘调度算法"></a>磁盘调度算法</h3><p>并发的I/O请求会排成队列，需要合适的调度策略才能提高效率</p>
+<h4 id="只考虑寻道时间-SCAN"><a href="#只考虑寻道时间-SCAN" class="headerlink" title="只考虑寻道时间(SCAN)"></a>只考虑寻道时间(SCAN)</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241217141046652.png" alt="image-20241217141046652"></p>
+<ul>
+<li><strong>SSTF</strong> 最短寻道时间优先<ul>
+<li>问题：驱动程序无法看到具体的磁道只能看到块地址、饥饿</li>
+</ul>
+</li>
+<li><strong>NBF</strong> 最近块优先<ul>
+<li>问题：饥饿</li>
+</ul>
+</li>
+<li><strong>SCAN</strong> 扫描算法<ul>
+<li>顺序扫描磁道，每个磁道在每次扫描过程中只能被服务一次，顺序扫完逆序回来扫一遍</li>
+<li><strong>C-SCAN</strong>(Circular-SCAN)：只在磁盘的一侧进行扫描，并且只按照一个方向扫描，直到到达磁盘边界，然后回到磁盘起点，重新开始循环。</li>
+<li><strong>LOOK</strong>：SCAN 算法中磁头到了磁盘的边界才改变移动方向，这样可能会做很多无用功，因为磁头移动方向上可能已经没有请求需要处理了。LOOK 算法对 SCAN 算法进行了改进，如果磁头移动方向上已经没有别的请求，就可以立即改变磁头移动方向，依此往复。</li>
+<li><strong>C-LOOK</strong>： C-SCAN 算法进行了改进，如果磁头移动的方向上已经没有磁道访问请求了，就可以立即让磁头返回，并且磁头只需要返回到有磁道访问请求的位置即可。</li>
+</ul>
+</li>
+</ul>
+<h4 id="考虑寻道时间-旋转时间"><a href="#考虑寻道时间-旋转时间" class="headerlink" title="考虑寻道时间+旋转时间"></a>考虑寻道时间+旋转时间</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241217141031508.png" alt="image-20241217141031508"></p>
+<p>图中寻道时间和旋转时间需要具体进行比较，因此不能在OS层面实现，需要驱动器自己实现</p>
+<ul>
+<li><strong>SPTF</strong> 最短定位时间优先</li>
+</ul>
+<h4 id="真实的调度"><a href="#真实的调度" class="headerlink" title="真实的调度"></a>真实的调度</h4><ul>
+<li>操作系统内部会把它认为最好的几个请求发出。磁盘内部能够得到完整的磁头位置以及磁道信息，因此内部可以实现SPTF，具体由驱动器调度</li>
+<li>I/O 合并：操作系统需要考虑将多个地址相近的请求合并为一个请求，因此驱动器得到的请求都是合并之后的请求</li>
+<li>非工作保全：操作系统并不是收到一个请求就立即发给磁盘，除去I/O合并，可能还需要等待某段时间，等到更好的请求过来，从而整体提高效率</li>
+</ul>
+<h2 id="独立冗余磁盘阵列-RAID"><a href="#独立冗余磁盘阵列-RAID" class="headerlink" title="独立冗余磁盘阵列(RAID)"></a>独立冗余磁盘阵列(RAID)</h2><h3 id="RAID"><a href="#RAID" class="headerlink" title="RAID"></a>RAID</h3><p>Redundant Array of Independent Disks</p>
+<ol>
+<li>抽象：RAID 内部是一个复杂的计算机系统，有磁盘、CPU（可以是多个）、内存，但是对外仍然像一个磁盘，一个线性的块数组</li>
+<li>性能：RAID 中可以有多个磁盘并行处理请求，并且有CPU调度，可以极大提升效率</li>
+<li>容量：RAID 可以扩充总容量</li>
+<li>可靠性：通过冗余来容忍一定程度的数据损失</li>
+</ol>
+<p><strong>接口与内部结构</strong></p>
+<p>文件系统向 RAID 接口发起逻辑 I/O，RAID 的处理器需要调度逻辑 I/O，向具体的<strong>一个或多个</strong>磁盘接口发出真正的物理 I/O，RAID 需要一些程序（固件 filmware）来协调磁盘之间的工作，同时需要RAM和ROM进行安全地缓冲数据，甚至可能包含专门的逻辑电路用来进行数据完整性的检验。</p>
+<p><strong>RAID 实现</strong>：</p>
+<ul>
+<li><p><strong>软件</strong>：主要由 <strong>主 CPU</strong> 处理数组存储作业，缺点为耗损较多CPU资源运算RAID，优点则是价格低（若用操作系统的RAID功能，则无需额外花费）</p>
+<ul>
+<li>Fake RAID 卡辅助 仍然借助CPU进行运算。此类RAID卡的阵列较易迁移到其他电脑，其RAID功能靠执行于操作系统的厂商驱动程序和CPU运算提供。</li>
+<li>操作系统内置支持</li>
+</ul>
+</li>
+<li><p><strong>硬件</strong>：完全基于硬件自身的运算，不需要 主 CPU 参与</p>
+<ul>
+<li><p>主板支持 RAID，依靠主板芯片，不需要任何磁盘阵列卡。</p>
+</li>
+<li><p>RAID 卡：基于片上RAID (ROC, RAID-on-chip)，具有独立的 CPU 资源及独立 BIOS。优点是读写性能快，不占用服务器资源，可用于任何操作系统，也能在系统断电后，透过备份电池模块（BBU, Backup Battery Unit）以及非易失性存储器（NVRAM）将硬盘读写日志（Journal）包含的剩余读写作业先记录在存储器中，等待电力供应撤销后，再由 NVRAM 取回日志资料，接着再完成读写作业，将剩余读写作业安全完成以确保读写完整性。此外，使用RAID卡还可能因内置的自检程序而导致电脑启动时间增加。</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>性能基准</strong></p>
+<table>
+<thead>
+<tr>
+<th align="center">RAID等级</th>
+<th align="center">最少硬盘</th>
+<th align="center">最大容错</th>
+<th align="center">可用容量</th>
+<th align="center">读取性能</th>
+<th align="center">写入性能</th>
+<th align="center">安全性</th>
+<th align="center">目的</th>
+<th align="center">应用产业</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">单一硬盘</td>
+<td align="center">(参考)</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">无</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">JBOD</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">n</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">无（同RAID 0）</td>
+<td align="center">增加容量</td>
+<td align="center">个人（暂时）存储备份</td>
+</tr>
+<tr>
+<td align="center">0</td>
+<td align="center">2</td>
+<td align="center">0</td>
+<td align="center">n</td>
+<td align="center">n</td>
+<td align="center">n</td>
+<td align="center">一个硬盘异常，全部资料都会异常</td>
+<td align="center">追求最大容量、速度</td>
+<td align="center">影片剪接缓存用途</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">n-1</td>
+<td align="center">1</td>
+<td align="center">n</td>
+<td align="center">1</td>
+<td align="center">高，一个正常即可</td>
+<td align="center">追求最大安全性</td>
+<td align="center">个人、企业备份</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td align="center">3</td>
+<td align="center">1</td>
+<td align="center">n-1</td>
+<td align="center">n-1</td>
+<td align="center">n-1</td>
+<td align="center">中下至中</td>
+<td align="center">追求最大容量、最小预算</td>
+<td align="center">个人、小型企业备份</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td align="center">4</td>
+<td align="center">2</td>
+<td align="center">n-2</td>
+<td align="center">n-2</td>
+<td align="center">n-2</td>
+<td align="center">中至中高,仅安全性较RAID 5高</td>
+<td align="center">同RAID 5，但较安全</td>
+<td align="center">个人、企业备份</td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td align="center">4</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">高</td>
+<td align="center">综合RAID 0/1优点，理论速度较快</td>
+<td align="center">大型数据库、服务器</td>
+</tr>
+<tr>
+<td align="center">50</td>
+<td align="center">6</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">高</td>
+<td align="center">提升资料安全</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">60</td>
+<td align="center">8</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">高</td>
+<td align="center">提升资料安全</td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<ol>
+<li>n代表硬盘总数</li>
+<li>JBOD（Just a Bunch Of Disks）指将数个物理硬盘在操作系统中合并成一个逻辑硬盘，以直接增加容量，失去磁盘分割表即失去一切数据，若遭遇磁盘阵列资料或硬盘出错的状况，危险程度较RAID 0更剧。它的好处是不会像RAID 0，每次访问都要读写全部硬盘。同时，因为每次读写操作只作用于单一硬盘，JBOD的传输速率与I/O表现均与单颗硬盘无异。</li>
+</ol>
+<h3 id="RAID-方式"><a href="#RAID-方式" class="headerlink" title="RAID 方式"></a>RAID 方式</h3><p><strong>RAID 0(条带化)</strong></p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1024px-RAID_0.svg.png" alt="RAID 0" style="zoom:16%;" />
+
+<p>RAID 0亦称为带区卷。它将两个以上的磁盘并联起来，成为一个大容量的磁盘。在存放数据时，分段后分散存储在这些磁盘中，因为读写时都可以并行处理，所以在所有的级别中，RAID 0的速度是最快的。但是RAID 0既没有冗余功能，也不具备容错能力，如果一个磁盘（物理）损坏，所有数据都会丢失，危险程度与JBOD相当。</p>
+<p><strong>RAID 1(镜像)</strong></p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1024px-RAID_1.svg.png" alt="RAID 1" style="zoom: 16%;" />
+
+<p>两组以上的N个磁盘相互作镜像，在一些多线程操作系统中能有很好的读取速度，理论上读取速度等于硬盘数量的倍数，与RAID 0相同。另外写入速度有微小的降低。只要一个磁盘正常即可维持运作，可靠性最高。其原理为在主硬盘上存放数据的同时也在镜像硬盘上写一样的数据。当主硬盘（物理）损坏时，镜像硬盘则代替主硬盘的工作。因为有镜像硬盘做数据备份，所以RAID 1的数据安全性在所有的RAID级别上来说是最好的。但无论用多少磁盘做RAID 1，仅算一个磁盘的容量，是所有RAID中磁盘利用率最低的一个级别。</p>
+<p>如果用两个不同大小的磁盘建RAID 1，可用空间为较小的那个磁盘，较大的磁盘多出来的空间也可以分割成一个区来使用，不会造成浪费。</p>
+<p>RAID 1没有校验机制。用两个磁盘组成RAID 1阵列，如果两个硬盘上的数据出现差异，RAID 1会不知道该相信哪一个硬盘，这种情形称作大脑分裂。事实上，RAID 1的磁盘数量越多，越有可能其中某个磁盘的数据变得不一致（但仍然工作），RAID 1只会从第一个工作的硬盘里提供数据，没有办法检测到底哪个硬盘的数据不对。</p>
+<p><strong>RAID 4(奇偶校验)</strong></p>
+<img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/RAID_4.svg" style="zoom:50%;" />
+
+<p>采用块交织技术（Block interleaving）。在分割时是以区块为单位分别存在硬盘中，但每次的数据访问都必须从同比特检查的那个硬盘中取出对应的同比特数据进行核对，由于过于频繁的使用，所以对硬盘的损耗可能会提高。</p>
+<p><strong>RAID 5(旋转奇偶校验)</strong></p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/1920px-RAID_5.svg.png" alt="RAID 5" style="zoom: 18%;" />
+
+<p>RAID 5 是一种存储性能、数据安全和存储成本兼顾的存储解决方案。 RAID 5可以理解为是RAID 0和RAID 1的折中方案。RAID 5可以为系统提供数据安全保障，但保障程度要比Mirror低而磁盘空间利用率要比Mirror高。RAID 5具有和RAID 0相近似的数据读取速度，只是多了一个奇偶校验信息，写入数据的速度比对单个磁盘进行写入操作稍慢。同时由于多个数据对应一个奇偶校验信息，RAID 5的磁盘空间利用率要比RAID 1高，存储成本相对较低，是运用较多的一种解决方案</p>
+<p><strong>其他 RAID</strong> </p>
+<p><strong>RAID 2</strong> 是 RAID 0 的改良版，以汉明码（Hamming Code）的方式将数据进行编码后分割为独立的比特，并将数据分别写入硬盘中。因为在数据中加入错误修正码（ECC，Error Correction Code），所以数据整体的容量会比原始数据大一些。最少要三台磁盘驱动器方能运作。</p>
+<p><strong>RAID 3</strong> 采用Bit－interleaving（数据交错存储）技术，它需要通过编码再将数据比特分割后分别存在硬盘中，而将相同比特检查后单独存在一个硬盘中，但由于数据内的比特分散在不同的硬盘上，因此就算要读取一小段数据资料都可能需要所有的硬盘进行工作，所以这种规格比较适于读取大量数据时使用。</p>
+<p><strong>RAID 10</strong> 先做镜像卷 RAID 1 将所有硬盘分为两组，再做RAID 0 执行条带化操作分割数据，视为以RAID 1作为最低组合，然后将每组RAID 1视为一个“硬盘”组合为RAID 0运作。当RAID 10有一个硬盘受损，其余硬盘会继续运作。</p>
+<h1 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h1><h2 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h2><h3 id="文件和目录的抽象"><a href="#文件和目录的抽象" class="headerlink" title="文件和目录的抽象"></a>文件和目录的抽象</h3><p><strong>文件</strong>可以看作一个<strong>线性字节数组</strong>，能够进行读或者写，并且每个文件都有一个唯一标识自己的 <strong>inode 号</strong>。</p>
+<p><strong>目录</strong>也有一个 inode 号，但其内容非常具体：它<strong>包含一个“用户可读名称——inode号”对的列表</strong>。例如，假设有一个低级名称( inode 号 )为“10”的文件，并且由用户可读名称“foo”引用。因此，“foo”所在的目录将有一个条目（“foo”，“10”），它将用户可读名称映射到低级名称。目录中的每个条目引用文件或其他目录。通过将目录放置在其他目录中，用户可以构建任意目录树（或目录层次结构），所有文件和目录都存储在该<strong>目录树</strong>下。</p>
+<h3 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h3><p>通过 <code>strace</code> 来追踪一条命令的系统调用</p>
+<h4 id="创建与打开-open-2"><a href="#创建与打开-open-2" class="headerlink" title="创建与打开 open(2)"></a>创建与打开 <code>open(2)</code></h4><p><code>int fd = open(&quot;foo&quot;, O_CREAT|O_WRONLY|O_TRUNC, S_IRUSR|S_IWUSR);</code></p>
+<p>“foo” 为文件名，“O_CREAT” 表示文件不存在则创建，“O_WRONLY” 表示write only只写，“O_TRUNC” 表示如果文件存在则截断大小为0字节从而删除任何现有内容(WRONLY以及读写方式)，第三个参数表示权限，文件所有者可读可写。</p>
+<p>要访问文件，进程必须使用系统调用（通常为 open()）来请求操作系统的权限。如果授予权限，操作系统会<strong>返回一个文件描述符</strong>，然后可以在权限和意图允许的情况下将其用于读或写访问。</p>
+<h5 id="文件描述符-file-descriptor"><a href="#文件描述符-file-descriptor" class="headerlink" title="文件描述符 file descriptor"></a>文件描述符 file descriptor</h5><p>每个文件描述符都是<strong>一个私有的、每个进程的实体</strong>，它引用打开文件表中的一个条目。其中的条目跟踪这次访问引用了哪个文件、文件的当前偏移量（即下一次读取或写入将访问文件的哪一部分）以及其他相关信息。</p>
+<p>open() 的一个重要方面是它返回的内容：<strong>文件描述符</strong>。文件描述符只是一个整数，每个进程私有，在 UNIX 系统中用于访问文件；因此，一旦打开文件，您就可以使用文件描述符来读取或写入该文件（假设您有这样做的权限）。 这样，文件描述符就是一个不透明的句柄，使您能够执行某些操作。将文件描述符视为<strong>指向文件类型对象的指针</strong>；一旦有了这样的对象，您就可以调用其他“方法”来访问该文件，例如 read() 和 write() </p>
+<p>文件描述符是每个进程私有的，它引用打开文件表中的一个条目。其中的条目跟踪这次访问引用了哪个文件、文件的当前偏移量（即下一次读取或写入将访问文件的哪一部分）以及其他相关信息。</p>
+<p>在进程结构中有一个代表文件描述符的数据结构——打开文件表，每个进程都维护一个文件描述符数组，每个文件描述符都引用系统范围的打开文件表中的一个条目。该表中的每个条目都会跟踪描述符引用的底层文件、当前偏移量以及其他相关详细信息，例如文件是否可读或可写。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">proc</span> &#123;</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">ofile</span>[<span class="title">NOFILE</span>];</span> <span class="comment">// Open files</span></span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这是一个 file 的二级指针，或者也可以说是指向 file 结构体的指针数组，表示打开的文件描述符，最大打开 <code>NOFILE</code> 个文件，文件描述符就是数组下标，ofile[0]代表指向 stdin 的指针。数组的每个元素都指向一个 file 结构体</p>
+<h4 id="读写文件-read-2-write-2"><a href="#读写文件-read-2-write-2" class="headerlink" title="读写文件 read(2) write(2)"></a>读写文件 <code>read(2)</code> <code>write(2)</code></h4><p>调用 read() 和 write() 自然会更新当前偏移量[current offset]；  进程可以使用 lseek() 更改其值，从而实现对文件不同部分的随机访问</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231110340615.png" alt="image-20241231110340615"></p>
+<p><code>ssize_t read(int fd, void buf[.count], size_t count);</code></p>
+<p>第一个参数是fd，这里的3就是刚刚打开的foo文件描述符，第二个参数是缓冲区，第三个参数是缓冲区大小，返回读取的字节数6</p>
+<p><code> ssize_t write(int fd, const void buf[.count], size_t count);</code></p>
+<p>第一个参数是fd，这里的1是stdout标准输出，第二个是刚刚的缓冲区，第三个是要写入的字节数。</p>
+<p>cat 可能会调用库例程 printf();最后，printf() 计算出传递给它的所有格式详细信息，并最终写入stdout 以将结果打印到屏幕上。 然后，cat 程序尝试从文件中读取更多内容，但由于文件中没有剩余字节，因此 read() 返回 0，程序知道这意味着它已读取整个文件。因此，程序调用 close() 来表明文件“foo”已完成，并传入相应的文件描述符。文件就这样关闭了，它的读取就这样完成了。</p>
+<h5 id="随机读写-lseek-2"><a href="#随机读写-lseek-2" class="headerlink" title="随机读写 lseek(2)"></a>随机读写 <code>lseek(2)</code></h5><p>要注意这里的seek和磁盘寻道的seek没有关系</p>
+<p><code>off_t lseek(int fildes, off_t offset, int whence);</code></p>
+<p>第一个参数是fd，第二个是偏移，第三个是 lseek 模式</p>
+<ul>
+<li><p><code>If whence is SEEK_SET, the offset is set to offset bytes. </code> </p>
+</li>
+<li><p><code>If whence is SEEK_CUR, the offset is set to its current location plus offset bytes. </code> </p>
+</li>
+<li><p><code>If whence is SEEK_END, the offset is set to the size of the file plus offset bytes.</code> </p>
+</li>
+</ul>
+<p>current location(offset) 随着顺序读写在隐式变化：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231112124078.png" alt="image-20241231112124078"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231112134972.png" alt="image-20241231112134972"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231112341606.png" alt="image-20241231112341606"></p>
+<h5 id="文件的数据结构（file）"><a href="#文件的数据结构（file）" class="headerlink" title="文件的数据结构（file）"></a>文件的数据结构（<code>file</code>）</h5><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">file</span> &#123;</span></span><br><span class="line">    <span class="type">int</span> ref;</span><br><span class="line">    <span class="type">char</span> readable;</span><br><span class="line">    <span class="type">char</span> writable;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">inode</span> *<span class="title">ip</span>;</span></span><br><span class="line">    uint off;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>一个是 ref 引用计数，另外两个是可读/可写，inode是文件的元数据，剩下的就是current offset偏移量，OFT 保存的就是这样的打开文件结构。</p>
+<h5 id="共享打开文件表-fork-2-dup-2"><a href="#共享打开文件表-fork-2-dup-2" class="headerlink" title="共享打开文件表 fork(2) dup(2)"></a>共享打开文件表 <code>fork(2)</code> <code>dup(2)</code></h5><p>在许多情况下，文件描述符到打开文件表中的条目的映射是一对一的映射。例如，当一个进程运行时，它可能决定打开一个文件，读取它，然后关闭它；在此示例中，该文件将在打开的文件表中具有唯一的条目。即使其他进程同时读取同一个文件，每个进程也会在打开的文件表中拥有<strong>自己的条目</strong>。每个逻辑读写都是独立的，都有他们自己的文件偏移。</p>
+<p>但是有时候进程的打开文件表是<strong>共享的</strong>：</p>
+<p><code>fork()</code>在父级和子级之间共享打开的文件表条目有时很有用。例如，如果您创建多个协作处理某项任务的进程，它们可以写入同一输出文件，而无需任何额外的协调。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231121737897.png" alt="image-20241231121737897"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231121907763.png" alt="image-20241231121907763"></p>
+<p>dup() 调用允许进程创建一个新的文件描述符，该文件描述符引用与现有描述符相同的底层打开文件。dup() 调用（特别是 dup2()）在编写 UNIX shell 和执行输出重定向等操作时非常有用</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231122001903.png" alt="image-20241231122001903"></p>
+<h4 id="立即刷盘-fsync-2"><a href="#立即刷盘-fsync-2" class="headerlink" title="立即刷盘 fsync(2)"></a>立即刷盘 <code>fsync(2)</code></h4><p>要强制更新到持久介质，进程必须使用 fsync() 或相关调用。然而，在保持高性能的同时正确执行此操作具有挑战性，因此在执行此操作时请仔细考虑。</p>
+<p>大多数时候，当程序调用 write() 时，它只是告诉文件系统：请在将来的某个时刻将此数据写入持久存储。出于性能原因，文件系统会将此类写入在内存中缓冲一段时间（例如 5 秒或 30 秒）；在稍后的时间点，写入实际上将被发送到存储设备。<strong>从调用应用程序的角度来看，写入似乎很快就能完成，并且只有在极少数情况下（例如，在 write() 调用之后但在写入磁盘之前机器崩溃）才会丢失数据。</strong> 但是对于DBMS，要求数据强一致，所以应该不时进行强制刷盘：</p>
+<p>当进程为特定文件描述符调用 fsync() 时，文件系统会通过将指定文件描述符引用的文件的所有脏（即尚未写入）数据强制写入磁盘来做出响应。一旦所有这些写入完成，fsync() 例程就会返回。有趣的是，这个顺序并不能保证你所期望的一切。在某些情况下，您还需要 fsync() 包含文件 foo 的目录。添加此步骤不仅可以确保文件本身位于磁盘上，而且可以确保该文件（如果是新创建的）也永久地成为目录的一部分。毫不奇怪，此类细节经常被忽视，从而导致许多应用程序级错误 [P+13，P+14]。</p>
+<h4 id="重命名文件-rename-2"><a href="#重命名文件-rename-2" class="headerlink" title="重命名文件 rename(2)"></a>重命名文件 <code>rename(2)</code></h4><p>调用 mv 命令</p>
+<p><code>rename(char *old, char *new)</code> 新名称和旧的名称</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231122626242.png" alt="image-20241231122626242"></p>
+<p>编辑器所做的事情很简单：以临时名称 (foo.txt.tmp) 写出文件的新版本，使用 fsync() 将其强制写入磁盘，然后，当应用程序确定新文件时元数据和内容都在磁盘上，将临时文件重命名为原始文件的名称。最后一步以原子方式将新文件交换到位，同时删除旧版本的文件，从而实现原子文件更新。</p>
+<h4 id="内存映射-mmap-2"><a href="#内存映射-mmap-2" class="headerlink" title="内存映射 mmap(2)"></a>内存映射 <code>mmap(2)</code></h4><p>mmap 为file结构中的offset和调用进程的虚拟地址之间创造出了一种映射关系，前者称为backing file，后者称为内存映射。进程可以使用 CPU 指令（即加载和存储）访问内存中映射的backing file。 通过将文件的持久性与内存的访问语义相结合，文件支持的内存映射支持称为持久性内存的软件抽象。<strong>消除内存和存储的不同数据格式之间的转换</strong>，简化应用程序。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231123711172.png" alt="image-20241231123711172"></p>
+<p>文件包含堆栈大小的计数以及保存堆栈内容的整数数组。在 mmap() 处理backing file之后，返回值为内存指针，我们可以使用 C 指针来访问这个持久堆栈文件，例如，p-&gt;n 访问堆栈上的计数，p-&gt;stack 访问整数数组。由于堆栈是持久的，因此一次调用 pstack 推送的数据可以由下一次调用弹出。 </p>
+<p>在 push 的增量和分配之间发生崩溃可能会使持久堆栈处于<u>不一致</u>的状态。应用程序通过使用针对故障自动更新持久内存的机制来防止此类损坏。WAL(write ahead logging)</p>
+<h4 id="获取文件的元数据-stat-2"><a href="#获取文件的元数据-stat-2" class="headerlink" title="获取文件的元数据 stat(2)"></a>获取文件的元数据 <code>stat(2)</code></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231123010037.png" alt="image-20241231123010037"></p>
+<p>stat 结构中包含文件的各种信息，在操作系统中，这些信息就存储在 inode 结构中现在，您应该将索引节点视为由文件系统保存的持久数据结构，其中包含我们上面看到的信息。所有 inode 都驻留在磁盘上；活动副本通常缓存在内存中以加快访问速度。</p>
+<h4 id="删除文件-unlink-2"><a href="#删除文件-unlink-2" class="headerlink" title="删除文件 unlink(2)"></a>删除文件 <code>unlink(2)</code></h4><p>调用 rm 命令</p>
+<p>要使文件系统中的多个 人类可读名称 引用同一基础文件，请使用硬链接或符号链接。每种方法在不同的情况下都有用，因此在使用之前请考虑它们的优点和缺点。请记住，删除文件只是从目录层次结构中执行最后一次 unlink() 操作。</p>
+<h5 id="硬链接（hard-link）"><a href="#硬链接（hard-link）" class="headerlink" title="硬链接（hard link）"></a>硬链接（hard link）</h5><p>通过 link() 的系统调用在文件系统树中创建条目，回到为什么通过 unlink() 执行删除文件的谜团。 link() 系统调用有两个参数，oldpath和newpath；当将newpath“链接”到oldpath，实际上创建了另一种方式来引用同一文件。</p>
+<p>link() 的工作方式：在创建链接的目录中创建另一个名称，并将其引用到原始文件的相同 inode 号。该文件不会以任何方式<strong>复制</strong>；但是现在有两个人类可读的名称（file 和 file2），它们都引用同一个文件。命令行程序 <code>ln</code> 用于执行此操作：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231125743798.png" alt="image-20241231125743798"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231125826092.png" alt="image-20241231125826092"></p>
+<p>可以看到两个文件的 <code>inode</code> 号完全一样。当创建文件时，文件系统实际上在做两件事。<strong>首先</strong>，创建一个结构（inode），inode 将跟踪有关文件的几乎所有相关信息，包括文件的大小、块在磁盘上的位置等等。<strong>其次</strong>，将一个人类可读名称链接到该 inode，并将该链接放入一个目录中。</p>
+<p>创建文件的硬链接后，文件系统感知到原始文件名（file）和新创建的文件名（file2）之间没有区别；事实上，它们都只是指向该文件的元数据的链接，该元数据可通过 inode 号 67158084 找到。因此，要从文件系统中删除文件，我们调用 unlink()。在上面的示例中，我们可以删除名为 file 的文件，并且仍然可以毫无困难地访问该文件</p>
+<h6 id="引用计数（reference-count）"><a href="#引用计数（reference-count）" class="headerlink" title="引用计数（reference count）"></a>引用计数（reference count）</h6><p>这样做的原因是，当文件系统unlink文件时，它会检查 inode 号内的引用计数。该引用计数（有时称为链接计数）允许文件系统跟踪有多少不同的文件名已链接到该特定 inode。删除文件引用时，引用计数会减一，此文件引用到inode号的映射会消失。只有当引用计数为零时，文件系统才会释放inode和相关数据块，从而真正“删除”文件。  当然，您可以使用 stat() 查看文件的引用计数。让我们看看当我们创建和删除文件的硬链接时会发生什么：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231130430929.png" alt="image-20241231130430929"></p>
+<h5 id="软链接（soft-symbolic-link）"><a href="#软链接（soft-symbolic-link）" class="headerlink" title="软链接（soft/symbolic link）"></a>软链接（soft/symbolic link）</h5><p>还有另一种非常有用的链接类型，它称为符号链接，有时也称为软链接。硬链接有一定的局限性：不能创建一个目录的硬链接（因为担心你会在目录树中创建一个循环）；不能硬链接到其他磁盘分区中的文件（因为 <strong>==inode 编号仅在特定文件系统内唯一==，而不是跨文件系统</strong>）；因此，创建了一种称为符号链接的新型链接。</p>
+<p>使用 <code>ln -s file file2</code> 创建file的软引用，软引用实际上是常规文件、目录之外的第三种文件，运行 ls 也揭示了这个事实。如果仔细观察 ls 输出的长格式的第一个字符，您会发现最左侧列中的第一个字符是 <code>-</code>（表示常规文件）、<code>d</code>（表示目录）和 <code>l</code>（软链接）。还可以查看符号链接的大小（在本例中为 4 字节）以及链接指向的内容（名为 file 的文件）。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231130958841.png" alt="image-20241231130958841"></p>
+<p>符号链接的形成方式是<strong>将链接到的文件的路径名作为链接文件的数据</strong>，因此会出现悬空引用：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231130739288.png" alt="image-20241231130739288"></p>
+<p>与硬链接完全不同，删除名为 file 的原始文件会导致软链接指向一个不存在的路径名。因此，这个就类似 windows 中的 <code>.lnk</code> 快捷方式文件</p>
+<h3 id="目录操作"><a href="#目录操作" class="headerlink" title="目录操作"></a>目录操作</h3><h4 id="创建删除目录-mkdir-rmdir"><a href="#创建删除目录-mkdir-rmdir" class="headerlink" title="创建删除目录 mkdir rmdir"></a>创建删除目录 <code>mkdir</code> <code>rmdir</code></h4><p>目录虽然也属于一种特殊的文件，但是不能直接修改他们的信息，因为这正是文件系统为了保持一致性所作的工作，只能通过修改其中的文件信息来简介修改</p>
+<p>通过mkdir()（由同名程序 mkdir 使用）创建目录，当创建这样的目录时，它被视为“空”，尽管它确实具有最少的内容。具体来说，空目录有两个条目：一个引用其自身的条目，另一个引用其父目录的条目。前者被称为“。” （点）目录，后者为“..”（点-点）。您可以通过将标志 (-a) 传递给程序 ls 来查看这些目录</p>
+<p>您可以通过调用 rmdir()（由同名程序 rmdir 使用）来删除目录。然而，与文件删除不同，删除目录更危险，因为您可能使用单个命令删除大量数据。因此， <strong>rmdir() 要求目录在删除之前为空</strong>（即只有“.”和“..”条目）。如果您尝试删除非空目录，则对 rmdir() 的调用将会失败。</p>
+<h4 id="读取目录内容-opendir-2-readdir-2-closedir-2"><a href="#读取目录内容-opendir-2-readdir-2-closedir-2" class="headerlink" title="读取目录内容 opendir(2) readdir(2) closedir(2)"></a>读取目录内容 <code>opendir(2)</code> <code>readdir(2)</code> <code>closedir(2)</code></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231125255802.png" alt="image-20241231125255802"></p>
+<p>如图即为读取目录，输出所有文件的信息。由于目录信息较少（基本上，只有将人类可读名称映射到 inode 号，以及一些其他详细信息），因此程序可能希望对每个文件调用 stat() 以获取每个文件的更多信息，例如其长度或其他详细信息。事实上，这正是 ls 当你传递 -l 标志时所做的事情；尝试在带有或不带有该标志的 ls 上执行 strace 来亲自查看。</p>
+<h3 id="访问许可与权限控制"><a href="#访问许可与权限控制" class="headerlink" title="访问许可与权限控制"></a>访问许可与权限控制</h3><p>大多数文件系统都有启用和禁用共享的机制。 此类控制的基本形式是由权限位提供的；更复杂的访问控制列表可以更精确地控制谁可以访问和操作信息。</p>
+<h4 id="许可控制位-permission-bits"><a href="#许可控制位-permission-bits" class="headerlink" title="许可控制位(permission bits)"></a>许可控制位(permission bits)</h4><p>文件系统中的访问权限位：<code>-rw-r--r-- 1 remzi wheel 0 Aug 24 16:29 foo.txt</code></p>
+<p>第一个是文件类型位，剩下九位是访问控制位，分成三部分：文件所有者|同一个group|其他人</p>
+<p>其中 r 代表可读，w 代表可写，x 代表可执行，文件的所有者可以轻松更改这些权限，例如通过使用 chmod 命令（更改文件模式）: 用三位二进制数表示权限许可位：</p>
+<p>chmod 707 foo.sh  : rwx—rwx </p>
+<p>chmod 640 foo.txt : rw-r—–</p>
+<ul>
+<li>对于文件，可执行就代表脚本文件或者ELF二进制可执行文件能否直接被执行</li>
+<li>对于目录，可执行就代表能否 cd 进去</li>
+</ul>
+<h5 id="超级管理员-su-root"><a href="#超级管理员-su-root" class="headerlink" title="超级管理员(su/root)"></a>超级管理员(su/root)</h5><p>允许哪个用户执行特权操作来帮助管理文件系统？例如，如果需要删除非活动用户的文件以节省空间，谁有权这样做？  在本地文件系统上，常见的默认设置是某种超级用户（即 root）可以访问所有文件，无论权限如何。在诸如 AFS（具有访问控制列表）之类的分布式文件系统中，名为 system:administrators 的组 包含受信任执行此操作的用户。在这两种情况下，这些受信任的用户都代表着固有的安全风险；如果攻击者能够以某种方式冒充此类用户，则攻击者可以访问系统中的所有信息，从而违反预期的隐私和保护保证。</p>
+<h4 id="访问控制表-access-control-lists"><a href="#访问控制表-access-control-lists" class="headerlink" title="访问控制表(access control lists)"></a>访问控制表(access control lists)</h4><p>setacl listacl</p>
+<p>除了权限位之外，一些文件系统，例如称为 AFS 的分布式文件系统（将在后面的章节中讨论），还包括更复杂的控制。例如，AFS 以每个目录的访问控制列表 (ACL) 的形式执行此操作。访问控制列表是一种更通用、更强大的方式来准确表示谁可以访问给定资源。 在文件系统中，这使用户能够创建一个非常具体的列表，其中列出谁可以读取一组文件，谁不能读取一组文件，这与上述权限位的<strong>所有者</strong>/<strong>组</strong>/<strong>所有人</strong>结构不同，例如，以下是一位作者的 AFS 帐户中私有目录的访问控制：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231132720656.png" alt="image-20241231132720656"></p>
+<p>该列表显示，两者系统管理员和用户 remzi 可以查找、插入、删除和管理此目录中的文件，以及读取、写入和锁定这些文件。  要允许某人（在本例中为其他作者）访问此目录，用户 remzi 只需键入以下命令即可。  <code>prompt&gt; fs setacl private/ andrea rl</code></p>
+<h4 id="TOCTTOU（原子性问题）"><a href="#TOCTTOU（原子性问题）" class="headerlink" title="TOCTTOU（原子性问题）"></a>TOCTTOU（原子性问题）</h4><p><strong>Time Of Check</strong> to <strong>Time Of Use</strong> (TOCTTOU) 检查到使用之间存在空隙，没有原子性，因此容易发生安全问题：邮件服务有root权限，首先它必须<strong>检查</strong>这个收件箱文件是否合法的常规文件，然后负责将新消息<strong>附加</strong>到收件箱文件中。攻击者可以通过这两个操作的空隙，将收件箱文件指向本来无法访问的敏感区域，例如 /etc/passwd（其中保存有关用户及其密码的信息）</p>
+<p>TOCTTOU 问题没有任何简单而出色的解决方案。</p>
+<ul>
+<li>一种方法是减少需要 root 权限才能运行的服务数量，这会有所帮助。 </li>
+<li>O_NOFOLLOW 标志，如果目标是软链接，open() 将失败，从而避免软链接攻击。</li>
+<li>更激进的方法，使用<strong>事务型文件系统</strong>，可以解决问题，但广泛部署的事务性文件系统并不多。</li>
+<li>因此，通常的（蹩脚的）建议是：编写以高权限运行的代码时要小心！</li>
+</ul>
+<h3 id="挂载文件系统-mount"><a href="#挂载文件系统-mount" class="headerlink" title="挂载文件系统 mount"></a>挂载文件系统 <code>mount</code></h3><p>如何从许多底层文件系统中组装出完整的目录树？此任务是通过首先创建文件系统，然后安装它们以使其内容可访问来完成的。</p>
+<p>为了创建文件系统，大多数文件系统都提供了一个工具 mkfs 专门执行此任务。 想法如下：为工具提供一个设备（例如磁盘分区，例如 <strong>/dev/sda1</strong>）和文件系统类型（例如 <strong>ext3</strong>）作为输入，它只需写入一个空文件系统从根目录开始，到该磁盘分区。而mkfs说，要有一个文件系统！ 然而，一旦创建了这样的文件系统，就需要在统一文件系统树中对其进行访问。该任务是通过 mount 程序来实现的（这使得底层系统调用 mount() 来完成真正的工作）。 mount 的作用很简单，就是将现有目录作为目标安装点，并将新的文件系统粘贴到该点的目录树上，用-t 来显式标记设备的文件系统</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231133159940.png" alt="image-20241231133159940"></p>
+<p>sda1设备中有a和b两个文件，在挂载操作之后，在/home/users/ 下就会多出两个文件 a b</p>
+<p>要查看挂载信息，直接运行 <code>mount</code>：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241231133404123.png" alt="image-20241231133404123"></p>
+<p>如图，这个操作系统上挂载了许多文件系统，包括 ext3（基于磁盘的标准文件系统）、proc 文件系统（用于访问当前进程信息的文件系统）、tmpfs（仅用于临时文件的文件系统） ）和 AFS（分布式文件系统）都粘合到这台机器的文件系统树上</p>
+]]></content>
+      <categories>
+        <category>OS</category>
+      </categories>
+      <tags>
+        <tag>磁盘</tag>
+        <tag>文件系统</tag>
+        <tag>raid</tag>
+      </tags>
   </entry>
 </search>

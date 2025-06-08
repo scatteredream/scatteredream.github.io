@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 5.4.2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Arvo:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="操作系统启动 CPU模式 | scatteredream’s blog 虚拟机 | scatteredream’s blog Linux 基本命令 | scatteredream’s blog  进程、线程管理虚拟化#CPU-Virtualization | scatteredream’s blog 进程的组成：code，data(static, heap, stack)，PCB 特征：动态性、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OS 期末复习">
+<meta property="og:url" content="http://scatteredream.github.io/2025/06/08/408-OS-Review/index.html">
+<meta property="og:site_name" content="scatteredream&#39;s blog">
+<meta property="og:description" content="操作系统启动 CPU模式 | scatteredream’s blog 虚拟机 | scatteredream’s blog Linux 基本命令 | scatteredream’s blog  进程、线程管理虚拟化#CPU-Virtualization | scatteredream’s blog 进程的组成：code，data(static, heap, stack)，PCB 特征：动态性、">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608215235926.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608214700023.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608221712079.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/abeda97ed8d909980e1183629f516dee.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608234254047.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231625487.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231633336.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230151762.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231527443.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230354877.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230413290.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230429042.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231332461.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230514727.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231226427.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608224100649.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608224304923.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608224501939.png">
+<meta property="og:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608225011060.png">
+<meta property="article:published_time" content="2025-06-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-06-08T15:50:18.360Z">
+<meta property="article:author" content="碎梦">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608215235926.png">
+
+
+<link rel="canonical" href="http://scatteredream.github.io/2025/06/08/408-OS-Review/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://scatteredream.github.io/2025/06/08/408-OS-Review/","path":"2025/06/08/408-OS-Review/","title":"OS 期末复习"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>OS 期末复习 | scatteredream's blog</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">scatteredream's blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E7%AE%A1%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">进程、线程管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%9A%84%E4%BA%A4%E4%BA%92"><span class="nav-number">2.</span> <span class="nav-text">进程的交互</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%92%E6%96%A5%E4%B8%8E%E5%90%8C%E6%AD%A5"><span class="nav-number">2.1.</span> <span class="nav-text">互斥与同步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IPC"><span class="nav-number">2.2.</span> <span class="nav-text">IPC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%BB%E9%94%81"><span class="nav-number">2.3.</span> <span class="nav-text">死锁</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Trade-off"><span class="nav-number">3.</span> <span class="nav-text">Trade-off</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E7%AD%96%E7%95%A5"><span class="nav-number">4.</span> <span class="nav-text">调度策略</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%9C%E4%B8%9A%E8%B0%83%E5%BA%A6"><span class="nav-number">4.1.</span> <span class="nav-text">作业调度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E8%B0%83%E5%BA%A6"><span class="nav-number">4.2.</span> <span class="nav-text">磁盘调度</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">5.</span> <span class="nav-text">内存管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">6.</span> <span class="nav-text">文件系统</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E3%80%81%E8%AE%B0%E5%BD%95%E5%92%8C%E6%95%B0%E6%8D%AE%E9%A1%B9"><span class="nav-number">6.1.</span> <span class="nav-text">文件、记录和数据项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">6.2.</span> <span class="nav-text">层次结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5"><span class="nav-number">6.3.</span> <span class="nav-text">分配策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%9D%97%E5%88%86%E9%85%8D%EF%BC%88%E7%89%A9%E7%90%86%E7%BB%93%E6%9E%84%EF%BC%89"><span class="nav-number">6.3.1.</span> <span class="nav-text">文件块分配（物理结构）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E9%97%B2%E5%88%86%E9%85%8D"><span class="nav-number">6.3.2.</span> <span class="nav-text">空闲分配</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%85%B1%E4%BA%AB"><span class="nav-number">6.4.</span> <span class="nav-text">文件共享</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%BF%9D%E6%8A%A4"><span class="nav-number">6.5.</span> <span class="nav-text">文件保护</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E7%AE%A1%E7%90%86"><span class="nav-number">7.</span> <span class="nav-text">设备管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%86%B2"><span class="nav-number">7.1.</span> <span class="nav-text">缓冲</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87%E5%88%86%E9%85%8D"><span class="nav-number">7.2.</span> <span class="nav-text">设备分配</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%88%99"><span class="nav-number">7.2.1.</span> <span class="nav-text">原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SPOOLing"><span class="nav-number">7.2.2.</span> <span class="nav-text">SPOOLing</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A3%81%E7%9B%98"><span class="nav-number">7.3.</span> <span class="nav-text">磁盘</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="碎梦"
+      src="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+  <p class="site-author-name" itemprop="name">碎梦</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">130</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/06/08/408-OS-Review/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="OS 期末复习 | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OS 期末复习
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-08 00:00:00 / 修改时间：23:50:18" itemprop="dateCreated datePublished" datetime="2025-06-08T00:00:00+08:00">2025-06-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/OS/" itemprop="url" rel="index"><span itemprop="name">OS</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p><a href="https://scatteredream.github.io/2025/01/06/408-OS-Boot/">操作系统启动 CPU模式 | scatteredream’s blog</a></p>
+<p><a href="https://scatteredream.github.io/2025/01/20/408-OS-%E8%99%9A%E6%8B%9F%E6%9C%BA/">虚拟机 | scatteredream’s blog</a></p>
+<p><a href="https://scatteredream.github.io/2024/11/30/408-OS-Linux/">Linux 基本命令 | scatteredream’s blog</a></p>
+</blockquote>
+<h1 id="进程、线程管理"><a href="#进程、线程管理" class="headerlink" title="进程、线程管理"></a>进程、线程管理</h1><p><a href="https://scatteredream.github.io/2025/01/18/408-OS-%E8%99%9A%E6%8B%9F%E5%8C%96/#CPU-Virtualization">虚拟化#CPU-Virtualization | scatteredream’s blog</a></p>
+<p>进程的组成：code，data(static, heap, stack)，PCB</p>
+<p>特征：动态性、独立性、异步性。（不共享）</p>
+<p>PCB：和进程的生命周期相同</p>
+<ul>
+<li>上下文（寄存器信息，主要是SP(栈)和IP(指令)，以及一些通用寄存器）、</li>
+<li>进程当前状态</li>
+<li>进程的地址空间、打开的文件、PID、内核栈、中断信息、父进程。</li>
+</ul>
+<p>PCB 不采用静态分配(固定大小数组)灵活性差。难以应对进程动态创建/销毁，现代系统普遍采用<strong>动态链表</strong>或<strong>索引表</strong>。</p>
+<p>PID 定位 PCB Hash表</p>
+<table>
+<thead>
+<tr>
+<th>原语名称</th>
+<th>英文名 / 表示</th>
+<th>作用说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>创建进程</td>
+<td><code>create</code> / <code>fork()</code></td>
+<td>创建一个新进程</td>
+</tr>
+<tr>
+<td>撤销进程</td>
+<td><code>exit</code> / <code>terminate</code></td>
+<td>结束当前进程</td>
+</tr>
+<tr>
+<td>阻塞进程</td>
+<td><code>block</code></td>
+<td>使当前进程进入等待（不参与调度）</td>
+</tr>
+<tr>
+<td>唤醒进程</td>
+<td><code>wakeup</code></td>
+<td>使某个等待的进程重新进入就绪状态</td>
+</tr>
+<tr>
+<td>进程切换</td>
+<td><code>dispatch</code> / <code>schedule</code></td>
+<td>把 CPU 切换给另一个进程</td>
+</tr>
+</tbody></table>
+<p>OS 对进程的操作：</p>
+<ul>
+<li><strong>fork</strong>：复制一个和父进程一样的子进程（子进程直接从fork返回然后继续执行）子进程的内存空间和父进程是独立的，并且变量的值大部分一样。遵循 COW 原则，推迟甚至避免了大量复制</li>
+<li><strong>wait</strong>：子进程创建后，根据OS调度（schedule）决定先后顺序，wait可以使父进程等子进程执行完再开始运行</li>
+<li><strong>exec</strong>：当前进程不想运行和之前一样的代码，可以调用exec加参数运行其他代码，新的程序会替代原来进程的所有信息，因此exec后边的代码是不会被执行的。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608215235926.png" alt="image-20250608215235926"></p>
+<p>READY：新建时进程所需资源已全部分配 或者 阻塞时事件发生。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608214700023.png" alt="image-20250608214700023"></p>
+<p>Redirecting：</p>
+<ul>
+<li>shell的基本原理就是主进程fork wait 子进程这边exec 运行其他程序，运行完成主进程wait结束，继续进行其他操作</li>
+<li><strong>输出重定向</strong>（redirecting）：默认输出就是标准输出流，如果你想重定向到一个文件，应当关闭stdout然后重新打开一个你想要的文件描述符。</li>
+<li><strong>管道</strong>（pipe）：也类似与输出重定向，上一个的输出无缝作为下一个的输入</li>
+</ul>
+<p>线程 THREAD：同一进程中的各线程可共享该进程所拥有的资源。如具有相同的进程地址空间、访问进程所拥有的已打开文件等。</p>
+<ul>
+<li>Thread 作为 CPU 调度单位，也是并行的最小单位。Process 作为资源分配的单位。</li>
+<li>同一个进程的线程共享大部分资源，可以访问进程的code和data</li>
+<li>thread-local 只有 tcb、寄存器、栈等</li>
+<li>线程的创建和切换更加轻量</li>
+<li>IPC 必须通过内核保证，线程通信因为有很多共享的所以可以不通过内核</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608221712079.png" alt="image-20250608221712079"></p>
+<h1 id="进程的交互"><a href="#进程的交互" class="headerlink" title="进程的交互"></a>进程的交互</h1><h2 id="互斥与同步"><a href="#互斥与同步" class="headerlink" title="互斥与同步"></a>互斥与同步</h2><p><a href="https://scatteredream.github.io/2025/01/24/408-OS-%E5%B9%B6%E5%8F%91/">并发 | scatteredream’s blog</a> </p>
+<h2 id="IPC"><a href="#IPC" class="headerlink" title="IPC"></a>IPC</h2><blockquote>
+<p>管道（Pipe）</p>
+</blockquote>
+<ol>
+<li>它是半双工的（即数据只能在一个方向上流动），具有固定的读端和写端。</li>
+<li>它只能用于具有亲缘关系的进程之间的通信（也是父子进程或者兄弟进程之间）。</li>
+<li>它可以看成是一种特殊的文件，对于它的读写也可以使用普通的read、write 等函数。但是它不是普通的文件，并不属于其他任何文件系统，并且只存在于内存中。</li>
+</ol>
+<p>当一个管道建立时，它会创建两个文件描述符：<code>fd[0]</code>为读而打开，<code>fd[1]</code>为写而打开。</p>
+<p>调用 pipe 的进程接着调用 fork，这样就创建了父进程与子进程之间的 IPC 通道。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/abeda97ed8d909980e1183629f516dee.png" alt="img"></p>
+<p>Bash: <code>cat story.txt | wc</code> <code>cat *.txt | grep hello | wc -l</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">fork(); exec(<span class="string">&quot;cat&quot;</span>)</span><br><span class="line">fork(); exec(<span class="string">&quot;wc&quot;</span>)</span><br><span class="line">forl(); exec(<span class="string">&quot;grep&quot;</span>)</span><br><span class="line">pipe(cat_output_fd, grep_input_fd);</span><br><span class="line">pipe(grep_output_fd, wc_input_fd);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">pid_t</span> pid = fork();</span><br><span class="line"><span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// 子进程中，执行新程序</span></span><br><span class="line">    execl(<span class="string">&quot;/bin/ls&quot;</span>, <span class="string">&quot;ls&quot;</span>, <span class="string">&quot;-l&quot;</span>, (<span class="type">char</span>*) <span class="literal">NULL</span>);</span><br><span class="line">    <span class="comment">// 如果 exec 执行成功，下面不会被执行</span></span><br><span class="line">    perror(<span class="string">&quot;exec failed&quot;</span>);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// 父进程中，等待子进程</span></span><br><span class="line">    wait(<span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<blockquote>
+<p>信号（SIGNAL）</p>
+</blockquote>
+<p>操作系统通过向进程发送信号，使其异步地执行指定的处理函数（或默认操作）。</p>
+<table>
+<thead>
+<tr>
+<th>信号名</th>
+<th>数字</th>
+<th>含义</th>
+<th>默认操作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SIGINT</code></td>
+<td>2</td>
+<td>来自终端的中断（Ctrl+C）</td>
+<td>终止</td>
+</tr>
+<tr>
+<td><code>SIGTERM</code></td>
+<td>15</td>
+<td>请求终止进程（kill 默认）</td>
+<td>终止</td>
+</tr>
+<tr>
+<td><code>SIGKILL</code></td>
+<td>9</td>
+<td>强制终止进程（不可捕获）</td>
+<td>终止</td>
+</tr>
+<tr>
+<td><code>SIGSTOP</code></td>
+<td>19</td>
+<td>暂停进程（不可捕获）</td>
+<td>暂停</td>
+</tr>
+<tr>
+<td><code>SIGCONT</code></td>
+<td>18</td>
+<td>继续执行一个暂停的进程</td>
+<td>继续执行</td>
+</tr>
+<tr>
+<td><code>SIGCHLD</code></td>
+<td>17</td>
+<td>子进程状态改变</td>
+<td>忽略 / 捕获</td>
+</tr>
+<tr>
+<td><code>SIGHUP</code></td>
+<td>1</td>
+<td>终端挂起</td>
+<td>终止</td>
+</tr>
+<tr>
+<td><code>SIGSEGV</code></td>
+<td>11</td>
+<td>段错误（非法内存访问）</td>
+<td>终止并core</td>
+</tr>
+</tbody></table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -SIGINT &lt;pid&gt;      <span class="comment"># 向某个进程发送 SIGINT</span></span><br><span class="line"><span class="built_in">kill</span> -9 &lt;pid&gt;           <span class="comment"># 强制终止进程（SIGKILL）</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kill(pid, SIGTERM);     <span class="comment">// 向指定进程发送信号</span></span><br><span class="line">raise(SIGINT);          <span class="comment">// 向自己发送信号</span></span><br></pre></td></tr></table></figure>
+
+<p>信号是异步的，随时可能打断程序执行。每个进程对信号有三种处理方式：<code>SIGKILL</code> 和 <code>SIGSTOP</code> 不能被捕获、阻塞或忽略。</p>
+<ol>
+<li><strong>默认处理</strong>（默认动作，如终止）</li>
+<li><strong>捕获信号</strong>（注册一个处理函数）</li>
+<li><strong>忽略信号</strong>（某些信号不能被忽略）</li>
+</ol>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_34144916/article/details/81184434#t11">消息队列</a></p>
+</blockquote>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_34144916/article/details/81184434#t15">信号量</a></p>
+</blockquote>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_34144916/article/details/81184434#t19">共享内存（Shared Memory）</a></p>
+</blockquote>
+<blockquote>
+<p><a href="https://scatteredream.github.io/2025/05/29/net-io-socket/#%E5%AE%9A%E4%B9%89">Socket 编程 | scatteredream’s blog</a></p>
+</blockquote>
+<h2 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608234254047.png" alt="image-20250608234254047"></p>
+<p>死锁检测——资源分配图</p>
+<h1 id="Trade-off"><a href="#Trade-off" class="headerlink" title="Trade-off"></a>Trade-off</h1><p><strong>空间换时间</strong>：磁盘缓冲区、PCB FCB inode、prefetch、Spooling、缓冲池。</p>
+<p><strong>时间换空间</strong>：虚拟存储器通过消耗一定的额外时间（<strong>缺页中断</strong>处理时间、等请求分页系统中独有操作的时间），来达到扩大内存的逻辑空间的目的，从而给用户提供超过内存大小的进程逻辑空间。</p>
+<h1 id="调度策略"><a href="#调度策略" class="headerlink" title="调度策略"></a>调度策略</h1><h2 id="作业调度"><a href="#作业调度" class="headerlink" title="作业调度"></a>作业调度</h2><p>周转时间 = 完成时间 - 到达时间</p>
+<p>带权周转时间 = 周转时间 ÷ 执行时间</p>
+<ul>
+<li><strong>FCFS</strong>：先到先得，计算密集型会阻塞io密集型，降低效率</li>
+<li><strong>SJF</strong>：Shortest Job First 最短工作优先，<u>同时到达</u>，先进行最短的工作</li>
+<li><strong>STCF</strong>：Shortest Time-to-Complete First 最短完成时间优先，针对<u>随时到达</u>的情况，到达时比较里完成还有多少时间，首次出现了任务切换的概念。</li>
+<li><strong>RR</strong>：Round-Robin 轮转，运行一个任务到时间片就切换到下一个任务（context switch）</li>
+<li><strong>MLFQ</strong>：Multi-Level Feedback Queue，多级反馈队列<ul>
+<li>设置不同的优先级，每个任务刚到达都是最高级。</li>
+<li>级别低的任务必须先让级别高的执行完。</li>
+<li>相同级别的任务轮转执行（RR）。</li>
+<li>在同一个优先级执行时间达到阈值就降低优先级：防止高优先级一直占据CPU<ul>
+<li>如果采用对每次执行单独计时的方法可能会有恶意占据CPU的情况发生</li>
+</ul>
+</li>
+<li>每隔一段时间就重置所有任务的优先级为最高：防止低优先级的任务饥饿。</li>
+</ul>
+</li>
+</ul>
+<h2 id="磁盘调度"><a href="#磁盘调度" class="headerlink" title="磁盘调度"></a>磁盘调度</h2><ul>
+<li>SSTF：最短寻道时间。驱动程序无法看到具体的磁道只能看到块地址；饥饿</li>
+<li>NBF：最近块。饥饿</li>
+<li>SCAN：双向扫描。</li>
+<li>Circular-SCAN：只进行单向扫描的SCAN</li>
+<li>LOOK：SCAN 如果扫描方向上没有了访问请求，立即掉头往回扫描。</li>
+<li>Circular-LOOK：C-SCAN 改进，原理同上，只不过是立即从头开始扫描</li>
+</ul>
+<h1 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h1><p><a href="https://scatteredream.github.io/2025/01/18/408-OS-%E8%99%9A%E6%8B%9F%E5%8C%96/#Memory-Virtualization">虚拟化#Memory Virtualization | scatteredream’s blog</a> </p>
+<ul>
+<li>虚拟地址的作用</li>
+<li>内存分配:<ul>
+<li>机制：空闲空间链表节点的分割与合并</li>
+<li>物理：Buddy, SLAB「内存池」<ul>
+<li>空闲空间的管理：内存紧缩，<u>free list</u>(best fit、first fit、next fit、bitmap，内存池)</li>
+</ul>
+</li>
+<li>虚拟：mmap malloc brk</li>
+</ul>
+</li>
+<li>虚拟地址的翻译（重定位）<ul>
+<li>段式 base+bound, bound varies from each other</li>
+<li>页式 fixed bound，</li>
+<li>段页式 </li>
+<li>多级页表 fill one page with one table, hi-level table points to low-level table</li>
+<li>TLB：翻译缓存</li>
+</ul>
+</li>
+<li>Swap：将物理内存看作虚拟内存的缓存<ul>
+<li>机制：Page Fault &amp; Disk I/O </li>
+<li>策略：<ul>
+<li>是否需要SWAP？物理内存充足就没必要开启</li>
+<li>具体换<strong>出</strong>哪一页？LRU, FIFO, Random, Second Chance, LRU-K, 2Q, Clock</li>
+<li>何时换<strong>出</strong>？被动watermark、主动swappiness&gt;0</li>
+<li>一次 I/O 换<strong>出</strong>多少页？ clustering</li>
+<li>何时换<strong>入</strong>？lazy aka. <u>demand paging(请求调入)</u></li>
+<li>一次 I/O 只换<strong>入</strong>一页<strong>吗</strong>？prefetching(预取)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h1><blockquote>
+<p>文件系统 </p>
+</blockquote>
+<ul>
+<li>定义：OS中与管理文件有关的软件和数据结构称为文件系统。它负责为用户建立、撤销、读写、修改和复制文件，还负责完成文件的按名存取和存取控制等。</li>
+<li>文件系统功能：<ol>
+<li>定义文件逻辑结构：实现文件的按名存取；</li>
+<li>定义文件的物理结构：文件信息在存储设备上的存放方式</li>
+<li>文件信息的描述和管理：文件目录管理</li>
+<li>合理地存放文件：对磁盘等辅助存储空间进行统一管理</li>
+<li>实现文件信息的查找</li>
+<li>完成文件的共享与保护</li>
+</ol>
+</li>
+</ul>
+<h2 id="文件、记录和数据项"><a href="#文件、记录和数据项" class="headerlink" title="文件、记录和数据项"></a>文件、记录和数据项</h2><ul>
+<li>对记录式文件，操作系统为用户存取文件信息的最小单位是（记录）</li>
+<li>由字符序列组成，文件内的信息不再划分结构，这是指（流式文件）</li>
+<li>数据库文件的逻辑结构形式是（记录式文件）</li>
+<li>逻辑文件是（从用户观点看）的文件组织形式。</li>
+<li>文件的存储方法依赖于（文件的物理结构、存放文件的存储设备的特性）</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231625487.png" alt="image-20250608231625487"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231633336.png" alt="image-20250608231633336"></p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230151762.png" alt="image-20250608230151762" style="zoom:50%;" />
+
+<h2 id="层次结构"><a href="#层次结构" class="headerlink" title="层次结构"></a>层次结构</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231527443.png" alt="image-20250608231527443"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230354877.png" alt="image-20250608230354877"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230413290.png" alt="image-20250608230413290"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230429042.png" alt="image-20250608230429042"></p>
+<h2 id="分配策略"><a href="#分配策略" class="headerlink" title="分配策略"></a>分配策略</h2><h3 id="文件块分配（物理结构）"><a href="#文件块分配（物理结构）" class="headerlink" title="文件块分配（物理结构）"></a>文件块分配（物理结构）</h3><p>文件物理结构（文件块分配）</p>
+<ul>
+<li><p>连续（Contiguous Allocation）：磁盘上<strong>连续分配</strong>。记录文件只需起始块号和长度。「老式系统、CD-ROM 文件系统」</p>
+</li>
+<li><p>链接（Linked Allocation）：「FAT 文件系统（变种）」</p>
+<ul>
+<li>FAT 表（File Allocation Table）：<strong>不需要在每个块中嵌入指针</strong>，可以将 FAT 缓存在内存中，加快速度；</li>
+<li>FAT 表中集中记录每个块的指针，FAT 表中块号对应的内容是下一个块号。5-9-14 对应的内容分别是 9-14-0(EOF)</li>
+<li>起始块记录在目录项中，系统顺着 FAT 表查找整个文件。</li>
+<li>文件碎片严重（不连续）FAT 表越大，加载越耗内存；</li>
+</ul>
+</li>
+<li><p><strong>索引结构（Indexed Allocation）</strong>：每个文件分配一个<strong>索引块</strong>（或多个索引块），块中记录文件数据块地址。</p>
+<ul>
+<li><p>UNIX（如 ext2、ext3、ext4）使用 inode，Windows NT 的 NTFS 使用 MFT</p>
+</li>
+<li><p><strong>单级索引</strong>：索引块直接记录所有数据块。</p>
+</li>
+<li><p><strong>多级索引</strong>（例如 Unix inode）：</p>
+<ul>
+<li>实现对大文件的支持。</li>
+<li>直接指针 + 间接指针（一级、二级、三级等）如下为 ext2 结构</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>指针类型</th>
+<th>指向内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>12 个直接块指针</td>
+<td>直接指向数据块</td>
+</tr>
+<tr>
+<td>1 个一级间接指针</td>
+<td>指向一个块，块中存放数据块地址</td>
+</tr>
+<tr>
+<td>1 个二级间接指针</td>
+<td>指向一个块，块中是一级指针块地址</td>
+</tr>
+<tr>
+<td>1 个三级间接指针</td>
+<td>指向块 → 二级块 → 一级块 → 数据块地址</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>inode</th>
+<th>FAT</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>类型</td>
+<td>索引结构（混合索引）</td>
+<td>链式结构（集中表）</td>
+</tr>
+<tr>
+<td>访问方式</td>
+<td>多级指针，支持随机访问</td>
+<td>顺链访问，随机访问慢</td>
+</tr>
+<tr>
+<td>碎片控制</td>
+<td>更好（可配合预分配策略）</td>
+<td>容易碎片化</td>
+</tr>
+<tr>
+<td>稳定性</td>
+<td>更强（结构分散）</td>
+<td>FAT 表损坏易导致全盘不可用</td>
+</tr>
+</tbody></table>
+<h3 id="空闲分配"><a href="#空闲分配" class="headerlink" title="空闲分配"></a>空闲分配</h3><ul>
+<li><p>连续（Bitmap）：容易寻找连续空闲块。占空间（对于大磁盘，位图也大），并且需要加载整个bitmap</p>
+</li>
+<li><p>链接：每个空闲块中记录下一个空闲块的地址。查找连续空闲块效率低；</p>
+</li>
+<li><p>空闲表：用一张表记录每一个空闲块号或空闲块段。可以快速定位，但是表会占空间。</p>
+</li>
+<li><p>成组链接：空闲块分组管理，一个块记录多个空闲块地址 + 下一组入口地址。</p>
+<ul>
+<li>综合了“链接法”的简单与“表法”的批量管理优势。</li>
+<li>假设每组记录 4 个空闲块地址 + 下一个组的地址（总共可以在一个块中记录 5 个地址）</li>
+<li>每次取空闲块：<ul>
+<li>优先用当前组的 4 个空闲块；</li>
+<li>当前组用完后，读取“下一组地址”所指向的块，加载新的一组空闲块信息。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ 块100 ]：&#123; 下一个组地址 = 200, 空闲块地址 = 101, 102, 103, 104 &#125;  </span><br><span class="line">[ 块200 ]：&#123; 下一个组地址 = 300, 空闲块地址 = 201, 202, 203, 204 &#125;  </span><br><span class="line">[ 块300 ]：&#123; 下一个组地址 = 0（无下一组）, 空闲块地址 = 301, 302, 303, 304 &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>空闲区间法（Extent-based Free Space Management）<ul>
+<li>记录空闲区域的起始地址 + 长度（适合连续空闲块）</li>
+<li>适合大块文件系统，空间利用率高。但是不适合高度碎片化的场景。</li>
+</ul>
+</li>
+</ul>
+<h2 id="文件共享"><a href="#文件共享" class="headerlink" title="文件共享"></a>文件共享</h2><p>静态文件共享</p>
+<ul>
+<li>绕弯路法：</li>
+<li>连访法：</li>
+<li>基于基本文件目录共享法：</li>
+<li>基于索引节点共享：</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231332461.png" alt="image-20250608231332461"></p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608230514727.png" alt="image-20250608230514727" style="zoom:67%;" />
+
+
+
+<h2 id="文件保护"><a href="#文件保护" class="headerlink" title="文件保护"></a>文件保护</h2><p>访问类型：Read、Write、eXecute、修改访问权限</p>
+<p>访问控制：</p>
+<ul>
+<li>用户范围类型：指定用户、用户组、任意用户</li>
+<li>访问类型和用户范围的组合：<ul>
+<li>访问矩阵</li>
+<li>存取控制表</li>
+</ul>
+</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608231226427.png" alt="image-20250608231226427" style="zoom: 33%;" />
+
+
+
+<h1 id="设备管理"><a href="#设备管理" class="headerlink" title="设备管理"></a>设备管理</h1><p>IO控制技术：</p>
+<ul>
+<li>轮询、中断、DMA、通道</li>
+</ul>
+<h2 id="缓冲"><a href="#缓冲" class="headerlink" title="缓冲"></a>缓冲</h2><ul>
+<li>目的：缓解CPU和外设的速度不匹配、实现并行、减少中断次数、提高效率</li>
+<li>方式：单缓冲、双缓冲、环形缓冲、缓冲池</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608224100649.png" alt="image-20250608224100649"></p>
+<h2 id="设备分配"><a href="#设备分配" class="headerlink" title="设备分配"></a>设备分配</h2><h3 id="原则"><a href="#原则" class="headerlink" title="原则"></a>原则</h3><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608224304923.png" alt="image-20250608224304923" style="zoom:80%;" />
+
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608224501939.png" alt="image-20250608224501939"></p>
+<h3 id="SPOOLing"><a href="#SPOOLing" class="headerlink" title="SPOOLing"></a>SPOOLing</h3><p>假脱机（Simultaneous Peripheral Operations On-Line）将独占设备虚拟成共享设备。</p>
+<p><strong>SPOOLing 是一种“以磁盘作为中介缓冲”的技术</strong>，用于协调低速外设（如打印机、CD机、磁带机）与高速 CPU 之间的速度差异。</p>
+<p>通俗解释：你在电脑上点了<strong>多份文档打印</strong>，这些文档不是立即送到打印机，而是<strong>先被缓存在磁盘的“打印队列”中</strong>。打印机慢慢地、一份一份地取出来打印，CPU 不必等待外设。</p>
+<table>
+<thead>
+<tr>
+<th>应用场景</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>打印系统</td>
+<td>用户打印文档时，任务先存入“打印队列”，再由打印机按序执行，打印机这种独占设备变成共享设备</td>
+</tr>
+<tr>
+<td>批处理系统</td>
+<td>作业先存储在磁盘等待调度再运行</td>
+</tr>
+<tr>
+<td>多用户系统</td>
+<td>多用户提交任务，SPOOLing 使多个用户“看起来像同时在打印”</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>⚠️注意：SPOOLing 是<strong>磁盘级缓冲机制</strong>，区别于内存级的缓存和缓冲。</p>
+</blockquote>
+<p>SPOOLing 的运行流程</p>
+<ol>
+<li>用户程序提交 I/O 请求（如打印）；</li>
+<li>操作系统将请求信息写入<strong>磁盘上的缓冲区（SPOOL区）</strong>；</li>
+<li>外设空闲时，从磁盘中取出任务执行；</li>
+<li>任务完成后反馈状态（如打印完成、打印失败等）。</li>
+</ol>
+<p>SPOOLing 利用了 <strong>多道程序设计的思想</strong>：多个程序同时驻留内存，通过<strong>I/O 与 CPU 并行执行</strong>来提高资源利用率，实现设备的请求排队与管理，支持多用户共享外设。</p>
+<h2 id="磁盘"><a href="#磁盘" class="headerlink" title="磁盘"></a>磁盘</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608225011060.png" alt="image-20250608225011060"></p>
+<p>磁盘调度见之前的。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/06/08/408-OS-%E6%8C%81%E4%B9%85%E5%8C%96/" rel="prev" title="OS 虚拟化">
+                  <i class="fa fa-angle-left"></i> OS 虚拟化
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2023 – 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">碎梦</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+  <a href="https://github.com/scatteredream" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
