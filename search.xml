@@ -36103,8 +36103,10 @@ return 0;
 </ul>
 <h1 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h1><p><a href="https://scatteredream.github.io/2025/01/18/408-OS-%E8%99%9A%E6%8B%9F%E5%8C%96/#Memory-Virtualization">虚拟化#Memory Virtualization | scatteredream’s blog</a> </p>
 <ul>
-<li>虚拟地址的作用</li>
-<li>内存分配:<ul>
+<li><p>虚拟地址的作用</p>
+</li>
+<li><p>内存分配:</p>
+<ul>
 <li>机制：空闲空间链表节点的分割与合并</li>
 <li>物理：Buddy, SLAB「内存池」<ul>
 <li>空闲空间的管理：内存紧缩，<u>free list</u>(best fit、first fit、next fit、bitmap，内存池)</li>
@@ -36113,7 +36115,8 @@ return 0;
 <li>虚拟：mmap malloc brk</li>
 </ul>
 </li>
-<li>虚拟地址的翻译（重定位）<ul>
+<li><p>虚拟地址的翻译（重定位）</p>
+<ul>
 <li>段式 base+bound, bound varies from each other</li>
 <li>页式 fixed bound，</li>
 <li>段页式 </li>
@@ -36121,15 +36124,44 @@ return 0;
 <li>TLB：翻译缓存</li>
 </ul>
 </li>
-<li>Swap：将物理内存看作虚拟内存的缓存<ul>
-<li>机制：Page Fault &amp; Disk I/O </li>
-<li>策略：<ul>
-<li>是否需要SWAP？物理内存充足就没必要开启</li>
-<li>具体换<strong>出</strong>哪一页？LRU, FIFO, Random, Second Chance, LRU-K, 2Q, Clock</li>
-<li>何时换<strong>出</strong>？被动watermark、主动swappiness&gt;0</li>
-<li>一次 I/O 换<strong>出</strong>多少页？ clustering</li>
-<li>何时换<strong>入</strong>？lazy aka. <u>demand paging(请求调入)</u></li>
-<li>一次 I/O 只换<strong>入</strong>一页<strong>吗</strong>？prefetching(预取)</li>
+<li><p>Swap：将物理内存看作虚拟内存的缓存</p>
+<ul>
+<li><p>机制：Page Fault &amp; Disk I/O </p>
+</li>
+<li><p>策略：</p>
+<ul>
+<li><p>是否需要SWAP？物理内存充足就没必要开启</p>
+</li>
+<li><p>具体换<strong>出</strong>哪一页？LRU, FIFO, Random, Second Chance, LRU-K, 2Q, Clock</p>
+<ul>
+<li><p>FIFO：淘汰最先进来的页面。</p>
+</li>
+<li><p>LRU：淘汰最久未访问的页面。</p>
+</li>
+<li><p>OPT：每次发生缺页时，淘汰的是未来最长时间内不会被访问的页面。</p>
+</li>
+<li><p>LRU-2：2个LRU 2Q(改进的LRU-2)</p>
+</li>
+<li><p>Clock：每个页框都有一个<strong>使用位</strong>（Use Bit），初始为 0。页面访问时，若页面在内存中，将其使用位设为 1。若发生缺页且内存已满，从当前“指针”所指的页面开始检查：</p>
+<ul>
+<li><p>若使用位为 0：淘汰该页，加载新页，使用位设为 1，指针移动到下一页。</p>
+</li>
+<li><p>若使用位为 1：将其置为 0，跳过，指针继续前移。</p>
+</li>
+<li><p>重复此过程直到找到使用位为 0 的页。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>何时换<strong>出</strong>？被动watermark、主动swappiness&gt;0</p>
+</li>
+<li><p>一次 I/O 换<strong>出</strong>多少页？ clustering</p>
+</li>
+<li><p>何时换<strong>入</strong>？lazy aka. <u>demand paging(请求调入)</u></p>
+</li>
+<li><p>一次 I/O 只换<strong>入</strong>一页<strong>吗</strong>？prefetching(预取)</p>
+</li>
 </ul>
 </li>
 </ul>
