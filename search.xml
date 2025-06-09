@@ -35804,6 +35804,9 @@ return 0;
 </ul>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250608221712079.png" alt="image-20250608221712079"></p>
 <h1 id="进程的交互"><a href="#进程的交互" class="headerlink" title="进程的交互"></a>进程的交互</h1><h2 id="互斥与同步"><a href="#互斥与同步" class="headerlink" title="互斥与同步"></a>互斥与同步</h2><p><a href="https://scatteredream.github.io/2025/01/24/408-OS-%E5%B9%B6%E5%8F%91/">并发 | scatteredream’s blog</a> </p>
+<p>Semaphore 的 P V 操作</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">P(Semaphore  s)</span><br><span class="line">&#123;</span><br><span class="line">   --s.count;          <span class="comment">//表示申请一个资源;</span></span><br><span class="line">   <span class="keyword">if</span> (s.count &lt; <span class="number">0</span>)   <span class="comment">//表示没有空闲资源;</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// 调用进程进入等待队列s.queue;</span></span><br><span class="line">        <span class="comment">// 阻塞调用进程;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">V(Semaphore s )</span><br><span class="line">&#123;</span><br><span class="line"> ++s.count;	             <span class="comment">//表示释放一个资源；</span></span><br><span class="line"> <span class="keyword">if</span> (s.count &lt;= <span class="number">0</span>)    <span class="comment">//表示有进程处于阻塞状态；</span></span><br><span class="line"> &#123;</span><br><span class="line">     <span class="comment">// 从等待队列s.queue中取出一个进程p;</span></span><br><span class="line">     <span class="comment">// 进程p进入就绪队列;</span></span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h2 id="IPC"><a href="#IPC" class="headerlink" title="IPC"></a>IPC</h2><blockquote>
 <p>管道（Pipe）</p>
 </blockquote>
