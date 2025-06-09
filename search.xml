@@ -36189,7 +36189,7 @@ return 0;
       </categories>
   </entry>
   <entry>
-    <title>虚拟机</title>
+    <title>Virtual Machine Monitor/Hype</title>
     <url>/2025/01/20/408-OS-Virtual-Machine/</url>
     <content><![CDATA[<h1 id="Hypervisor-VMM"><a href="#Hypervisor-VMM" class="headerlink" title="Hypervisor (VMM)"></a>Hypervisor (VMM)</h1><p>Hypervisor 是一种运行在基础硬件和操作系统之间的中间软件层，可允许多个操作系统和应用共享硬件。也可叫做虚拟机监视器，即 VMM（ virtual machine monitor ）。（操作系统的操作系统）</p>
 <p>动机：</p>
@@ -36231,7 +36231,7 @@ return 0;
       </categories>
   </entry>
   <entry>
-    <title>OS 虚拟化</title>
+    <title>持久化</title>
     <url>/2025/06/08/408-OS-%E6%8C%81%E4%B9%85%E5%8C%96/</url>
     <content><![CDATA[<h1 id="I-O-设备"><a href="#I-O-设备" class="headerlink" title="I/O 设备"></a>I/O 设备</h1><h2 id="I-O-系统架构演进"><a href="#I-O-系统架构演进" class="headerlink" title="I/O 系统架构演进"></a>I/O 系统架构演进</h2><h3 id="传统系统"><a href="#传统系统" class="headerlink" title="传统系统"></a>传统系统</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241216183418923-1734346411610-1.png" alt="image-20241216183418923"></p>
 <p>CPU通过专用的内存总线连接到内存，通过通用I/O总线(如PCI)连接到显卡等高性能设备，通过外围总线连接到低速的设备(USB Flash, 磁盘驱动器 )，因为光速的限制以及各种物理因素，越快的总线越短，造价也贵，因此离CPU越远的设备性能越低。</p>
