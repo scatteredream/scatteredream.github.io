@@ -166,18 +166,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-count">96</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">20</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">130</span>
+        <span class="site-state-item-count">131</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -194,6 +194,659 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/12/408-%E8%AE%A1%E7%BD%91-HTTPS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/12/408-%E8%AE%A1%E7%BD%91-HTTPS/" class="post-title-link" itemprop="url">HTTPS(TLS)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-05-12 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-12T00:00:00+08:00">2025-05-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-06-03 18:32:43" itemprop="dateModified" datetime="2025-06-03T18:32:43+08:00">2025-06-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%BD%91/" itemprop="url" rel="index"><span itemprop="name">计网</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="计算机面临的安全威胁"><a href="#计算机面临的安全威胁" class="headerlink" title="计算机面临的安全威胁"></a>计算机面临的安全威胁</h1><h2 id="攻击类型"><a href="#攻击类型" class="headerlink" title="攻击类型"></a>攻击类型</h2><p><a target="_blank" rel="noopener" href="https://javaguide.cn/cs-basics/network/network-attack-means.html">网络攻击常见手段总结 | JavaGuide</a> </p>
+<p><strong>被动攻击</strong>：也叫截获，流量分析。</p>
+<p><strong>主动攻击</strong>：</p>
+<ul>
+<li><p><strong>篡改报文</strong>。</p>
+</li>
+<li><p><strong>恶意程序</strong>（病毒、蠕虫、木马、流氓软件、漏洞入侵、逻辑炸弹）</p>
+</li>
+<li><p><strong>拒绝服务</strong>（DoS, Denial of Service）：从互联网的一个服务器A发送大量信息到另一个服务器B，使得服务器B崩溃，拒绝服务。从多个服务器发分组又叫做分布式拒绝服务（DDoS, Distributed DoS）。负载均衡（anycast…）</p>
+</li>
+<li><p><strong>交换机中毒</strong>：发送大量伪造MAC帧，迅速填满交换机的交换表，使交换机无法正常提供服务。</p>
+</li>
+</ul>
+<h2 id="安全措施"><a href="#安全措施" class="headerlink" title="安全措施"></a>安全措施</h2><ul>
+<li><strong>机密性</strong>：密码技术，加密报文信息；对称加密</li>
+<li><strong>信息完整性</strong>：防止报文信息被篡改；非对称加密，签名-鉴别</li>
+<li><strong>端点鉴别</strong>（Authentication）：鉴别对方的真实身份；</li>
+</ul>
+<ul>
+<li><strong>访问控制</strong>（Authorization）：确认用户的权限级别，能够进行什么样的操作。</li>
+</ul>
+<h3 id="Authentication（身份验证）"><a href="#Authentication（身份验证）" class="headerlink" title="Authentication（身份验证）"></a>Authentication（身份验证）</h3><p>确认用户的身份，确保用户是他声称的那个人。</p>
+<p>验证用户的凭证（如用户名/密码、指纹、OTP 等）。</p>
+<h4 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h4><ul>
+<li>登录网站时输入用户名和密码。</li>
+<li>使用指纹、面部识别或其他生物识别方式解锁设备。</li>
+<li>输入短信验证码进行二次验证。</li>
+</ul>
+<h4 id="重点"><a href="#重点" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>“你是谁？”</li>
+<li>解决的是<strong>身份问题</strong>。</li>
+</ul>
+<h3 id="Authorization（授权）"><a href="#Authorization（授权）" class="headerlink" title="Authorization（授权）"></a>Authorization（授权）</h3><p>确定已经通过身份验证的用户是否有权访问某资源或执行某操作。</p>
+<p>控制用户能访问的资源或功能。</p>
+<h4 id="例子-1"><a href="#例子-1" class="headerlink" title="例子"></a>例子</h4><ul>
+<li>一个普通用户登录后不能访问管理员控制面板。</li>
+<li>文件系统中，只有特定权限的用户可以修改文件。</li>
+<li>云服务中，用户可能只能管理自己的项目，不能访问其他人的数据。</li>
+</ul>
+<h4 id="重点-1"><a href="#重点-1" class="headerlink" title="重点"></a>重点</h4><ul>
+<li>“你可以做什么？”</li>
+<li>解决的是<strong>权限问题</strong>。</li>
+</ul>
+<h3 id="区别与联系"><a href="#区别与联系" class="headerlink" title="区别与联系"></a>区别与联系</h3><table>
+<thead>
+<tr>
+<th><strong>对比项</strong></th>
+<th><strong>Authentication（身份验证）</strong></th>
+<th><strong>Authorization（授权）</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>目的</strong></td>
+<td>确认用户身份</td>
+<td>确定用户访问权限</td>
+</tr>
+<tr>
+<td><strong>处理对象</strong></td>
+<td>用户的身份</td>
+<td>用户的权限</td>
+</tr>
+<tr>
+<td><strong>执行顺序</strong></td>
+<td>先进行身份验证</td>
+<td>只有通过身份验证后才能进行授权</td>
+</tr>
+<tr>
+<td><strong>核心问题</strong></td>
+<td>用户是否真实有效？</td>
+<td>用户能访问哪些资源或执行哪些操作？</td>
+</tr>
+<tr>
+<td><strong>技术示例</strong></td>
+<td>密码验证、2FA、OAuth 登录</td>
+<td>角色权限分配（RBAC）、ACL、API Token</td>
+</tr>
+</tbody></table>
+<p><code>Authentication</code> 是 <code>Authorization</code> 的前提。<br> 一个用户必须先证明“自己是谁”，然后才能被系统允许或限制访问某些资源或执行操作。</p>
+<h1 id="加密算法"><a href="#加密算法" class="headerlink" title="加密算法"></a>加密算法</h1><h2 id="两类密钥体制"><a href="#两类密钥体制" class="headerlink" title="两类密钥体制"></a>两类密钥体制</h2><h3 id="对称加密"><a href="#对称加密" class="headerlink" title="对称加密"></a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%B0%8D%E7%A8%B1%E5%AF%86%E9%91%B0%E5%8A%A0%E5%AF%86">对称加密</a></h3><p>双方使用同一把密钥，不对外公开，使用密钥将报文信息进行加密或者进行解密。</p>
+<ul>
+<li><p><strong>DES</strong>：密钥共64位，8位用于奇偶校验，实际为56位有效。</p>
+</li>
+<li><p><strong>3DES</strong>：使用两个DES密钥，先用K1加密，再用K2解密，再用K1加密</p>
+</li>
+<li><p><strong>AES</strong>：使用分组加密，密钥长度为128 192 256三种</p>
+</li>
+<li><p><strong>一个传统保管箱，开门和关门都是使用同一条钥匙，这是对称加密</strong> </p>
+</li>
+<li><p>只支持一对一通信。</p>
+</li>
+</ul>
+<h3 id="公钥加密（非对称加密）"><a href="#公钥加密（非对称加密）" class="headerlink" title="公钥加密（非对称加密）"></a><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%AC%E5%BC%80%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86">公钥加密（非对称加密）</a></h3><ul>
+<li><p>使用密钥生成器生成密钥对，一个是公钥（对外公开），一个是私钥（自己保留）。</p>
+</li>
+<li><p>已知其中一个密钥的情况下，几乎不可能知道另外一个密钥。</p>
+</li>
+<li><p>私钥加密的数据，只能用公钥解密。公钥加密的数据，只能用私钥解密。</p>
+<ul>
+<li>其实不应该叫做加密和解密，应该称作D运算和E运算这两个互逆的运算，没有规定他们谁先谁后。</li>
+<li>更准确的说法是私钥参与D运算，公钥参与E运算。</li>
+</ul>
+</li>
+<li><p><strong>一个公开的邮箱，投递口是任何人都可以寄信进去的，这可视为公钥；</strong></p>
+</li>
+<li><p><strong>而只有信箱主人拥有钥匙可以打开信箱，这就视为私钥。</strong></p>
+</li>
+<li><p>支持多对一的通信。</p>
+</li>
+</ul>
+<h2 id="鉴别（Authentication）"><a href="#鉴别（Authentication）" class="headerlink" title="鉴别（Authentication）"></a>鉴别（Authentication）</h2><h3 id="报文鉴别"><a href="#报文鉴别" class="headerlink" title="报文鉴别"></a>报文鉴别</h3><p>主要是鉴别报文是否被篡改。</p>
+<h4 id="数字签名（私钥加密-公钥解密）"><a href="#数字签名（私钥加密-公钥解密）" class="headerlink" title="数字签名（私钥加密-公钥解密）"></a>数字签名（私钥加密-公钥解密）</h4><p>decryption and encryption</p>
+<p>A要发出信息，并进行数字签名，将报文用私钥SK<del>A</del>进行D运算（签名），其他人只能用公钥PK<del>A</del>进行E运算（鉴别）。</p>
+<ul>
+<li><strong>防止篡改报文</strong>：没人知道A的私钥SK<del>A</del>，窃听者使用公钥PK<del>A</del>进行E运算得出明文，篡改报文之后再D运算，另一边使用公钥PK<del>A</del>解析出的明文将会是不可读的，因此不会被欺骗。</li>
+<li><strong>不可否认</strong>：既然信息明文可读，就说明没有被篡改过，而拥有私钥的只有A一个人，A就不能抵赖自己曾经的签名。</li>
+</ul>
+<p>上述方法是对报文本身进行了私钥加密，公钥直接可以解出报文具体内容，如果要用非对称加密实现报文内容的保密，可以在A用私钥D运算之后，再用B的公钥E运算，这样就彻底加密了报文内容，B收到以后先用B的私钥D运算，再用A的公钥E运算。</p>
+<h4 id="哈希函数"><a href="#哈希函数" class="headerlink" title="哈希函数"></a>哈希函数</h4><p>是一种摘要算法，将任意长度的报文经过哈希函数可以的到固定长度的字符串。</p>
+<h4 id="结合报文鉴别码（MAC）实现数字签名报文鉴别"><a href="#结合报文鉴别码（MAC）实现数字签名报文鉴别" class="headerlink" title="结合报文鉴别码（MAC）实现数字签名报文鉴别"></a><span id="sign">结合报文鉴别码（MAC）实现数字签名报文鉴别</span></h4><p>Message Authentication Code, MAC</p>
+<p>H(X) 代表 X 的哈希值；D(X) 代表 X 经过私钥的D运算以后的结果；E(X) 代表 X 经过 公钥的E运算之后的结果</p>
+<p>D(E(X)) = X         E(D(X)) = X</p>
+<p>扩展报文实现的数字签名可以分为三类：</p>
+<ol>
+<li>❌A + H(A)：只篡改报文A或者H(A)可以鉴别出来，但是直接换一个 X + H(X) 直接会蒙混过关，由此引出了使用密钥K来进行哈希运算的方法。</li>
+<li>✅A + H(A,K)：也就是 HMAC，使用对称密钥K，如果报文A被篡改成X，但是攻击者不知道密钥，因此无法伪造出哈希值H(X,K)，另一边根据密钥计算出H(X,K)，就能发现报文被篡改过。这样将密钥拼接在正文之后，得出的散列值就是<strong>HMAC</strong>。JWT(Json Web Token)采用的数字签发就可以采用这样的方式 （HS256 代表 HMAC 散列函数为SHA-256）**对密钥K<u>严格要求保密</u>**。</li>
+<li>✅A + D(H(A))：使用私钥对报文的哈希进行D运算，其他人使用公钥对密文进行E运算能够得出哈希值，将这个哈希值和报文段的哈希值比较即可。如果A$被篡改为$X，攻击者因为不知道发送者的私钥，因此无法得出一个正确的 D(H(X))，这时候发给接收者，接受者再对攻击者伪造的哈希值密文进行E运算，得出哈希值肯定和真正的H(X)不同，这就是RS256和ES256的原理。**由此方法扩展出的报文<u>不可伪造，也不可否认</u>**，同时可以运用到分布式架构中，一个服务签发，其他服务验证只需要公钥即可。ES256（ECDSA）使用椭圆曲线计算公钥。</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/kirito-c/p/12402066.html">JWT 签名算法 HS256、RS256 及 ES256 及密钥生成 - 於清樂 - 博客园</a> </p>
+<h5 id="RSA-与-DSA"><a href="#RSA-与-DSA" class="headerlink" title="RSA 与 DSA"></a>RSA 与 DSA</h5><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/20221021233729-2.png" alt="RSA算法和DSA的区别" style="zoom:67%;" />
+
+<p>Elliptic Curve Digital Signature Algorithm，用私钥生成原文的签名，用公钥验证签名是否与原文相对应。</p>
+<blockquote>
+<p>ECDSA 签名流程：</p>
+<ul>
+<li><strong>输入</strong>：私钥 <code>d</code>、待签名消息 <code>m</code></li>
+<li><strong>输出</strong>：签名 <code>(r, s)</code></li>
+</ul>
+<ol>
+<li><strong>消息哈希</strong>：<ul>
+<li>计算 <code>e = HASH(m)</code>，比如使用 SHA-256</li>
+</ul>
+</li>
+<li><strong>选随机数</strong>：<ul>
+<li>随机选一个整数 <code>k</code>，满足 <code>1 ≤ k &lt; n</code>，其中 <code>n</code> 是椭圆曲线的阶</li>
+<li>⚠️ 注意：<code>k</code> 必须<strong>绝对不能重复</strong>，否则私钥会被泄漏（Sony PS3 曾因这个出过事故）</li>
+</ul>
+</li>
+<li><strong>计算椭圆曲线点</strong>：<ul>
+<li><code>P = k × G</code>，其中 <code>G</code> 是椭圆曲线的基点</li>
+<li>取 <code>r = P.x mod n</code>，如果 <code>r == 0</code>，重新选 <code>k</code></li>
+</ul>
+</li>
+<li><strong>计算签名值 s</strong>：<ul>
+<li><code>s = k⁻¹ × (e + d × r) mod n</code>，如果 <code>s == 0</code>，重新选 <code>k</code></li>
+</ul>
+</li>
+<li><strong>输出签名对</strong> <code>(r, s)</code></li>
+</ol>
+</blockquote>
+<blockquote>
+<p>ECDSA 验证流程</p>
+<p><strong>输入</strong>：公钥 <code>Q = d × G</code>、消息 <code>m</code>、签名 <code>(r, s)</code><br> <strong>输出</strong>：验签结果 true / false</p>
+<ol>
+<li><strong>检查 r、s 是否在合法范围内</strong>：<code>1 ≤ r,s &lt; n</code>，否则签名无效</li>
+<li><strong>消息哈希</strong>：<ul>
+<li>计算 <code>e = HASH(m)</code></li>
+</ul>
+</li>
+<li><strong>计算中间值</strong>：<ul>
+<li><code>w = s⁻¹ mod n</code></li>
+<li><code>u1 = e × w mod n</code></li>
+<li><code>u2 = r × w mod n</code></li>
+</ul>
+</li>
+<li><strong>计算点坐标</strong>：<ul>
+<li><code>P = u1 × G + u2 × Q</code></li>
+<li>如果 <code>P == ∞</code>，则签名无效</li>
+</ul>
+</li>
+<li><strong>验证签名是否正确</strong>：<ul>
+<li>签名有效 ⇔ <code>r ≡ P.x mod n</code></li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<ul>
+<li>对于非对称的加密算法，加密功能的实现=公钥加密+私钥解密，签名功能的实现=私钥加密+公钥解密。</li>
+<li>换言之，在DSA算法中，私钥不能解密使用公钥加密的数据，因此具有加密功能，而RSA可以。</li>
+</ul>
+<h3 id="实体鉴别"><a href="#实体鉴别" class="headerlink" title="实体鉴别"></a>实体鉴别</h3><h4 id="对称密钥"><a href="#对称密钥" class="headerlink" title="对称密钥"></a>对称密钥</h4><p>主要是验证来访者的确是访问者，也就是鉴别身份。</p>
+<p>相比于报文鉴别，实体鉴别只需要鉴别一次发送者即可，后续传输不需要鉴别，使用<strong>共享对称密钥</strong>，如果第三方C截获了A发给B的验证信息，并未破译报文，而是直接伪装成A给B发消息，这样B就会错误地与C建立起联系。把以前窃听到的数据原封不动地重新发送给接收方，这就叫 <strong>重放攻击</strong>。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E9%87%8D%E6%94%BE%E6%94%BB%E5%87%BB/2229240">重放攻击_百度百科</a> </p>
+<p>重放攻击的基本原理就是把以前<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%AA%83%E5%90%AC/1624599?fromModule=lemma_inlink">窃听</a>到的数据原封不动地重新发送给接收方。很多时候，网络上传输的数据是<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8A%A0%E5%AF%86/752748?fromModule=lemma_inlink">加密</a>过的，此时窃听者无法得到数据的准确意义。但如果他知道这些数据的作用，就可以在不知道数据内容的情况下通过再次发送这些数据达到愚弄接收端的目的。例如，有的系统会将鉴别信息进行简单加密后进行传输，这时攻击者虽然无法窃听<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%AF%86%E7%A0%81/65553?fromModule=lemma_inlink">密码</a>，但他们却可以首先截取加密后的口令然后将其重放，从而利用这种方式进行有效的攻击。再比如，假设网上存款系统中，一条消息表示用户支取了一笔存款，攻击者完全可以多次发送这条消息而偷窃存款。</p>
+</blockquote>
+<p>因此采取的措施就是尽量能够让B端验证清楚A的身份。K(X)表示用密钥加密过的X</p>
+<p>A先发身份信息 + 一个大随机不重复数<code>RA</code>，B收到后响应一个<code>RB</code>和<code>K(RA)</code>，因此对于A端而言B端是可信的；A端再发送<code>K(RB)</code>，因此对于B端而言A端是可信的。需要注意的是每次会话都都需要重新验证，并且需要有足够的空间存储不同会话的不同随机数。</p>
+<h4 id="非对称密钥"><a href="#非对称密钥" class="headerlink" title="非对称密钥"></a>非对称密钥</h4><p>对于上文的不重复随机数，B可以用B自己的私钥加密RA，A用B的公钥解密得出RA；A用自己的私钥加密RB，B用A的公钥解密RB。这里C可以生成自己的私钥和公钥，分别截获RA和RB，仍然能够冒充A，与B进行通信。不过A与B根本没有进行通信，A端很容易察觉到。</p>
+<p><strong>中间人攻击</strong>：假设AB通信双方并没有提前知道对方的公钥是什么。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241129155621051.png" alt="image-20241129155621051"></p>
+<p>C截获A的身份验证信息和RB，用自己的私钥加密RB得到D<del>C</del>(RB)返回给B，同时把RB转发给A，A向对方索取公钥，C就把自己的公钥发给A，但是仍然把公钥的请求转发给A，A发出了自己的D<del>A</del>(RB)和公钥，但均被C所截获。</p>
+<p>A跟B开始建立通信，B就把发送的数据用C的公钥加密，C直接可以用自己的私钥解密，解密出来以后再用A的公钥加密，发给A，看似A和B建立了保密通信，实际上C能够神不知鬼不觉地窃取信息。</p>
+<blockquote>
+<p>SSL劫持</p>
+<p>当今绝大部分网站采用HTTPS方式进行访问，也就是用户与网站服务器间建立<a target="_blank" rel="noopener" href="https://info.support.huawei.com/info-finder/encyclopedia/zh/SSL.html">SSL</a>连接，基于SSL证书进行数据验证和加密。HTTPS可以在一定程度上减少中间人攻击，但是攻击者还是会使用各种技术尝试破坏HTTPS，SSL劫持就是其中的一种。SSL劫持也称为SSL证书欺骗，攻击者伪造网站服务器证书，公钥替换为自己的公钥，然后将虚假证书发给用户。此时用户浏览器会提示不安全，但是如果用户安全意识不强继续浏览，攻击者就可以控制用户和服务器之间的通信，解密流量，窃取甚至篡改数据。</p>
+</blockquote>
+<h2 id="密钥分配与管理"><a href="#密钥分配与管理" class="headerlink" title="密钥分配与管理"></a>密钥分配与管理</h2><h3 id="非对称加密算法"><a href="#非对称加密算法" class="headerlink" title="非对称加密算法"></a>非对称加密算法</h3><ul>
+<li>加密算法：公钥加密，私钥解密。</li>
+<li>签名算法：私钥加密，公钥解密。</li>
+</ul>
+<h4 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a><span id="rsa">RSA</span></h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/RSA%E5%8A%A0%E5%AF%86%E6%BC%94%E7%AE%97%E6%B3%95">Rivest-Shamir-Adleman - Wikipedia</a> </p>
+</blockquote>
+<h5 id="难点：大数因式分解"><a href="#难点：大数因式分解" class="headerlink" title="难点：大数因式分解"></a>难点：大数因式分解</h5><p>公开的数字：公钥D，N</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241129230424076-1732894652386-1.png" alt="image-20241129230424076"></p>
+<p>难点：算出T的值，也就是要分解N。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241129230521315-1732944264022-8.png" alt="image-20241129230521315"></p>
+<h5 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h5><ul>
+<li>使用场景较广泛，适合需要加密数据、验证签名的场合。</li>
+<li>不适合直接交换大数据（效率较低）。</li>
+</ul>
+<h5 id="RSA-的缺陷"><a href="#RSA-的缺陷" class="headerlink" title="RSA 的缺陷"></a>RSA 的缺陷</h5><ul>
+<li>没有前向保密性，所有的数字（质数乘积N，公钥E）必须提前沟通好，依赖于长期的静态密钥对（公钥和私钥）来交换对称密钥，而没有使用每次会话生成的临时密钥对。在 RSA 密钥交换过程中，如果服务器的私钥被泄露，攻击者可以解密所有使用该私钥加密的对称密钥，进而恢复以前的会话数据，从而破坏了前向保密性。</li>
+<li>基于大数乘积分解问题，密钥和签名的长度都很长，签名速度和验证速度慢，占用CPU时间长，抗量子攻击（Shor算法）弱</li>
+</ul>
+<h4 id="Diffle-Hellman-密钥交换"><a href="#Diffle-Hellman-密钥交换" class="headerlink" title="Diffle-Hellman 密钥交换"></a>Diffle-Hellman 密钥交换</h4><blockquote>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%BF%AA%E8%8F%B2-%E8%B5%AB%E7%88%BE%E6%9B%BC%E5%AF%86%E9%91%B0%E4%BA%A4%E6%8F%9B">Diffle-Hellman Key Exchange - Wikipedia</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/599518034">一文搞懂Diffie-Hellman密钥交换协议 - 知乎</a> </p>
+</blockquote>
+<h5 id="难点：离散对数"><a href="#难点：离散对数" class="headerlink" title="难点：离散对数"></a>难点：离散对数</h5><p>公开的数字：P、G、双方的公钥。</p>
+<ul>
+<li><p>正向计算简单，逆向计算难（即在有限域上计算  $g^x \mod p$ 的逆运算很难）</p>
+</li>
+<li><p>依赖于离散对数的计算难度，使用的素数位数越长，安全性越高。</p>
+</li>
+<li><p>易受中间人攻击，因此通常结合认证机制（如数字签名）使用。</p>
+</li>
+</ul>
+<h5 id="使用场景-1"><a href="#使用场景-1" class="headerlink" title="使用场景"></a>使用场景</h5><ul>
+<li>专用于安全密钥交换，通常与对称加密算法结合使用。</li>
+<li>不支持数据加密或签名。</li>
+</ul>
+<p>由8和19无法逆推回x与y，由$19^x \mod 23 = 8^y \mod 23$ 也无法推出x和y的值</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241129230002490.png" alt="image-20241129230002490"></p>
+<h5 id="ECDHE-算法"><a href="#ECDHE-算法" class="headerlink" title="ECDHE 算法"></a><span id=ecdhe>ECDHE 算法</span></h5><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%A9%A2%E5%9C%93%E6%9B%B2%E7%B7%9A%E8%BF%AA%E8%8F%B2-%E8%B5%AB%E7%88%BE%E6%9B%BC%E9%87%91%E9%91%B0%E4%BA%A4%E6%8F%9B">Elliptic-Curve Diffie–Hellman - Wikipedia</a> </p>
+<p>static DH算法 – &gt; DHE算法、ECDH算法 – &gt; ECDHE算法</p>
+<p><strong>static DH</strong> 算法里有一方的私钥是静态的，也就说每次密钥协商的时候有一方的私钥都是一样的，一般是服务器方固定，即 a 不变，客户端的私钥则是随机生成的。 于是，DH 交换密钥时就只有客户端的公钥是变化，而服务端公钥是不变的，那么随着时间延长，黑客就会截获海量的密钥协商过程的数据，因为密钥协商的过程有些数据是公开的，黑客就可以依据这些数据暴力破解出服务器的私钥，然后就可以计算出会话密钥了，于是之前截获的加密数据会被破解，所以 static DH 算法<strong>不具备前向安全性</strong>。</p>
+<p><strong>DHE</strong> ——<strong>Ephemeral（临时密钥）</strong>：在 DHE 中，”Ephemeral” 表示每次会话都生成新的密钥对（临时密钥）。因此，即使密钥在某一时刻被泄露，它也无法用于恢复以前的通信，增强了前向保密性（forward secrecy）。</p>
+<p>G、P可以固定，DHE 每次需要传递的数据就是计算出来的公钥，不过大数乘除性能不好，于是有了ECDHE，用ECC提高性能：</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2023-10-19-09-21-59.png" alt="img"></p>
+<p><strong>ECDHE</strong>（Elliptic Curve Diffie-Hellman Ephemeral） 是 Diffie-Hellman 协议的椭圆曲线版本，使用椭圆曲线加密（ECC，Elliptic Curve Cryptography）来代替传统的基于大数的计算。基于椭圆曲线离散对数问题（ECDLP）的困难性。它定义在椭圆曲线上的一个有限域循环群上。给定一个基点 <code>G</code> 和一个点 <code>P = k * G</code>（其中 <code>k</code> 是私钥），计算 <code>k</code> 在计算上是极其困难的。公钥是曲线上的一个点，私钥是一个整数。椭圆曲线加密在相同的安全级别下，所需的密钥长度比传统的 DH 小得多，从而提高了计算效率。</p>
+<h4 id="密钥分发中心（KDC）"><a href="#密钥分发中心（KDC）" class="headerlink" title="密钥分发中心（KDC）"></a>密钥分发中心（KDC）</h4><p>Key Distribution Center</p>
+<h3 id="公钥体制：CA"><a href="#公钥体制：CA" class="headerlink" title="公钥体制：CA"></a>公钥体制：CA</h3><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%AC%E9%96%8B%E9%87%91%E9%91%B0%E8%AA%8D%E8%AD%89">Certificate Authority 证书权威机构</a></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2023-10-16-17-48-27.png" alt="img"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2023-10-18-10-40-13.png" alt="img"></p>
+<p>除非A与B线下沟通好公钥，不然总是有可能会被中间人攻击（即中间人会截获请求者的公钥，替换成自己的公钥），那么如何保证B的公钥能准确无误传到A手上不被篡改呢？需要第三方进行数字签名，CA用自己的私钥将报文信息数字签名，也就是MAC报文鉴别码。最终报文鉴别码附在报文后面$B + D(H(B))$</p>
+<p>这里的报文B包含：</p>
+<ul>
+<li>B的身份验证信息（我是B）</li>
+<li>B的公钥（我的公钥是xxx）</li>
+</ul>
+<p>因此，B需要提供证书，A需要把证书的报文部分进行哈希运算，然后用报文中B提供的公钥进行E运算，看得出的结果是否相同，如果不同说明证书被篡改，不可信。一切的基础是建立在CA上面，CA是一个大家都认可的权威机构</p>
+<h4 id="CA-标准：X-509（PKI）"><a href="#CA-标准：X-509（PKI）" class="headerlink" title="CA 标准：X.509（PKI）"></a>CA 标准：X.509（PKI）</h4><p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%85%AC%E9%96%8B%E9%87%91%E9%91%B0%E8%AA%8D%E8%AD%89">公开密钥认证 - 维基百科，自由的百科全书</a> Public Key Infrastructure</p>
+<p><strong>数字证书标准</strong>：</p>
+<ul>
+<li>X.509 版本</li>
+<li>数字证书名称、序列号</li>
+<li>本数字签名证书使用的签名算法（CA进行数字签名的非对称算法）</li>
+<li>数字签名的公钥（私钥由签发者保存）</li>
+<li>签发者的唯一标识符</li>
+<li>数字证书的有效期</li>
+<li>数字证书的主体名（数字证书拥有者及其拥有的公钥的唯一标识符）</li>
+</ul>
+<h4 id="CA-信任链：多级认证系统"><a href="#CA-信任链：多级认证系统" class="headerlink" title="CA 信任链：多级认证系统"></a>CA 信任链：多级认证系统</h4><p>万一中级证书不能信任了，还可以让根证书再找一个中级证书，因为信任根证书，也自然信任这个新的中级证书，但如果根证书直接信任某个网站的证书，万一根证书被攻破不能信任了，那就找不到可以信任的了。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241129222025691.png" alt="image-20241129222025691"></p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%A0%B9%E8%AF%81%E4%B9%A6">根证书</a>：所有信任链的起点，使用私钥自签。根证书获得广泛认可，通常已预先安装在各种软件（包括<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F">操作系统</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BD%91%E9%A1%B5%E6%B5%8F%E8%A7%88%E5%99%A8">浏览器</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E9%83%B5%E4%BB%B6%E7%94%A8%E6%88%B6%E7%AB%AF">电邮软件</a>等），作为<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BF%A1%E4%BB%BB%E9%8F%88">信任链</a>的起点，来自于公认可靠的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%94%BF%E5%BA%9C%E6%9C%BA%E5%85%B3">政府机关</a>（如<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%A6%99%E6%B8%AF%E9%83%B5%E6%94%BF">香港邮政</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8F%B0%E7%81%A3%E7%B6%B2%E8%B7%AF%E8%B3%87%E8%A8%8A%E4%B8%AD%E5%BF%83">台湾网络信息中心</a>）、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AF%81%E4%B9%A6%E9%A2%81%E5%8F%91%E6%9C%BA%E6%9E%84">证书颁发机构</a>公司（如<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/DigiCert">DigiCert</a>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Google">Google</a>）、非营利组织（如<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Let's_Encrypt">Let’s Encrypt</a>）等，与各大软件商透过严谨的核认程序才在不同的软件广泛部署。由于部署程序复杂费时，需要行政人员的授权及机构法人身份的核认，一张根证书有效期可能长达二十年以上。在某些企业，也可能会在内部电脑自行安装企业自签的根证书，以支持<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%86%85%E9%83%A8%E7%BD%91">内部网</a>的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E4%BC%81%E4%B8%9A%E7%BA%A7%E8%BD%AF%E4%BB%B6">企业级软件</a>；但是这些证书可能未被广泛认可，只在企业内部适用。</p>
+<p><strong>中介证书</strong>：认证机构的一个重要任务就是为客户签发证书，虽然广泛认可的认证机构都已拥有根证书，相对应的私钥可用以签署其他证书，但因为<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%AF%86%E9%92%A5%E7%AE%A1%E7%90%86">密钥管理</a>和行政考虑，一般会先行签发中介证书，才为客户作数字签署。中介证书的有效期会较根证书为短，并可能对不同类别的客户有不同的中介证书作分工。</p>
+<p><strong>TLS 服务器证书</strong>：服务器通常以域名形式在互联网上提供服务，服务器证书上<strong>主体</strong>的<strong>通用名称</strong>就会是相应的域名，相关机构名称则写在<strong>组织</strong>或<strong>单位</strong>一栏上。服务器证书（包括公钥）和私钥会安装于服务器（例如<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Apache_HTTP_Server">Apache</a>），等待客户端连接时<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%8F%A1%E6%89%8B_(%E6%8A%80%E6%9C%AF)">协议加密细节</a>。客户端的软件（如浏览器）会执行<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/w/index.php?title=%E8%AA%8D%E8%AD%89%E8%B7%AF%E5%BE%91%E9%A9%97%E8%AD%89%E7%AE%97%E6%B3%95&action=edit&redlink=1">认证路径验证算法</a>以确保安全，如果未能肯定加密通道是否安全（例如证书上的主体名称不对应网站域名、服务器使用了自签证书、或加密算法不够强），可能会警告用户。</p>
+<p><strong>TLS 客户端证书</strong>：有时候，某些TLS服务器可能会在建立加密通道时，要求客户端提供客户端证书，以验证<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B0%E5%AD%97%E8%BA%AB%E4%BB%BD">身份</a>及<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%AD%98%E5%8F%96%E6%8E%A7%E5%88%B6">控制访问权限</a>。客户端证书包含电子邮件地址或个人姓名，而不是主机名。但客户端证书比较不常见，因为考虑到技术门槛及成本因素，通常都是由服务提供者验证客户身份，而不是依赖第三方认证机构。通常，需要使用到客户端证书的服务都是内部网的企业级软件，他们会设立自己的内部根证书，由企业的技术人员在企业内部的电脑安装相关客户端证书以便使用。在公开的互联网，大多数网站都是使用<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%AF%86%E7%A2%BC_(%E8%AA%8D%E8%AD%89)">登录密码</a>和<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Cookie">Cookie</a>来验证用户，而不是客户端证书。客户端证书在<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%81%A0%E7%A8%8B%E9%81%8E%E7%A8%8B%E8%AA%BF%E7%94%A8">RPC系统</a>中更常见，用于验证连接设备的许可授权。</p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%87%AA%E7%AD%BE%E8%AF%81%E4%B9%A6">自签证书</a>：在用于小范围测试等目的的时候，用户也可以自己生成数字证书，但没有任何可信赖的人签名，这种自签名证书通常不会被广泛信任，使用时可能会遇到电脑软件的安全警告。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2023-10-17-16-26-23.jpg" alt="img"></p>
+<h4 id="CA-撤销名单"><a href="#CA-撤销名单" class="headerlink" title="CA 撤销名单"></a>CA 撤销名单</h4><p>CA 撤销名单：尚未到期就被<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AF%81%E4%B9%A6%E9%A2%81%E5%8F%91%E6%9C%BA%E6%9E%84">证书颁发机构</a>吊销的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6">数字证书</a>的名单。</p>
+<ul>
+<li>吊销：该证书被不可逆的吊销。例如，它被不当的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AF%81%E4%B9%A6%E9%A2%81%E5%8F%91%E6%9C%BA%E6%9E%84">证书颁发机构</a>颁发了证书，或者私钥被认为已经破坏。被吊销的最常见的原因是用户不再独有私钥，而私钥则被窃取。</li>
+<li>吊扣：这个状态是可逆的。</li>
+</ul>
+<p>每个CA都有对应的CA证书撤销名单，里面包含着证书的序列号。有 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%9C%A8%E7%BA%BF%E8%AF%81%E4%B9%A6%E7%8A%B6%E6%80%81%E5%8D%8F%E8%AE%AE">OCSP</a> 和 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AF%81%E4%B9%A6%E5%90%8A%E9%94%80%E5%88%97%E8%A1%A8">CRL</a> 两种形式</p>
+<blockquote>
+<p>非关键 CA 颁发者: URI: <a target="_blank" rel="noopener" href="http://secure.globalsign.com/cacert/gsrsaovsslca2018.crt">http://secure.globalsign.com/cacert/gsrsaovsslca2018.crt</a> </p>
+<p>OCSP 响应者: URI: <a target="_blank" rel="noopener" href="http://ocsp.globalsign.com/gsrsaovsslca2018">http://ocsp.globalsign.com/gsrsaovsslca2018</a></p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/crl.png" alt="img"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/ocsp.png" alt="img"></p>
+<h1 id="HTTPS-SSL-TLS"><a href="#HTTPS-SSL-TLS" class="headerlink" title="HTTPS (SSL/TLS)"></a>HTTPS (SSL/TLS)</h1><p><a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/2_http/http_interview.html#http-%E4%B8%8E-https">HTTPS  HTTP</a> </p>
+<h2 id="传输层安全（TLS）"><a href="#传输层安全（TLS）" class="headerlink" title="传输层安全（TLS）"></a>传输层安全（TLS）</h2><p>Transport Layer Security</p>
+<h3 id="TLS-1-2"><a href="#TLS-1-2" class="headerlink" title="TLS 1.2"></a>TLS 1.2</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc5246"><strong>RFC 5246</strong>: <em>The Transport Layer Security (TLS) Protocol Version 1.2</em></a></p>
+</blockquote>
+<p>在TCP 三次握手后就会开始TLS handshake</p>
+<p>一般是两种交换会话密钥的算法：<a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/2_http/https_rsa.html#rsa-%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B">RSA 握手</a> 和 <a target="_blank" rel="noopener" href="https://xiaolincoding.com/network/2_http/https_ecdhe.html">ECDHE 握手</a>， 后者支持前向安全，现在使用更加广泛。</p>
+<h4 id="静态-RSA-握手"><a href="#静态-RSA-握手" class="headerlink" title="静态 RSA 握手"></a>静态 RSA 握手</h4><h5 id="四次握手流程"><a href="#四次握手流程" class="headerlink" title="四次握手流程"></a>四次握手流程</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241130161720294.png" alt="image-20241130161720294"></p>
+<ol>
+<li><strong>ClientHello</strong>: 客户端向服务器发送随机数<code>client random</code>，TLS版本，支持的加密套件列表。</li>
+<li><strong>ServerHello</strong>: 服务器响应随机数<code>server random</code>，确认好加密套件，下发服务器证书(<code>Certificate</code>)。<ul>
+<li>证书里有用于给<code>premaster secret</code>加密的服务器公钥。</li>
+</ul>
+</li>
+<li><strong>Client Key Exchange</strong>: 客户端证书验证通过后，生成另一个随机数<code>premaster secret</code>，通过<strong>服务器证书的公钥</strong>加密</li>
+<li>服务器用私钥解密获取<code>premaster secret</code>，双方根据<code>premaster secret</code>和两个随机数生成<code>session key</code> </li>
+<li><strong>Change Cipher Spec</strong>: 客户端通知接下来要使用会话密钥进行通信了，之前都是明文通信。切换加密标准</li>
+<li><strong>Finishd</strong>: 客户端计算之前发出的明文消息的摘要（Hash），再用<code>session key</code>加密后发给服务端</li>
+<li>服务端重复5,6步，双方认证加解密无问题，则可以开始正式发送用<code>session key</code>加密后的<code>application data</code> </li>
+</ol>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/e6zkf4qwi7.jpeg" alt="img"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/https_rsa.png" alt="img"> </p>
+<h5 id="加密套件（Cipher-Suite）"><a href="#加密套件（Cipher-Suite）" class="headerlink" title="加密套件（Cipher Suite）"></a>加密套件（Cipher Suite）</h5><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43408952/article/details/124715927">TLS 各种加密套件_tls加密套件-CSDN博客</a> </p>
+<p><strong>TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256</strong> </p>
+<ul>
+<li><strong>密钥交换策略</strong>（Key Exchange/Arrangement）：用于交换对称密钥。<strong>RSA</strong>、DH、DHE、<strong>ECDHE</strong>、PSK</li>
+<li><strong>数字签名算法</strong>（Authentication）：用于验证证书。<strong>RSA</strong>、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D%E7%AE%97%E6%B3%95"><strong>DSA</strong></a> 、ECDSA</li>
+<li><strong>对称加密算法</strong>（Block/stream ciphers）：用于加密消息流。<strong>ChaCha20</strong>、<strong>AES</strong>、DES等</li>
+<li><strong>MAC 算法</strong>（Message authentication）：用于创建报文鉴别码，例如<strong>SHA-256</strong>，MD5，消息流每个<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%95%B0%E6%8D%AE%E5%9D%97">数据块</a>的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%8A%A0%E5%AF%86%E6%95%A3%E5%88%97">加密散列</a>。(分块加密信息以后的报文摘要)</li>
+</ul>
+<h5 id="前向安全性（Forward-Secrecy）"><a href="#前向安全性（Forward-Secrecy）" class="headerlink" title="前向安全性（Forward Secrecy）"></a>前向安全性（Forward Secrecy）</h5><p>共享密钥被攻破<strong>不会</strong>导致之前的会话信息全部泄露，这就是<strong>完美前向安全</strong>——Perfect Forward Secrecy</p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/45203206">如何理解前向安全性？和完美前向保密（perfect forward secrecy）区别？ - 知乎</a> </p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/348420897">有了共享（premaster）密钥为什么还需要会话密钥？ - 知乎</a> </p>
+</blockquote>
+<p>RSA握手中不把premaster key直接当做对称密钥，单次session key泄露不会造成之前的会话信息都泄露。</p>
+<p>前向安全性问题出在共享密钥上，RSA握手的共享公-私密钥对是长期不变的，也就是说如果服务端用于RSA加密的私钥泄露会导致之前的会话信息全部暴露。如果对每次会话都生成一对RSA密钥对，理论可行，但是性能不如后面要介绍的ECDHE。</p>
+<p> 双<strong>RSA</strong>虽然也能实现<strong>PFS</strong>，但是效率太差，没有公司会采用， 基本都是<strong>RSA + ECDHE</strong>。</p>
+<h4 id="ECDHE-握手"><a href="#ECDHE-握手" class="headerlink" title="ECDHE 握手"></a>ECDHE 握手</h4><p><a href="#ecdhe">Elliptic-curve Diffle-Hellman Ephemeral</a></p>
+<h5 id="四次握手流程-1"><a href="#四次握手流程-1" class="headerlink" title="四次握手流程"></a>四次握手流程</h5><p><a href="#ecdhe">ECDHE：椭圆曲线（ECC） + DH密钥交换 + 临时（Ephemeral）</a> </p>
+<p>椭圆曲线最重要的参数是<strong>椭圆曲线类型</strong>（基点G）[RSA 算法的替代品：X25519/Ed25519 使用记录 | 存在感消失的地方|ω•`)](<a target="_blank" rel="noopener" href="https://akarin.dev/2021/09/16/a-taste-of-curve25519/">https://akarin.dev/2021/09/16/a-taste-of-curve25519/</a>)  </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241130165130228.png" alt="image-20241130165130228"></p>
+<ol>
+<li><strong>ClientHello</strong>: 客户端向服务器发送<strong>随机数</strong> client random，TLS版本，支持的加密套件列表</li>
+<li><strong>ServerHello</strong>: 服务器响应<strong>随机数</strong> server random，确认好双方都支持的加密套件，同时下发服务器<strong>证书</strong>(<code>certificate</code>)<ul>
+<li>证书中的公钥不用于加密premaster，而是为了给</li>
+</ul>
+</li>
+<li><strong>Server Key Exchange</strong>: 生成随机数作为<strong>私钥 b（Ephemeral Private Key）</strong>，保留在本地。公开<strong>椭圆曲线</strong>基点 G，一般是X25519，根据 G 和私钥 b，算出<strong>公钥 bG</strong>发给客户端。为了保证曲线的参数G以及公钥不被篡改，同时会使用CA证书中的私钥进行数字签名。</li>
+<li><strong>Client Key Exchange</strong>: 客户端使用CA证书的公钥验证通过后，随机生成自己临时私钥a，根据基点G算出<strong>公钥 aG</strong>，发送给服务器。</li>
+<li>这样，双方知道了对方的公钥，就可以开始算共享密钥了，a(bG) = b(aG) = premaster key，加上两个随机数就是会话密钥。</li>
+<li>互相发送<strong>Change cipher spec+Finished</strong>之后可以开始发送应用数据。ECDHE因为前向安全可以在客户端发完信息之后直接开始发送<code>application data</code>（TCP False Start）</li>
+</ol>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/2023-10-16-04-06-23.jpg" alt="img"></p>
+<h5 id="抓包实战"><a href="#抓包实战" class="headerlink" title="抓包实战"></a>抓包实战</h5><p><u>搭建https server（springboot）</u></p>
+<ol>
+<li><strong>生成自签名证书</strong>，使用jdk的keytool生成证书</li>
+</ol>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -genkey -<span class="keyword">alias</span> wxl -keyalg RSA -keysize <span class="number">2048</span> -storetype PKCS12 -keystore wxl-ssl-<span class="keyword">key</span>.p12 -validity <span class="number">3650</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>-genkey：表示要创建一个新的密钥</li>
+<li>-alias：keystore别名</li>
+<li>-keyalg：加密算法</li>
+<li>-keysize：密钥长度</li>
+<li>-storetype：密钥类型</li>
+<li>-keystore：文件存放位置</li>
+<li>-validity：密钥有效期，单位为天</li>
+</ul>
+<ol start="2">
+<li><strong>springboot配置https</strong></li>
+</ol>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8443</span></span><br><span class="line">  <span class="attr">ssl:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">key-store:</span> <span class="string">classpath:wxl-ssl-key.p12</span></span><br><span class="line">    <span class="attr">key-store-password:</span> <span class="number">123456</span></span><br><span class="line">    <span class="attr">key-store-type:</span> <span class="string">PKCS12</span></span><br><span class="line">    <span class="attr">enabled-protocols:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TLSv1.2</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>enabled-protocols表示支持启用的TLS版本，这里配置仅TLS1.2</li>
+</ul>
+<p><u>请求并抓包</u></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https://localhost:8443/hello -k</span><br></pre></td></tr></table></figure>
+
+<p>tcp.port == 8443</p>
+<h5 id="TLS-False-Start-RFC-7918"><a href="#TLS-False-Start-RFC-7918" class="headerlink" title="TLS False Start(RFC 7918)"></a>TLS False Start(RFC 7918)</h5><p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000004003319">https - TLS False Start究竟是如何加速网站的 - 野狗科技官方专栏 - SegmentFault 思否</a> </p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/0mhr8kq63w.jpeg" alt="img" style="zoom:80%;" />
+
+<blockquote>
+<p>The recommended whitelists are such that if cryptographic algorithms suitable for forward secrecy would possibly be negotiated, no False Start will take place if the current handshake fails to provide forward secrecy.</p>
+<p><a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc7918">RFC 7918 - Transport Layer Security (TLS) False Start</a> </p>
+</blockquote>
+<p>ECDHE和DHE支持前向保密，所以可以使用TLS抢跑。</p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1420297">90%的人都不懂的TLS握手优化-腾讯云开发者社区-腾讯云</a> </p>
+<h3 id="TLS-记录"><a href="#TLS-记录" class="headerlink" title="TLS 记录"></a>TLS 记录</h3><p>TLS 握手主要用来解决服务器的可信度问题，TLS 记录可以解决报文的压缩、加密和数据认证的问题。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241130224715135.png" alt="image-20241130224715135"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/%E8%AE%B0%E5%BD%95%E5%8D%8F%E8%AE%AE.png" alt="img"></p>
+<h3 id="TLS-漏洞"><a href="#TLS-漏洞" class="headerlink" title="TLS 漏洞"></a>TLS 漏洞</h3><hr>
+<p><u><strong>协议设计上的漏洞</strong></u>：一些漏洞源于TLS协议本身的设计缺陷，通常会在新版本中修复：</p>
+<p><strong>BEAST（Browser Exploit Against SSL/TLS）</strong></p>
+<ul>
+<li><strong>描述</strong>：BEAST 攻击利用 TLS 1.0 中的 CBC 模式实现的设计缺陷，通过中间人攻击窃取加密数据。</li>
+<li><strong>修复</strong>：TLS 1.1 和更高版本已经修复了该问题，同时推荐使用 AES-GCM 等替代的加密模式。</li>
+</ul>
+<p><strong>CRIME（Compression Ratio Info-leak Made Easy）</strong></p>
+<ul>
+<li><strong>描述</strong>：通过利用TLS压缩功能，攻击者可以猜测敏感数据（如会话Cookie）。</li>
+<li><strong>修复</strong>：禁用TLS压缩功能。</li>
+</ul>
+<p><strong>POODLE（Padding Oracle On Downgraded Legacy Encryption）</strong></p>
+<ul>
+<li><strong>描述</strong>：POODLE 利用 SSL 3.0 中的填充漏洞进行攻击，针对使用CBC模式的实现。</li>
+<li><strong>修复</strong>：废弃 SSL 3.0 并采用更安全的协议版本（如 TLS 1.2+）。</li>
+</ul>
+<p><strong>Downgrade Attacks</strong></p>
+<ul>
+<li><strong>描述</strong>：攻击者通过中间人攻击强制客户端和服务器降级到不安全的协议版本（如 SSL 3.0 或早期 TLS 版本）。</li>
+<li><strong>修复</strong>：使用 <strong>TLS_FALLBACK_SCSV</strong> 标记防止协议降级攻击。</li>
+</ul>
+<p><strong>Logjam</strong></p>
+<ul>
+<li><strong>描述</strong>：Logjam 攻击利用 Diffie-Hellman 密钥交换中的弱参数（512位素数），允许攻击者破解加密。</li>
+<li><strong>修复</strong>：升级到更强的密钥（2048位或以上），并禁用弱算法。</li>
+</ul>
+<hr>
+<p><u><strong>实现上的漏洞</strong></u>：许多漏洞是由于TLS库实现中存在的错误或疏漏，而不是协议本身的问题。</p>
+<p><strong>Heartbleed</strong></p>
+<ul>
+<li><strong>描述</strong>：这是 OpenSSL 的实现漏洞，允许攻击者通过 Heartbeat 扩展读取服务器内存中的敏感数据（如私钥）。</li>
+<li><strong>修复</strong>：修复受影响的 OpenSSL 版本，更新到无漏洞的版本。</li>
+</ul>
+<p><strong>ROBOT（Return Of Bleichenbacher’s Oracle Threat）</strong></p>
+<ul>
+<li><strong>描述</strong>：利用某些TLS实现中的 RSA 加密模式缺陷，通过构造恶意数据包破解私钥。</li>
+<li><strong>修复</strong>：修复实现并采用更安全的加密模式。</li>
+</ul>
+<p><strong>Zero-Length Padding</strong></p>
+<ul>
+<li><strong>描述</strong>：某些TLS实现接受零长度的填充，可能被攻击者利用进行漏洞利用。</li>
+<li><strong>修复</strong>：严格遵循协议规范，确保填充字段符合要求。</li>
+</ul>
+<hr>
+<p><u><strong>配置和使用上的问题</strong></u>：即使TLS协议和实现没有漏洞，不当的配置或使用也可能导致安全隐患。</p>
+<p><strong>弱密码套件</strong></p>
+<ul>
+<li>使用已知不安全的加密算法或过短的密钥长度（如RC4或1024位RSA）。</li>
+<li><strong>解决方法</strong>：禁用弱密码套件，使用推荐的安全算法（如 AES-GCM、ChaCha20-Poly1305）。</li>
+</ul>
+<p><strong>过期或伪造的证书</strong></p>
+<ul>
+<li>如果服务器使用过期、伪造或不可信的证书，攻击者可以进行中间人攻击。</li>
+<li><strong>解决方法</strong>：确保证书可信且未过期，并使用 Certificate Transparency 来检测伪造证书。</li>
+</ul>
+<p><strong>主机名验证问题</strong></p>
+<ul>
+<li>一些TLS实现未正确验证证书中的主机名，可能导致攻击者伪装成合法服务器。</li>
+<li><strong>解决方法</strong>：强制严格的主机名验证。</li>
+</ul>
+<p><strong>会话恢复漏洞</strong></p>
+<ul>
+<li>TLS会话恢复功能（如会话ID或会话票据）在设计或实现上可能存在漏洞，导致会话劫持。</li>
+<li><strong>解决方法</strong>：确保会话恢复机制的实现安全，并定期刷新密钥。</li>
+</ul>
+<hr>
+<p><u><strong>环境相关漏洞</strong></u></p>
+<p><strong>硬件漏洞</strong></p>
+<ul>
+<li>硬件加速器或HSM（硬件安全模块）可能存在漏洞，攻击者可以利用其生成弱密钥或泄露数据。</li>
+</ul>
+<p><strong>随机数生成问题</strong></p>
+<ul>
+<li>如果随机数生成器的质量不足，攻击者可能预测到密钥。</li>
+<li><strong>解决方法</strong>：使用高质量的随机数生成器（如 /dev/urandom 或硬件随机数生成器）。</li>
+</ul>
+<p><strong>中间人攻击</strong></p>
+<ul>
+<li>攻击者通过篡改DNS或ARP欺骗迫使客户端连接到恶意服务器，伪装成合法的TLS服务。</li>
+<li><strong>解决方法</strong>：使用 HSTS（HTTP Strict Transport Security）和证书锁定（Certificate Pinning）。</li>
+</ul>
+<hr>
+<p><u><strong>社会工程和弱安全操作</strong></u>：即使TLS协议本身非常安全，攻击者可能利用社会工程或操作疏漏来绕过安全机制</p>
+<ul>
+<li>攻击者诱骗用户接受不可信的证书。</li>
+<li>管理员错误配置服务器，允许使用过时的协议版本。</li>
+</ul>
+<hr>
+<h4 id="如何应对？"><a href="#如何应对？" class="headerlink" title="如何应对？"></a>如何应对？</h4><ol>
+<li><strong>升级协议和实现</strong><ul>
+<li>确保使用最新版本的TLS（推荐TLS 1.2或TLS 1.3）。</li>
+<li>定期更新TLS库（如OpenSSL、BoringSSL、GnuTLS）。</li>
+</ul>
+</li>
+<li><strong>禁用弱配置</strong><ul>
+<li>禁用SSL 2.0、SSL 3.0和TLS 1.0。</li>
+<li>禁用RC4和其他已知不安全的密码套件。</li>
+</ul>
+</li>
+<li><strong>安全的服务器配置</strong><ul>
+<li>强制使用强加密算法。</li>
+<li>使用2048位以上的密钥和推荐的椭圆曲线（如 P-256）。</li>
+</ul>
+</li>
+<li><strong>监控和检测</strong><ul>
+<li>定期扫描服务器的TLS配置，使用工具如 SSL Labs 的服务器测试工具。</li>
+<li>监控网络流量中的潜在攻击行为。</li>
+</ul>
+</li>
+</ol>
+<h3 id="TLS-1-3"><a href="#TLS-1-3" class="headerlink" title="TLS 1.3"></a>TLS 1.3</h3><blockquote>
+<p><a target="_blank" rel="noopener" href="https://datatracker.ietf.org/doc/html/rfc8446"><strong>RFC 8446</strong>: <em>The Transport Layer Security (TLS) Protocol Version 1.3</em></a> </p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/0877fe78380bf34ad3b28768e59fb53a.png" alt="图片"></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/28850798">TLS 1.3科普——新特性与协议实现 - 知乎</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/187262056">TLS 1.3 进行时 - 知乎</a> </p>
+<h4 id="2-RTT（TLS-1-2）"><a href="#2-RTT（TLS-1-2）" class="headerlink" title="2-RTT（TLS 1.2）"></a>2-RTT（TLS 1.2）</h4><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wusanga/p/17386098.html">TLS1.2握手流程分析（RSA，ECDHE），和TLS1.3区别 - wuworker - 博客园</a> </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-485b564d2209a3108575a1b13a52d715_1440w.jpg" alt="img"></p>
+<h4 id="1-RTT"><a href="#1-RTT" class="headerlink" title="1-RTT"></a>1-RTT</h4><p>TLS1.2 为了考虑各种兼容性，保留了许多加密套件，这就使得客户端必须提前和服务端协商好用哪一种加密套件，这也导致了必须空出一个RTT专门协商，因此变成2-RTT。1.3只剩下5种，省去协商步骤，变成了1-RTT。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">TLS_AES_256_GCM_SHA384</span><br><span class="line">TLS_CHACHA20_POLY1305_SHA256</span><br><span class="line">TLS_AES_128_GCM_SHA256</span><br><span class="line">TLS_AES_128_CCM_8_SHA256</span><br><span class="line">TLS_AES_128_CCM_SHA256</span><br></pre></td></tr></table></figure>
+
+<p>TLS 1.3 在之前版本的基础上删除了那些不安全的加密算法，这些加密算法包括：</p>
+<ul>
+<li>RSA 密钥传输 —— 不支持前向安全性</li>
+<li>CBC 模式密码 —— 易受 BEAST 和 Lucky 13 攻击</li>
+<li>RC4 流密码 —— 在 HTTPS 中使用并不安全</li>
+<li>SHA-1 哈希函数 —— 建议以 SHA-2 取而代之</li>
+<li>任意 Diffie-Hellman 组—— CVE-2016-0701 漏洞</li>
+<li>输出密码 —— 易受 FREAK 和 LogJam 攻击</li>
+</ul>
+<p>TLS 1.3 只支持<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%AE%A4%E8%AF%81%E5%8A%A0%E5%AF%86">AEAD认证模式</a> 同时完成加密和完整性校验，不再允许对加密报文进行压缩、不再允许双方发起重协商，密钥的改变不再需要发送change_cipher_spec报文给对方。对称加密算法只有AES，Chacha20，摘要算法只有 SHA，密钥交换算法只有ECDHE。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-91669b8728eb5b0fa2d88730425f9391_1440w.jpg" alt="img"></p>
+<h4 id="0-RTT"><a href="#0-RTT" class="headerlink" title="0-RTT"></a>0-RTT</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-083c00146d71e75adbcab401e57c90e1_1440w.jpg" alt="img"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/59539201f006d7dc0a06333617e5ea85.png" alt="图片"></p>
+<h2 id="HTTPS-优化（TLS-性能优化）"><a href="#HTTPS-优化（TLS-性能优化）" class="headerlink" title="HTTPS 优化（TLS 性能优化）"></a><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1420297">HTTPS 优化（TLS 性能优化）</a></h2><p>上文的TLS漏洞已经说明了提高安全性的措施，下列措施为提高TLS性能的措施</p>
+<h3 id="硬件优化"><a href="#硬件优化" class="headerlink" title="硬件优化"></a>硬件优化</h3><ul>
+<li>计算密集型任务，升级的是<strong>CPU</strong>而不是网卡等IO设备，如果CPU有针对 <strong>AES-NI</strong> 的特性，可以使用AES，否则可以选择chacha20</li>
+</ul>
+<h3 id="软件优化"><a href="#软件优化" class="headerlink" title="软件优化"></a>软件优化</h3><ul>
+<li>升级Linux，升级OpenSSL</li>
+</ul>
+<h3 id="协议优化：节省RTT"><a href="#协议优化：节省RTT" class="headerlink" title="协议优化：节省RTT"></a>协议优化：节省RTT</h3><p>（整体的握手过程还是需要的）</p>
+<ul>
+<li><strong>密钥交换算法</strong>：使用<code>ECDHE</code>而不是<code>RSA</code>，<code>ECDHE</code>支持前向安全，因此也支持 <code>TLS False Start</code>，发送ClientKeyExchange的同时可以开始发送<code>application data</code>节省 <code>1 RTT</code>。</li>
+<li><strong>升级TLS版本</strong>：TLS 1.3 相比于 TLS 1.2 废除了不安全的加密套件，总数变少，因此不需要协商套件的过程，可以节省<code>1 RTT</code>。</li>
+</ul>
+<h3 id="证书优化：节省客户端验证时间"><a href="#证书优化：节省客户端验证时间" class="headerlink" title="证书优化：节省客户端验证时间"></a>证书优化：节省客户端验证时间</h3><ul>
+<li><strong>证书类型</strong>：在相同的安全强度下，<code>ECDSA</code> 椭圆曲线证书相比于 <code>RSA</code> 证书的密钥长度减少很多，减少了验证证书完整性的时间。</li>
+<li><strong>证书验证流程</strong>：验证证书信任链的时候，<code>OCSP</code> 相比于 <code>CRL</code> 实时性更高，不用逐行读取文件；<ul>
+<li>进一步提升性能可以启用<code>OCSP Stapling</code>，服务器周期性地向 CA 获取证书状态，CA会在状态上签名防止篡改，在发出ServerHello的同时也把有效信息发给客户端。</li>
+</ul>
+</li>
+</ul>
+<h3 id="会话复用：复用会话密钥"><a href="#会话复用：复用会话密钥" class="headerlink" title="会话复用：复用会话密钥"></a>会话复用：复用会话密钥</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/mrpre/article/details/77868669">TLS/SSL 协议详解 (22)会话复用_ssl会话复用-CSDN博客</a> 抓包</p>
+<p><strong>以下技术都是建立在已经建立过一次连接的基础上的，可以节省第一次以后会话的RTT，是用来免去握手过程的</strong></p>
+<ul>
+<li><strong>Session ID</strong>：将与每个客户端的会话密钥缓存在服务器内存里，形成 id-key的键值对形式，ClientHello带上session id，节省<code>1 RTT</code>，缺点是不支持分布式和消耗服务器内存。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/sessionid.png" alt="img"></p>
+<ul>
+<li><strong>Session Ticket</strong>：服务器可以将会话密钥再次用<strong>只有自己知道的密钥</strong>加密，然后附上有效期进行签发，以session ticket的形式交给客户端进行缓存，ClientHello带上ticket，服务器验证有效期（类似JWT）也能节省 <code>1 RTT</code> ，分布式之间需要共享这个密钥。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/ticket.png" alt="img"></p>
+<ul>
+<li><strong>Pre-shared Key</strong>：TLS 1.3 引入的新特性，将 Session Ticket 和 早期的 application data 一并发送给服务器 直接变成<code>0-RTT</code> ，因为不用协商套件。</li>
+</ul>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241130172210036.png" alt="image-20241130172210036"></p>
+<p>会话复用会影响前向安全性，还可能会受到重放攻击，解决方案：</p>
+<ul>
+<li>只对幂等请求（GET）开放0-RTT；</li>
+<li>对session ticket添加有效期；</li>
+</ul>
+<h1 id="SSH"><a href="#SSH" class="headerlink" title="SSH"></a>SSH</h1><p><strong><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Secure_Shell">SSH</a> （Secure Shell）</strong> 基于 TCP 协议，通过加密和认证机制实现安全的访问和文件传输等业务。</p>
+<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV13P4y1o76u">SSH 握手详解 - bilibili 技术蛋老师</a> </p>
+<p>SSH 的经典用途是登录到远程电脑中执行命令。除此之外，SSH 也支持隧道协议、端口映射和 X11 连接（允许用户在本地运行远程服务器上的图形应用程序）。借助 SFTP（SSH File Transfer Protocol） 或 SCP（Secure Copy Protocol） 协议，SSH 还可以安全传输文件。</p>
+<p>SSH 使用客户端-服务器模型，默认端口是 22。SSH 是一个守护进程，负责实时监听客户端请求，并进行处理。大多数现代操作系统都提供了 SSH。</p>
+<p>如下图所示，SSH Client（SSH 客户端）和 SSH Server（SSH 服务器）通过公钥交换生成共享的对称加密密钥，用于后续的加密通信。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/ssh-client-server.png" alt="SSH:安全的网络传输协议"></p>
+<p>SSH以<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86">非对称加密</a>实现<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81">身份验证</a>：</p>
+<p>身份验证有多种途径，例如其中一种方法是使用自动生成的公钥-私钥对来简单地加密网络连接，随后使用密码认证进行登录；另一种方法是人工生成一对公钥和私钥，通过生成的密钥进行认证，这样就可以在不输入密码的情况下登录。任何人都可以自行生成密钥。公钥需要放在待访问的电脑之中，而对应的私钥需要由用户自行保管。认证过程基于生成出来的私钥，但整个认证过程中私钥本身不会传输到网络中。</p>
+<h1 id="IPsec"><a href="#IPsec" class="headerlink" title="IPsec"></a>IPsec</h1><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/download" alt="IPsec加密验证过程" style="zoom:150%;" />
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -3048,297 +3701,6 @@
 
 <p>如果线程之间完全没有数据依赖，比如前面提到的<strong>向量加法</strong>示例，每个线程独立计算一个元素，互不干扰，那么不需要任何同步操作：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">__global__ <span class="type">void</span> <span class="title function_">vectorAdd</span><span class="params">(<span class="type">const</span> <span class="type">float</span>* A, <span class="type">const</span> <span class="type">float</span>* B, <span class="type">float</span>* C, <span class="type">int</span> N)</span> &#123;</span><br><span class="line">    <span class="type">int</span> i = blockIdx.x * blockDim.x + threadIdx.x;</span><br><span class="line">    <span class="keyword">if</span> (i &lt; N) &#123;</span><br><span class="line">        C[i] = A[i] + B[i]; <span class="comment">// 独立计算，无需同步</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/02/03/rpc-interpretation/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/02/03/rpc-interpretation/" class="post-title-link" itemprop="url">基于 Netty 的 RPC 框架</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-02-03 00:00:00" itemprop="dateCreated datePublished" datetime="2025-02-03T00:00:00+08:00">2025-02-03</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-06-07 22:07:40" itemprop="dateModified" datetime="2025-06-07T22:07:40+08:00">2025-06-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%A1%B9%E7%9B%AE/" itemprop="url" rel="index"><span itemprop="name">项目</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="基于-Netty-的-RPC-框架"><a href="#基于-Netty-的-RPC-框架" class="headerlink" title="基于 Netty 的 RPC 框架"></a>基于 Netty 的 RPC 框架</h1><p><a target="_blank" rel="noopener" href="https://docs.qq.com/doc/p/f8200727e71c50b34456abd09cf70401ac4b0eb9">补充：压测、遇到的困难、瓶颈、为什么做RPC、容灾、调用方式、重试、幂等。</a></p>
-<p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/scatteredream/netty-rpc">https://github.com/scatteredream/netty-rpc</a> </p>
-<p>实现要点： </p>
-<ul>
-<li>实现了 Netty <a href="#%E5%BF%83%E8%B7%B3%E6%9C%BA%E5%88%B6">心跳机制</a>，保持连接。客户端<a href="#%E6%8C%87%E6%95%B0%E9%80%80%E9%81%BF">指数退避</a>重试连接，服务端用线程池处理请求。可选 HTTP 和 Socket。</li>
-<li>实现了自定义 RPC <a href="#protocol">通信协议</a>，<a href="#codec">自定义编解码器和拆包解码器</a>解决粘包和半包，实现了 Kryo 等5种<a href="#serialization">序列化方式</a>。</li>
-<li><a href="#center">注册中心</a>支持 Nacos 与 Zookeeper，服务发现支持本地缓存、实时监听。除利用健康检查机制外，下线服务还会主动通知注册中心注销，实现优雅下线。支持一致性哈希等3种<a href="#loadbalance">负载均衡</a>算法。</li>
-<li>集成 SpringBoot。通过<a href="#annotation">自定义注解</a>，提供者自动扫描并注册服务 Bean，消费者自动注入<a href="#proxy">代理对象</a>。自定义 starter 实现<a href="#autoconfig">自动装配</a>。</li>
-<li>参考 Dubbo 实现 <a href="#spi">SPI</a>，支持<a href="#spi1">序列化</a>、<a href="#spi2">服务发现</a>等的动态扩展，实现与类型解耦的<a href="#cache">单例缓存</a>，减少大量冗余的对象创建。</li>
-</ul>
-<h2 id="为什么做-RPC"><a href="#为什么做-RPC" class="headerlink" title="为什么做 RPC"></a>为什么做 RPC</h2><p>1、首先，目前的应用大部分都是分布式/微服务架构，通常各个模块之间都是通过RPC来进行调用的，所以我认为自己写一个RPC项目可以有更加深入的理解RPC的一个原理；</p>
-<p>2、其次的话，在写RPC项目的过程中，学会了对Zookeeper、Netty的使用，包括对动态代理、负载均衡、序列化算法的实现，以及对SpringBoot框架的扩展和自动配置的理解。</p>
-<h2 id="RPC-优化思路"><a href="#RPC-优化思路" class="headerlink" title="RPC 优化思路"></a>RPC 优化思路</h2><ol>
-<li><p><strong>网络传输</strong>：长连接、关闭nagle算法、0拷贝。</p>
-</li>
-<li><p><strong>协议设计、编解码</strong>：底层可用 HTTP/2。精简协议头（如魔数+版本号+序列化类型+数据长度），避免冗余字段。低效的消息边界解析会增加CPU消耗。<u>lengthBasedFrameDecoder</u></p>
-</li>
-<li><p>序列化：CPU密集型操作——复杂序列化格式会消耗大量CPU资源，增加延迟。二进制更加高效 <u>Kryo</u>。</p>
-</li>
-<li><p>对象池化、复用：高并发内存分配导致频繁GC，停顿时间过长，<u>单例池</u>。</p>
-</li>
-<li><p>负载均衡：熔断与重试引入额外开销，负载均衡不均匀。<u>一致性哈希</u>。</p>
-<ul>
-<li>动态权重调整：基于实时指标（如响应时间、错误率）分配流量。</li>
-<li>路由缓存：对相同请求路由目标节点，减少服务发现计算</li>
-</ul>
-</li>
-<li><p>本地缓存服务列表：减少注册中心查询频率，配合增量更新机制。</p>
-</li>
-</ol>
-<h3 id="高性能：对象复用与内存优化"><a href="#高性能：对象复用与内存优化" class="headerlink" title="高性能：对象复用与内存优化"></a>高性能：对象复用与内存优化</h3><ol>
-<li><strong>减少临时对象创建：</strong> 避免在请求处理链路的各个环节（序列化、反序列化、编解码、业务逻辑处理、网络传输封装）中创建不必要的、短生命周期的对象，特别是大对象或高频创建的小对象。</li>
-<li><strong>对象复用：</strong> 对于生命周期可控、创建成本较高的对象，考虑采用对象池技术进行复用。</li>
-<li><strong>降低对象“重量”：</strong> 优化数据结构本身，使其更紧凑、更轻量。</li>
-<li><strong>避免隐式复制：</strong> 警惕框架内部或序列化库可能导致的意外数据复制。</li>
-<li><strong>优化线程模型与上下文传递：</strong> 减少线程切换和上下文对象传递带来的开销。</li>
-</ol>
-<p>优化Java RPC框架的内存和冗余对象，核心在于<strong>减少临时对象分配</strong>和<strong>复用昂贵资源</strong>。<strong>序列化/反序列化</strong>和<strong>网络缓冲区管理</strong>是重中之重。优先选择高效的二进制序列化库并利用其Zero-Copy特性。充分利用Netty的<code>ByteBuf</code>池化。谨慎且正确地使用对象池管理请求/响应对象。优化线程模型和上下文传递。结合JVM调优（GC选择与参数配置）</p>
-<h4 id="序列化-反序列化层-最关键的优化点"><a href="#序列化-反序列化层-最关键的优化点" class="headerlink" title="序列化/反序列化层 (最关键的优化点)"></a>序列化/反序列化层 (最关键的优化点)</h4><ol>
-<li><strong>选择高效序列化协议：</strong><ul>
-<li><strong>二进制协议优先：</strong> 如 Protobuf, FlatBuffers, Kryo, FST, MessagePack, Hessian(优化版如<code>hessian-lite</code>) 等。它们比 JSON/XML 体积小，解析速度快，产生的中间对象更少。</li>
-<li><strong>评估标准：</strong> 重点考察序列化后的 <strong>字节大小</strong>、<strong>序列化/反序列化速度</strong>、<strong>产生的中间对象数量/大小</strong> (用Profiler观察)、<strong>是否支持Zero-Copy</strong>。</li>
-<li><strong>避免Java原生序列化：</strong> <code>ObjectOutputStream</code>/<code>ObjectInputStream</code> 性能差，体积大，是主要的冗余对象来源。</li>
-</ul>
-</li>
-<li><strong>启用Zero-Copy或减少复制：</strong><ul>
-<li><strong>目标：</strong> 避免在序列化/反序列化过程中对字节数组进行不必要的拷贝。</li>
-<li><strong>方法：</strong><ul>
-<li>使用支持 <code>ByteBuffer</code> 或直接操作内存（如 Netty 的 <code>ByteBuf</code>）的序列化库 (如 FlatBuffers、Kryo with Unsafe)。确保框架在网络读写时也直接使用这些缓冲区。</li>
-<li>利用 Netty 的 <code>CompositeByteBuf</code> 组合多个缓冲区，避免合并拷贝。</li>
-<li>在反序列化时，尽量直接从网络缓冲区 (<code>ByteBuf</code>) 中解析出对象，而不是先拷贝到一个新的 <code>byte[]</code> 中再解析。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><strong>优化序列化逻辑：</strong> 避免在序列化方法里面创建临时容器</li>
-</ol>
-<h4 id="网络层-结合Netty等NIO框架优化"><a href="#网络层-结合Netty等NIO框架优化" class="headerlink" title="网络层 (结合Netty等NIO框架优化)"></a>网络层 (结合Netty等NIO框架优化)</h4><ol>
-<li><strong>使用对象池管理 <code>ByteBuf</code>：</strong><ul>
-<li>Netty 提供了优秀的 <code>ByteBuf</code> 内存管理和对象池 (<code>PooledByteBufAllocator.DEFAULT</code>)。<strong>务必启用池化分配器！</strong> 这是减少大内存块分配和GC压力的关键。</li>
-<li>配置合理的 <code>ByteBuf</code> 初始大小、最大容量，避免频繁扩容。</li>
-</ul>
-</li>
-<li><strong>复用 <code>ByteBuf</code>：</strong><ul>
-<li>在编解码器和业务逻辑中，尽量复用 <code>ByteBuf</code>。例如，解码出一个请求对象后，如果该 <code>ByteBuf</code> 的数据已完全消费，可以将其释放回池中；如果只消费了一部分，使用 <code>slice()</code> / <code>retainedSlice()</code> 获取剩余数据的视图，避免拷贝。</li>
-<li><strong>注意引用计数：</strong> 使用 <code>retain()</code>/<code>release()</code> 正确管理 <code>ByteBuf</code> 的生命周期，防止内存泄漏和提前释放。</li>
-</ul>
-</li>
-<li><strong>优化编解码器 (<code>Encoder</code>/<code>Decoder</code>):</strong><ul>
-<li>避免在 <code>encode</code>/<code>decode</code> 方法中创建不必要的临时对象（如<code>String</code>, <code>byte[]</code>, 临时容器）。</li>
-<li>尽量直接操作 <code>ByteBuf</code> 进行编码，而不是先序列化成 <code>byte[]</code> 再写入 <code>ByteBuf</code>。</li>
-<li>解码时，尽量直接从 <code>ByteBuf</code> 反序列化出目标对象，避免中间 <code>byte[]</code>。</li>
-</ul>
-</li>
-</ol>
-<h4 id="请求-响应对象池"><a href="#请求-响应对象池" class="headerlink" title="请求/响应对象池"></a>请求/响应对象池</h4><ul>
-<li><strong>场景：</strong> 对于结构固定、生命周期短暂（仅在单次请求处理中存活）的请求 (<code>Request</code>) 和响应 (<code>Response</code>) 对象，如果创建开销较大（包含复杂集合、大数组等），考虑使用对象池。</li>
-<li><strong>实现：</strong> 使用成熟的池库 (Apache Commons Pool, <code>Recycler</code>)。在请求入口处从池中获取 <code>Request</code> 对象，填充数据；在业务逻辑处理和序列化完成后，清理并归还到池中。<code>Response</code> 同理。</li>
-<li><strong>注意事项：</strong><ul>
-<li><strong>线程安全：</strong> 确保池的实现是线程安全的。</li>
-<li><strong>彻底清理：</strong> 在将对象归还池前，<strong>必须</strong>将其内部状态彻底重置/清理干净（置空引用、清空集合、重置基本类型字段），防止内存泄漏和脏数据。</li>
-<li><strong>容量控制：</strong> 设置合理的池大小上限，避免无限增长。</li>
-<li><strong>权衡：</strong> 对于极其简单的POJO，池化可能得不偿失（管理开销 vs 创建开销）。<strong>务必通过Profiling验证收益！</strong></li>
-</ul>
-</li>
-</ul>
-<h4 id="业务逻辑-创建轻量对象"><a href="#业务逻辑-创建轻量对象" class="headerlink" title="业务逻辑 创建轻量对象"></a>业务逻辑 创建轻量对象</h4><ol>
-<li><strong>DTO (POJO)优化：</strong> <ul>
-<li>鼓励使用<strong>扁平化</strong>的数据结构，避免过深的嵌套层次。</li>
-<li>只包含<strong>必要的字段</strong>。避免传输整个大对象图。</li>
-</ul>
-</li>
-<li><strong>避免在业务逻辑中创建大量临时对象：</strong><ul>
-<li>例如，在循环内创建字符串 (<code>+</code> 拼接, <code>new String</code>)、频繁创建临时集合、过度使用Stream API产生中间对象等。</li>
-</ul>
-</li>
-</ol>
-<h4 id="JVM-层面配合"><a href="#JVM-层面配合" class="headerlink" title="JVM 层面配合"></a>JVM 层面配合</h4><p><strong>合理设置堆大小与GC参数：</strong></p>
-<ul>
-<li>根据实际负载设置合适的 <code>-Xmx</code> / <code>-Xms</code>。过小导致频繁GC，过大会延长Full GC停顿时间。</li>
-<li>针对低延迟要求，优先选用 <strong>G1</strong> 或 <strong>ZGC</strong>/<strong>Shenandoah</strong> 垃圾收集器，并针对RPC场景调优其参数 (如 <code>MaxGCPauseMillis</code>)。</li>
-<li>增大 <strong>年轻代</strong> 比例 (<code>-Xmn</code>)，因为RPC产生的临时对象大多朝生夕死。</li>
-<li>调整 <strong>Eden/Survivor</strong> 区比例。</li>
-<li>考虑使用 <strong>Off-Heap Memory</strong>：对于极端的、需要管理超大缓冲区（如文件传输）的场景，可探索使用堆外内存 (<code>DirectByteBuffer</code>)，但管理复杂，需谨慎。</li>
-</ul>
-<h4 id="优化流程建议"><a href="#优化流程建议" class="headerlink" title="优化流程建议"></a>优化流程建议</h4><ol>
-<li><strong>Profiling First! (性能分析先行)：</strong><ul>
-<li>使用成熟的Profiler工具 (<strong>Java Flight Recorder (JFR)</strong>, <strong>Async Profiler</strong>, <strong>VisualVM</strong>, <strong>YourKit</strong>, <strong>JProfiler</strong>) 进行详细分析。</li>
-<li><strong>关键指标：</strong><ul>
-<li><strong>内存分配速率 (Allocation Rate):</strong> 重点关注由框架核心组件（序列化、编解码、网络层、请求/响应对象构造）产生的分配。</li>
-<li><strong>GC 活动与停顿时间：</strong> 观察Young GC / Full GC的频率和时长。</li>
-<li><strong>热点方法 (CPU / Wall Clock)：</strong> 找出CPU消耗或耗时最长的部分，看是否与对象创建/复制相关。</li>
-<li><strong>堆内存快照 (Heap Dump)：</strong> 分析内存中占比较大的对象类型及其引用链，识别潜在的内存浪费或泄漏。查找重复的、冗余的对象实例。</li>
-</ul>
-</li>
-<li><strong>目标：</strong> 精确量化内存分配和GC开销的来源，避免盲目优化。</li>
-</ul>
-</li>
-<li><strong>针对性优化：</strong><ul>
-<li>根据Profiling结果，优先优化分配速率最高、GC压力最大的部分。通常是序列化/反序列化和网络缓冲区管理。</li>
-</ul>
-</li>
-<li><strong>基准测试 (Benchmarking)：</strong><ul>
-<li>使用 <strong>JMH</strong> 对关键的优化点（如新的序列化协议、对象池）进行微观基准测试，验证优化的有效性。</li>
-<li>进行<strong>全链路压测</strong> (如使用 <strong>JMeter</strong>, <strong>wrk</strong>, <strong>自定义压测程序</strong>)，模拟真实负载，观察优化后的吞吐量、延迟、GC表现变化。</li>
-</ul>
-</li>
-<li><strong>渐进式优化与监控：</strong><ul>
-<li>优化后持续监控生产环境的关键指标（QPS, Latency, Error Rate, GC Time, Heap Usage, Allocation Rate）。</li>
-<li>优化是一个持续的过程，随着业务增长和框架演进，需要不断审视和调整。</li>
-</ul>
-</li>
-</ol>
-<h2 id="Netty-NIO"><a href="#Netty-NIO" class="headerlink" title="Netty/NIO"></a>Netty/NIO</h2><p>Java NIO（New I/O）是 Java 1.4 引入的非阻塞 I/O API，提供了基于通道（Channel）、缓冲区（Buffer）和选择器（Selector）的异步非阻塞编程模型。它允许单线程处理多个连接，显著提升了高并发场景下的性能。</p>
-<p>Netty 是基于 Java NIO 构建的高性能网络编程框架，它简化了 NIO 的复杂操作，提供了更易用的 API，同时解决了 NIO 编程中的许多陷阱（如断连重连、半包读写、心跳处理等）。Netty 广泛应用于各类高性能网络应用，如分布式系统中的 RPC 框架、游戏服务器等。</p>
-<ul>
-<li><strong>选择 Java NIO</strong>：如果需要完全控制底层实现，应用场景简单，或想深入理解 NIO 原理。</li>
-<li><strong>选择 Netty</strong>：如果需要快速开发高性能网络应用，避免处理 NIO 的复杂性和陷阱。</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>特性</th>
-<th>Java NIO</th>
-<th>Netty</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>API 复杂度</td>
-<td>复杂，需要深入理解 Selector 等机制</td>
-<td>简单，封装了底层细节</td>
-</tr>
-<tr>
-<td>内存管理</td>
-<td>需手动管理 ByteBuffer</td>
-<td>自动内存管理，提供更高效的 ByteBuf</td>
-</tr>
-<tr>
-<td>可靠性</td>
-<td>需要自己处理断连、粘包等问题</td>
-<td>内置多种编解码器和处理器</td>
-</tr>
-<tr>
-<td>扩展性</td>
-<td>需自行实现</td>
-<td>模块化设计，易于扩展</td>
-</tr>
-<tr>
-<td>性能</td>
-<td>高，但需要优化</td>
-<td>更高，针对性能做了优化</td>
-</tr>
-<tr>
-<td>应用场景</td>
-<td>简单应用或学习 NIO 原理</td>
-<td>复杂网络应用，如 RPC 框架、游戏服务器</td>
-</tr>
-</tbody></table>
-<h3 id="Java-NIO-核心组件"><a href="#Java-NIO-核心组件" class="headerlink" title="Java NIO 核心组件"></a>Java NIO 核心组件</h3><ol>
-<li><strong>Channel</strong>：数据的双向通道，类似传统 IO 中的 Stream，但更灵活，可以异步读写。</li>
-<li><strong>Buffer</strong>：数据的容器，所有数据必须通过 Buffer 处理。</li>
-<li><strong>Selector</strong>：单线程管理多个 Channel 的关键，实现多路复用。</li>
-<li><strong>SelectionKey</strong>：表示 Channel 在 Selector 中的注册关系及就绪状态。</li>
-</ol>
-<h3 id="Netty-核心组件"><a href="#Netty-核心组件" class="headerlink" title="Netty 核心组件"></a>Netty 核心组件</h3><ol>
-<li><strong>EventLoop</strong>：处理 I/O 操作的多线程事件循环器，替代了原生 Selector。</li>
-<li><strong>ChannelPipeline</strong>：处理网络事件的责任链模式实现。</li>
-<li><strong>ChannelHandler</strong>：处理或拦截 I/O 事件的接口。</li>
-<li><strong>ByteBuf</strong>：更高效的字节缓冲区，替代了原生 ByteBuffer。</li>
-</ol>
-<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/项目架构图.png" alt="项目架构图" style="zoom:67%;" />
-
-<p><code>consumer</code>模块：服务的消费者，依赖于 <code>rpc-client-spring-boot-starter</code> 模块；</p>
-<p><code>provider-api</code>模块：服务提供者暴露的API；</p>
-<p><code>provider</code>模块：服务的提供者，依赖于 <code>rpc-server-spring-boot-starter</code> 模块：</p>
-<p><code>rpc-client-spring-boot</code>模块：rpc 客户端模块，封装客户端发起的请求过程，提供服务发现、动态代理，网络通信等功能；</p>
-<p><code>rpc-client-spring-boot-stater</code>模块：是<code>rpc-client-spring-boot</code>的stater模块，负责引入相应依赖进行自动配置；</p>
-<p><code>rpc-framework-core</code>模块：是rpc核心依赖，提供负载均衡、服务注册发现、消息协议、消息编码解码、序列化算法；</p>
-<p><code>rpc-server-spring-boot</code>模块：rpc 服务端模块，负责启动服务，接受和处理RPC请求，提供服务发布、反射调用等功能；</p>
-<p><code>rpc-server-spring-boot-stater</code>模块：是<code>rpc-server-spring-boot</code>的stater模块，负责引入相应依赖进行自动配置；</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2025/02/03/rpc-interpretation/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
       
     </div>
 

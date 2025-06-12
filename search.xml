@@ -14825,7 +14825,10 @@ return 0;
 <p>支持一发一收 多发多收，因为只能是一个socket对应一个socket，是端到端的，要实现跟其他socket的通信只能断开连接，所以引入多线程，接到socket就开一个新线程，继续监听socket，用while循环实现。</p>
 <p>要实现群聊，服务器可以用一个集合储存socket，如果某个socket收到了消息，就遍历集合发给所有socket（同客户端的发送代码）客户端建立socket对象之后，在while循环内部出不来，要监听</p>
 <p>BrowserServer架构 Server要提供的内容必须符合HTTP规范</p>
-<h1 id="单元测试框架"><a href="#单元测试框架" class="headerlink" title="单元测试框架"></a>单元测试框架</h1><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240919211712463.png" alt="image-20240919211712463"></p>
+<h1 id="Debug"><a href="#Debug" class="headerlink" title="Debug"></a>Debug</h1><p>步入：进入查看递归调用栈</p>
+<p>跳出：跳过查看之后的递归调用栈</p>
+<p>mask 隐藏断点。</p>
+<h1 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h1><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20240919211712463.png" alt="image-20240919211712463"></p>
 <p>检测抛出异常</p>
 <h2 id="断言机制"><a href="#断言机制" class="headerlink" title="断言机制"></a>断言机制</h2><p>Assert.assertEquals() bug提示 <strong>期望值</strong> 实际值 </p>
 <h2 id="自动化测试"><a href="#自动化测试" class="headerlink" title="自动化测试"></a>自动化测试</h2><p>可以一键进行所有测试，一键自动化测试</p>
@@ -23641,6 +23644,13 @@ return 0;
 </li>
 </ul>
 <h4 id="MQ"><a href="#MQ" class="headerlink" title="MQ"></a>MQ</h4><p>MQ 这边本身支持 concurrency，不过用默认的 1 就好，我们手动配置好线程池的参数，然后提交给线程池。</p>
+<h5 id="单消费者？"><a href="#单消费者？" class="headerlink" title="单消费者？"></a>单消费者？</h5><p>订单落库操作的核心瓶颈在数据库，每个消费者实例</p>
+<ul>
+<li><strong>优先选择单消费者 + 线程池模式：</strong> 对于订单落库/回滚这类强事务、状态依赖、DB密集的操作，这是<strong>更安全、更可控、更易于实现事务一致性和避免资源竞争</strong>的方案。核心在于利用数据库连接池、本地事务、线程内顺序处理和基于订单ID的分区机制。</li>
+<li><strong>利用队列分片实现水平扩展：</strong> 当单个消费者实例（即使有较大线程池）成为瓶颈时，通过创建多个分片队列并部署多个消费者实例（每个实例仍是单消费者+线程池模式）来水平扩展。关键在于<strong>分片路由策略</strong>和<strong>确保同一订单的消息始终路由到同一队列并由同一消费者实例处理</strong>。</li>
+<li><strong>务必实现幂等性：</strong> 无论哪种模式，消息都可能重复传递。在落库/回滚逻辑中必须实现幂等（例如使用数据库唯一约束、乐观锁、状态机检查、记录消息ID等）。</li>
+<li><strong>完善的错误处理与监控：</strong> 使用死信队列（DLX）处理反复失败的消息。监控 RabbitMQ 队列积压、消费者状态、线程池状态、数据库连接池状态和关键业务指标。</li>
+</ul>
 <p>异步：时效性不是那么重要，因此使用 MQ 慢慢消化即可。</p>
 <p>单机——轻量级异步任务编排：如并行调用多个本地接口、合并结果、链式处理。</p>
 <ul>
@@ -23763,6 +23773,7 @@ return 0;
 
 <h1 id="高可用"><a href="#高可用" class="headerlink" title="高可用"></a><span id="ha">高可用</span></h1><p>三大法宝：缓存预热、拆分服务、横向扩展机器。</p>
 <p>挂了，重启服务之前拦截流量，并且再次做好缓存的预热工作。</p>
+<h2 id="流量削峰"><a href="#流量削峰" class="headerlink" title="流量削峰"></a>流量削峰</h2><p>Cache/Cache预热、MQ削峰、限流（RateLimiter）、熔断降级、静态资源CDN分发（ServerPush）、请求异步化/批量化。</p>
 <h2 id="Redis-集群"><a href="#Redis-集群" class="headerlink" title="Redis 集群"></a>Redis 集群</h2><p>在 Redis Cluster 中，<strong>每个节点都承担了一部分类似于 Sentinel 的职责</strong>：监控其他节点、检测故障、参与主从切换，因此在高可用机制上，<strong>Redis Cluster 实现了去中心化的哨兵机制</strong>。</p>
 <p>🔹 <strong>Redis Sentinel：集中式哨兵 + 单主多从</strong> </p>
 <p>🔸 **Redis Cluster：去中心化哨兵 + 多主多从 + 分片 ** </p>
@@ -25544,6 +25555,8 @@ return 0;
 <li>避免在 <code>encode</code>/<code>decode</code> 方法中创建不必要的临时对象（如<code>String</code>, <code>byte[]</code>, 临时容器）。</li>
 <li>尽量直接操作 <code>ByteBuf</code> 进行编码，而不是先序列化成 <code>byte[]</code> 再写入 <code>ByteBuf</code>。</li>
 <li>解码时，尽量直接从 <code>ByteBuf</code> 反序列化出目标对象，避免中间 <code>byte[]</code>。</li>
+<li>读完消息头，检查完剩余字节是否足够，不然就resetIndex</li>
+<li></li>
 </ul>
 </li>
 </ol>
@@ -26438,119 +26451,13 @@ return 0;
 
 <h4 id="RemoteMethodCall-发起-RPC-的公共方法"><a href="#RemoteMethodCall-发起-RPC-的公共方法" class="headerlink" title="RemoteMethodCall 发起 RPC 的公共方法"></a>RemoteMethodCall 发起 RPC 的公共方法</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">remoteCall</span><span class="params">(ServiceDiscovery serviceDiscovery, RpcClient rpcClient, String serviceName, 	</span></span><br><span class="line"><span class="params">                                RpcClientProperties properties, Method method, Object[] args)</span>&#123;</span><br><span class="line">    <span class="type">MessageHeader</span> <span class="variable">header</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MessageHeader</span>().build(properties.getSerialization());</span><br><span class="line">    <span class="comment">// 构建 RpcRequest: serviceName, methodName, parameterTypes, args</span></span><br><span class="line">    <span class="comment">// 构建 RpcMessage</span></span><br><span class="line">    <span class="comment">// 服务发现：得到负载均衡后返回的服务信息 serviceInfo</span></span><br><span class="line">    <span class="comment">// 根据 serviceInfo, properties, 与 rpcMessage 构建 RequestMetadata</span></span><br><span class="line">    <span class="comment">// client 调用 sendRpcRequest(rpcMetadata) 返回的 rpcMessage</span></span><br><span class="line">    <span class="comment">// rpcMessage 解包出 rpcResponse 提取 value 返回</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h1 id="Spring-部分"><a href="#Spring-部分" class="headerlink" title="Spring 部分"></a>Spring 部分</h1><p>服务端的Spring：</p>
+<h1 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h1><p>服务端的Spring：</p>
 <p><mark>需要按照是否有@RpcService注解进行 Bean 的注册。谁能注册？谁来执行注册？（手动实现Scanner以BeanDefinitionRegistrar），然后把被注解的bean加入本地缓存map，准备执行 RequestHandler</mark> </p>
 <p>客户端的Spring：</p>
 <p><mark>所有的 bean 都已经注册并导入好了，唯一的问题是 RestController 里面，出现 HelloService 字段，需要将其进行替换为代理对象！</mark> </p>
-<h2 id="Review-Spring-Bean-生命周期一览"><a href="#Review-Spring-Bean-生命周期一览" class="headerlink" title="Review: Spring Bean 生命周期一览"></a>Review: Spring Bean 生命周期一览</h2><h3 id="IoC-容器启动过程"><a href="#IoC-容器启动过程" class="headerlink" title="IoC 容器启动过程"></a><mark>IoC 容器启动过程</mark></h3><ol>
-<li><p>Spring IoC 启动入口：<code>AnnotationConfigApplicationContext</code> 或 Spring Boot 的 <code>SpringApplication.run(...)</code> </p>
-</li>
-<li><p>加载配置类（带 <code>@Configuration</code>、<code>@ComponentScan</code>、<code>@Import</code> 等注解）</p>
-</li>
-<li><p> <strong>扫描、注册阶段</strong> （由 <code>ClassPathBeanDefinitionScanner</code> 完成）</p>
-</li>
-</ol>
-<ul>
-<li>扫描被 <code>@ComponentScan</code> 指定的包</li>
-<li>找到带注解的类（如 <code>@Component</code>、<code>@Service</code>、<code>@Controller</code>）</li>
-<li>解析为 <code>BeanDefinition</code>，使用 <code>BeanDefinitionRegistry</code> 将其注册进<code>beanDefinitionMap</code>还未创建对象。<ul>
-<li>修改Bean定义：执行所有 <code>BeanFactoryPostProcessor</code> 的实现类（如 <code>PropertySourcesPlaceholderConfigurer</code>），允许对 <code>BeanDefinition</code> 进行修改（例如替换占位符）。</li>
-<li><strong>提前实例化处理器</strong>：注册 <code>BeanPostProcessor</code> 实现类（如 <code>AutowiredAnnotationBeanPostProcessor</code>），这些处理器需在普通Bean之前初始化，以便后续处理其他Bean的创建。</li>
-<li>初始化消息源以及事件广播器</li>
-</ul>
-</li>
-</ul>
-<ol start="4">
-<li><p><strong>实例化阶段</strong>（容器对于单例且非懒加载的 Bean）</p>
-<p>对每个要使用的 Bean：</p>
-<ul>
-<li><p>（主要是针对懒加载或者<code>Scope = prototype</code>）存在性检查：Scope判断（若为单例则检查到单例缓存）以及循环依赖判断（如果当前正在创建就从单例缓存获取原始对象）</p>
-</li>
-<li><p><strong>实例化</strong>：从 <code>BeanDefinitionRegistry</code> 获取<code> BeanDefinition</code>，包含类名、作用域、初始化方法等元数据。检查是否存在未满足的依赖（如通过<code>@DependsOn</code>指定的前置依赖，或者<code>@Order</code>加载顺序）最后<strong>实例化</strong>对象（通过反射或者工厂方法调用<code>Constructor</code>创建原始对象）</p>
-</li>
-<li><p><strong>依赖注入</strong>： <code>@Autowired/@Resource</code> 递归调用<code>getBean()</code>获取依赖bean，通过三级缓存（<code>singletonFactories</code>、<code>earlySingletonObjects</code>、<code>singletonObjects</code>）提前暴露对象引用，解决setter的循环依赖。设置好属性。</p>
-</li>
-<li><p>Aware 接口回调：如果实现了 <code>XXXAware</code> 接口，则通过 <code>setXXX</code> 注入容器底层信息。如名称，类加载器等</p>
-</li>
-<li><p><code>BeanPostProcessor</code>: 每个bean在构建的过程中，Spring都会遍历所有的<code>BeanPostProcessor</code>的实现类，调用实现类中的方法，入参为构建好的bean。要实现无感的对bean的处理必须使用 <code>BeanPostProcessor</code>。</p>
-<table>
-<thead>
-<tr>
-<th>方法（按照先后顺序）</th>
-<th>方法所属</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>1. <code>Object postProcessBeforeInitialization()</code></td>
-<td><code>BeanPostProcessor</code></td>
-</tr>
-<tr>
-<td>2. <code>@PostConstruct</code> 标注的方法</td>
-<td>JSR-250 规定</td>
-</tr>
-<tr>
-<td>3. <code>void afterPropertiesSet()</code></td>
-<td><code>InitializingBean</code></td>
-</tr>
-<tr>
-<td>4. <code>init()</code></td>
-<td><code>@Bean (initMethod =  init)</code></td>
-</tr>
-<tr>
-<td>5. <code>Object postProcessAfterInitialization()</code></td>
-<td><code>BeanPostProcessor</code></td>
-</tr>
-</tbody></table>
-<p> <strong>5 是 AOP 动态代理的关键阶段</strong>：Spring 在这里可能会返回代理对象替代原对象</p>
-</li>
-</ul>
-</li>
-<li><p><strong>完成容器启动</strong>：触发 <code>ContextRefreshedEvent</code>，通知监听器容器已就绪。<strong>此时可以通过 <code>getBean()</code> 获取单例 Bean</strong>，如果是懒加载或者<code>Scope = prototype</code>的则会在主动调用 <code>getBean()</code> 的时候才实例化。</p>
-</li>
-</ol>
-<h3 id="Bean-生命周期"><a href="#Bean-生命周期" class="headerlink" title="Bean 生命周期"></a>Bean 生命周期</h3><ol>
-<li><p>Bean 实例化(仅为构造出对象)</p>
-<ul>
-<li><strong>触发条件</strong>：①容器启动 ②首次请求 Bean 时 <code>getBean() 或者依赖注入</code>。</li>
-<li><strong>方式</strong>：通过构造函数或工厂方法创建 Bean 的实例。</li>
-<li><strong>异常</strong>：若依赖无法解析或构造函数抛出异常，Bean 创建失败。</li>
-</ul>
-</li>
-<li><p>属性赋值 Populate Properties</p>
-<ul>
-<li><strong>依赖注入</strong>：通过 <code>@Autowired</code>、<code>@Resource</code>、XML 配置等方式注入属性。</li>
-<li>处理 <code>@Value</code>：解析并注入 SpEL 表达式或占位符的值。</li>
-</ul>
-</li>
-<li><p>Aware 接口回调 与 <code>BeanPostProcessor </code>前置处理、初始化、后置处理。</p>
-</li>
-<li><p>就绪状态</p>
-<ul>
-<li>Bean 完全初始化，可被应用程序使用。</li>
-<li><strong>Singleton Bean</strong> 会被缓存，后续请求直接获取。</li>
-<li><strong>Prototype Bean</strong> 每次请求创建新实例（无后续销毁步骤）。</li>
-</ul>
-</li>
-<li><p>Bean 对象销毁回调</p>
-<ul>
-<li><p><code>@PreDestroy</code> JSR-250</p>
-</li>
-<li><p><code>destroy()-&gt;</code>  DisposableBean</p>
-</li>
-<li><p><code>close()</code> @Bean (destroyMethod =  close)</p>
-</li>
-</ul>
-</li>
-<li><p>Bean 对象销毁</p>
-<ul>
-<li><strong>触发条件</strong>：容器关闭时（如 <code>close()</code> 方法调用）。</li>
-<li><strong>作用域影响</strong>：仅 Singleton Bean 会执行销毁回调，Prototype Bean 需手动清理。</li>
-</ul>
-</li>
-</ol>
-<h3 id="SpringBoot-启动"><a href="#SpringBoot-启动" class="headerlink" title="SpringBoot 启动"></a>SpringBoot 启动</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line">SpringApplication.run()</span><br><span class="line">    ├── 创建 SpringApplication</span><br><span class="line">    ├── prepareEnvironment</span><br><span class="line">    ├── createApplicationContext <span class="comment">// 创建应用上下文</span></span><br><span class="line">    ├── refresh() <span class="comment">// AbstractApplicationContext#refresh() 方法 启动 IOC 容器</span></span><br><span class="line">        ├── postProcessBeanFactory(beanFactory)</span><br><span class="line">        ├── prepareBeanFactory(beanFactory)</span><br><span class="line">        ├── invokeBeanFactoryPostProcessors(beanFactory)</span><br><span class="line">        ├── registerBeanPostProcessors, initMessageSource/initEventMulticaster </span><br><span class="line">        ├── onRefresh (Web容器启动)</span><br><span class="line">        ├── registerListeners</span><br><span class="line">        ├── finishBeanFactoryInitialization <span class="comment">// 初始化所有非懒加载单例 Bean </span></span><br><span class="line">        └── finishRefresh (发布ContextRefreshedEvent)</span><br><span class="line">    ├── 调用 CommandLineRunner.run(String... args) ApplicationRunner(String... args)</span><br><span class="line">    └── ApplicationReady</span><br></pre></td></tr></table></figure>
-
-<p><a href="#boot">由此可见 CommandLineRunner 是在容器启动完成以后执行的。可以实现这个接口的 run 方法来注入参数。</a></p>
+<h2 id="Bean-Lifecycle"><a href="#Bean-Lifecycle" class="headerlink" title="Bean Lifecycle"></a>Bean Lifecycle</h2><h3 id="IoC-容器启动过程"><a href="#IoC-容器启动过程" class="headerlink" title="IoC 容器启动过程"></a><mark>IoC 容器启动过程</mark></h3><p>[IOC容器启动过程](<a href="https://scatteredream.github.io/2024/08/15/spring-in-one/#IoC">https://scatteredream.github.io/2024/08/15/spring-in-one/#IoC</a> 容器启动过程)</p>
+<h3 id="Bean-生命周期"><a href="#Bean-生命周期" class="headerlink" title="Bean 生命周期"></a>Bean 生命周期</h3><p>[Bean 生命周期](<a href="https://scatteredream.github.io/2024/08/15/spring-in-one/#Bean">https://scatteredream.github.io/2024/08/15/spring-in-one/#Bean</a> 生命周期)</p>
+<h3 id="SpringBoot-启动"><a href="#SpringBoot-启动" class="headerlink" title="SpringBoot 启动"></a>SpringBoot 启动</h3><p><a href="https://scatteredream.github.io/2024/08/15/spring-in-one/#SpringBoot%20%E5%90%AF%E5%8A%A8">SpringBoot 启动</a> </p>
 <h2 id="Spring-扫描自定义注解"><a href="#Spring-扫描自定义注解" class="headerlink" title="Spring 扫描自定义注解"></a><span id="annotation">Spring 扫描自定义注解</span></h2><h3 id="RpcComponentScan-：扫描、注册-RpcService的类，实例化时将其加入本地缓存"><a href="#RpcComponentScan-：扫描、注册-RpcService的类，实例化时将其加入本地缓存" class="headerlink" title="@RpcComponentScan ：扫描、注册@RpcService的类，实例化时将其加入本地缓存"></a><code>@RpcComponentScan</code> ：扫描、注册<code>@RpcService</code>的类，实例化时将其加入本地缓存</h3><p>扫描、注册的具体过程：</p>
 <ol>
 <li>扫描到 <code>@Configuration</code> 配置类，又扫到了 <code>@Import(RpcBeanDefinitionRegistrar.class)</code> </li>
@@ -26624,106 +26531,8 @@ return 0;
 
 
 
-<h2 id="SpringBoot-自动装配：自动装配框架内部的-Bean"><a href="#SpringBoot-自动装配：自动装配框架内部的-Bean" class="headerlink" title="SpringBoot 自动装配：自动装配框架内部的 Bean"></a><span id="autoconfig">SpringBoot 自动装配：自动装配框架内部的 Bean</span></h2><p>自动装配基于自动装配类，所以要把所有的bean都用bean方法的形式注册到容器中。</p>
-<p>包括之前讲的 服务发现、服务注册、代理工厂、BeanPostProcessor、ConfigurationProperties等。</p>
-<p>Bean 方法不需要使用Autowired在参数上注解！！！！</p>
-<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p><a href="https://javaguide.cn/system-design/framework/spring/spring-boot-auto-assembly-principles.html">SpringBoot 自动装配原理详解</a> </p>
-<p>自动装配可以简单理解为：<strong>通过注解或者一些简单的配置就能在 Spring Boot 的帮助下实现某块功能。</strong></p>
-<ul>
-<li>没有 Spring Boot 的时候，我们写一个 RestFul Web 服务，还首先需要自己写 Configuration 配置类，写 Bean 方法。</li>
-<li>但有了 SpringBoot，只需要引入依赖，启动 SpringBootApplication 即可。</li>
-</ul>
-<blockquote>
-<p>SpringBoot 定义了一套接口规范，这套规范规定：SpringBoot 在启动时会扫描外部引用 jar 包中的<code>META-INF/spring.factories</code>文件，将文件中配置的类型信息加载到 Spring 容器（此处涉及到 JVM 类加载机制与 Spring 的容器知识），并执行类中定义的各种操作。对于外部 jar 来说，只需要按照 SpringBoot 定义的标准，就能将自己的功能装置进 SpringBoot。</p>
-<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># SpringBoot 2.x  在 META-INF/spring.factories </span></span><br><span class="line"><span class="attr">org.springframework.boot.autoconfigure.EnableAutoConfiguration</span>=<span class="string">\</span></span><br><span class="line"><span class="string">com.example.rpc.RpcServerAutoConfiguration</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># SpringBoot 3 在 META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports</span></span><br><span class="line"><span class="attr">com.example.rpc.RpcServerAutoConfiguration</span></span><br></pre></td></tr></table></figure>
-
-<p>没有 Spring Boot 的情况下，如果我们需要引入第三方依赖，需要手动配置，非常麻烦。但是，Spring Boot 中，我们直接引入一个 starter 即可。比如你想要在项目中使用 redis 的话，直接在项目中引入对应的 starter 即可。</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>引入 starter 之后，我们通过少量注解和一些简单的配置就能使用第三方组件提供的功能了。</p>
-</blockquote>
-<h3 id="原理浅析"><a href="#原理浅析" class="headerlink" title="原理浅析"></a>原理浅析</h3><p>机制核心 @EnableAutoConfiguration (@SpringBootApplication 的一部分) </p>
-<p>底层通过 @Import(AutoConfigurationImportSelector.class) 加载所有自动配置类（通过 spring.factories 找到） 这个ImportSelector很重要，通过 selectImport</p>
-<p>方法扫描获取所有符合条件的类的全限定类名，将这些类注册到 IoC 容器。核心调用路径如下：</p>
-<p><code>selectImport-&gt;getAutoConfigurationEntry-&gt;getCandidateConfigurations-&gt;SpringFactoriesLoader.loadFactoryNames-&gt;loadSpringFactories</code> 不光是这个依赖下的<code>META-INF/spring.factories</code>被读取到，所有 Spring Boot Starter 下的<code>META-INF/spring.factories</code>都会被读取到。后边会根据条件进行逐层筛选。</p>
-<h3 id="示例-创建-starter"><a href="#示例-创建-starter" class="headerlink" title="示例 创建 starter"></a>示例 创建 starter</h3><blockquote>
-<p>引入 starter-validation</p>
-<p>@Validated注解加到类上，下面这些注解可以用到 字段、参数</p>
-<p>@NotBlank @Email  @Min(1)  @Max(91)</p>
-<p>@Pattern(regexp = “^[a-zA-Z0-9]{8,16}$”,message = “用户名只能是长度在8至16”      + “之间的包含数字和大小写字母的字符串”)</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Validated</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;rpc.server&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RpcServerProperties</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String address;<span class="keyword">private</span> Integer port;<span class="keyword">private</span> String appName;</span><br><span class="line">    <span class="meta">@Pattern(regexp = &quot;zookeeper|nacos&quot;, message = &quot;必须是 nacos或者zookeeper&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String registry;</span><br><span class="line">    <span class="keyword">private</span> String transport;<span class="keyword">private</span> String registryAddr;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RpcServerProperties</span><span class="params">()</span> <span class="keyword">throws</span> UnknownHostException &#123;</span><br><span class="line">        <span class="built_in">this</span>.address = InetAddress.getLocalHost().getHostAddress();</span><br><span class="line">        <span class="built_in">this</span>.port = <span class="number">8080</span>;</span><br><span class="line">        <span class="built_in">this</span>.appName = <span class="string">&quot;provider-1&quot;</span>;</span><br><span class="line">        <span class="built_in">this</span>.registry = <span class="string">&quot;zookeeper&quot;</span>;</span><br><span class="line">        <span class="built_in">this</span>.transport = <span class="string">&quot;netty&quot;</span>;</span><br><span class="line">        <span class="built_in">this</span>.registryAddr = <span class="string">&quot;127.0.0.1:2181&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>pojo 类 + @ConfigurationProperties注解，可在 application.yml 中按照前缀配置属性。</p>
-<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">rpc.server.app-name</span>=<span class="string">provider-1</span></span><br><span class="line"><span class="attr">rpc.server.port</span>=<span class="string">9991</span></span><br><span class="line"><span class="attr">rpc.server.registry</span>=<span class="string">zookeeper</span></span><br><span class="line"><span class="attr">rpc.server.registry-addr</span>=<span class="string">39.108.66.202:2181</span></span><br><span class="line"><span class="attr">rpc.server.transport</span>=<span class="string">netty</span></span><br><span class="line"><span class="comment"># 设置指定包下的日志显示级别 INFO/DEBUG/WARNING/OFF</span></span><br><span class="line"><span class="attr">logging.level.com.wxy.rpc</span>=<span class="string">info</span></span><br></pre></td></tr></table></figure>
-
-<table>
-<thead>
-<tr>
-<th>注解</th>
-<th>作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>@ConditionalOnProperty</code></td>
-<td>属性Property，满足一定的条件才生效</td>
-</tr>
-<tr>
-<td><code>@ConditionalOnMissingBean</code></td>
-<td>只有没有这个类型的 Bean 时才生效 (用户自定义实现了Bean方法，可以替换这个自动装配的)</td>
-</tr>
-<tr>
-<td><code>@ConditionalOnClass</code></td>
-<td>类路径下有某个类才生效</td>
-</tr>
-<tr>
-<td><code>@ConditionalOnBean</code></td>
-<td>依赖的 Bean 存在才生效</td>
-</tr>
-<tr>
-<td><code>@Primary</code></td>
-<td>多个同类的 Bean 存在时首选注入</td>
-</tr>
-</tbody></table>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableConfigurationProperties(RpcServerProperties.class)</span> <span class="comment">// 绑定 pojo 作为 properties</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RpcServerAutoConfiguration</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    RpcServerProperties properties;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">    <span class="meta">@ConditionalOnProperty(prefix = &quot;rpc.server&quot;, name = &quot;registry&quot;, havingValue = &quot;zookeeper&quot;, matchIfMissing = true)</span><span class="comment">// property 的 registry 字段的 value = zookeeper 才生效，如果配置项不存在也会生效</span></span><br><span class="line">    <span class="keyword">public</span> ServiceRegistry <span class="title function_">serviceRegistry</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(properties.get)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ZookeeperServiceRegistry</span>(properties.getRegistryAddr());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">    <span class="meta">@ConditionalOnProperty(prefix = &quot;rpc.server&quot;, name = &quot;registry&quot;, havingValue = &quot;nacos&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> ServiceRegistry <span class="title function_">nacosServiceRegistry</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">NacosServiceRegistry</span>(properties.getRegistryAddr());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">    <span class="meta">@ConditionalOnBean(&#123;ServiceRegistry.class, RpcServer.class&#125;)</span></span><br><span class="line">    <span class="keyword">public</span> RpcServerBeanPostProcessor <span class="title function_">rpcServerBeanPostProcessor</span><span class="params">(</span></span><br><span class="line"><span class="params">        <span class="meta">@Autowired</span> ServiceRegistry serviceRegistry,</span></span><br><span class="line"><span class="params">		<span class="meta">@Autowired</span> RpcServer rpcServer,</span></span><br><span class="line"><span class="params">        <span class="meta">@Autowired</span> RpcServerProperties properties)</span> </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">RpcServerBeanPostProcessor</span>(serviceRegistry, rpcServer, properties);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>例子：添加 <code>spring-boot-starter-data-redis</code> 后，可直接注入 <code>RedisTemplate</code>。</p>
-<table>
-<thead>
-<tr>
-<th align="left">特征</th>
-<th align="left">Starter 模块</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><strong>命名</strong></td>
-<td align="left">以 <code>-spring-boot-starter</code> 结尾</td>
-</tr>
-<tr>
-<td align="left"><strong>依赖</strong></td>
-<td align="left">包含 <code>spring-boot-autoconfigure</code></td>
-</tr>
-<tr>
-<td align="left"><strong>自动配置</strong></td>
-<td align="left">有 <code>@AutoConfiguration</code> 类，并注册到 <code>spring.factories</code> 或 <code>AutoConfiguration.imports</code></td>
-</tr>
-<tr>
-<td align="left"><strong>配置属性</strong></td>
-<td align="left">包含 <code>@ConfigurationProperties</code> 类</td>
-</tr>
-<tr>
-<td align="left"><strong>功能入口</strong></td>
-<td align="left">提供开箱即用的 Bean，无需用户手动配置。可通过 <code>application.properties</code> 或 <code>@Bean</code> 覆盖 Starter 的默认配置。</td>
-</tr>
-</tbody></table>
-<ol>
-<li><p>实现自动配置类 AutoConfiguration </p>
-</li>
-<li><p>按照 SpringBoot 版本将配置类的全限定名引入指定路径下。</p>
-</li>
-<li><p>新建 starter 模块，添加依赖</p>
-<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 必须依赖 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-autoconfigure<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring-boot.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 可选：配置注解处理器 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-configuration-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 你的模块核心实现 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>rpc-server-spring-boot<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
-</ol>
+<h2 id="自动装配"><a href="#自动装配" class="headerlink" title="自动装配"></a><span id="autoconfig">自动装配</span></h2><p><a href="https://scatteredream.github.io/2024/08/15/spring-in-one/#SpringBoot%20%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%EF%BC%9A%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%A1%86%E6%9E%B6%E5%86%85%E9%83%A8%E7%9A%84%20Bean">SpringBoot-自动装配：自动装配框架内部的-Bean</a> </p>
+<p><a href="https://scatteredream.github.io/2024/10/01/spring-boot-starter/">自定义 starter | scatteredream’s blog</a> </p>
 <h1 id="项目使用"><a href="#项目使用" class="headerlink" title="项目使用"></a>项目使用</h1><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><ul>
 <li>操作系统：Windows + Linux</li>
 <li>集成开发工具：IntelliJ IDEA</li>
@@ -26977,6 +26786,30 @@ return 0;
 <li><strong>开源社区策略</strong>：差异化功能作为扩展插件（如 WASM 运行时），吸引特定场景用户。</li>
 </ol>
 <p>通过以上方向，可以在不直接挑战 Dubbo 通用性的前提下，在特定领域（如边缘计算、极致性能、云原生深度集成）建立优势。关键是根据目标用户的实际需求做减法（如移除复杂治理功能）或创新（如内置新型序列化）。</p>
+<h1 id="qa"><a href="#qa" class="headerlink" title="qa"></a>qa</h1><p>实现的rpc跟dubbo有什么区别，为什么不用dubbo要用这个rpc？ </p>
+<p>如果把rpc改成分布式架构，应该怎么改 ，哪一部分要改成分本式？</p>
+<p>注册中心改成分布式，客户端的接口的幂等性和多个分布式注册中心之间的数据一致性怎么保证或者平衡？</p>
+<p>心跳检测是在一个单线程定时器里，这一部分要不要分布式一下？ </p>
+<p>服务端节点应该怎么优雅地上下线？客户端什么时候会拉取最新的服务节点？拉取的是所有的服务节点还是部分服务节点？</p>
+<p>为什么？ 客户端和服务端的定时器的区别？ </p>
+<p>rpc为什么要基于tcp？能不能用udp？该怎么改或者定怎样的传输协议，可靠性传输相关的要不要考虑一下？ </p>
+<p>能不能在除了rpc的应用层，在别的层（比如传输层和网络层）做负载均衡？大概该怎么做？</p>
+<p>在项目中使用了代理设计模式来简化用户调用流程，请解释一下代理设计模式在该项目中的具体应用和优势。</p>
+<p>项目中提到支持多种序列化方式，例如Hessian和son，请说明在选择序列化方式时需要考虑哪些因素并举例说明不同序列化方式的适用场景。</p>
+<p>你可以详细解释一下项目中使用的序列化机制的选择和实现方式，并说明在实际应用中如何评估和选择合适的序列化方式。</p>
+<p>你可以详细解释一下项目中使用的负载均衡算法的选择和实现方式，并说明在实际应用中如何评估和调整负载均衡策略。</p>
+<p>你可以详细解释一下在使用Zookeeper和Redis作为注册中心时，它们各自的作用和优势是什么，并举例说明它们在该项目中的具体应用。</p>
+<p>在负载均衡策略中，你提到了轮询和一致性哈希算法，请解释一下这两种算法的原理和适用场景，并说明在该项目中如何实现这些负载均衡策略。</p>
+<p>容错机制在分布式系统中非常重要，请详细说明在该项目中引入的容错机制是如何工作的，并举例说明它们如何提高系统的健壮性和可用性。</p>
+<p>拦截器层在该项目中被用来实现哪些功能?诗列举一些常见的拦截器类型，并解释它们的作用和如何实现。</p>
+<p>在项目中引入了拦截器层，请解释一下在该项目中如何定义和使用拦截器，并说明拦截器在系统中的执行顺序和作用。</p>
+<p>SPI层在该项目中被用作基础架构，请解释一下系统SPI和用户SPI的区别和作用，并说明它们在项目中的具体应用场景。</p>
+<p>在项目中使用了SPI层来实现高拓展性，请说明一下在该项目中如何定义和使用SPI接口，并解释一下SPI的工作原理和实现方式。</p>
+<p>Netty在该项目中被用作什么角色?请解释一下Netty的主要特点和优势，并说明在该项目中为什么选择Netty作为网络通信框架。</p>
+<p>你在项目中提到了自定义传输协议数据格式，详细解释一下自定义传输协议的设计思路和实现方式，并说明为什么选择自定义传输协议。</p>
+<p>你在项目中提到了高拓展性，请解释一下在该项目中如何实现高拓展性，并举例说明用户如何根据配置策略引入和替换模块。</p>
+<p>项目中提到了重试策略，诗解释一下在该项目中如何实现重试策略，并说明如何避免重试导致的潜在问题，例如请求重复执行等。如何保证幂等性?(因为有重试策略)</p>
+<p>请说明一下在该项目中遇到的主要挑战和问题，并解释你是如何解决这些挑战和问题的。</p>
 ]]></content>
       <categories>
         <category>项目</category>
@@ -27498,15 +27331,15 @@ return 0;
 </ul>
 </li>
 </ul>
-<h4 id="bean-创建方式"><a href="#bean-创建方式" class="headerlink" title="bean 创建方式"></a>bean 创建方式</h4><h5 id="使用构造方法"><a href="#使用构造方法" class="headerlink" title="使用构造方法"></a><mark>使用构造方法<mark></h5><p>无参构造器，如果使用构造器进行依赖注入，则走的是有参构造</p>
+<h4 id="bean-创建方式"><a href="#bean-创建方式" class="headerlink" title="bean 创建方式"></a>bean 创建方式</h4><h5 id="构造方法"><a href="#构造方法" class="headerlink" title="构造方法"></a><mark>构造方法<mark></h5><p>无参构造器，如果使用构造器进行依赖注入，则走的是有参构造</p>
 <h5 id="使用静态工厂实例化Bean"><a href="#使用静态工厂实例化Bean" class="headerlink" title="使用静态工厂实例化Bean"></a>使用静态工厂实例化Bean</h5><ul>
 <li>工厂的静态方法factoryMethod(return new Bean)，不造工厂，调用工厂的<strong>静态</strong>方法造Bean <u>ATTRIBUTE</u>: factory-method</li>
 </ul>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019160109618.png" alt="image-20241019160109618"></p>
-<h5 id="使用实例工厂实例化Bean"><a href="#使用实例工厂实例化Bean" class="headerlink" title="使用实例工厂实例化Bean"></a>使用实例工厂实例化Bean</h5><ul>
+<h5 id="使用工厂实例化Bean"><a href="#使用工厂实例化Bean" class="headerlink" title="使用工厂实例化Bean"></a>使用工厂实例化Bean</h5><ul>
 <li>先造工厂bean再调用工厂的<strong>实例</strong>方法(return newBean) 造bean</li>
 </ul>
-<h5 id="FactoryBean-实例工厂bean"><a href="#FactoryBean-实例工厂bean" class="headerlink" title="FactoryBean 实例工厂bean"></a><mark>FactoryBean 实例工厂bean<mark></h5><ul>
+<h5 id="FactoryBean-工厂bean"><a href="#FactoryBean-工厂bean" class="headerlink" title="FactoryBean 工厂bean"></a><mark>FactoryBean 工厂bean</mark></h5><ul>
 <li><p>第三方自定义工厂Bean类实现FactoryBean接口，重写方法<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019160946566.png" alt="image-20241019160946566"></p>
 <ul>
 <li>getObject 工厂类的returnNewBean方法</li>
@@ -27598,14 +27431,14 @@ return 0;
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019222158026.png" alt="image-20241019222158026"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019221938964.png" alt="image-20241019221938964"></p>
 <p>立即加载（饿汉），lazy-init 延迟加载 (懒汉)</p>
-<h2 id="注解开发"><a href="#注解开发" class="headerlink" title="注解开发"></a>注解开发</h2><h3 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h3><h4 id="定义bean-Component"><a href="#定义bean-Component" class="headerlink" title="定义bean@Component"></a><mark>定义bean@Component</mark></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019223116345.png" alt="image-20241019223116345"></p>
+<h2 id="注解开发"><a href="#注解开发" class="headerlink" title="注解开发"></a>注解开发</h2><h3 id="Bean-的定义"><a href="#Bean-的定义" class="headerlink" title="Bean 的定义"></a>Bean 的定义</h3><h4 id="定义bean-Component"><a href="#定义bean-Component" class="headerlink" title="定义bean@Component"></a><mark>定义bean@Component</mark></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019223116345.png" alt="image-20241019223116345"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019223156078.png" alt="image-20241019223156078"></p>
 <p>加上对应的bean的id ，不加就要加载字节码class</p>
-<h4 id="纯注解开发-Configuration-ComponetScan"><a href="#纯注解开发-Configuration-ComponetScan" class="headerlink" title="纯注解开发@Configuration  @ComponetScan"></a><mark>纯注解开发@Configuration  @ComponetScan</mark></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019224153002.png" alt="image-20241019224153002"></p>
+<h4 id="纯注解开发-Configuration-ComponentScan"><a href="#纯注解开发-Configuration-ComponentScan" class="headerlink" title="纯注解开发@Configuration  @ComponentScan"></a><mark>纯注解开发@Configuration  @ComponentScan</mark></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019224153002.png" alt="image-20241019224153002"></p>
 <p>获取ctx: <code>ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringConfig.class)</code> </p>
-<p>默认xml配置文件只给了beans的命名空间，context还得另外自己加，纯注解开发需要定义一个SpringConfig类，常用的配置都有，不用手动去加命名空间</p>
-<p>XML out!</p>
-<h3 id="2-bean管理"><a href="#2-bean管理" class="headerlink" title="2. bean管理"></a>2. bean管理</h3><h4 id="作用范围-Scope"><a href="#作用范围-Scope" class="headerlink" title="作用范围 @Scope"></a>作用范围 @Scope</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019225307356.png" alt="image-20241019225307356"></p>
+<p>默认xml配置文件只给了beans的命名空间，context还得另外自己加，纯注解开发需要定义一个SpringConfig类，常用的配置都有，不用手动去加命名空间 XML out!</p>
+<p>和 @Component 的区别是，能进行代理拦截，保证bean是单例的。</p>
+<h3 id="Bean-的管理"><a href="#Bean-的管理" class="headerlink" title="Bean 的管理"></a>Bean 的管理</h3><h4 id="作用范围-Scope"><a href="#作用范围-Scope" class="headerlink" title="作用范围 @Scope"></a>作用范围 @Scope</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241019225307356.png" alt="image-20241019225307356"></p>
 <h4 id="生命周期-PostConstruct-PreDestroy"><a href="#生命周期-PostConstruct-PreDestroy" class="headerlink" title="生命周期 @PostConstruct @PreDestroy"></a>生命周期 @PostConstruct @PreDestroy</h4><p><a href="https://scatteredream.github.io/2025/02/03/rpc-interpretation/#Review-Spring-Bean-%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E4%B8%80%E8%A7%88">Review-Spring-Bean-生命周期一览</a> </p>
 <p><a href="https://cloud.tencent.com/developer/article/2426419">探究Spring Boot中@PostConstruct注解的使用场景-腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
 <p><a href="https://cloud.tencent.com/developer/article/1588212">Spring 框架中 @PostConstruct 注解详解-腾讯云开发者社区-腾讯云 (tencent.com)</a></p>
@@ -27613,8 +27446,7 @@ return 0;
 <p>Instantiate(Constructor)&gt; @Autowired &gt; @PostConstruct</p>
 <p>依赖注入完成，被显式调用之前</p>
 <p><a href="https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/postconstruct-and-predestroy-annotations.html">Using @PostConstruct and @PreDestroy :: Spring Framework</a></p>
-<h3 id="DI-自动装配"><a href="#DI-自动装配" class="headerlink" title="DI 自动装配"></a>DI 自动装配</h3><h4 id="自动装配-Autowired（引用类型）"><a href="#自动装配-Autowired（引用类型）" class="headerlink" title="自动装配@Autowired（引用类型）"></a><mark>自动装配@Autowired（引用类型）<mark></h4><p>在需要注入依赖的<strong>一个</strong>属性</p>
-<p>与配置文件<a href="#autowire">autowire Attribute of Bean</a>不同，注解Autowired不依赖于setter和有参构造器，直接暴力反射访问private属性，创建对象并注入依赖。 </p>
+<h3 id="DI-自动装配"><a href="#DI-自动装配" class="headerlink" title="DI 自动装配"></a>DI 自动装配</h3><h4 id="自动装配-Autowired"><a href="#自动装配-Autowired" class="headerlink" title="自动装配@Autowired"></a><mark>自动装配@Autowired</mark></h4><p>在需要注入依赖的<strong>一个</strong>属性，与配置文件<a href="#autowire">autowire Attribute of Bean</a>不同，注解Autowired不依赖于setter和有参构造器，直接暴力反射访问private属性，创建对象并注入依赖。 </p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020011345128.png" alt="image-20241020011345128"></p>
 <h5 id="按名称匹配-Qualifier"><a href="#按名称匹配-Qualifier" class="headerlink" title="按名称匹配@Qualifier"></a>按名称匹配@Qualifier</h5><p>autowired默认按类型装 配，同一类型多个实现，用Qualifier指定具体bean名称，<em>不加Qualifier就按一定规则选择</em> </p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020011356460.png" alt="image-20241020011356460"></p>
@@ -27696,8 +27528,91 @@ return 0;
 </blockquote>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020145826024.png" alt="image-20241020145826024"></p>
 <p>需要引用类型参数直接autowired注入即可，一般是业务类做测试</p>
-<h2 id="BeanDefinition-BeanPostProcessor"><a href="#BeanDefinition-BeanPostProcessor" class="headerlink" title="BeanDefinition BeanPostProcessor"></a>BeanDefinition BeanPostProcessor</h2><p><a href="https://scatteredream.github.io/2025/02/03/rpc-interpretation/#Spring-%E6%89%AB%E6%8F%8F%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3">Spring-扫描自定义注解</a> </p>
-<h1 id="Spring-AOP"><a href="#Spring-AOP" class="headerlink" title="Spring AOP"></a>Spring AOP</h1><h2 id="AOP的含义"><a href="#AOP的含义" class="headerlink" title="AOP的含义"></a>AOP的含义</h2><p>AOP 面向切面编程 <strong>不惊动原始设计</strong>的情况下增强功能</p>
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><h3 id="IoC-容器动作"><a href="#IoC-容器动作" class="headerlink" title="IoC 容器动作"></a>IoC 容器动作</h3><h4 id="ApplicationContextInitializer-容器创建后"><a href="#ApplicationContextInitializer-容器创建后" class="headerlink" title="ApplicationContextInitializer: 容器创建后"></a>ApplicationContextInitializer: 容器创建后</h4><ul>
+<li>IoC容器初始化器，实现 <code>initialize()</code>方法（返回 ConfigurableApplicationContext对象）</li>
+<li>在spring.factories中配置自定义实现类的全限定名。</li>
+<li>IOC创建完成后执行，常用于 Environment 环境属性注册。</li>
+</ul>
+<h4 id="ApplicationListener-监听容器发布的事件"><a href="#ApplicationListener-监听容器发布的事件" class="headerlink" title="ApplicationListener: 监听容器发布的事件"></a>ApplicationListener: 监听容器发布的事件</h4><blockquote>
+<p>设计模式：观察者模式</p>
+</blockquote>
+<p>ioc容器发布事件后回调，通常用于资源加载和定时任务的发布。</p>
+<ul>
+<li><code>onApplicationEvent(ApplicationEvent event)</code>:</li>
+<li>在spring.factories中配置自定义实现类的全限定名。</li>
+</ul>
+<p><code>ApplicationReadyEvent</code>, <code>ApplicationFailedEvent</code></p>
+<h3 id="IoC-容器"><a href="#IoC-容器" class="headerlink" title="IoC 容器"></a>IoC 容器</h3><h4 id="BeanFactory-容器根接口"><a href="#BeanFactory-容器根接口" class="headerlink" title="BeanFactory: 容器根接口"></a>BeanFactory: 容器根接口</h4><p>主要是bean的创建、配置、依赖注入等功能。</p>
+<p>核心方法是 <code>getBean()</code>，还包含 <code>isSingleton()/isPrototype()</code> <code>containsBean()</code>的功能。</p>
+<p>getBean(): <a href="https://scatteredream.github.io/2025/05/25/spring-circle-ref/#%E6%BA%90%E7%A0%81%E6%B5%81%E7%A8%8B">spring 循环依赖 | scatteredream’s blog</a> </p>
+<ul>
+<li>BeanFactory：根接口</li>
+<li>AbstractBeanFactory</li>
+<li>DefaultSingletonBeanRegistry</li>
+<li>AbstractAutowireCapableBeanFactory</li>
+</ul>
+<blockquote>
+<p>委托制：AnnotationConfigServletWebServer<u>ApplicationContext</u> 将bean的创建配置和依赖注入委托给了 DefaultListable<u>BeanFactory</u></p>
+</blockquote>
+<h3 id="Bean"><a href="#Bean" class="headerlink" title="Bean"></a>Bean</h3><h4 id="BeanDefinition-Bean-相关信息"><a href="#BeanDefinition-Bean-相关信息" class="headerlink" title="BeanDefinition: Bean 相关信息"></a>BeanDefinition: Bean 相关信息</h4><p>描述bean，包括名称、属性、行为（初始化方法、销毁方法、类名、构造器参数）、实现的接口、添加的注解等。Bean创建之前都要封装成 BeanDefinition 注册到 BeanDefinitionMap 中。</p>
+<ul>
+<li>BeanDefinition</li>
+<li>ScannedGenericBeanDefinition （标注x类为bean的注解）</li>
+<li>ConfigurationClassBeanDefinition（标注某个方法的返回值是bean）</li>
+</ul>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250612222012377.png" alt="image-20250612222012377" style="zoom:50%;" />
+
+<h4 id="BeanFactoryPostProcessor-BeanFactory-后处理器"><a href="#BeanFactoryPostProcessor-BeanFactory-后处理器" class="headerlink" title="BeanFactoryPostProcessor: BeanFactory 后处理器"></a>BeanFactoryPostProcessor: BeanFactory 后处理器</h4><p>BeanFactory 准备好，正式开始Bean创建之前，<code>postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) </code>经常用来新增 BeanDefinition。只要把name bdf传入即可实现注册。</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250612223522046.png" alt="image-20250612223522046" style="zoom: 67%;" />
+
+<h4 id="BeanPostProcessor"><a href="#BeanPostProcessor" class="headerlink" title="BeanPostProcessor"></a>BeanPostProcessor</h4><p><a href="https://scatteredream.github.io/2025/02/03/rpc-interpretation/#Spring-%E6%89%AB%E6%8F%8F%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3">Spring-扫描自定义注解</a> 在每个Bean初始化完成之后或者之前都会调用 postProcess<u>Before/After</u>Initialization. </p>
+<p>after: 代理对象</p>
+<img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250612224408027.png" alt="image-20250612224408027" style="zoom: 67%;" />
+
+<h4 id="Aware"><a href="#Aware" class="headerlink" title="Aware"></a>Aware</h4><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250612223852103.png" alt="image-20250612223852103" style="zoom:50%;" />
+
+<h2 id="Bean-生命周期"><a href="#Bean-生命周期" class="headerlink" title="Bean 生命周期"></a>Bean 生命周期</h2><ol>
+<li><p>Bean 实例化(仅为构造出对象)</p>
+<ul>
+<li><strong>触发条件</strong>：①容器启动 ②首次请求 Bean 时 <code>getBean() 或者依赖注入</code>。</li>
+<li><strong>方式</strong>：通过构造函数或工厂方法创建 Bean 的实例。</li>
+<li><strong>异常</strong>：若依赖无法解析或构造函数抛出异常，Bean 创建失败。</li>
+</ul>
+</li>
+<li><p>属性赋值 Populate Properties</p>
+<ul>
+<li><strong>依赖注入</strong>：通过 <code>@Autowired</code>、<code>@Resource</code>、XML 配置等方式注入属性。</li>
+<li>处理 <code>@Value</code>：解析并注入 SpEL 表达式或占位符的值。</li>
+</ul>
+</li>
+<li><p>Aware 接口回调 与 <code>BeanPostProcessor </code>前置处理、初始化、后置处理。</p>
+</li>
+<li><p>就绪状态</p>
+<ul>
+<li>Bean 完全初始化，可被应用程序使用。</li>
+<li><strong>Singleton Bean</strong> 会被缓存，后续请求直接获取。</li>
+<li><strong>Prototype Bean</strong> 每次请求创建新实例（无后续销毁步骤）。</li>
+</ul>
+</li>
+<li><p>Bean 对象销毁回调</p>
+<ul>
+<li><p><code>@PreDestroy</code> JSR-250</p>
+</li>
+<li><p><code>destroy()-&gt;</code>  DisposableBean</p>
+</li>
+<li><p><code>close()</code> @Bean (destroyMethod =  close)</p>
+</li>
+</ul>
+</li>
+<li><p>Bean 对象销毁</p>
+<ul>
+<li><strong>触发条件</strong>：容器关闭时（如 <code>close()</code> 方法调用）。</li>
+<li><strong>作用域影响</strong>：仅 Singleton Bean 会执行销毁回调，Prototype Bean 需手动清理。</li>
+</ul>
+</li>
+</ol>
+<h2 id="扫描并注册被注解的类"><a href="#扫描并注册被注解的类" class="headerlink" title="扫描并注册被注解的类"></a>扫描并注册被注解的类</h2><p><a href="https://scatteredream.github.io/2025/02/03/rpc-interpretation/#annotation">基于 Netty 的 RPC 框架 | scatteredream’s blog</a> </p>
+<h2 id="IoC容器初始化"><a href="#IoC容器初始化" class="headerlink" title="IoC容器初始化"></a><a href="#refresh">IoC容器初始化</a></h2><h1 id="Spring-AOP"><a href="#Spring-AOP" class="headerlink" title="Spring AOP"></a>Spring AOP</h1><h2 id="AOP的含义"><a href="#AOP的含义" class="headerlink" title="AOP的含义"></a>AOP的含义</h2><p>AOP 面向切面编程 <strong>不惊动原始设计</strong>的情况下增强功能</p>
 <p>Spring理念：无侵入式增强功能</p>
 <ul>
 <li>所有原始方法-&gt;连接点(joint point) 在SpringAOP中如此<ul>
@@ -27755,7 +27670,13 @@ return 0;
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020163432072.png" alt="image-20241020163432072"></p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Pointcut(&quot;execution(void com.itheima.dao.BookDao.update())&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(void com.itheima.dao.impl.BookDaoImpl.update())&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(* com.itheima.dao.impl.BookDaoImpl.update(*))&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(void com.*.*.*.update())&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(* *..*(..))&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(* *..*e(..))&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(void com..*())&quot;)</span></span><br><span class="line"><span class="meta">@Pointcut(&quot;execution(* com.itheima.*.*Service.find*(..))&quot;)</span></span><br><span class="line"><span class="comment">//执行com.itheima包下的任意包下的名称以Service结尾的类或接口中的save方法，参数任意，返回值任意</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<h3 id="通知类型"><a href="#通知类型" class="headerlink" title="通知类型"></a>通知类型</h3><h4 id="前置-Before"><a href="#前置-Before" class="headerlink" title="前置@Before"></a>前置@Before</h4><h4 id="后置-After"><a href="#后置-After" class="headerlink" title="后置@After"></a>后置@After</h4><h4 id="环绕-Around"><a href="#环绕-Around" class="headerlink" title="环绕@Around"></a><u><mark>环绕@Around</mark></u></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020170038080.png" alt="image-20241020170038080"></p>
+<h3 id="通知类型"><a href="#通知类型" class="headerlink" title="通知类型"></a>通知类型</h3><blockquote>
+<p>前置@Before</p>
+</blockquote>
+<blockquote>
+<p>后置@After</p>
+</blockquote>
+<h4 id="环绕-Around"><a href="#环绕-Around" class="headerlink" title="环绕@Around"></a><u><mark>环绕@Around</mark></u></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020170038080.png" alt="image-20241020170038080"></p>
 <ul>
 <li><p>ProceedingJoinPoint</p>
 </li>
@@ -27766,8 +27687,14 @@ return 0;
 <li><p>强制抛Throwable </p>
 </li>
 </ul>
-<h4 id="得到返回值之后-AfterReturning"><a href="#得到返回值之后-AfterReturning" class="headerlink" title="得到返回值之后@AfterReturning"></a>得到返回值之后@AfterReturning</h4><p>和after区别：after只要方法结束即可，不管是得到返回值正常结束还是抛异常。AfterReturning需要得到返回值正常结束才能</p>
-<h4 id="抛出异常之后-AfterThrowing"><a href="#抛出异常之后-AfterThrowing" class="headerlink" title="抛出异常之后@AfterThrowing"></a>抛出异常之后@AfterThrowing</h4><h3 id="案例：JUnit-测量业务层接口执行效率"><a href="#案例：JUnit-测量业务层接口执行效率" class="headerlink" title="案例：JUnit 测量业务层接口执行效率"></a>案例：JUnit 测量业务层接口执行效率</h3><p>JUnit 测试服务类就private服务出来，<code>@Autowired</code> </p>
+<blockquote>
+<p>得到返回值之后@AfterReturning</p>
+</blockquote>
+<p>和after区别：after只要方法结束即可，不管是得到返回值正常结束还是抛异常。AfterReturning需要得到返回值正常结束才能</p>
+<blockquote>
+<p>抛出异常之后@AfterThrowing</p>
+</blockquote>
+<h3 id="案例：JUnit-测量业务层接口执行效率"><a href="#案例：JUnit-测量业务层接口执行效率" class="headerlink" title="案例：JUnit 测量业务层接口执行效率"></a>案例：JUnit 测量业务层接口执行效率</h3><p>JUnit 测试服务类就private服务出来，<code>@Autowired</code> </p>
 <p>下面写test具体方法。详见JUnit单元测试篇(Java SE)</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020171154617.png" alt="image-20241020171154617"></p>
 <p>获取方法签名 (执行信息) <code>getSignature()</code></p>
@@ -27775,17 +27702,23 @@ return 0;
 <h3 id="通知获取数据"><a href="#通知获取数据" class="headerlink" title="通知获取数据"></a>通知获取数据</h3><h4 id="JoinPoint-amp-ProceedingJoinPoint"><a href="#JoinPoint-amp-ProceedingJoinPoint" class="headerlink" title="JoinPoint &amp; ProceedingJoinPoint"></a>JoinPoint &amp; ProceedingJoinPoint</h4><p><strong>作为通知的参数</strong>，如果出现，必须在第一个参数的位置上,PJP是JP的子类</p>
 <p><code>Object[] getArgs()</code>: 获取原始方法的参数</p>
 <p><code> Object proceed()</code> :环绕 PJP专用，调用原始方法同时返回这个方法的返回值</p>
-<h4 id="AOP获取原始方法调用参数"><a href="#AOP获取原始方法调用参数" class="headerlink" title="AOP获取原始方法调用参数"></a><mark>AOP获取原始方法调用参数<mark></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020173959692.png" alt="image-20241020173959692"></p>
+<h4 id="AOP获取原始方法调用参数"><a href="#AOP获取原始方法调用参数" class="headerlink" title="AOP获取原始方法调用参数"></a><mark>AOP获取原始方法调用参数</mark></h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020173959692.png" alt="image-20241020173959692"></p>
 <p>这样可以对原始参数进行处理，可以增加程序健壮性。</p>
 <p><code>Object proceed(Object[] args)</code> 可以把处理以后的参数传给原始方法。</p>
 <h4 id="案例：网盘提取码去空格"><a href="#案例：网盘提取码去空格" class="headerlink" title="案例：网盘提取码去空格"></a>案例：网盘提取码去空格</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020180157823.png" alt="image-20241020180157823"></p>
 <p>args本身是Object数组，拿进来需要转成字符串toString getArgs 然后遍历参数数组，对每个字符串参数trim，再把处理以后的传给proceed</p>
-<h4 id="AOP获取返回值"><a href="#AOP获取返回值" class="headerlink" title="AOP获取返回值"></a>AOP获取返回值</h4><ol>
+<blockquote>
+<p>AOP获取返回值</p>
+</blockquote>
+<ol>
 <li>环绕 pjp proceed </li>
 <li>AfterReturning 注解的returning要和形参名字相同</li>
 </ol>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020175037570.png" alt="image-20241020175037570"></p>
-<h4 id="AOP接收异常"><a href="#AOP接收异常" class="headerlink" title="AOP接收异常"></a>AOP接收异常</h4><ol>
+<blockquote>
+<p>AOP接收异常</p>
+</blockquote>
+<ol>
 <li><p>环绕 不要往出抛Throwable 内部try-catch</p>
 </li>
 <li><p>AfterThrowing 注解的throwing和形参名字相同</p>
@@ -27855,18 +27788,30 @@ return 0;
 <p><a href="https://blog.csdn.net/wang489687009/article/details/129259394">【Spring事务三千问】Spring的事务管理与MyBatis事务管理结合的原理_spring transaction和mybatis的整合 原理-CSDN博客</a></p>
 <p><a href="https://zhuanlan.zhihu.com/p/358657396">【spring源码深度解析】：spring是如何利用@Transactional注解实现数据库事务的？把握住事务的基本用法你就懂了 - 知乎 (zhihu.com)</a></p>
 <h2 id="事务管理整合"><a href="#事务管理整合" class="headerlink" title="事务管理整合"></a>事务管理整合</h2><p><a href="https://www.cnblogs.com/jddreams/p/14024754.html">图解Java JDBC和JPA的区别 - 快乐随行 - 博客园 (cnblogs.com)</a></p>
-<h3 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h3><ul>
+<blockquote>
+<p>MySQL</p>
+</blockquote>
+<ul>
 <li>InnoDB存储引擎支持事务（SQL语句）</li>
 </ul>
-<h3 id="原生-JDBC"><a href="#原生-JDBC" class="headerlink" title="原生 JDBC"></a>原生 JDBC</h3><ul>
+<blockquote>
+<p>原生 JDBC</p>
+</blockquote>
+<ul>
 <li> 注册驱动，</li>
 <li> 获取Connection，</li>
 <li> 建立Statement执行SQL语句，Connection可以管理事务（本质是执行SQL语句）</li>
 </ul>
-<h3 id="DataSource数据源"><a href="#DataSource数据源" class="headerlink" title="DataSource数据源"></a>DataSource数据源</h3><ul>
+<blockquote>
+<p>DataSource数据源</p>
+</blockquote>
+<ul>
 <li>主要用来获取并管理，调度Connection</li>
 </ul>
-<h3 id="原生-MyBatis-ORM"><a href="#原生-MyBatis-ORM" class="headerlink" title="原生 MyBatis (ORM)"></a>原生 MyBatis (ORM)</h3><ul>
+<blockquote>
+<p>原生 MyBatis (ORM)</p>
+</blockquote>
+<ul>
 <li><p>可以调用外部数据源获取Connection，也可以使用原生JDBC来获取，最终这些Connection可以呗SqlSession获取到。</p>
 </li>
 <li><p>SqlSession同样能管理事务，底层是基于Transaction(也是mybatis的一个类)</p>
@@ -27874,7 +27819,10 @@ return 0;
 </ul>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">SqlSession</span> <span class="variable">session</span> <span class="operator">=</span> sqlSessionFactory.openSession();</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">affected_rows</span> <span class="operator">=</span> session.insert(<span class="string">&quot;com.kvn.mapper.UserMapper.insert&quot;</span>, user);</span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    <span class="comment">// 捕获到异常，将操作回滚</span></span><br><span class="line">    session.rollback();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 正常执行，提交事务</span></span><br><span class="line">session.commit();</span><br><span class="line">session.close();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<h3 id="Spring联合MyBatis事务管理"><a href="#Spring联合MyBatis事务管理" class="headerlink" title="Spring联合MyBatis事务管理"></a>Spring联合MyBatis事务管理</h3><p><code>SpringManagedTransaction</code> 打通了 MyBatis 的事务管理、连接管理 和 spring-tx 的 事务管理、连接管理，使得 MyBatis 与 Spring 可以使用统一的方式来管理连接的生命周期 和 事务处理。</p>
+<blockquote>
+<p><strong>Spring联合MyBatis事务管理</strong></p>
+</blockquote>
+<p><code>SpringManagedTransaction</code> 打通了 MyBatis 的事务管理、连接管理 和 spring-tx 的 事务管理、连接管理，使得 MyBatis 与 Spring 可以使用统一的方式来管理连接的生命周期 和 事务处理。</p>
 <ol start="0">
 <li><p>原生的MyBatis 使用的是JdbcTransaction实现类</p>
 </li>
@@ -27888,7 +27836,7 @@ return 0;
 <li>SqlSessionInterceptor 保证了 MyBatis 的 SqlSession 在执行 sql 时使用的连接与 Spring 事务管理操作使用的连接是<u>同一个</u>连接。具体就是通过 Spring 的事务同步器 <code>TransactionSynchronizationManager</code> 来保证的。</li>
 <li>SpringManagedTransaction 中连接的获取是从 Spring 管理的 DataSource 中获取的，这样，数据库连接池也就和 spring 整合在一起了。</li>
 </ol>
-<h2 id="多线程事务"><a href="#多线程事务" class="headerlink" title="多线程事务"></a>多线程事务</h2><h3 id="javax-sql-Connection"><a href="#javax-sql-Connection" class="headerlink" title="javax.sql.Connection"></a>javax.sql.Connection</h3><p>简单地来说，建立<code>Connection</code>连接，会消耗数据库系统的如下资源：</p>
+<h2 id="多线程事务"><a href="#多线程事务" class="headerlink" title="多线程事务"></a>多线程事务</h2><h3 id="Connection"><a href="#Connection" class="headerlink" title="Connection"></a>Connection</h3><p>简单地来说，建立<code>Connection</code>连接，会消耗数据库系统的如下资源：</p>
 <table>
 <thead>
 <tr>
@@ -27926,23 +27874,35 @@ return 0;
 <p>至于为什么要用ThreadLocal呢?这个和连接池无关,我认为更多的是和程序本身相关,为了更清楚的说明,我举个例子</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">servlet中获取一个连接.首先,servlet是线程安全的吗?</span><br><span class="line"></span><br><span class="line">     class MyServlet extends HttpServlet&#123;</span><br><span class="line">         private Connection conn;</span><br><span class="line">     &#125;</span><br><span class="line">     ok,遗憾的告诉你,这个conn并不是安全的,所有请求这个servlet的连接,使用的都是一个Connection,这个就是致命的了.多个人使用同一个连接,算上延迟啥的,天知道数据会成什么样.</span><br><span class="line">     因此我们要保证Connection对每个请求都是唯一的.这个时候就可以用到ThreadLocal了,保证每个线程都有自己的连接.</span><br><span class="line">     改为 private ThreadLocal&lt;Connection&gt; ct = new ThreadLocal&lt;Connnection&gt;();</span><br><span class="line">     然后从连接池获取Connection,set到ct中,再get就行了,至于得到的是哪个Connection就是连接池的问题了,你也管不到.</span><br></pre></td></tr></table></figure>
 
-<h3 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal?"></a>ThreadLocal?</h3><p>就是为每一个使用该变量的线程都提供一个变量值的副本，是每一个线程都可以独立地改变自己的副本，而不会和其它线程的副本冲</p>
-<h2 id="开启步骤"><a href="#开启步骤" class="headerlink" title="开启步骤"></a>开启步骤</h2><h3 id="业务层-接口-为业务方法打开事务-Transactional"><a href="#业务层-接口-为业务方法打开事务-Transactional" class="headerlink" title="业务层**接口**为业务方法打开事务@Transactional"></a>业务层**<mark>接口<mark>**为业务方法打开事务@Transactional</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020204651727.png" alt="image-20241020204651727"></p>
+<h3 id="ThreadLocal"><a href="#ThreadLocal" class="headerlink" title="ThreadLocal?"></a>ThreadLocal?</h3><p>就是为每一个使用该变量的线程都提供一个变量值的副本，是每一个线程都可以独立地改变自己的副本，而不会和其它线程的副本冲突</p>
+<h2 id="开启步骤"><a href="#开启步骤" class="headerlink" title="开启步骤"></a>开启步骤</h2><blockquote>
+<p>业务层**<mark>接口</mark>**为业务方法打开事务@Transactional</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020204651727.png" alt="image-20241020204651727"></p>
 <ul>
 <li><p>@Transactional是方法级别或者类级别的注解，可以<strong>开在整个接口上</strong>，也可以开在单个方法上</p>
 </li>
 <li><p>接口能够提高复用性，降低耦合</p>
 </li>
 </ul>
-<h3 id="JdbcConfig创建事务管理器Bean-Bean"><a href="#JdbcConfig创建事务管理器Bean-Bean" class="headerlink" title="JdbcConfig创建事务管理器Bean@Bean"></a>JdbcConfig创建事务管理器Bean@Bean</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020204933459.png" alt="image-20241020204933459"></p>
+<blockquote>
+<p>JdbcConfig创建事务管理器Bean@Bean</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020204933459.png" alt="image-20241020204933459"></p>
 <p>PlatformTransactionManager是Spring规定的，DataSourceTransactionManager可以动，根据具体的技术选择</p>
 <p>要注意，事务管理器的datasource和mybatis用的datasource必须是同一个，不然</p>
-<h3 id="SpringConfig打开事务-EnableTransactionManagement"><a href="#SpringConfig打开事务-EnableTransactionManagement" class="headerlink" title="SpringConfig打开事务@EnableTransactionManagement"></a>SpringConfig打开事务@EnableTransactionManagement</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020205233232.png" alt="image-20241020205233232"></p>
+<blockquote>
+<p>打开事务@EnableTransactionManagement</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020205233232.png" alt="image-20241020205233232"></p>
 <h2 id="事务角色"><a href="#事务角色" class="headerlink" title="事务角色"></a>事务角色</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020205625500.png" alt="image-20241020205625500"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020205648701.png" alt="image-20241020205648701"></p>
 <h2 id="事务配置"><a href="#事务配置" class="headerlink" title="事务配置"></a>事务配置</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020222103484.png" alt="image-20241020222103484"></p>
 <p>有些异常不会触发回滚，需要手动设置一下rollbackFor</p>
-<h3 id="追加日志"><a href="#追加日志" class="headerlink" title="追加日志"></a>追加日志</h3><p>try finally结构，finally 记日志功能必定触发</p>
+<blockquote>
+<p>追加日志</p>
+</blockquote>
+<p>try finally结构，finally 记日志功能必定触发</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020222628555.png" alt="image-20241020222628555"></p>
 <h3 id="事务传播行为控制"><a href="#事务传播行为控制" class="headerlink" title="事务传播行为控制"></a>事务传播行为控制</h3><p><a href="https://segmentfault.com/a/1190000013341344#item-2-2">(1) java - Spring事务传播行为详解 - 个人文章 - SegmentFault 思否</a></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020222917510.png" alt="image-20241020222917510"></p>
@@ -28024,7 +27984,7 @@ return 0;
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021164930504.png" alt="image-20241021164930504"></p>
 <p>创建容器设定配置再去返回容器，简化过程只需要指定类的字节码即可</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021165128160.png" alt="image-20241021165128160"></p>
-<h2 id="配置Controller"><a href="#配置Controller" class="headerlink" title="配置Controller"></a>配置Controller</h2><h3 id="请求Request相关"><a href="#请求Request相关" class="headerlink" title="请求Request相关"></a>请求Request相关</h3><h4 id="请求映射路径-RequestMapping"><a href="#请求映射路径-RequestMapping" class="headerlink" title="请求映射路径@RequestMapping"></a>请求映射路径@RequestMapping</h4><p>对于不同的controller可能会优相同方法，这时会有冲突问题，解决办法是在controller**<mark>类<mark><strong>上加一个@RequestMapping，要和</strong><mark>方法<mark>**的@RequestMapping注解结合一下。</p>
+<h2 id="Controller"><a href="#Controller" class="headerlink" title="Controller"></a>Controller</h2><h3 id="Request"><a href="#Request" class="headerlink" title="Request"></a>Request</h3><h4 id="请求映射路径-RequestMapping"><a href="#请求映射路径-RequestMapping" class="headerlink" title="请求映射路径@RequestMapping"></a>请求映射路径@RequestMapping</h4><p>对于不同的controller可能会优相同方法，这时会有冲突问题，解决办法是在controller**<mark>类<mark><strong>上加一个@RequestMapping，要和</strong><mark>方法<mark>**的@RequestMapping注解结合一下。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021172423291.png" alt="image-20241021172423291"></p>
 <h4 id="名称匹配-指定请求参数名-RequestParam"><a href="#名称匹配-指定请求参数名-RequestParam" class="headerlink" title="名称匹配 指定请求参数名@RequestParam"></a>名称匹配 指定<mark>请求参数<mark>名@RequestParam</h4><p>用于接收GET请求中URL的查询参数，也可以接收POST请求的参数（表单）</p>
 <blockquote>
@@ -28080,7 +28040,7 @@ return 0;
 <h5 id="Converter接口-将字符串参数转换成Java类型"><a href="#Converter接口-将字符串参数转换成Java类型" class="headerlink" title="Converter接口-将字符串参数转换成Java类型"></a>Converter接口-将字符串参数转换成Java类型</h5><p>请求里面的参数都是以字符串形式发来的，converter要根据形参类型，把字符串转成对应类型提供给方法，这就是为什么前面能把字符串12按照需求转换成int 12</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021223621200.png" alt="image-20241021223621200"></p>
 <p>@EnableWebMvc</p>
-<h3 id="响应Response相关"><a href="#响应Response相关" class="headerlink" title="响应Response相关"></a>响应Response相关</h3><h4 id="响应页面（跳转页面）"><a href="#响应页面（跳转页面）" class="headerlink" title="响应页面（跳转页面）"></a>响应页面（跳转页面）</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/toPage&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">toJumpPage</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;page.jsp&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Response"><a href="#Response" class="headerlink" title="Response"></a>Response</h3><h4 id="响应页面（跳转页面）"><a href="#响应页面（跳转页面）" class="headerlink" title="响应页面（跳转页面）"></a>响应页面（跳转页面）</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/toPage&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">toJumpPage</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;page.jsp&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>直接在方法里 return “page.jsp” </p>
 <p>Spring默认认为Controller的方法返回的就是一个页面</p>
@@ -28096,7 +28056,7 @@ return 0;
 <h5 id="HttpMessageConverter接口"><a href="#HttpMessageConverter接口" class="headerlink" title="HttpMessageConverter接口"></a>HttpMessageConverter接口</h5><p>POJO转JSON字符串</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021225843796.png" alt="image-20241021225843796"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021225823024.png" alt="image-20241021225823024"></p>
-<h3 id="REST-风格"><a href="#REST-风格" class="headerlink" title="REST 风格"></a>REST 风格</h3><p><strong>Re</strong>presentational <strong>S</strong>tate <strong>T</strong>ransfer</p>
+<h3 id="REST"><a href="#REST" class="headerlink" title="REST"></a>REST</h3><p><strong>Re</strong>presentational <strong>S</strong>tate <strong>T</strong>ransfer</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021230252993.png" alt="image-20241021230252993"></p>
 <p>根据请求的方式区分 GET POST PUT DELETE</p>
 <p>同一URL，请求方式不同，调用的方法也不同</p>
@@ -28108,7 +28068,7 @@ return 0;
 <h5 id="URL占位符传参-PathVariable"><a href="#URL占位符传参-PathVariable" class="headerlink" title="URL占位符传参 @PathVariable"></a>URL占位符传参 <mark>@PathVariable<mark></h5><p>value=”/users/{id}”  URL中的{id}和用@PathVariable修饰的方法参数id是一致的</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021231846312.png" alt="image-20241021231846312"></p>
 <h5 id="RequestBody-RequestParam-PathVariable"><a href="#RequestBody-RequestParam-PathVariable" class="headerlink" title="@RequestBody@RequestParam@PathVariable"></a>@RequestBody@RequestParam@PathVariable</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021232010983.png" alt="image-20241021232010983"></p>
-<h4 id="RESTful-快速开发"><a href="#RESTful-快速开发" class="headerlink" title="RESTful 快速开发"></a><mark>RESTful 快速开发<mark></h4><h5 id="类级别注解-RequestMapping"><a href="#类级别注解-RequestMapping" class="headerlink" title="类级别注解 @RequestMapping"></a>类级别注解 @RequestMapping</h5><p>省去所有user前缀，写一次就好。</p>
+<h4 id="RESTful-快速开发"><a href="#RESTful-快速开发" class="headerlink" title="RESTful 快速开发"></a><mark>RESTful 快速开发</mark></h4><h5 id="类级别注解-RequestMapping"><a href="#类级别注解-RequestMapping" class="headerlink" title="类级别注解 @RequestMapping"></a>类级别注解 @RequestMapping</h5><p>省去所有user前缀，写一次就好。</p>
 <h5 id="类级别注解-RestController"><a href="#类级别注解-RestController" class="headerlink" title="类级别注解 @RestController"></a>类级别注解 @RestController</h5><p>类级别的@RequestBody，表示所有类的返回值都是请求体的数据，既然@Controller和RequestBody都要写，合而为一即可</p>
 <h5 id="方法级别注解-PostMapping"><a href="#方法级别注解-PostMapping" class="headerlink" title="方法级别注解 @PostMapping"></a>方法级别注解 @PostMapping</h5><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(value = &quot;/&#123;id&#125;&quot; ,method = RequestMethod.DELETE)</span></span><br><span class="line"><span class="meta">@GetMapping</span></span><br><span class="line"><span class="meta">@PostMapping(&quot;/&#123;id&#125;&quot;)</span></span><br></pre></td></tr></table></figure>
 
@@ -28120,40 +28080,80 @@ return 0;
 <p>默认SpringMvcConfig接管/后所有东西，通过ResourceHandlerRegistry 设置SpringMVC如何处理对静态资源的访问 </p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021235616215.png" alt="image-20241021235616215"></p>
 <h5 id="前端ajax"><a href="#前端ajax" class="headerlink" title="前端ajax"></a>前端ajax</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021235623670.png" alt="image-20241021235623670"></p>
-<h2 id="SSM整合"><a href="#SSM整合" class="headerlink" title="SSM整合"></a>SSM整合</h2><h3 id="创建工程"><a href="#创建工程" class="headerlink" title="创建工程"></a>创建工程</h3><h3 id="整合Config包"><a href="#整合Config包" class="headerlink" title="整合Config包"></a>整合Config包</h3><h4 id="SpringConfig"><a href="#SpringConfig" class="headerlink" title="SpringConfig"></a>SpringConfig</h4><p><code>Configuration</code> <code>ComponentScan</code> <code>Import</code></p>
-<h5 id="MyBatisConfig-amp-JdbcConfig"><a href="#MyBatisConfig-amp-JdbcConfig" class="headerlink" title="MyBatisConfig &amp; JdbcConfig"></a>MyBatisConfig &amp; JdbcConfig</h5><p>JdbcConfig：数据源 DataSource Bean</p>
+<h2 id="SSM整合"><a href="#SSM整合" class="headerlink" title="SSM整合"></a>SSM整合</h2><h3 id="创建工程"><a href="#创建工程" class="headerlink" title="创建工程"></a>创建工程</h3><h3 id="Config"><a href="#Config" class="headerlink" title="Config"></a>Config</h3><h4 id="SpringConfig"><a href="#SpringConfig" class="headerlink" title="SpringConfig"></a>SpringConfig</h4><p><code>Configuration</code> <code>ComponentScan</code> <code>Import</code></p>
+<blockquote>
+<p>MyBatisConfig &amp; JdbcConfig</p>
+</blockquote>
+<p>JdbcConfig：数据源 DataSource Bean</p>
 <p>MyBatisConfig：sqlSessionFactoryBean</p>
 <p><code>Bean</code> <code>jdbc.properties</code> </p>
 <h4 id="SpringMvcConfig"><a href="#SpringMvcConfig" class="headerlink" title="SpringMvcConfig"></a>SpringMvcConfig</h4><p><code>Configuration</code> <code>ComponentScan</code> <code>EnableWebMvc</code></p>
-<h5 id="ServletConfig"><a href="#ServletConfig" class="headerlink" title="ServletConfig"></a>ServletConfig</h5><p>rootApplicationContext和webApplicationContext</p>
-<h3 id="编写后端模块"><a href="#编写后端模块" class="headerlink" title="编写后端模块"></a>编写后端模块</h3><h4 id="Domain"><a href="#Domain" class="headerlink" title="Domain"></a>Domain</h4><p>实体类，User</p>
-<h4 id="Dao"><a href="#Dao" class="headerlink" title="Dao"></a>Dao</h4><p>MyBatis Mapper自动代理，写接口，写方法结合注解</p>
+<blockquote>
+<p>ServletConfig</p>
+</blockquote>
+<p>rootApplicationContext和webApplicationContext</p>
+<h3 id="编写后端模块"><a href="#编写后端模块" class="headerlink" title="编写后端模块"></a>编写后端模块</h3><blockquote>
+<p>Domain</p>
+</blockquote>
+<p>实体类，User</p>
+<blockquote>
+<p>Dao</p>
+</blockquote>
+<p>MyBatis Mapper自动代理，写接口，写方法结合注解</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022135643205.png" alt="image-20241022135643205"></p>
 <p>占位符对应参数的名称，这里映射实体类中的字段信息     </p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022135845990.png" alt="image-20241022135845990"></p>
-<h4 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h4><p>BookDao@Autowired</p>
+<blockquote>
+<p>Service</p>
+</blockquote>
+<p>BookDao@Autowired</p>
 <p>dao接口加repository注解（可加可不加）</p>
-<h4 id="RestController"><a href="#RestController" class="headerlink" title="RestController"></a>RestController</h4><p>参数在url中：PathVariable</p>
+<blockquote>
+<p>RestController</p>
+</blockquote>
+<p>参数在url中：PathVariable</p>
 <p>参数在请求体：RequestBody</p>
-<h4 id="JUnit-测试-Service"><a href="#JUnit-测试-Service" class="headerlink" title="JUnit 测试 Service"></a>JUnit 测试 Service</h4><h4 id="Postman-测试-Controller"><a href="#Postman-测试-Controller" class="headerlink" title="Postman 测试 Controller"></a>Postman 测试 Controller</h4><h4 id="Spring-事务激活"><a href="#Spring-事务激活" class="headerlink" title="Spring 事务激活"></a>Spring 事务激活</h4><p><code>JdbcConfig</code> 里 加PlatformTransactionManager Bean, 接dataSource参数</p>
+<blockquote>
+<p>JUnit 测试 Service</p>
+</blockquote>
+<blockquote>
+<p>Postman 测试 Controller</p>
+</blockquote>
+<blockquote>
+<p>Spring 事务激活</p>
+</blockquote>
+<p><code>JdbcConfig</code> 里 加PlatformTransactionManager Bean, 接dataSource参数</p>
 <p><code>Service</code>接口添加@Transactional</p>
 <h3 id="前后端联调"><a href="#前后端联调" class="headerlink" title="前后端联调"></a>前后端联调</h3><h4 id="表现层数据封装模型-设置统一的返回结果集Result"><a href="#表现层数据封装模型-设置统一的返回结果集Result" class="headerlink" title="表现层数据封装模型 - 设置统一的返回结果集Result"></a>表现层数据封装模型 - 设置统一的返回结果集Result</h4><p>实际开发过程中前后端<mark>约定<mark></p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Result</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Object data;</span><br><span class="line">    <span class="keyword">private</span> Integer code;</span><br><span class="line">    <span class="keyword">private</span> String message;</span><br><span class="line">    <span class="comment">//下方提供若干构造方法,有参无参</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Result</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Result</span><span class="params">(Integer code,Object data)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.data = data;</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Result</span><span class="params">(Integer code, Object data, String msg)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.data = data;</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">        <span class="built_in">this</span>.msg = msg;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//.....getter setter</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022152253512-1729581786093-1.png" alt="image-20241022152253512"></p>
-<h5 id="Result-data"><a href="#Result-data" class="headerlink" title="Result.data"></a>Result.data</h5><p>业务方法不同返回数据格式也不同，可能是true false这样的text，也可能是json数据，还可能是json数组，约定将数据封装到<mark>data<mark>字段中</p>
+<blockquote>
+<p>Result.data</p>
+</blockquote>
+<p>业务方法不同返回数据格式也不同，可能是true false这样的text，也可能是json数据，还可能是json数组，约定将数据封装到<mark>data<mark>字段中</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022144637267.png" alt="image-20241022144637267"></p>
-<h5 id="Result-code"><a href="#Result-code" class="headerlink" title="Result.code"></a>Result.code</h5><p>不同业务方法可能会返回相同的内容，返回一个true可能对应新增，修改，删除的业务方法，加一个识别码<mark>code<mark>字段区分 ，可以约定尾数是0表示失败，尾数是1表示成功：</p>
+<blockquote>
+<p>Result.code</p>
+</blockquote>
+<p>不同业务方法可能会返回相同的内容，返回一个true可能对应新增，修改，删除的业务方法，加一个识别码<mark>code<mark>字段区分 ，可以约定尾数是0表示失败，尾数是1表示成功：</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022145108783.png" alt="image-20241022145108783"></p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Code</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">SAVE_OK</span> <span class="operator">=</span> <span class="number">20011</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">DELETE_OK</span> <span class="operator">=</span> <span class="number">20021</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">UPDATE_OK</span> <span class="operator">=</span> <span class="number">20031</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">GET_OK</span> <span class="operator">=</span> <span class="number">20041</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">SAVE_ERR</span> <span class="operator">=</span> <span class="number">20010</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">DELETE_ERR</span> <span class="operator">=</span> <span class="number">20020</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">UPDATE_ERR</span> <span class="operator">=</span> <span class="number">20030</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Integer</span> <span class="variable">GET_ERR</span> <span class="operator">=</span> <span class="number">20040</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//这里Result的构造器识别的是Integer code</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Enum枚举：CodeEnum是一个类，类内部有一字段code(Integer)</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022152238169.png" alt="image-20241022152238169"></p>
-<h5 id="Result-message"><a href="#Result-message" class="headerlink" title="Result.message"></a>Result.message</h5><p>一些业务方法，本来应该返回json，没查到只能返回null，不能直接把null展示给用户看，展示的是message信息</p>
-<h5 id="Controller-返回值统一设定为-Result"><a href="#Controller-返回值统一设定为-Result" class="headerlink" title="Controller 返回值统一设定为 Result"></a>Controller 返回值统一设定为 Result</h5><p>将返回值封装到Result中，data</p>
+<blockquote>
+<p>Result.message</p>
+</blockquote>
+<p>一些业务方法，本来应该返回json，没查到只能返回null，不能直接把null展示给用户看，展示的是message信息</p>
+<hr>
+<blockquote>
+<p>Controller 返回值统一设定为 Result</p>
+</blockquote>
+<p>将返回值封装到Result中，data</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@GetMapping</span></span><br><span class="line">    <span class="keyword">public</span> Result <span class="title function_">getAll</span><span class="params">()</span> &#123;</span><br><span class="line">        List&lt;Book&gt; bookList = bookService.getAll();</span><br><span class="line">        <span class="type">Integer</span> <span class="variable">code</span> <span class="operator">=</span> bookList != <span class="literal">null</span> ? Code.GET_OK : Code.GET_ERR;</span><br><span class="line">        <span class="type">String</span> <span class="variable">msg</span> <span class="operator">=</span> bookList != <span class="literal">null</span> ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;数据查询失败，请重试！&quot;</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(code,bookList,msg);</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">//data字段是否为null？</span></span><br></pre></td></tr></table></figure>
 
-<h4 id="返回数据格式统一-异常处理器-RestControllerAdvice"><a href="#返回数据格式统一-异常处理器-RestControllerAdvice" class="headerlink" title="返回数据格式统一 - 异常处理器@RestControllerAdvice"></a>返回数据格式统一 - 异常处理器<mark>@RestControllerAdvice<mark></h4><ul>
-<li><p><mark>类级别注解<mark></p>
+<h4 id="异常处理器-RestControllerAdvice"><a href="#异常处理器-RestControllerAdvice" class="headerlink" title="异常处理器@RestControllerAdvice"></a>异常处理器<mark>@RestControllerAdvice</mark></h4><ul>
+<li><p><mark>类级别注解</mark></p>
 </li>
 <li><p>后端抛出的异常如果不处理，就会抛到前端页面，不美观，并且不会返回任何数据，导致<mark>数据不统一<mark> </p>
 </li>
@@ -28197,7 +28197,7 @@ return 0;
 <h5 id="拦截并处理异常-返回Result"><a href="#拦截并处理异常-返回Result" class="headerlink" title="拦截并处理异常 返回Result"></a>拦截并处理异常 返回Result</h5><p>在RestControllerAdvice下方的类中处理对应类型的异常，将异常继续封装成Result返回</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022160546843.png" alt="image-20241022160546843"></p>
 <h3 id="放行静态资源配置"><a href="#放行静态资源配置" class="headerlink" title="放行静态资源配置"></a>放行静态资源配置</h3><h4 id="SpringMvcSupport（Config类）"><a href="#SpringMvcSupport（Config类）" class="headerlink" title="SpringMvcSupport（Config类）"></a>SpringMvcSupport（Config类）</h4><p>加Configuration注解，继承WebMvcConfigurationSupport类，重写resourceHandler方法</p>
-<h4 id="Config包详解"><a href="#Config包详解" class="headerlink" title="Config包详解"></a><mark>Config包详解<mark></h4><h5 id="ServletContainersInitializerConfig-Servlet容器配置类"><a href="#ServletContainersInitializerConfig-Servlet容器配置类" class="headerlink" title="ServletContainersInitializerConfig (Servlet容器配置类)"></a>ServletContainersInitializerConfig (Servlet容器配置类)</h5><p>用来构建ServletContext，继承自 AbstractDispatcherServletInitializer，Spring MVC是建立在 DispatcherServlet 基础之上的，每一个请求最先访问的都是它，负责转发每一个Request请求，所以是必不可少的。</p>
+<h4 id="Config包详解"><a href="#Config包详解" class="headerlink" title="Config包详解"></a><mark>Config包详解</mark></h4><h5 id="ServletContainersInitializerConfig-Servlet容器配置类"><a href="#ServletContainersInitializerConfig-Servlet容器配置类" class="headerlink" title="ServletContainersInitializerConfig (Servlet容器配置类)"></a>ServletContainersInitializerConfig (Servlet容器配置类)</h5><p>用来构建ServletContext，继承自 AbstractDispatcherServletInitializer，Spring MVC是建立在 DispatcherServlet 基础之上的，每一个请求最先访问的都是它，负责转发每一个Request请求，所以是必不可少的。</p>
 <p>先以 <mark>Abstract<u>DispatcherServlet</u>Initializer<mark> 为例介绍这个加载Config类的职责 具体介绍在<a href="#webappinit">下方</a></p>
 <h6 id="a-createRootApplicationContext"><a href="#a-createRootApplicationContext" class="headerlink" title="a. createRootApplicationContext"></a>a. createRootApplicationContext</h6><p>需要加载Spring IoC容器的配置类(SpringConfig)，返回配置好的 <a href="#wac">Root WAC</a> </p>
 <h6 id="b-createServletApplicationContext"><a href="#b-createServletApplicationContext" class="headerlink" title="b.createServletApplicationContext"></a>b.createServletApplicationContext</h6><p>需要加载WebMvc容器的配置类(SpringMvcConfig) 返回配置好的 <a href="#swac">Servlet WAC</a> </p>
@@ -28239,16 +28239,45 @@ return 0;
 <p>删除：delete请求</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023191526268.png" alt="image-20241023191526268"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023191952545.png" alt="image-20241023191952545"></p>
-<h3 id="容器之间的嵌套关系-概念解释-源码解析"><a href="#容器之间的嵌套关系-概念解释-源码解析" class="headerlink" title="容器之间的嵌套关系 + 概念解释 (源码解析)"></a>容器之间的嵌套关系 + 概念解释 (源码解析)</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022175254007-1729595662475-3.png" alt="image-20241022175254007"></p>
+<h2 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h2><h3 id="Interceptor"><a href="#Interceptor" class="headerlink" title="Interceptor"></a>Interceptor</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023193138396.png" alt="image-20241023193138396"></p>
+<h4 id="In-Filter"><a href="#In-Filter" class="headerlink" title="In Filter"></a>In Filter</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023193414214.png" alt="image-20241023193414214"></p>
+<p>filter在一定是在访问servlet之前，interceptor只能在servlet中， <mark>before Controller<mark></p>
+<h3 id="功能类"><a href="#功能类" class="headerlink" title="功能类"></a>功能类</h3><p>控制表现层：controller下新建interceptor包，新建一个Interceptor类 <strong>extends HandlerInterceptor</strong> </p>
+<p>注意preHandle返回值和@Component</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023210048371.png" alt="image-20241023210048371"></p>
+<h4 id="SpringMvcSupport"><a href="#SpringMvcSupport" class="headerlink" title="SpringMvcSupport"></a>SpringMvcSupport</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023205518460.png" alt="image-20241023205518460"></p>
+<p>addInterceptors 自动注入自定义拦截器</p>
+<p>addPathPatterns 加的不是前缀，<mark>是严格的URL匹配<mark>，配/books就拦截对/books发的请求，/books/100就拦截不了</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023205715345.png" alt="image-20241023205715345"></p>
+<p><mark>preHandle</mark>，yourService，postHandle，afterCompletion 顺序</p>
+<blockquote>
+<p>示意图</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023210636045.png" alt="image-20241023210636045"></p>
+<h4 id="简化开发-WebMvcConfigurer"><a href="#简化开发-WebMvcConfigurer" class="headerlink" title="简化开发-WebMvcConfigurer"></a>简化开发-WebMvcConfigurer</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023210528299.png" alt="image-20241023210528299"></p>
+<p>已经和Spring接口绑定，侵入性强。</p>
+<h3 id="拦截方法"><a href="#拦截方法" class="headerlink" title="拦截方法"></a>拦截方法</h3><h4 id="preHandle"><a href="#preHandle" class="headerlink" title="preHandle"></a>preHandle</h4><p><code>boolean preHandle(req,resp,handler)</code></p>
+<p>req和resp是servlet的响应和请求，handler实际上是HandlerMethod，通过getMethod能拿到执行的业务方法的对象（反射）</p>
+<h4 id="postHandle"><a href="#postHandle" class="headerlink" title="postHandle"></a>postHandle</h4><p><code>void postHandle(req,resp,handler,modelAndView)</code></p>
+<p>页面跳转相关。</p>
+<h4 id="afterCompletion"><a href="#afterCompletion" class="headerlink" title="afterCompletion"></a>afterCompletion</h4><p><code>void afterCompletion(req,resp,handler,exception)</code></p>
+<p>能拿到原始业务方法执行过程中的异常</p>
+<h3 id="拦截链顺序"><a href="#拦截链顺序" class="headerlink" title="拦截链顺序"></a>拦截链顺序</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023211911820.png" alt="image-20241023211911820"></p>
+<p>拦截顺序，和注册顺序有关系</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023212439810.png" alt="image-20241023212439810"></p>
+<p>如果某个pre返回false，post全部跳过，倒序执行，从最近一个pre返回true的拦截器开始执行afterCompletion</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023212527269.png" alt="image-20241023212527269"></p>
+<p><a href="https://blog.csdn.net/penriver/article/details/118571991">万字详解 GoF 23 种设计模式（多图、思维导图、模式对比），让你一文全面理解-CSDN博客</a></p>
+<h2 id="Spring-MVC-源码分析"><a href="#Spring-MVC-源码分析" class="headerlink" title="Spring MVC 源码分析"></a>Spring MVC 源码分析</h2><h3 id="WebApplicationContext"><a href="#WebApplicationContext" class="headerlink" title="WebApplicationContext"></a><code>WebApplicationContext</code></h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022175254007-1729595662475-3.png" alt="image-20241022175254007"></p>
 <h4 id="WebApplicationContext-WAC"><a href="#WebApplicationContext-WAC" class="headerlink" title="WebApplicationContext(WAC)"></a><span id="wac">WebApplicationContext(WAC)</span></h4><ul>
-<li>ApplicationContext(AC) 表示整个 Spring 应用的上下文。WAC是普通AC的扩展，它具有Web应用程序所需的一些额外功能，比如可以<u>get</u>ServletContext或者<u>set</u>ServletContext</li>
+<li>ApplicationContext(AC) 表示 ioc 容器。WAC是普通AC的扩展，它具有Web应用程序所需的一些额外功能，比如可以<u>get</u>ServletContext或者<u>set</u>ServletContext</li>
 <li><code>Root WAC</code>在应用启动时首先被加载，并且作为父上下文，供表示层使用，主要负责管理服务层（Service）、数据访问层（DAO）、中间件配置等非 Web 层（表示层）的 Bean</li>
 </ul>
 <h4 id="Servlet-WebApplicationContext-Servlet-WAC"><a href="#Servlet-WebApplicationContext-Servlet-WAC" class="headerlink" title="Servlet WebApplicationContext(Servlet WAC)"></a><span id="swac">Servlet WebApplicationContext(Servlet WAC)</span></h4><ul>
 <li><code>Servlet WAC</code> 是 <code>Root WAC</code> 的<strong>子上下文</strong>，专门用于处理表示层的 Bean 和配置。比如控制器（<code>Controller</code>）、视图解析器、拦截器(<code>Interceptor</code>)等</li>
 <li>每个 <code>DispatcherServlet</code> 实例会有一个独立的 <code>Servlet WAC</code> </li>
 </ul>
-<h5 id="Parent-amp-Child-ApplicatitonContext"><a href="#Parent-amp-Child-ApplicatitonContext" class="headerlink" title="Parent &amp; Child ApplicatitonContext"></a>Parent &amp; Child ApplicatitonContext</h5><p>Root WAC 作为 所有 Servlet WAC 的 Parent，DispatherServlet在创建属于自己的ServletContext的getAttribute方法来判断是否存在Root WebApplicationContext。如果存在，则将其设置为自己的parent。这就是父子上下文(父子容器)的概念，getParentBeanFactory。</p>
+<h4 id="Parent-amp-Child-ApplicatitonContext"><a href="#Parent-amp-Child-ApplicatitonContext" class="headerlink" title="Parent &amp; Child ApplicatitonContext"></a>Parent &amp; Child ApplicatitonContext</h4><p>Root WAC 作为 所有 Servlet WAC 的 Parent，DispatherServlet在创建属于自己的ServletContext的getAttribute方法来判断是否存在Root WebApplicationContext。如果存在，则将其设置为自己的parent。这就是父子上下文(父子容器)的概念，getParentBeanFactory。</p>
 <p>对于作用范围而言，在DispatcherServlet中可以引用由ContextLoaderListener所创建的RootWAC中的内容，而反过来不行。当Spring在执行ApplicationContext的getBean时，如果在自己context中找不到对应的bean，则会在父ApplicationContext中去找。这也解释了为什么我们可以在DispatcherServlet中获取到RootWAC中的bean。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023154504980.png" alt="image-20241023154504980"></p>
 <h4 id="ServletContext"><a href="#ServletContext" class="headerlink" title="ServletContext"></a>ServletContext</h4><ul>
@@ -28276,9 +28305,7 @@ return 0;
 <h5 id="web-xml-配置-ServletContext"><a href="#web-xml-配置-ServletContext" class="headerlink" title="web.xml 配置 ServletContext"></a>web.xml 配置 ServletContext</h5><p>Tomcat创建web应用时，会构建ServletContext对象，根据web.xml中的配置把如下参数都存到ServletContext对象中，注册Listener，Servlet等</p>
 <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span>  </span><br><span class="line">  </span><br><span class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">version</span>=<span class="string">&quot;3.0&quot;</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    </span><br><span class="line">    &lt;!—ServletContext自有的init 参数--&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">context-param</span>&gt;</span>  </span><br><span class="line">        &lt;!—创建Root WAC所需要的配置文件路径--&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>/WEB-INF/spring/applicationContext.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">context-param</span>&gt;</span>  </span><br><span class="line">  	</span><br><span class="line">    &lt;!—注册ContextLoaderListener--&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">listener</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">listener</span>&gt;</span>  </span><br><span class="line">    </span><br><span class="line">    &lt;!—注册DispatcherServlet ServletConfig--&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>dispatcher<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>org.springframework.web.servlet.DispatcherServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span> </span><br><span class="line">        &lt;!—init Servlet所需参数--&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">init-param</span>&gt;</span>  </span><br><span class="line">            &lt;!—创建Servlet WAC所需参数--&gt;</span><br><span class="line">            <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>/WEB-INF/spring/spring-servlet.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">load-on-startup</span>&gt;</span>1<span class="tag">&lt;/<span class="name">load-on-startup</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">servlet</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span>  </span><br><span class="line">        &lt;!—指定某个servlet的URL映射路径--&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>dispatcher<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span>  </span><br><span class="line">  </span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-
-
-<h4 id="ContextLoaderListener-创建-Root-WAC"><a href="#ContextLoaderListener-创建-Root-WAC" class="headerlink" title="ContextLoaderListener - 创建 Root WAC"></a>ContextLoader<mark>Listener<mark> - 创建 Root WAC</h4><ul>
+<h3 id="ContextLoaderListener-创建-Root-WAC"><a href="#ContextLoaderListener-创建-Root-WAC" class="headerlink" title="ContextLoaderListener - 创建 Root WAC"></a>ContextLoaderListener - 创建 Root WAC</h3><ul>
 <li><p>本质就是一个Listener，因此需要在web.xml中注册</p>
 </li>
 <li><p>实现了ServletContextListener接口，EventListener-&gt;ServletContextListener</p>
@@ -28286,15 +28313,15 @@ return 0;
 <li><p>继承了ContextLoader类，见名知意，是用来加载WAC的，有一个WAC参数context，所有方法都是围绕加工这个context字段进行的</p>
 </li>
 </ul>
-<h5 id="WebApplicationContext-initWAC-ServletContext-sc"><a href="#WebApplicationContext-initWAC-ServletContext-sc" class="headerlink" title="WebApplicationContext initWAC(ServletContext sc)"></a>WebApplicationContext initWAC(ServletContext sc)</h5><p>ContextLoaer 接收一个ServletContext参数sc，调用initWAC方法返回加载好的WAC对象this.context</p>
+<h4 id="WebApplicationContext-initWAC-ServletContext-sc"><a href="#WebApplicationContext-initWAC-ServletContext-sc" class="headerlink" title="WebApplicationContext initWAC(ServletContext sc)"></a><code>WebApplicationContext initWAC(ServletContext sc)</code></h4><p>ContextLoaer 接收一个ServletContext参数sc，调用initWAC方法返回加载好的WAC对象this.context</p>
 <p>打印在服务器日志上 <code>servletContext.log(&quot;Initializing Spring root WebApplicationContext&quot;);</code></p>
 <p>中间调用<code>createWAC(ServletContext sc)</code>返回一个ConfigurableWAC对象，将其<strong>parentContext设置为sc</strong>，</p>
 <p>再把这个CWAC和sc传给<code>configureAndRefreshWAC(CWAC cwac,ServletContext sc)</code>方法进行配置（ServletContext是根据web.xml构建的，根据key: contextConfigLocation找到RootWAC的配置文件<code>applicationContext.xml</code>）</p>
 <p>之后在sc中创建一个Attribute，使得能通过ServletContext对这个Root WAC进行访问（键值对形式）</p>
 <p><code>setAttribute(</code> <code>WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE</code>, <code>this.context)</code></p>
 <p>最终返回 <code>this.context</code> 作为 Root WAC</p>
-<h5 id="WebApplicationContext-contextInitialized-ServletContextEvent-sce"><a href="#WebApplicationContext-contextInitialized-ServletContextEvent-sce" class="headerlink" title="WebApplicationContext contextInitialized(ServletContextEvent sce)"></a>WebApplicationContext contextInitialized(ServletContextEvent sce)</h5><p>ContextLoaderListener 能监听Web应用启动或关闭的事件（会修改ServletContext中的参数），触发contextInitializaed/contextDestroyed，创建或销毁Root WAC。</p>
-<h4 id="DispatcherServlet-创建-Servlet-WAC"><a href="#DispatcherServlet-创建-Servlet-WAC" class="headerlink" title="DispatcherServlet - 创建 Servlet WAC"></a>Dispatcher<mark>Servlet<mark> - 创建 Servlet WAC</h4><ul>
+<h4 id="WebApplicationContext-contextInitialized-ServletContextEvent-sce"><a href="#WebApplicationContext-contextInitialized-ServletContextEvent-sce" class="headerlink" title="WebApplicationContext contextInitialized(ServletContextEvent sce)"></a><code>WebApplicationContext contextInitialized(ServletContextEvent sce)</code></h4><p>ContextLoaderListener 能监听Web应用启动或关闭的事件（会修改ServletContext中的参数），触发contextInitializaed/contextDestroyed，创建或销毁Root WAC。</p>
+<h3 id="DispatcherServlet-创建-Servlet-WAC"><a href="#DispatcherServlet-创建-Servlet-WAC" class="headerlink" title="DispatcherServlet - 创建 Servlet WAC"></a>DispatcherServlet - 创建 Servlet WAC</h3><ul>
 <li><p>本质就是一个Servlet，所以需要在web.xml中注册，继承自HttpServlet-&gt;HttpServletBean-&gt;FrameworkServlet</p>
 </li>
 <li><p>Spring MVC 的核心前端控制器，用于处理所有进入的 HTTP 请求。将请求分发给适当的处理器（控制器 Controller），并在处理后将响应返回给客户端。</p>
@@ -28324,11 +28351,15 @@ return 0;
 </ul>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/mvc-context-hierarchy.png" alt="mvc-context-hierarchy"></p>
 <p>这两个context都是在ServletContext中，属于dispatcherServlet的上下文是servletWAC，找不到的话就去rootWAC中找</p>
-<h4 id="替代web-xml，以Java形式配置ServletContext——WebApplicationInitializer"><a href="#替代web-xml，以Java形式配置ServletContext——WebApplicationInitializer" class="headerlink" title="替代web.xml，以Java形式配置ServletContext——WebApplicationInitializer"></a><span id="webappinit">替代web.xml，以Java形式配置ServletContext——WebApplicationInitializer</span></h4><p>![屏幕截图 2024-10-23 133904](<a href="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE">https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/屏幕截图</a> 2024-10-23 133904.png)</p>
-<h5 id="ServletContainerInitializer"><a href="#ServletContainerInitializer" class="headerlink" title="ServletContainerInitializer"></a>ServletContainerInitializer</h5><p>之前，web容器（Tomcat）会根据WEB-INF下的web.xml初始化ServletContext</p>
+<h3 id="Java形式配置ServletContext——WebApplicationInitializer"><a href="#Java形式配置ServletContext——WebApplicationInitializer" class="headerlink" title="Java形式配置ServletContext——WebApplicationInitializer"></a><span id="webappinit">Java形式配置ServletContext——WebApplicationInitializer</span></h3><p>![屏幕截图 2024-10-23 133904](<a href="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE">https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/屏幕截图</a> 2024-10-23 133904.png)</p>
+<blockquote>
+<p>替代web.xml</p>
+</blockquote>
+<h4 id="ServletContainerInitializer"><a href="#ServletContainerInitializer" class="headerlink" title="ServletContainerInitializer"></a>ServletContainerInitializer</h4><p>之前，web容器（Tomcat）会根据WEB-INF下的web.xml初始化ServletContext</p>
 <p>Java EE Servlet 规范定义了这个接口，web容器（Tomcat）启动时根据这个初始化器做一些组件内的初始化工作。 </p>
 <p><strong>SpringServletContainerInitializer</strong> 是Spring 对其的实现，其onStartup方法会调用 <strong><a href="#webappinit">WebApplicationInitializer</a></strong> 的onStartup(<strong>ServletContext sc</strong>)初始化Web应用</p>
-<h4 id="SpringMVC-Web应用启动流程"><a href="#SpringMVC-Web应用启动流程" class="headerlink" title="SpringMVC Web应用启动流程"></a>SpringMVC Web应用启动流程</h4><ul>
+<h3 id="SpringMVC-Web应用启动流程"><a href="#SpringMVC-Web应用启动流程" class="headerlink" title="SpringMVC Web应用启动流程"></a>SpringMVC Web应用启动流程</h3><p><a href="https://www.cnblogs.com/54chensongxia/p/12522804.html">Spring MVC启动流程</a> </p>
+<ul>
 <li>Tomcat 读取web.xml中 <code>&lt;context-param&gt;</code> <code>&lt;listener&gt;</code>  然后创建一个全局共享的ServletContext</li>
 <li>Tomcat 将<code>&lt;context-param&gt;</code> <code>&lt;listener&gt;</code>转化为键值对，存到ServletContext </li>
 <li>Tomcat 加载Listener实例，实施监听，Listener必须实现<u>ServletContext</u>Listener接口（比如ContextLoaderListener）</li>
@@ -28339,72 +28370,74 @@ return 0;
 </ul>
 </li>
 </ul>
-<p><a href="https://www.cnblogs.com/54chensongxia/p/12522804.html">Spring MVC启动流程</a> </p>
-<h5 id="100-code-based"><a href="#100-code-based" class="headerlink" title="100% code-based"></a>100% code-based</h5><p>用Java类的形式配置ServletContext，有一些细微差异，Spring这边实现了ServletContainerInitializer接口，注册组件的工作就交给了WebApplicationInitializer：</p>
+<blockquote>
+<p>100% code-based </p>
+</blockquote>
+<p>用Java类的形式配置ServletContext，有一些细微差异，Spring这边实现了ServletContainerInitializer接口，注册组件的工作就交给了WebApplicationInitializer：</p>
 <p>先根据指定的rootWacConfig配置类（SpringConfig）创建出父容器，父容器作为参数进行Listener的有参构造，最后以<mark>add<mark>Listener的方式注册到ServletContext中。</p>
-<h2 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h2><h3 id="Interceptor"><a href="#Interceptor" class="headerlink" title="Interceptor"></a>Interceptor</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023193138396.png" alt="image-20241023193138396"></p>
-<h4 id="In-Filter"><a href="#In-Filter" class="headerlink" title="In Filter"></a>In Filter</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023193414214.png" alt="image-20241023193414214"></p>
-<p>filter在一定是在访问servlet之前，interceptor只能在servlet中， <mark>before Controller<mark></p>
-<h3 id="功能类"><a href="#功能类" class="headerlink" title="功能类"></a>功能类</h3><p>控制表现层：controller下新建interceptor包，新建一个Interceptor类 <strong>extends HandlerInterceptor</strong> </p>
-<p>注意preHandle返回值和@Component</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023210048371.png" alt="image-20241023210048371"></p>
-<h4 id="SpringMvcSupport"><a href="#SpringMvcSupport" class="headerlink" title="SpringMvcSupport"></a>SpringMvcSupport</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023205518460.png" alt="image-20241023205518460"></p>
-<p>addInterceptors 自动注入自定义拦截器</p>
-<p>addPathPatterns 加的不是前缀，<mark>是严格的URL匹配<mark>，配/books就拦截对/books发的请求，/books/100就拦截不了</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023205715345.png" alt="image-20241023205715345"></p>
-<p><mark>preHandle<mark>，yourService，postHandle，afterCompletion 顺序</p>
-<h4 id="示意图"><a href="#示意图" class="headerlink" title="示意图"></a>示意图</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023210636045.png" alt="image-20241023210636045"></p>
-<h4 id="简化开发"><a href="#简化开发" class="headerlink" title="简化开发"></a>简化开发</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023210528299.png" alt="image-20241023210528299"></p>
-<p>已经和Spring接口绑定，侵入性强。</p>
-<h3 id="拦截方法参数配置"><a href="#拦截方法参数配置" class="headerlink" title="拦截方法参数配置"></a>拦截方法参数配置</h3><h4 id="boolean-preHandle-req-resp-handler"><a href="#boolean-preHandle-req-resp-handler" class="headerlink" title="boolean preHandle(req,resp,handler)"></a>boolean preHandle(req,resp,<mark>handler<mark>)</h4><p>req和resp是servlet的响应和请求，handler实际上是HandlerMethod，通过getMethod能拿到执行的业务方法的对象（反射）</p>
-<h4 id="void-postHandle-req-resp-handler-modelAndView"><a href="#void-postHandle-req-resp-handler-modelAndView" class="headerlink" title="void postHandle(req,resp,handler,modelAndView)"></a>void postHandle(req,resp,<mark>handler<mark>,modelAndView)</h4><p>页面跳转相关。</p>
-<h4 id="void-afterCompletion-req-resp-handler-exception"><a href="#void-afterCompletion-req-resp-handler-exception" class="headerlink" title="void afterCompletion(req,resp,handler,exception)"></a>void afterCompletion(req,resp,<mark>handler<mark>,exception)</h4><p>能拿到原始业务方法执行过程中的异常</p>
-<h3 id="拦截链顺序"><a href="#拦截链顺序" class="headerlink" title="拦截链顺序"></a>拦截链顺序</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023211911820.png" alt="image-20241023211911820"></p>
-<p>拦截顺序，和注册顺序有关系</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023212439810.png" alt="image-20241023212439810"></p>
-<p>如果某个pre返回false，post全部跳过，倒序执行，从最近一个pre返回true的拦截器开始执行afterCompletion</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023212527269.png" alt="image-20241023212527269"></p>
-<p><a href="https://blog.csdn.net/penriver/article/details/118571991">万字详解 GoF 23 种设计模式（多图、思维导图、模式对比），让你一文全面理解-CSDN博客</a></p>
-<h1 id="Spring-Boot"><a href="#Spring-Boot" class="headerlink" title="Spring Boot"></a>Spring Boot</h1><h2 id="入门案例——Web项目"><a href="#入门案例——Web项目" class="headerlink" title="入门案例——Web项目"></a>入门案例——Web项目</h2><h3 id="创建boot模块"><a href="#创建boot模块" class="headerlink" title="创建boot模块"></a>创建boot模块</h3><p><a href="https://blog.csdn.net/dream_ready/article/details/134639886">idea创建不了spring2.X版本，无法使用JDK8，最低支持JDK17 ， 如何用idea创建spring2.X版本，使用JDK8解决方案_spring3不支持jdk8-CSDN博客</a></p>
+<h1 id="Spring-Boot"><a href="#Spring-Boot" class="headerlink" title="Spring Boot"></a>Spring Boot</h1><h2 id="入门案例-1"><a href="#入门案例-1" class="headerlink" title="入门案例"></a>入门案例</h2><h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><blockquote>
+<p>创建boot模块</p>
+</blockquote>
+<p><a href="https://blog.csdn.net/dream_ready/article/details/134639886">idea创建不了spring2.X版本，无法使用JDK8，最低支持JDK17 ， 如何用idea创建spring2.X版本，使用JDK8解决方案_spring3不支持jdk8-CSDN博客</a></p>
 <p>SpringBoot2停止维护，SpringBoot3最低Java17</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025190302057.png" alt="image-20241025190302057"></p>
-<h3 id="写控制器类"><a href="#写控制器类" class="headerlink" title="写控制器类"></a>写控制器类</h3><p>把controller类写好</p>
+<blockquote>
+<p>写控制器类</p>
+</blockquote>
+<p>把controller类写好</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025194037167.png" alt="image-20241025194037167"></p>
-<h3 id="启动app"><a href="#启动app" class="headerlink" title="启动app"></a>启动app</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025194052846.png" alt="image-20241025194052846"></p>
-<h3 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h3><h4 id="打包—jar"><a href="#打包—jar" class="headerlink" title="打包—jar"></a>打包—jar</h4><p><code>package</code> 之前 <code>clean</code> 全部设置为UTF-8参数</p>
+<blockquote>
+<p>启动app</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025194052846.png" alt="image-20241025194052846"></p>
+<h3 id="快速启动"><a href="#快速启动" class="headerlink" title="快速启动"></a>快速启动</h3><h4 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h4><p><code>package</code> 之前 <code>clean</code> 全部设置为UTF-8参数</p>
 <h4 id="命令行启动-java-jar"><a href="#命令行启动-java-jar" class="headerlink" title="命令行启动 java -jar"></a>命令行启动 java -jar</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025194844475.png" alt="image-20241025194844475"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025194925821.png" alt="image-20241025194925821"></p>
 <p>jar执行要有入口类，boot打包需要插件才能生成可执行的入口类</p>
-<h2 id="简述boot"><a href="#简述boot" class="headerlink" title="简述boot"></a>简述boot</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025195226537.png" alt="image-20241025195226537"></p>
-<h3 id="starter-起步依赖"><a href="#starter-起步依赖" class="headerlink" title="starter 起步依赖"></a>starter 起步依赖</h3><h3 id="starter-parent-依赖管理"><a href="#starter-parent-依赖管理" class="headerlink" title="starter-parent 依赖管理"></a>starter-parent 依赖管理</h3><p>starter-parent：定义了无数jar包的版本管理和依赖管理，减少依赖冲突。只写GA 不写V</p>
-<h3 id="dependencies-辅助功能"><a href="#dependencies-辅助功能" class="headerlink" title="dependencies-辅助功能"></a>dependencies-辅助功能</h3><p>每一个dependency（以web包为例）把真正需要用到的jar包声明，去找parent要即可</p>
+<h2 id="boot-依赖管理"><a href="#boot-依赖管理" class="headerlink" title="boot 依赖管理"></a>boot 依赖管理</h2><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025195226537.png" alt="image-20241025195226537"></p>
+<h3 id="starter-起步依赖"><a href="#starter-起步依赖" class="headerlink" title="starter 起步依赖"></a>starter 起步依赖</h3><blockquote>
+<p>starter-parent 依赖管理</p>
+</blockquote>
+<p>starter-parent：定义了无数jar包的版本管理和依赖管理，减少依赖冲突。只写GA 不写V</p>
+<blockquote>
+<p>dependencies-辅助功能</p>
+</blockquote>
+<p>每一个dependency（以web包为例）把真正需要用到的jar包声明，去找parent要即可</p>
 <p>spring-boot-starter-web: </p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025201404198.png" alt="image-20241025201404198"></p>
 <p>spring-boot-dependencies: </p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025201443556.png" alt="image-20241025201443556"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025201805886.png" alt="image-20241025201805886"></p>
-<h3 id="替换starter的某个依赖"><a href="#替换starter的某个依赖" class="headerlink" title="替换starter的某个依赖"></a>替换starter的某个依赖</h3><p>依赖排除exclusion，换技术</p>
+<h3 id="替换starter的某个依赖-exclusion"><a href="#替换starter的某个依赖-exclusion" class="headerlink" title="替换starter的某个依赖: exclusion"></a>替换starter的某个依赖: exclusion</h3><p>依赖排除exclusion，换技术</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025202142653.png" alt="image-20241025202142653"></p>
-<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><h3 id="resources目录下配置文件加载优先级"><a href="#resources目录下配置文件加载优先级" class="headerlink" title="resources目录下配置文件加载优先级"></a>resources目录下配置文件加载优先级</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025204356892.png" alt="image-20241025204356892"></p>
+<h2 id="application-yml"><a href="#application-yml" class="headerlink" title="application.yml"></a>application.yml</h2><h3 id="resources目录下配置文件加载优先级"><a href="#resources目录下配置文件加载优先级" class="headerlink" title="resources目录下配置文件加载优先级"></a>resources目录下配置文件加载优先级</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025204356892.png" alt="image-20241025204356892"></p>
 <p>properties&gt;<mark>yml<mark>&gt;yaml</p>
 <h3 id="自动提示功能消失—引入配置文件到boot模块中"><a href="#自动提示功能消失—引入配置文件到boot模块中" class="headerlink" title="自动提示功能消失—引入配置文件到boot模块中"></a>自动提示功能消失—引入配置文件到boot模块中</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025204437530.png" alt="image-20241025204437530"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025204503008.png" alt="image-20241025204503008"></p>
 <p>debug&gt;info&gt;warn</p>
-<h3 id="YAML—-YAML-Ain’t-Markup-Language"><a href="#YAML—-YAML-Ain’t-Markup-Language" class="headerlink" title="YAML—(YAML Ain’t Markup Language)"></a>YAML—(YAML Ain’t Markup Language)</h3><h4 id="YAML-简介"><a href="#YAML-简介" class="headerlink" title="YAML 简介"></a>YAML 简介</h4><p>Jamel  Camel</p>
+<h3 id="YAML—-YAML-Ain’t-Markup-Language"><a href="#YAML—-YAML-Ain’t-Markup-Language" class="headerlink" title="YAML—(YAML Ain’t Markup Language)"></a>YAML—(YAML Ain’t Markup Language)</h3><blockquote>
+<p>YAML 简介</p>
+</blockquote>
+<p>Jamel  Camel</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025204800590.png" alt="image-20241025204800590"></p>
-<h4 id="语法规则"><a href="#语法规则" class="headerlink" title="语法规则"></a>语法规则</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025204945594.png" alt="image-20241025204945594"></p>
+<blockquote>
+<p>语法规则</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025204945594.png" alt="image-20241025204945594"></p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 空格数量不限，只要前面格数一样就是同一级，不允许使用tab缩进</span></span><br><span class="line"><span class="attr">enterprise:</span></span><br><span class="line"> <span class="attr">name:</span> <span class="string">John</span></span><br><span class="line"> <span class="attr">likes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Java</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">Python</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">C++</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025205033642.png" alt="image-20241025205033642"></p>
-<h3 id="以Java方式读取yaml配置文件"><a href="#以Java方式读取yaml配置文件" class="headerlink" title="以Java方式读取yaml配置文件"></a>以Java方式读取yaml配置文件</h3><h4 id="读取单个数据—定义成员变量-Value-enterprise-subject"><a href="#读取单个数据—定义成员变量-Value-enterprise-subject" class="headerlink" title="读取单个数据—定义成员变量@Value(${enterprise.subject)"></a>读取单个数据—定义成员变量@Value(${enterprise.subject)</h4><p>自动赋值</p>
+<h3 id="以Java方式读取yaml"><a href="#以Java方式读取yaml" class="headerlink" title="以Java方式读取yaml"></a>以Java方式读取yaml</h3><h4 id="单个数据—成员变量-Value-enterprise-subject"><a href="#单个数据—成员变量-Value-enterprise-subject" class="headerlink" title="单个数据—成员变量@Value(${enterprise.subject)"></a>单个数据—成员变量@Value(${enterprise.subject)</h4><p>自动赋值</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025205805383.png" alt="image-20241025205805383"></p>
-<h4 id="读取全部数据—Environment对象"><a href="#读取全部数据—Environment对象" class="headerlink" title="读取全部数据—Environment对象"></a>读取全部数据—Environment对象</h4><p>定义一个Environment，自动装配，将配置中的属性全部遍历:</p>
+<h4 id="全部数据—Environment"><a href="#全部数据—Environment" class="headerlink" title="全部数据—Environment"></a>全部数据—Environment</h4><p>定义一个Environment，自动装配，将配置中的属性全部遍历:</p>
 <p><code>environment.getProperty(&quot;name&quot;)</code></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025210024893.png" alt="image-20241025210024893"></p>
-<h4 id="自定义对象封装指定数据-Component-ConfigurationProperties-prefix-enterprise"><a href="#自定义对象封装指定数据-Component-ConfigurationProperties-prefix-enterprise" class="headerlink" title="自定义对象封装指定数据@Component@ConfigurationProperties(prefix = enterprise)"></a><strong>自定义对象封装指定数据</strong>@Component@ConfigurationProperties(prefix = enterprise)</h4><p>可以拿到需要的某个属性的信息(prefix)</p>
-<p>在控制器中定义成员变量自动装配，常用</p>
+<h4 id="pojo类映射到yaml-ConfigurationProperties"><a href="#pojo类映射到yaml-ConfigurationProperties" class="headerlink" title="pojo类映射到yaml @ConfigurationProperties"></a>pojo类映射到yaml @ConfigurationProperties</h4><p>可以拿到需要的某个属性的信息(prefix)，在控制器中定义成员变量自动装配，常用</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025210946272.png" alt="image-20241025210710013"></p>
-<h5 id="自定义对象封装数据警告"><a href="#自定义对象封装数据警告" class="headerlink" title="自定义对象封装数据警告"></a>自定义对象封装数据警告</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025211036999.png" alt="image-20241025211036999"></p>
+<blockquote>
+<p>自定义对象封装数据警告</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241025211036999.png" alt="image-20241025211036999"></p>
 <h3 id="多环境开发"><a href="#多环境开发" class="headerlink" title="多环境开发"></a>多环境开发</h3><h4 id="生产环境设定"><a href="#生产环境设定" class="headerlink" title="生产环境设定"></a>生产环境设定</h4><p><strong>独立生产环境设定</strong>：</p>
 <p><code>spring.profiles</code> <strong>boot2</strong></p>
 <p><code>spring.config.activate.on-profile</code> <strong>boot3</strong></p>
@@ -28460,49 +28493,45 @@ return 0;
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026143816570.png" alt="image-20241026143816570"></p>
 <h5 id="APK内部结构"><a href="#APK内部结构" class="headerlink" title="APK内部结构"></a>APK内部结构</h5><p>APK作为JAR包的变种，也具有相似的结构：</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026144246642.png" alt="image-20241026144246642"></p>
-<h2 id="与其他框架整合"><a href="#与其他框架整合" class="headerlink" title="与其他框架整合"></a>与其他框架整合</h2><h3 id="Spring-Boot-X-JUnit"><a href="#Spring-Boot-X-JUnit" class="headerlink" title="Spring Boot X JUnit"></a>Spring Boot X JUnit</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026151902777.png" alt="image-20241026151902777"></p>
+<h2 id="框架整合"><a href="#框架整合" class="headerlink" title="框架整合"></a>框架整合</h2><h3 id="JUnit"><a href="#JUnit" class="headerlink" title="JUnit"></a>JUnit</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026151902777.png" alt="image-20241026151902777"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026152538674.png" alt="image-20241026152538674"></p>
-<h4 id="测试类注解-SpringBootTest"><a href="#测试类注解-SpringBootTest" class="headerlink" title="测试类注解@SpringBootTest"></a>测试类注解@SpringBootTest</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026152650043.png" alt="image-20241026152650043"></p>
+<blockquote>
+<p>测试类注解@SpringBootTest</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026152650043.png" alt="image-20241026152650043"></p>
 <p>SpringBoot启动类：@SpringBootApplication有加载bean的功能，会扫描当前包同层以及子包中所有的bean，加载bean（包含配置类）</p>
 <p>SpringBootTest会自动扫描SpringBootApplication，测试类不在启动类所在包/子包中，需要指定启动类的class文件</p>
-<h3 id="基于SpringBoot实现SSM整合"><a href="#基于SpringBoot实现SSM整合" class="headerlink" title="基于SpringBoot实现SSM整合"></a>基于SpringBoot实现SSM整合</h3><h4 id="整合MyBatis案例"><a href="#整合MyBatis案例" class="headerlink" title="整合MyBatis案例"></a>整合MyBatis案例</h4><h5 id="启动依赖-MyBatis-MySQL"><a href="#启动依赖-MyBatis-MySQL" class="headerlink" title="启动依赖-MyBatis,MySQL"></a>启动依赖-MyBatis,MySQL</h5><h5 id="pojo-dao-Mapper-MapperScan"><a href="#pojo-dao-Mapper-MapperScan" class="headerlink" title="pojo dao @Mapper @MapperScan"></a>pojo dao @Mapper @MapperScan</h5><p>mybatis自动代理注解开发返回的对象就是实体类，所以实体类不用配置，</p>
+<h3 id="SSM"><a href="#SSM" class="headerlink" title="SSM"></a>SSM</h3><h4 id="整合-MyBatis"><a href="#整合-MyBatis" class="headerlink" title="整合 MyBatis"></a>整合 MyBatis</h4><blockquote>
+<p>1.启动依赖-MyBatis,MySQL</p>
+</blockquote>
+<blockquote>
+<p>2.pojo dao @Mapper @MapperScan</p>
+</blockquote>
+<p>mybatis自动代理注解开发返回的对象就是实体类，所以实体类不用配置，</p>
 <p>mybatis注解开发中@Mapper注解取代了bookMapper.xml，对mybatis声明这是一个mapper。</p>
-<p>spring-mybatis整合中，mybatis生成mapper的代理对象会以FactoryBean的形式交给Spring容器管理，要让mybatis知道mapper在哪里，就要加@Mapper注解</p>
+<p>spring-mybatis整合中，mybatis生成mapper的代理对象会以FactoryBean交给Spring容器管理，要让mybatis知道mapper在哪里，就要加@Mapper注解</p>
 <p>spring-mybatis整合中，不加@Mapper注解，要么配置mapperScannerConfigurer，要么加@MapperScan扫mapper包。</p>
-<h5 id="application-yml-配置数据源"><a href="#application-yml-配置数据源" class="headerlink" title="application.yml 配置数据源"></a>application.yml 配置数据源</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026163010546.png" alt="image-20241026163010546"></p>
-<h4 id="SSM项目迁移到Spring-Boot"><a href="#SSM项目迁移到Spring-Boot" class="headerlink" title="SSM项目迁移到Spring Boot"></a>SSM项目迁移到Spring Boot</h4><p>TODO 注释前面加TODO 可以有事项清单</p>
-<h5 id="配置类全部删除"><a href="#配置类全部删除" class="headerlink" title="配置类全部删除"></a>配置类全部删除</h5><h5 id="Dao加-Mapper"><a href="#Dao加-Mapper" class="headerlink" title="Dao加@Mapper"></a>Dao加@Mapper</h5><h5 id="Controller-Service不变"><a href="#Controller-Service不变" class="headerlink" title="Controller Service不变"></a>Controller Service不变</h5><h5 id="application-yml-配置端口和数据源"><a href="#application-yml-配置端口和数据源" class="headerlink" title="application.yml 配置端口和数据源"></a>application.yml 配置端口和数据源</h5><h5 id="静态资源放到resources-static"><a href="#静态资源放到resources-static" class="headerlink" title="静态资源放到resources/static"></a>静态资源放到resources/static</h5><h6 id="静态资源的重定向-JS脚本"><a href="#静态资源的重定向-JS脚本" class="headerlink" title="静态资源的重定向(JS脚本)"></a>静态资源的重定向(JS脚本)</h6><p>访问一个web资源，如果直接访问 <code>localhost:port</code> 一般会请求一个主页index.html，为了能直接从地址访问资源，创建一个index.html，添加一个跳转的js脚本</p>
+<blockquote>
+<p>3.application.yml 配置数据源</p>
+</blockquote>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241026163010546.png" alt="image-20241026163010546"></p>
+<h4 id="SSM迁移到SpringBoot"><a href="#SSM迁移到SpringBoot" class="headerlink" title="SSM迁移到SpringBoot"></a>SSM迁移到SpringBoot</h4><ol>
+<li>配置类全部删除</li>
+<li>Dao加@Mapper</li>
+<li>Controller Service不变</li>
+<li>application.yml 配置端口和数据源</li>
+<li>静态资源放到resources/static，静态资源可重定向(JS脚本)：</li>
+</ol>
+<p>访问一个web资源，如果直接访问 <code>localhost:port</code> 一般会请求一个主页index.html，为了能直接从地址访问资源，创建一个index.html，添加一个跳转的js脚本</p>
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">	<span class="variable language_">document</span>.<span class="property">location</span>.<span class="property">href</span>=<span class="string">&quot;pages/books.html&quot;</span>;</span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<h2 id="Spring-Boot-自动装配"><a href="#Spring-Boot-自动装配" class="headerlink" title="Spring Boot 自动装配"></a>Spring Boot 自动装配</h2><p><a href="https://scatteredream.github.io/2025/02/03/rpc-interpretation/#SpringBoot-%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%EF%BC%9A%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%A1%86%E6%9E%B6%E5%86%85%E9%83%A8%E7%9A%84-Bean">SpringBoot-自动装配：自动装配框架内部的-Bean</a> </p>
-<p><a href="https://scatteredream.github.io/2024/10/01/spring-boot-starter/">自定义 starter | scatteredream’s blog</a> </p>
 <h2 id="SpringBootApplication"><a href="#SpringBootApplication" class="headerlink" title="@SpringBootApplication"></a>@SpringBootApplication</h2><p><code>@SpringBootApplication</code> 是 Spring Boot 的核心注解，它是一个<strong>组合注解</strong>，整合了以下三个关键注解的功能：</p>
-<h3 id="核心作用"><a href="#核心作用" class="headerlink" title="核心作用"></a>核心作用</h3><ul>
-<li><strong><code>@Configuration</code></strong><br>标记当前类为<strong>配置类</strong>，允许通过 <code>@Bean</code> 定义 Spring 容器中的组件。</li>
-<li><strong><code>@EnableAutoConfiguration</code></strong><br>启用 Spring Boot 的<strong>自动配置机制</strong>，根据项目依赖（如 JDBC、Web、Redis 等）自动配置 Spring 应用。</li>
-<li><strong><code>@ComponentScan</code></strong><br>自动扫描<strong>当前包及其子包</strong>下的组件（如 <code>@Controller</code>、<code>@Service</code>、<code>@Repository</code> 等），无需手动注册。</li>
-</ul>
-<h3 id="典型用法"><a href="#典型用法" class="headerlink" title="典型用法"></a>典型用法</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyApp</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(MyApp.class, args); <span class="comment">// 启动 Spring Boot 应用</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>通常放在项目的<strong>主类</strong>（含 <code>main</code> 方法）上。</li>
-<li>启动后会自动初始化 Spring 容器、加载配置、启动内嵌服务器（如 Tomcat）。</li>
-</ul>
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><h4 id="排除特定自动配置"><a href="#排除特定自动配置" class="headerlink" title="排除特定自动配置"></a>排除特定自动配置</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication(exclude = &#123;DataSourceAutoConfiguration.class&#125;)</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>例如：项目未使用数据库时，可排除数据源自动配置。</li>
-</ul>
-<h4 id="自定义扫描路径"><a href="#自定义扫描路径" class="headerlink" title="自定义扫描路径"></a>自定义扫描路径</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication(scanBasePackages = &quot;com.example&quot;)</span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>默认扫描主类所在包，如需扫描其他包，可通过 <code>scanBasePackages</code> 指定</li>
-<li>因此，默认情况下，SpringBootApplication修饰的类应该在根目录，确保所有类都能被扫到</li>
-</ul>
-<h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><ul>
-<li><p><strong>Q：为什么我的 <code>@Component</code> 组件没被扫描到？</strong><br>A：确保组件位于主类的<strong>同级或子包</strong>下，或通过 <code>scanBasePackages</code> 显式指定路径。</p>
-</li>
-<li><p><strong>Q：如何查看生效的自动配置？</strong><br>A：启动时添加 <code>--debug</code> 参数，日志会输出所有自动配置的评估结果。</p>
-</li>
-</ul>
-<h3 id="对比传统-Spring"><a href="#对比传统-Spring" class="headerlink" title="对比传统 Spring"></a>对比传统 Spring</h3><table>
+<ol>
+<li><strong><code>@Configuration</code></strong>  标记当前类为<strong>配置类</strong>，允许通过 <code>@Bean</code> 定义 Spring 容器中的组件。</li>
+<li><strong><code>@EnableAutoConfiguration</code></strong>  启用 Spring Boot 的<strong>自动配置机制</strong>，根据项目依赖（如 JDBC、Web、Redis 等）自动配置 Spring 应用。</li>
+<li><strong><code>@ComponentScan</code></strong> 自动扫描<strong>当前包及其子包</strong>下的组件（如 <code>@Controller</code>、<code>@Service</code>、<code>@Repository</code> 等），无需手动注册。</li>
+</ol>
+<table>
 <thead>
 <tr>
 <th>特性</th>
@@ -28526,6 +28555,217 @@ return 0;
 <td>手动管理依赖版本</td>
 </tr>
 </tbody></table>
+<h3 id="用法"><a href="#用法" class="headerlink" title="用法"></a>用法</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyApp</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(MyApp.class, args); <span class="comment">// 启动 Spring Boot 应用</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>通常放在项目的<strong>主类</strong>（含 <code>main</code> 方法）上。</li>
+<li>启动后会自动初始化 Spring 容器、加载配置、启动内嵌服务器（如 Tomcat）。</li>
+</ul>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><blockquote>
+<p>排除特定自动配置</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication(exclude = &#123;DataSourceAutoConfiguration.class&#125;)</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>例如：项目未使用数据库时，可排除数据源自动配置。</li>
+</ul>
+<blockquote>
+<p>自定义扫描路径 scanBasePackages</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication(scanBasePackages = &quot;com.example&quot;)</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>默认扫描主类所在包，如需扫描其他包，可通过 <code>scanBasePackages</code> 指定</li>
+<li>因此，默认情况下，SpringBootApplication修饰的类应该在根目录，确保所有类都能被扫到。</li>
+</ul>
+<h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><ul>
+<li><strong>Q：为什么我的 <code>@Component</code> 组件没被扫描到？</strong>  A：确保组件位于主类的<strong>同级或子包</strong>下，或通过 <code>scanBasePackages</code> 显式指定路径。</li>
+<li><strong>Q：如何查看生效的自动配置？</strong>  A：启动时添加 <code>--debug</code> 参数，日志会输出所有自动配置的评估结果。</li>
+</ul>
+<h2 id="SpringBoot-启动流程"><a href="#SpringBoot-启动流程" class="headerlink" title="SpringBoot 启动流程"></a>SpringBoot 启动流程</h2><h3 id="app-run"><a href="#app-run" class="headerlink" title="app.run()"></a><code>app.run()</code></h3><ol>
+<li><code>new SpringApplication()</code><ul>
+<li>确认应用类型（SERVLET、NON、响应式）</li>
+<li>加载 <code>ApplicationContextInitializer</code>（包括在 spring.factories 自定义的）</li>
+<li>加载 <code>ApplicationListener</code></li>
+<li>记录主启动类(main所在类)</li>
+</ul>
+</li>
+<li><code>run(MyApp.class,args)</code></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">SpringApplication.run() <span class="comment">// 准备Environment PropertySource</span></span><br><span class="line">    ├── 创建 SpringApplication</span><br><span class="line">    ├── prepareEnvironment</span><br><span class="line">    ├── createApplicationContext <span class="comment">// 创建 context </span></span><br><span class="line">    ├── prepareContext() <span class="comment">// 设置Environment beanFactory后处理器 main类beanDefinition</span></span><br><span class="line">    ├── refresh() <span class="comment">// 刷新 IOC 容器 (往里面填充bean)</span></span><br><span class="line">    ├── CommandLineRunner.run(String... args) ApplicationRunner(String... args)</span><br><span class="line">    └── ApplicationReady</span><br></pre></td></tr></table></figure>
+
+<p>由此可见 <code>CommandLineRunner</code>是在容器启动完成以后执行的。可以实现这个接口的 <code>run()</code> 方法来注入参数。</p>
+<h3 id="IoC-容器初始化-refresh"><a href="#IoC-容器初始化-refresh" class="headerlink" title="IoC 容器初始化: refresh()"></a><span id="refresh">IoC 容器初始化: <code>refresh()</code></span></h3><blockquote>
+<p><code>AbstractApplicationContext#refresh()</code></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">refresh() <span class="comment">// 刷新 IOC 容器 (往里面填充)</span></span><br><span class="line">├── prepareRefresh()    </span><br><span class="line">├── prepareBeanFactory(beanFactory) <span class="comment">//1.给beanFactory设置基本属性(类加载器和enviroment)</span></span><br><span class="line">├── postProcessBeanFactory(beanFactory)<span class="comment">//2.beanFactory后处理器</span></span><br><span class="line">├── invokeBeanFactoryPostProcessors(beanFactory) <span class="comment">//3.扫描并注册beanDefinition</span></span><br><span class="line">├── registerBeanPostProcessors() <span class="comment">// 4.注册 bean 后处理器</span></span><br><span class="line">├── initMessageSource(); initEventMulticaster() <span class="comment">// 5.事件源的注册</span></span><br><span class="line">├── onRefresh() <span class="comment">// 6.模板方法, 针对特定的context实现去执行特定逻辑，比如启动tomcat</span></span><br><span class="line">├── registerListeners() <span class="comment">// 7.event listener 绑定和注册</span></span><br><span class="line">├── finishBeanFactoryInitialization() <span class="comment">// 8.实例化所有非懒加载单例 Bean</span></span><br><span class="line">└── finishRefresh() <span class="comment">//9.发布ContextRefreshedEvent, 清除一些缓存</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>加载配置类（带 <code>@Configuration</code>、<code>@ComponentScan</code>、<code>@Import</code> 等注解）</p>
+</li>
+<li><p><strong>扫描、注册阶段</strong> </p>
+<blockquote>
+<p><code>invokeBeanFactoryPostProcessors(beanFactory)</code> 执行beanFactory后处理器</p>
+</blockquote>
+<ul>
+<li>（由 <code>ClassPathBeanDefinitionScanner</code> 完成）</li>
+<li>扫描被 <code>@ComponentScan</code> 指定的包，找到带注解的类（如 <code>@Component</code>、<code>@Service</code>、<code>@Controller</code>）</li>
+<li>解析为 <code>BeanDefinition</code>，使用 <code>BeanDefinitionRegistry</code> 将其注册进<code>beanDefinitionMap</code>还未创建对象。<ul>
+<li>修改Bean定义：执行所有 <code>BeanFactoryPostProcessor</code> 的实现类（如 <code>PropertySourcesPlaceholderConfigurer</code>），允许对 <code>BeanDefinition</code> 进行修改（例如替换占位符）。</li>
+<li><strong>提前实例化处理器</strong>：注册 <code>BeanPostProcessor</code> 实现类（如 <code>AutowiredAnnotationBeanPostProcessor</code>），这些处理器需在普通Bean之前初始化，以便后续处理其他Bean的创建。</li>
+<li>初始化消息源以及事件广播器。 </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>实例化阶段</strong>（容器对于单例且非懒加载的 Bean）</p>
+<blockquote>
+<p><code>AbstractAutowireCapableBeanFactory#doCreateBean()</code></p>
+</blockquote>
+<p>对每个要使用的 Bean：</p>
+<ul>
+<li><p>（主要是针对懒加载）存在性检查：Scope判断（若为单例则检查到单例缓存）以及循环依赖判断（如果当前正在创建就从单例三级缓存获取原始对象）</p>
+</li>
+<li><p><strong>实例化</strong>：从 <code>BeanDefinitionRegistry</code> 获取<code> BeanDefinition</code>，包含类名、作用域、初始化方法等元数据。检查是否存在未满足的依赖（如通过<code>@DependsOn</code>指定的前置依赖，或者<code>@Order</code>加载顺序）最后<strong>实例化</strong>对象（通过反射或者工厂方法调用<code>Constructor</code>创建原始对象）</p>
+</li>
+<li><p><strong>依赖注入</strong>： <code>@Autowired/@Resource</code> 递归调用<code>getBean()</code>获取依赖bean，通过三级缓存（<code>singletonFactories</code>、<code>earlySingletonObjects</code>、<code>singletonObjects</code>）提前暴露对象引用，解决setter的循环依赖。设置好属性。</p>
+</li>
+<li><p>Aware 接口回调：如果实现了 <code>XXXAware</code> 接口，则通过 <code>setXXX</code> 注入容器底层信息。如名称，类加载器等</p>
+</li>
+<li><p><code>BeanPostProcessor</code>: 每个bean在构建的过程中，Spring都会遍历所有的<code>BeanPostProcessor</code>的实现类，调用实现类中的方法，入参为构建好的bean。要实现无感的对bean的处理必须使用 <code>BeanPostProcessor</code>。</p>
+<table>
+<thead>
+<tr>
+<th>方法（按照先后顺序）</th>
+<th>方法所属</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1. <code>Object postProcessBeforeInitialization()</code></td>
+<td><code>BeanPostProcessor</code></td>
+</tr>
+<tr>
+<td>2. <code>@PostConstruct</code> 标注的方法</td>
+<td>JSR-250 规定</td>
+</tr>
+<tr>
+<td>3. <code>void afterPropertiesSet()</code></td>
+<td><code>InitializingBean</code></td>
+</tr>
+<tr>
+<td>4. <code>init()</code></td>
+<td><code>@Bean (initMethod =  init)</code></td>
+</tr>
+<tr>
+<td>5. <code>Object postProcessAfterInitialization()</code></td>
+<td><code>BeanPostProcessor</code></td>
+</tr>
+</tbody></table>
+<p> <strong>5 是 AOP 动态代理的关键阶段</strong>：Spring 在这里可能会返回代理对象替代原对象</p>
+</li>
+</ul>
+</li>
+<li><p><strong>完成容器启动</strong>：触发 <code>ContextRefreshedEvent</code>，通知监听器容器已就绪。<strong>此时可以通过 <code>getBean()</code> 获取单例 Bean</strong>，如果是懒加载或者<code>Scope = prototype</code>的则会在主动调用 <code>getBean()</code> 的时候才实例化。</p>
+</li>
+</ol>
+<h2 id="SpringBoot-自动装配：自动装配框架内部的-Bean"><a href="#SpringBoot-自动装配：自动装配框架内部的-Bean" class="headerlink" title="SpringBoot 自动装配：自动装配框架内部的 Bean"></a><span id="autoconfig">SpringBoot 自动装配：自动装配框架内部的 Bean</span></h2><p>自动装配基于自动装配类，所以要把所有的bean都用bean方法的形式注册到容器中。</p>
+<p>包括之前讲的 服务发现、服务注册、代理工厂、BeanPostProcessor、ConfigurationProperties等。</p>
+<p>Bean 方法不需要使用Autowired在参数上注解！！！！</p>
+<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p><a href="https://javaguide.cn/system-design/framework/spring/spring-boot-auto-assembly-principles.html">SpringBoot 自动装配原理详解</a> </p>
+<p>自动装配可以简单理解为：<strong>通过注解或者一些简单的配置就能在 Spring Boot 的帮助下实现某块功能。</strong></p>
+<ul>
+<li>没有 Spring Boot 的时候，我们写一个 RestFul Web 服务，还首先需要自己写 Configuration 配置类，写 Bean 方法。</li>
+<li>但有了 SpringBoot，只需要引入依赖，启动 SpringBootApplication 即可。</li>
+</ul>
+<blockquote>
+<p>SpringBoot 定义了一套接口规范，这套规范规定：SpringBoot 在启动时会扫描外部引用 jar 包中的<code>META-INF/spring.factories</code>文件，将文件中配置的类型信息加载到 Spring 容器（此处涉及到 JVM 类加载机制与 Spring 的容器知识），并执行类中定义的各种操作。对于外部 jar 来说，只需要按照 SpringBoot 定义的标准，就能将自己的功能装置进 SpringBoot。</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># SpringBoot 2.x  在 META-INF/spring.factories </span></span><br><span class="line"><span class="attr">org.springframework.boot.autoconfigure.EnableAutoConfiguration</span>=<span class="string">\</span></span><br><span class="line"><span class="string">com.example.rpc.RpcServerAutoConfiguration</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment"># SpringBoot 3 在 META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports</span></span><br><span class="line"><span class="attr">com.example.rpc.RpcServerAutoConfiguration</span></span><br></pre></td></tr></table></figure>
+
+<p>没有 Spring Boot 的情况下，如果我们需要引入第三方依赖，需要手动配置，非常麻烦。但是，Spring Boot 中，我们直接引入一个 starter 即可。比如你想要在项目中使用 redis 的话，直接在项目中引入对应的 starter 即可。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>引入 starter 之后，我们通过少量注解和一些简单的配置就能使用第三方组件提供的功能了。</p>
+</blockquote>
+<h3 id="原理浅析"><a href="#原理浅析" class="headerlink" title="原理浅析"></a>原理浅析</h3><p>机制核心 @EnableAutoConfiguration (@SpringBootApplication 的一部分) </p>
+<p>底层通过 @Import(AutoConfigurationImportSelector.class) 加载所有自动配置类（通过 spring.factories 找到） 这个ImportSelector很重要，通过 selectImport</p>
+<p>方法扫描获取所有符合条件的类的全限定类名，将这些类注册到 IoC 容器。核心调用路径如下：</p>
+<p><code>selectImport-&gt;getAutoConfigurationEntry-&gt;getCandidateConfigurations-&gt;SpringFactoriesLoader.loadFactoryNames-&gt;loadSpringFactories</code> 不光是这个依赖下的<code>META-INF/spring.factories</code>被读取到，所有 Spring Boot Starter 下的<code>META-INF/spring.factories</code>都会被读取到。后边会根据条件进行逐层筛选。</p>
+<h3 id="示例-创建-starter"><a href="#示例-创建-starter" class="headerlink" title="示例 创建 starter"></a>示例 创建 starter</h3><p><a href="https://scatteredream.github.io/2024/10/01/spring-boot-starter/">自定义 starter | scatteredream’s blog</a> </p>
+<blockquote>
+<p>引入 starter-validation</p>
+<p>@Validated注解加到类上，下面这些注解可以用到 字段、参数</p>
+<p>@NotBlank @Email  @Min(1)  @Max(91)</p>
+<p>@Pattern(regexp = “^[a-zA-Z0-9]{8,16}$”,message = “用户名只能是长度在8至16”      + “之间的包含数字和大小写字母的字符串”)</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Validated</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;rpc.server&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RpcServerProperties</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String address;<span class="keyword">private</span> Integer port;<span class="keyword">private</span> String appName;</span><br><span class="line">    <span class="meta">@Pattern(regexp = &quot;zookeeper|nacos&quot;, message = &quot;必须是 nacos或者zookeeper&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String registry;</span><br><span class="line">    <span class="keyword">private</span> String transport;<span class="keyword">private</span> String registryAddr;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">RpcServerProperties</span><span class="params">()</span> <span class="keyword">throws</span> UnknownHostException &#123;</span><br><span class="line">        <span class="built_in">this</span>.address = InetAddress.getLocalHost().getHostAddress();</span><br><span class="line">        <span class="built_in">this</span>.port = <span class="number">8080</span>;</span><br><span class="line">        <span class="built_in">this</span>.appName = <span class="string">&quot;provider-1&quot;</span>;</span><br><span class="line">        <span class="built_in">this</span>.registry = <span class="string">&quot;zookeeper&quot;</span>;</span><br><span class="line">        <span class="built_in">this</span>.transport = <span class="string">&quot;netty&quot;</span>;</span><br><span class="line">        <span class="built_in">this</span>.registryAddr = <span class="string">&quot;127.0.0.1:2181&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>pojo 类 + @ConfigurationProperties注解，可在 application.yml 中按照前缀配置属性。</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">rpc.server.app-name</span>=<span class="string">provider-1</span></span><br><span class="line"><span class="attr">rpc.server.port</span>=<span class="string">9991</span></span><br><span class="line"><span class="attr">rpc.server.registry</span>=<span class="string">zookeeper</span></span><br><span class="line"><span class="attr">rpc.server.registry-addr</span>=<span class="string">39.108.66.202:2181</span></span><br><span class="line"><span class="attr">rpc.server.transport</span>=<span class="string">netty</span></span><br><span class="line"><span class="comment"># 设置指定包下的日志显示级别 INFO/DEBUG/WARNING/OFF</span></span><br><span class="line"><span class="attr">logging.level.com.wxy.rpc</span>=<span class="string">info</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>注解</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>@ConditionalOnProperty</code></td>
+<td>属性Property，满足一定的条件才生效</td>
+</tr>
+<tr>
+<td><code>@ConditionalOnMissingBean</code></td>
+<td>只有没有这个类型的 Bean 时才生效 (用户自定义实现了Bean方法，可以替换这个自动装配的)</td>
+</tr>
+<tr>
+<td><code>@ConditionalOnClass</code></td>
+<td>类路径下有某个类才生效</td>
+</tr>
+<tr>
+<td><code>@ConditionalOnBean</code></td>
+<td>依赖的 Bean 存在才生效</td>
+</tr>
+<tr>
+<td><code>@Primary</code></td>
+<td>多个同类的 Bean 存在时首选注入</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableConfigurationProperties(RpcServerProperties.class)</span> <span class="comment">// 绑定 pojo 作为 properties</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RpcServerAutoConfiguration</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    RpcServerProperties properties;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">    <span class="meta">@ConditionalOnProperty(prefix = &quot;rpc.server&quot;, name = &quot;registry&quot;, havingValue = &quot;zookeeper&quot;, matchIfMissing = true)</span><span class="comment">// property 的 registry 字段的 value = zookeeper 才生效，如果配置项不存在也会生效</span></span><br><span class="line">    <span class="keyword">public</span> ServiceRegistry <span class="title function_">serviceRegistry</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(properties.get)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ZookeeperServiceRegistry</span>(properties.getRegistryAddr());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">    <span class="meta">@ConditionalOnProperty(prefix = &quot;rpc.server&quot;, name = &quot;registry&quot;, havingValue = &quot;nacos&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> ServiceRegistry <span class="title function_">nacosServiceRegistry</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">NacosServiceRegistry</span>(properties.getRegistryAddr());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">    <span class="meta">@ConditionalOnBean(&#123;ServiceRegistry.class, RpcServer.class&#125;)</span></span><br><span class="line">    <span class="keyword">public</span> RpcServerBeanPostProcessor <span class="title function_">rpcServerBeanPostProcessor</span><span class="params">(</span></span><br><span class="line"><span class="params">        <span class="meta">@Autowired</span> ServiceRegistry serviceRegistry,</span></span><br><span class="line"><span class="params">		<span class="meta">@Autowired</span> RpcServer rpcServer,</span></span><br><span class="line"><span class="params">        <span class="meta">@Autowired</span> RpcServerProperties properties)</span> </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">RpcServerBeanPostProcessor</span>(serviceRegistry, rpcServer, properties);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例子：添加 <code>spring-boot-starter-data-redis</code> 后，可直接注入 <code>RedisTemplate</code>。</p>
+<table>
+<thead>
+<tr>
+<th align="left">特征</th>
+<th align="left">Starter 模块</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>命名</strong></td>
+<td align="left">以 <code>-spring-boot-starter</code> 结尾</td>
+</tr>
+<tr>
+<td align="left"><strong>依赖</strong></td>
+<td align="left">包含 <code>spring-boot-autoconfigure</code></td>
+</tr>
+<tr>
+<td align="left"><strong>自动配置</strong></td>
+<td align="left">有 <code>@AutoConfiguration</code> 类，并注册到 <code>spring.factories</code> 或 <code>AutoConfiguration.imports</code></td>
+</tr>
+<tr>
+<td align="left"><strong>配置属性</strong></td>
+<td align="left">包含 <code>@ConfigurationProperties</code> 类</td>
+</tr>
+<tr>
+<td align="left"><strong>功能入口</strong></td>
+<td align="left">提供开箱即用的 Bean，无需用户手动配置。可通过 <code>application.properties</code> 或 <code>@Bean</code> 覆盖 Starter 的默认配置。</td>
+</tr>
+</tbody></table>
+<ol>
+<li><p>实现自动配置类 AutoConfiguration </p>
+</li>
+<li><p>按照 SpringBoot 版本将配置类的全限定名引入指定路径下。</p>
+</li>
+<li><p>新建 starter 模块，添加依赖</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 必须依赖 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-autoconfigure<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;spring-boot.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 可选：配置注解处理器 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-configuration-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 你的模块核心实现 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>rpc-server-spring-boot<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
 ]]></content>
       <categories>
         <category>spring</category>
@@ -36821,6 +37061,229 @@ $$
         <tag>磁盘</tag>
         <tag>文件系统</tag>
         <tag>raid</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>前端概念</title>
+    <url>/2025/06/13/mvvm/</url>
+    <content><![CDATA[<h1 id="Jetpack-Compose-vs-Vue-js"><a href="#Jetpack-Compose-vs-Vue-js" class="headerlink" title="Jetpack Compose vs Vue.js"></a>Jetpack Compose vs Vue.js</h1><h2 id="声明式-UI-编程：组件-UI-状态"><a href="#声明式-UI-编程：组件-UI-状态" class="headerlink" title="声明式 UI 编程：组件 = UI + 状态"></a><strong>声明式 UI 编程：组件 = UI + 状态</strong></h2><table>
+<thead>
+<tr>
+<th>概念</th>
+<th>Jetpack Compose</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>UI 构建方式</td>
+<td>使用 Kotlin 编写 UI 函数</td>
+<td>使用 HTML + 模板语法</td>
+</tr>
+<tr>
+<td>编程风格</td>
+<td>声明式</td>
+<td>声明式</td>
+</tr>
+<tr>
+<td>示例</td>
+<td><code>Text(&quot;Hello&quot;)</code></td>
+<td><code>&lt;p&gt;&#123;&#123; message &#125;&#125;&lt;/p&gt;</code></td>
+</tr>
+</tbody></table>
+<p><strong>说明：</strong></p>
+<ul>
+<li>Jetpack Compose 用函数来“描述 UI”</li>
+<li>Vue 用模板语法“声明 UI”</li>
+<li>二者都强调 <strong>状态驱动 UI</strong>，界面是数据的“映射”</li>
+</ul>
+<h2 id="响应式系统：状态变-→-UI自动更新"><a href="#响应式系统：状态变-→-UI自动更新" class="headerlink" title="响应式系统：状态变 → UI自动更新"></a><strong>响应式系统：状态变 → UI自动更新</strong></h2><table>
+<thead>
+<tr>
+<th>功能</th>
+<th>Jetpack Compose</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>响应式状态管理</td>
+<td><code>mutableStateOf</code>、<code>remember</code>、<code>State</code></td>
+<td><code>reactive()</code>、<code>ref()</code>、Vue 2 是 <code>data</code></td>
+</tr>
+<tr>
+<td>自动更新机制</td>
+<td>Compose 会重新组合（Recompose）</td>
+<td>Vue 会重新渲染 DOM</td>
+</tr>
+<tr>
+<td>示例</td>
+<td><code>val name by remember &#123; mutableStateOf(&quot;冯宇杰&quot;) &#125;</code></td>
+<td><code>data() &#123; return &#123; name: &quot;冯宇杰&quot; &#125; &#125;</code></td>
+</tr>
+</tbody></table>
+<p><strong>说明：</strong></p>
+<ul>
+<li>当 <code>State</code> 或 <code>ref</code> 的值发生变化，界面自动刷新</li>
+<li>这就是所谓的“数据驱动视图”</li>
+</ul>
+<h2 id="组件化开发"><a href="#组件化开发" class="headerlink" title="组件化开发"></a><strong>组件化开发</strong></h2><table>
+<thead>
+<tr>
+<th>特点</th>
+<th>Jetpack Compose</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>组件形式</td>
+<td>Kotlin 函数（Composable）</td>
+<td>Vue 单文件组件（SFC）</td>
+</tr>
+<tr>
+<td>状态隔离</td>
+<td>每个 Composable 可维护自身状态</td>
+<td>每个 Vue 组件有自己的 data()</td>
+</tr>
+<tr>
+<td>重用方式</td>
+<td>像函数一样调用</td>
+<td>像标签一样引用 <code>&lt;MyComponent /&gt;</code></td>
+</tr>
+</tbody></table>
+<p><strong>说明：</strong></p>
+<ul>
+<li>Compose 使用 <code>@Composable</code> 函数来封装 UI 单元</li>
+<li>Vue 使用 <code>.vue</code> 文件封装组件</li>
+<li>都支持属性（props）、事件传递、插槽等概念</li>
+</ul>
+<h2 id="事件绑定与双向绑定"><a href="#事件绑定与双向绑定" class="headerlink" title="事件绑定与双向绑定"></a><strong>事件绑定与双向绑定</strong></h2><table>
+<thead>
+<tr>
+<th>概念</th>
+<th>Jetpack Compose</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>单向数据绑定</td>
+<td>默认行为（状态 -&gt; UI）</td>
+<td>默认行为（状态 -&gt; 模板）</td>
+</tr>
+<tr>
+<td>双向绑定</td>
+<td>手动实现（如 <code>TextField</code> 的 <code>onValueChange</code>)</td>
+<td><code>v-model</code></td>
+</tr>
+<tr>
+<td>事件处理</td>
+<td><code>onClick &#123;&#125;</code> 等 Lambda</td>
+<td><code>@click=&quot;handler&quot;</code></td>
+</tr>
+</tbody></table>
+<p><strong>说明：</strong></p>
+<ul>
+<li>两者都支持从 UI 控件中“获取输入”并更新状态</li>
+<li>Vue 封装了 <code>v-model</code> 实现双向绑定；Compose 则需要手动处理</li>
+</ul>
+<h2 id="生命周期感知"><a href="#生命周期感知" class="headerlink" title="生命周期感知"></a><strong>生命周期感知</strong></h2><table>
+<thead>
+<tr>
+<th>Jetpack Compose</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>LaunchedEffect</code>、<code>DisposableEffect</code> 等用于管理生命周期感知行为</td>
+<td><code>created</code>、<code>mounted</code>、<code>beforeDestroy</code> 等钩子</td>
+</tr>
+</tbody></table>
+<p><strong>说明：</strong></p>
+<ul>
+<li>Vue 有传统的生命周期钩子</li>
+<li>Compose 用更现代的 <code>Effect</code> API 来响应组件进入/退出组合的生命周期</li>
+</ul>
+<h2 id="路由与页面跳转（导航）"><a href="#路由与页面跳转（导航）" class="headerlink" title="路由与页面跳转（导航）"></a><strong>路由与页面跳转（导航）</strong></h2><table>
+<thead>
+<tr>
+<th>Jetpack Compose</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Navigation Compose</td>
+<td>Vue Router</td>
+</tr>
+<tr>
+<td>声明式路由配置</td>
+<td>是</td>
+</tr>
+<tr>
+<td>参数传递</td>
+<td><code>navArgument</code></td>
+</tr>
+</tbody></table>
+<h2 id="状态管理和跨组件通信"><a href="#状态管理和跨组件通信" class="headerlink" title="状态管理和跨组件通信"></a><strong>状态管理和跨组件通信</strong></h2><table>
+<thead>
+<tr>
+<th>Jetpack Compose</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ViewModel + State Hoisting</td>
+<td>Vuex（Vue2）/ Pinia（Vue3）</td>
+</tr>
+<tr>
+<td>状态提升、状态共享</td>
+<td>提倡单向流动</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><table>
+<thead>
+<tr>
+<th>共性概念</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>响应式系统</td>
+<td>UI 与数据自动同步</td>
+</tr>
+<tr>
+<td>声明式编程</td>
+<td>描述界面“应该长什么样”，不是“怎么去做”</td>
+</tr>
+<tr>
+<td>状态驱动</td>
+<td>状态决定 UI，不手动操作 UI 元素</td>
+</tr>
+<tr>
+<td>组件化</td>
+<td>UI = 可组合的模块</td>
+</tr>
+<tr>
+<td>单向数据流</td>
+<td>数据从父组件流向子组件，事件反向冒泡</td>
+</tr>
+<tr>
+<td>生命周期感知</td>
+<td>在特定生命周期执行代码</td>
+</tr>
+</tbody></table>
+<p><strong>Jetpack Compose ≈ Vue + Vuex + JSX + 响应式系统，只不过 Compose 是 Kotlin 函数式语法，Vue 是 HTML 模板 + JS。</strong></p>
+<h1 id="跨平台UI框架"><a href="#跨平台UI框架" class="headerlink" title="跨平台UI框架"></a>跨平台UI框架</h1><ul>
+<li>Flutter、RN、CMP（JC的扩展）</li>
+<li>Jetpack Compose(JC)：android UI 框架</li>
+<li>Compose Multiplatform(CMP)：JetBrains 开发的JC扩展，用于跨平台支持</li>
+<li>Kotlin Multiplatform(KMP): 用于编写<strong>跨平台共享业务逻辑</strong>。</li>
+</ul>
+<p>KMP 可以作为 CMP 的插件和底层跨平台支撑。反过来看，也可以认为 CMP 作为 KMP 项目中的 UI 支持，它不是 KMP 本身的一部分，只是一个通过启用共享 UI 来补充 KMP 的 SDK。</p>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+        <tag>kmp</tag>
       </tags>
   </entry>
 </search>

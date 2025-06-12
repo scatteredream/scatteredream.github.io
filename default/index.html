@@ -166,18 +166,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-count">96</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">20</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">130</span>
+        <span class="site-state-item-count">131</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -194,6 +194,295 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/06/13/mvvm/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/06/13/mvvm/" class="post-title-link" itemprop="url">前端概念</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-13 00:00:00 / 修改时间：00:16:06" itemprop="dateCreated datePublished" datetime="2025-06-13T00:00:00+08:00">2025-06-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Jetpack-Compose-vs-Vue-js"><a href="#Jetpack-Compose-vs-Vue-js" class="headerlink" title="Jetpack Compose vs Vue.js"></a>Jetpack Compose vs Vue.js</h1><h2 id="声明式-UI-编程：组件-UI-状态"><a href="#声明式-UI-编程：组件-UI-状态" class="headerlink" title="声明式 UI 编程：组件 = UI + 状态"></a><strong>声明式 UI 编程：组件 = UI + 状态</strong></h2><table>
+<thead>
+<tr>
+<th>概念</th>
+<th>Jetpack Compose</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>UI 构建方式</td>
+<td>使用 Kotlin 编写 UI 函数</td>
+<td>使用 HTML + 模板语法</td>
+</tr>
+<tr>
+<td>编程风格</td>
+<td>声明式</td>
+<td>声明式</td>
+</tr>
+<tr>
+<td>示例</td>
+<td><code>Text(&quot;Hello&quot;)</code></td>
+<td><code>&lt;p&gt;&#123;&#123; message &#125;&#125;&lt;/p&gt;</code></td>
+</tr>
+</tbody></table>
+<p><strong>说明：</strong></p>
+<ul>
+<li>Jetpack Compose 用函数来“描述 UI”</li>
+<li>Vue 用模板语法“声明 UI”</li>
+<li>二者都强调 <strong>状态驱动 UI</strong>，界面是数据的“映射”</li>
+</ul>
+<h2 id="响应式系统：状态变-→-UI自动更新"><a href="#响应式系统：状态变-→-UI自动更新" class="headerlink" title="响应式系统：状态变 → UI自动更新"></a><strong>响应式系统：状态变 → UI自动更新</strong></h2><table>
+<thead>
+<tr>
+<th>功能</th>
+<th>Jetpack Compose</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>响应式状态管理</td>
+<td><code>mutableStateOf</code>、<code>remember</code>、<code>State</code></td>
+<td><code>reactive()</code>、<code>ref()</code>、Vue 2 是 <code>data</code></td>
+</tr>
+<tr>
+<td>自动更新机制</td>
+<td>Compose 会重新组合（Recompose）</td>
+<td>Vue 会重新渲染 DOM</td>
+</tr>
+<tr>
+<td>示例</td>
+<td><code>val name by remember &#123; mutableStateOf(&quot;冯宇杰&quot;) &#125;</code></td>
+<td><code>data() &#123; return &#123; name: &quot;冯宇杰&quot; &#125; &#125;</code></td>
+</tr>
+</tbody></table>
+<p><strong>说明：</strong></p>
+<ul>
+<li>当 <code>State</code> 或 <code>ref</code> 的值发生变化，界面自动刷新</li>
+<li>这就是所谓的“数据驱动视图”</li>
+</ul>
+<h2 id="组件化开发"><a href="#组件化开发" class="headerlink" title="组件化开发"></a><strong>组件化开发</strong></h2><table>
+<thead>
+<tr>
+<th>特点</th>
+<th>Jetpack Compose</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>组件形式</td>
+<td>Kotlin 函数（Composable）</td>
+<td>Vue 单文件组件（SFC）</td>
+</tr>
+<tr>
+<td>状态隔离</td>
+<td>每个 Composable 可维护自身状态</td>
+<td>每个 Vue 组件有自己的 data()</td>
+</tr>
+<tr>
+<td>重用方式</td>
+<td>像函数一样调用</td>
+<td>像标签一样引用 <code>&lt;MyComponent /&gt;</code></td>
+</tr>
+</tbody></table>
+<p><strong>说明：</strong></p>
+<ul>
+<li>Compose 使用 <code>@Composable</code> 函数来封装 UI 单元</li>
+<li>Vue 使用 <code>.vue</code> 文件封装组件</li>
+<li>都支持属性（props）、事件传递、插槽等概念</li>
+</ul>
+<h2 id="事件绑定与双向绑定"><a href="#事件绑定与双向绑定" class="headerlink" title="事件绑定与双向绑定"></a><strong>事件绑定与双向绑定</strong></h2><table>
+<thead>
+<tr>
+<th>概念</th>
+<th>Jetpack Compose</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>单向数据绑定</td>
+<td>默认行为（状态 -&gt; UI）</td>
+<td>默认行为（状态 -&gt; 模板）</td>
+</tr>
+<tr>
+<td>双向绑定</td>
+<td>手动实现（如 <code>TextField</code> 的 <code>onValueChange</code>)</td>
+<td><code>v-model</code></td>
+</tr>
+<tr>
+<td>事件处理</td>
+<td><code>onClick &#123;&#125;</code> 等 Lambda</td>
+<td><code>@click=&quot;handler&quot;</code></td>
+</tr>
+</tbody></table>
+<p><strong>说明：</strong></p>
+<ul>
+<li>两者都支持从 UI 控件中“获取输入”并更新状态</li>
+<li>Vue 封装了 <code>v-model</code> 实现双向绑定；Compose 则需要手动处理</li>
+</ul>
+<h2 id="生命周期感知"><a href="#生命周期感知" class="headerlink" title="生命周期感知"></a><strong>生命周期感知</strong></h2><table>
+<thead>
+<tr>
+<th>Jetpack Compose</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>LaunchedEffect</code>、<code>DisposableEffect</code> 等用于管理生命周期感知行为</td>
+<td><code>created</code>、<code>mounted</code>、<code>beforeDestroy</code> 等钩子</td>
+</tr>
+</tbody></table>
+<p><strong>说明：</strong></p>
+<ul>
+<li>Vue 有传统的生命周期钩子</li>
+<li>Compose 用更现代的 <code>Effect</code> API 来响应组件进入/退出组合的生命周期</li>
+</ul>
+<h2 id="路由与页面跳转（导航）"><a href="#路由与页面跳转（导航）" class="headerlink" title="路由与页面跳转（导航）"></a><strong>路由与页面跳转（导航）</strong></h2><table>
+<thead>
+<tr>
+<th>Jetpack Compose</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Navigation Compose</td>
+<td>Vue Router</td>
+</tr>
+<tr>
+<td>声明式路由配置</td>
+<td>是</td>
+</tr>
+<tr>
+<td>参数传递</td>
+<td><code>navArgument</code></td>
+</tr>
+</tbody></table>
+<h2 id="状态管理和跨组件通信"><a href="#状态管理和跨组件通信" class="headerlink" title="状态管理和跨组件通信"></a><strong>状态管理和跨组件通信</strong></h2><table>
+<thead>
+<tr>
+<th>Jetpack Compose</th>
+<th>Vue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ViewModel + State Hoisting</td>
+<td>Vuex（Vue2）/ Pinia（Vue3）</td>
+</tr>
+<tr>
+<td>状态提升、状态共享</td>
+<td>提倡单向流动</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><table>
+<thead>
+<tr>
+<th>共性概念</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>响应式系统</td>
+<td>UI 与数据自动同步</td>
+</tr>
+<tr>
+<td>声明式编程</td>
+<td>描述界面“应该长什么样”，不是“怎么去做”</td>
+</tr>
+<tr>
+<td>状态驱动</td>
+<td>状态决定 UI，不手动操作 UI 元素</td>
+</tr>
+<tr>
+<td>组件化</td>
+<td>UI = 可组合的模块</td>
+</tr>
+<tr>
+<td>单向数据流</td>
+<td>数据从父组件流向子组件，事件反向冒泡</td>
+</tr>
+<tr>
+<td>生命周期感知</td>
+<td>在特定生命周期执行代码</td>
+</tr>
+</tbody></table>
+<p><strong>Jetpack Compose ≈ Vue + Vuex + JSX + 响应式系统，只不过 Compose 是 Kotlin 函数式语法，Vue 是 HTML 模板 + JS。</strong></p>
+<h1 id="跨平台UI框架"><a href="#跨平台UI框架" class="headerlink" title="跨平台UI框架"></a>跨平台UI框架</h1><ul>
+<li>Flutter、RN、CMP（JC的扩展）</li>
+<li>Jetpack Compose(JC)：android UI 框架</li>
+<li>Compose Multiplatform(CMP)：JetBrains 开发的JC扩展，用于跨平台支持</li>
+<li>Kotlin Multiplatform(KMP): 用于编写<strong>跨平台共享业务逻辑</strong>。</li>
+</ul>
+<p>KMP 可以作为 CMP 的插件和底层跨平台支撑。反过来看，也可以认为 CMP 作为 KMP 项目中的 UI 支持，它不是 KMP 本身的一部分，只是一个通过启用共享 UI 来补充 KMP 的 SDK。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -3064,103 +3353,6 @@ $$
 
 <h2 id="无法解决的循环引用"><a href="#无法解决的循环引用" class="headerlink" title="无法解决的循环引用"></a>无法解决的循环引用</h2><p>如果是 AB互相依赖，A只有含参构造，那么注入B完成之前就无法创建一个A实例出来，自然也没法加到缓存里面，A尝试注入B，B那边尝试注入A彻底卡死。</p>
 <p>但是 从B开始又可以了，然而对于普通的bean来说，注册顺序并不是一个可控的状态，所以尽量避免含参构造的bean之间互相依赖</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/24/jvm-arthas/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/24/jvm-arthas/" class="post-title-link" itemprop="url">ARTHAS</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-24 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-24T00:00:00+08:00">2025-05-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-31 20:29:41" itemprop="dateModified" datetime="2025-05-31T20:29:41+08:00">2025-05-31</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Arthas: </p>
-<p>Arthas是一款阿里巴巴开源的 Java 线上诊断工具，功能非常强大，可以解决很多线上不方便解决的问题。Arthas诊断使用的是命令行交互模式，支持JDK6+，Linux、Mac、Windows 操作系统，命令还支持使用 tab 键对各种信息的自动补全，诊断起来非常利索。</p>
-<ul>
-<li>从官网可以知道Arthas有以下一些特征</li>
-<li>检查是否加载了类，或在哪里加载了类。（对于解决jar文件冲突很有用）</li>
-<li>反编译一个类以确保代码按预期运行。</li>
-<li>查看类加载器统计信息，例如，类加载器的数量，每个类加载器加载的类的数量，类加载器的层次结构，可能的类加载器泄漏等。</li>
-<li>查看方法调用详细信息，例如方法参数，返回对象，引发的异常等。</li>
-<li>检查指定方法调用的堆栈跟踪。当开发人员想知道所述方法的调用者时，这很有用。</li>
-<li>跟踪方法调用以查找慢速子调用。</li>
-<li>监视方法调用统计信息，例如qps，rt，成功率等。</li>
-<li>监视系统指标，线程状态和cpu使用情况，gc统计信息等。</li>
-<li>支持命令行交互模式，并启用了自动完成功能。</li>
-<li>支持telnet和websocket，可通过命令行和浏览器启用本地和远程诊断。</li>
-<li>支持分析器/火焰图</li>
-<li>支持JDK 6+。</li>
-<li>支持Linux / Mac / Windows。</li>
-</ul>
-<p>thread: cpu占用情况</p>
-<p>thread 73: 检查 id 73 的线程栈，</p>
-<p>LINUX 原生：</p>
-<p>top  ps  jstack jps</p>
 
       
     </div>
