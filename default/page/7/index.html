@@ -1949,7 +1949,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-06-13 01:03:10" itemprop="dateModified" datetime="2025-06-13T01:03:10+08:00">2025-06-13</time>
+      <time title="修改时间：2025-06-13 15:12:36" itemprop="dateModified" datetime="2025-06-13T15:12:36+08:00">2025-06-13</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1971,7 +1971,18 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="Spring-IoC"><a href="#Spring-IoC" class="headerlink" title="Spring IoC"></a>Spring IoC</h1><p>IoC: Inverse of Control 原先调用服务或者DAO的需要自行new出来对象，硬编码，耦合程度高，Spring的Container能够接管对象的创建工作（实际上就是管理Bean） 并且能够根据对象Bean之间的关系进行依赖注入，创建A对象的同时会把B对象创建起来，也就是DI(Dependency Injection)</p>
+          <blockquote>
+<p>Spring</p>
+</blockquote>
+<h1 id="Review-Source-Codes-Analysis"><a href="#Review-Source-Codes-Analysis" class="headerlink" title="Review: Source Codes Analysis"></a>Review: Source Codes Analysis</h1><blockquote>
+<p><a href="#bean-lifecycle">Bean 生命周期</a></p>
+<p><a href="#refresh">IoC 容器初始化</a></p>
+<p><a href="#circle-ref">循环依赖</a></p>
+<p><a href="#springmvc-init">SpringMVC 启动流程</a>、<a href="#spring-mvc-exec">执行流程</a></p>
+<p><a href="#spring-boot-init">SpringBoot 启动流程</a></p>
+<p><a href="#autoconfig">SpringBoot 自动装配</a> </p>
+</blockquote>
+<h1 id="Spring-IoC"><a href="#Spring-IoC" class="headerlink" title="Spring IoC"></a>Spring IoC</h1><p>IoC: Inverse of Control 原先调用服务或者DAO的需要自行new出来对象，硬编码，耦合程度高，Spring的Container能够接管对象的创建工作（实际上就是管理Bean） 并且能够根据对象Bean之间的关系进行依赖注入，创建A对象的同时会把B对象创建起来，也就是DI(Dependency Injection)</p>
 <p>管理方式：配置文件xml            IoC容器的获取：Spring提供接口</p>
 <p>把业务接口的实现类交给Spring管理，遇到接口类，Spring就会自动去找Bean中是否有接口的实现类。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020194848409.png" alt="image-20241020194848409"></p>
@@ -2140,19 +2151,6 @@
 <h4 id="简单类型注入依赖-Value"><a href="#简单类型注入依赖-Value" class="headerlink" title="简单类型注入依赖@Value"></a>简单类型注入依赖@Value</h4><p>需要注入的属性上 写value</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020011954765.png" alt="image-20241020011954765"></p>
 <h4 id="导入配置文件-PropertySource"><a href="#导入配置文件-PropertySource" class="headerlink" title="导入配置文件@PropertySource"></a>导入配置文件@PropertySource</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020011844984.png" alt="image-20241020011844984"></p>
-<h4 id="循环依赖"><a href="#循环依赖" class="headerlink" title="循环依赖"></a><mark>循环依赖</mark></h4><p>Spring循环依赖指的是两个或多个Bean之间相互依赖，形成一个环状依赖的情况。简单来说，就是A依赖B，B依赖C，C依赖A，这样就形成了一个循环依赖的环。</p>
-<p>Spring循环依赖通常会导致Bean无法正确地被实例化，从而导致应用程序无法正常启动或者出现异常。因此，Spring循环依赖是一种需要尽量避免的情况。</p>
-<p>Spring 使用<a href="https://scatteredream.github.io/2025/05/25/spring-circle-ref/">三级缓存机制</a>部分解决循环依赖问题，但是从 SpringBoot 2.6 开始默认禁止循环依赖，因为这是顶层设计出现问题的表现。 </p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/633066ae3fcb2fcc117ab142dd90d3da-1730639875106-2.png"></p>
-<h5 id="使用构造函数注入"><a href="#使用构造函数注入" class="headerlink" title="使用构造函数注入"></a>使用构造函数注入</h5><p>构造函数注入是一种相对保险的方式，因为在实例化Bean时，Spring会检查是否存在循环依赖，并在发现循环依赖时抛出异常，避免死循环。示例代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> B b;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">A</span><span class="params">(B b)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.b = b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> A a;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">B</span><span class="params">(A a)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.a = a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="使用-Lazy注解"><a href="#使用-Lazy注解" class="headerlink" title="使用@Lazy注解"></a>使用@Lazy注解</h5><p>@Lazy注解可以延迟Bean的实例化，从而避免循环依赖的问题。示例代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Lazy</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> B b;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Lazy</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> A a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h5 id="使用-setter-注入"><a href="#使用-setter-注入" class="headerlink" title="使用 setter 注入"></a>使用 setter 注入</h5><p>使用setter方法注入也可以解决循环依赖的问题，但要注意可能出现的空指针异常。示例代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> B b;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setB</span><span class="params">(B b)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.b = b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> A a;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setA</span><span class="params">(A a)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.a = a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <h3 id="管理第三方Bean-1"><a href="#管理第三方Bean-1" class="headerlink" title="管理第三方Bean"></a>管理第三方Bean</h3><h4 id="Config配置类中bean的创建-Bean"><a href="#Config配置类中bean的创建-Bean" class="headerlink" title="Config配置类中bean的创建@Bean"></a><span id="bean"><mark>Config配置类中bean的创建@Bean</mark></span></h4><p>与@Component不同 这个是方法级别的注解，方法返回的对象将由Spring容器管理</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241020012511399.png" alt="image-20241020012511399"></p>
 <h5 id="Bean声明的Bean名称？"><a href="#Bean声明的Bean名称？" class="headerlink" title="@Bean声明的Bean名称？"></a>@Bean声明的Bean名称？</h5><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/w1014074794/article/details/106768607">spring boot中通过注解@Bean声明的bean的名称是什么？_springboot 声明bean的名称-CSDN博客</a></p>
@@ -2280,7 +2278,113 @@
 </li>
 </ol>
 <h2 id="扫描并注册被注解的类"><a href="#扫描并注册被注解的类" class="headerlink" title="扫描并注册被注解的类"></a>扫描并注册被注解的类</h2><p><a href="https://scatteredream.github.io/2025/02/03/rpc-interpretation/#annotation">基于 Netty 的 RPC 框架 | scatteredream’s blog</a> </p>
-<h2 id="IoC容器初始化"><a href="#IoC容器初始化" class="headerlink" title="IoC容器初始化"></a><a href="#refresh">IoC容器初始化</a></h2><h1 id="Spring-AOP"><a href="#Spring-AOP" class="headerlink" title="Spring AOP"></a>Spring AOP</h1><h2 id="AOP的含义"><a href="#AOP的含义" class="headerlink" title="AOP的含义"></a>AOP的含义</h2><p>AOP 面向切面编程 <strong>不惊动原始设计</strong>的情况下增强功能</p>
+<h2 id="IoC容器初始化"><a href="#IoC容器初始化" class="headerlink" title="IoC容器初始化"></a><a href="#refresh">IoC容器初始化</a></h2><h2 id="循环依赖"><a href="#循环依赖" class="headerlink" title="循环依赖"></a><span id="circle-ref">循环依赖</span></h2><p>Spring循环依赖指的是两个或多个Bean之间相互依赖，形成一个环状依赖的情况。简单来说，就是A依赖B，B依赖C，C依赖A，这样就形成了一个循环依赖的环。</p>
+<p>Spring循环依赖通常会导致Bean无法正确地被实例化，从而导致应用程序无法正常启动或者出现异常。因此，Spring循环依赖是一种需要尽量避免的情况。</p>
+<p>Spring 使用<a href="https://scatteredream.github.io/2025/05/25/spring-circle-ref/">三级缓存机制</a>部分解决循环依赖问题，但是从 SpringBoot 2.6 开始默认禁止循环依赖，因为这是顶层设计出现问题的表现。 </p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/633066ae3fcb2fcc117ab142dd90d3da-1730639875106-2.png"></p>
+<h3 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h3><blockquote>
+<p>使用构造函数注入</p>
+</blockquote>
+<p>构造函数注入是一种相对保险的方式，因为在实例化Bean时，Spring会检查是否存在循环依赖，并在发现循环依赖时抛出异常，避免死循环。示例代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> B b;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">A</span><span class="params">(B b)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.b = b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> A a;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">B</span><span class="params">(A a)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.a = a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>使用@Lazy注解</p>
+</blockquote>
+<p>@Lazy注解可以延迟Bean的实例化，从而避免循环依赖的问题。示例代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Lazy</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> B b;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Lazy</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> A a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>使用 setter 注入</p>
+</blockquote>
+<p>使用setter方法注入也可以解决循环依赖的问题，但要注意可能出现的空指针异常。示例代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> B b;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setB</span><span class="params">(B b)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.b = b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> A a;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setA</span><span class="params">(A a)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.a = a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取单例对象：三级缓存机制"><a href="#获取单例对象：三级缓存机制" class="headerlink" title="获取单例对象：三级缓存机制"></a>获取单例对象：三级缓存机制</h3><ol>
+<li><strong>优先查询一级缓存（<code>singletonObjects</code>）</strong><ul>
+<li>一级缓存也叫单例池，存储的是<strong>完全初始化</strong>的单例 Bean（例如已注入所有依赖且完成代理增强的对象）。</li>
+<li><strong>作用</strong>：直接获取可用 Bean，避免重复创建。</li>
+<li>优先级最高：如果找到直接返回，不触发后续缓存查询。</li>
+</ul>
+</li>
+<li><strong>未找到则查询二级缓存（<code>earlySingletonObjects</code>）</strong><ul>
+<li>二级缓存存储的是<strong>已实例化但未完成初始化</strong>的 Bean（半成品）。</li>
+<li><strong>作用</strong>：在循环依赖中临时暴露早期引用（例如 A 依赖 B 时，B 可能正在创建中，需引用 A 的半成品）。</li>
+<li>注意：若二级缓存中存在目标 Bean，则直接返回，但此时 Bean 可能尚未完成属性注入或代理。</li>
+</ul>
+</li>
+<li><strong>最后查询三级缓存（<code>singletonFactories</code>）</strong><ul>
+<li>三级缓存是 beanName 到 对象工厂（<code>ObjectFactory</code>）的映射，对象工厂是个函数式接口，这个接口用于动态生成 Bean 的早期引用或代理对象。</li>
+<li>触发条件：仅当一、二级缓存均未找到时，调用工厂生成 Bean 实例，之后将其提升至二级缓存。</li>
+<li><strong>关键作用</strong>：支持 AOP 代理的延迟生成（例如解决代理对象的循环依赖）。</li>
+</ul>
+</li>
+</ol>
+<h3 id="二级缓存可以解决问题"><a href="#二级缓存可以解决问题" class="headerlink" title="二级缓存可以解决问题"></a>二级缓存可以解决问题</h3><ul>
+<li><code>getBean(a)</code>，实例化对象 A 以后放入二级缓存（裸对象），然后 A 开始属性注入</li>
+<li>遇到一个属性 B，先从一级缓存里面拿发现没有，瞄一眼二级缓存里面也没有，于是开始 <code>getBean(b)</code>：</li>
+<li>实例化对象B以后将其放入二级缓存（裸对象），B 开始属性注入，发现 A 不在一级缓存，但是从二级缓存里面拿到了 A 的裸对象注入 B，此时 B 算初始化完成，把 B 从二级缓存里面删掉，放到一级缓存里面，至此 B 创建完成。</li>
+<li>最后 A 用于注入的方法就能返回一个从缓存里面拿到的 B 对象，A 的注入也就完成了。</li>
+</ul>
+<h4 id="二级缓存的不足"><a href="#二级缓存的不足" class="headerlink" title="二级缓存的不足"></a>二级缓存的不足</h4><p>但是二级缓存的问题是，A是代理，有B，B有需要注入A，首先A创建出实例，随后A就走到了populateBean这一步</p>
+<p>然后去拿B，B创建，又想来获取A了，此时A那边属于是一个刚创建实例的状态，并未走到生成代理对象那一步，因此直接注入就会出问题，所以应该注册一个回调函数，把A的实例注册进去，函数的返回值是A的对象（实例/代理实例），所以就产生了三级缓存。三级缓存的 <code>ObjectFactory</code> 主要是用于提供一个钩子，这个接口的方法返回的就是bean对象，不同之处在于可以在返回裸对象前，给其套上一层代理再返回。如果只有二级缓存，就没有机会返回代理对象。</p>
+<h3 id="源码流程"><a href="#源码流程" class="headerlink" title="源码流程"></a>源码流程</h3><blockquote>
+<p><code>DefaultSingletonBeanRegistry#getSingleton(name,true)</code> DCL双重校验锁。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="keyword">protected</span> Object <span class="title function_">getSingleton</span><span class="params">(String beanName, <span class="type">boolean</span> allowEarlyReference)</span> &#123;</span><br><span class="line">    <span class="comment">// 快速从一二级缓存检查已有的单例</span></span><br><span class="line">    <span class="type">Object</span> <span class="variable">singletonObject</span> <span class="operator">=</span> <span class="built_in">this</span>.singletonObjects.get(beanName);</span><br><span class="line">    <span class="keyword">if</span> (singletonObject == <span class="literal">null</span> &amp;&amp; isSingletonCurrentlyInCreation(beanName)) &#123;</span><br><span class="line">        singletonObject = <span class="built_in">this</span>.earlySingletonObjects.get(beanName);</span><br><span class="line">        <span class="keyword">if</span> (singletonObject == <span class="literal">null</span> &amp;&amp; allowEarlyReference) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (<span class="built_in">this</span>.singletonObjects) &#123;</span><br><span class="line">                <span class="comment">// 加锁，从三级缓存创建单例对象</span></span><br><span class="line">                singletonObject = <span class="built_in">this</span>.singletonObjects.get(beanName);</span><br><span class="line">                <span class="keyword">if</span> (singletonObject == <span class="literal">null</span>) &#123;</span><br><span class="line">                    singletonObject = <span class="built_in">this</span>.earlySingletonObjects.get(beanName);</span><br><span class="line">                    <span class="keyword">if</span> (singletonObject == <span class="literal">null</span>) &#123;</span><br><span class="line">                        ObjectFactory&lt;?&gt; singletonFactory = <span class="built_in">this</span>.singletonFactories.get(beanName);</span><br><span class="line">                        <span class="keyword">if</span> (singletonFactory != <span class="literal">null</span>) &#123;</span><br><span class="line">                            singletonObject = singletonFactory.getObject();</span><br><span class="line">                            <span class="built_in">this</span>.earlySingletonObjects.put(beanName, singletonObject);</span><br><span class="line">                            <span class="built_in">this</span>.singletonFactories.remove(beanName);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> singletonObject;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<blockquote>
+<p>流程正式开始——</p>
+<p><code>DefaultListableBeanFactory#preInstantiateSingletons()</code> 用于对解析到的<code> beanNames</code> 一一进行 <code>getBean(beanName)</code></p>
+<p><code>AbstractBeanFactory#doGetBean(name···)</code> </p>
+</blockquote>
+<ol>
+<li><code>getSingleton(name,true)</code> 获取不到再往下走</li>
+<li>类似双亲委派，找 parent，parent 找不到再自行寻找</li>
+<li>自行寻找：(dependsOn) 然后 <code>getSingleton(name, singletonFactory)</code></li>
+<li><code>getSingleton(name, singletonFactory)</code>: 先一级缓存找，找不到就真正开始<mark>创建工作</mark>：<ul>
+<li>首先将其加到 CreationSet 表明其正在创建。</li>
+<li><code>singletonFactory</code>实际上就是一个<code>ObjectFactory</code>，这个函数式接口实现方法通过<code>createBean(name···)</code>获取对象。</li>
+<li>创建完成将其从 CreationSet 中移除，保证其只存在于一级缓存单例池中。最后返回创建好的 bean</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p><code>AbstractAutowireCapableBeanFactory#doCreateBean(name,mbd,args)</code> </p>
+</blockquote>
+<ol>
+<li><p><code>createBeanInstance()</code>：创建出裸对象，此时未注入依赖。（实际上返回的是 BeanWrapper，有更完善的功能，本质还是对象实例）</p>
+<ul>
+<li>当且仅当<u>单例+允许循环依赖+这个bean在 CreationSet 中</u>，才加三级缓存<code>addSingletonFactory</code>，一定要保证一级和二级缓存里面没有，然后把ObjectFactory加到三级缓存里面。所以单例 bean 加入了三级缓存：lambda：<code>getEarlyBeanReference()</code>返回创建的裸/代理对象 <code>singletonObject</code></li>
+</ul>
+</li>
+<li><p><code>populateBean()</code>：进行字段、方法注入。做一些<code> postProcessAfterInstantiation</code> 实例化之后初始化之前的工作。然后就是 <code>autowireByName/Name</code>，本质上就是通过 <code>getBean(name···)</code>获取实例。</p>
+<ul>
+<li>依赖注入就是这里遇到的问题，如果代理对象出现循环依赖，那么其生成应该是初始化之后，所以此阶段断然不能提供出代理对象，因此加入三级缓存提前暴露出一个引用，。</li>
+</ul>
+</li>
+<li><p><code>initializeBean()</code>：</p>
+<ul>
+<li><p>调用 <code>BeanPostProcessor#postProcessBeforeInitialization</code>。</p>
+</li>
+<li><p>调用初始化方法。(PostConstruct-initMethod-afterPropertiesSet)</p>
+</li>
+<li><p>调用 <code>BeanPostProcessor#postProcessAfterInitialization</code>（<strong>一般到这里才生成代理对象</strong>）。</p>
+</li>
+</ul>
+</li>
+<li><p>完成上述工作之后，如果当前是存在于三级缓存，则调用下方的 <code>getSingleton(name,true)</code> ： true 代表允许早期引用（主要解决循环依赖）</p>
+</li>
+</ol>
+<blockquote>
+<p>代理：<code>AbstractAutoProxyCreator</code></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这个方法是用于三级缓存生成对象的时候将bean放到earlyBeanReferences里面，</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">getEarlyBeanReference</span><span class="params">(Object bean, String beanName)</span> &#123;</span><br><span class="line">    <span class="type">Object</span> <span class="variable">cacheKey</span> <span class="operator">=</span> <span class="built_in">this</span>.getCacheKey(bean.getClass(), beanName);</span><br><span class="line">    <span class="built_in">this</span>.earlyBeanReferences.put(cacheKey, bean);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.wrapIfNecessary(bean, beanName, cacheKey);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">postProcessAfterInitialization</span><span class="params">(<span class="meta">@Nullable</span> Object bean, String beanName)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (bean != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">cacheKey</span> <span class="operator">=</span> <span class="built_in">this</span>.getCacheKey(bean.getClass(), beanName);</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span>.earlyBeanReferences.remove(cacheKey) != bean) &#123;</span><br><span class="line">            <span class="comment">// wrap 包装成代理的核心方法</span></span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.wrapIfNecessary(bean, beanName, cacheKey);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> bean;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="无法解决的循环引用"><a href="#无法解决的循环引用" class="headerlink" title="无法解决的循环引用"></a>无法解决的循环引用</h3><p>如果是 AB互相依赖，A只有含参构造，那么注入B完成之前就无法创建一个A实例出来，自然也没法加到缓存里面，A尝试注入B，B那边尝试注入A彻底卡死。</p>
+<p>但是 从B开始又可以了，然而对于普通的bean来说，注册顺序并不是一个可控的状态，所以尽量避免含参构造的bean之间互相依赖</p>
+<h1 id="Spring-AOP"><a href="#Spring-AOP" class="headerlink" title="Spring AOP"></a>Spring AOP</h1><h2 id="AOP的含义"><a href="#AOP的含义" class="headerlink" title="AOP的含义"></a>AOP的含义</h2><p>AOP 面向切面编程 <strong>不惊动原始设计</strong>的情况下增强功能</p>
 <p>Spring理念：无侵入式增强功能</p>
 <ul>
 <li>所有原始方法-&gt;连接点(joint point) 在SpringAOP中如此<ul>
@@ -2708,11 +2812,10 @@
 <h5 id="Converter接口-将字符串参数转换成Java类型"><a href="#Converter接口-将字符串参数转换成Java类型" class="headerlink" title="Converter接口-将字符串参数转换成Java类型"></a>Converter接口-将字符串参数转换成Java类型</h5><p>请求里面的参数都是以字符串形式发来的，converter要根据形参类型，把字符串转成对应类型提供给方法，这就是为什么前面能把字符串12按照需求转换成int 12</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021223621200.png" alt="image-20241021223621200"></p>
 <p>@EnableWebMvc</p>
-<h3 id="Response"><a href="#Response" class="headerlink" title="Response"></a>Response</h3><h4 id="响应页面（跳转页面）"><a href="#响应页面（跳转页面）" class="headerlink" title="响应页面（跳转页面）"></a>响应页面（跳转页面）</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/toPage&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">toJumpPage</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;page.jsp&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Response"><a href="#Response" class="headerlink" title="Response"></a>Response</h3><h4 id="直接返回：响应的是一个页面"><a href="#直接返回：响应的是一个页面" class="headerlink" title="直接返回：响应的是一个页面"></a>直接返回：响应的是一个页面</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/toPage&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">toJumpPage</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;page.jsp&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>直接在方法里 return “page.jsp” </p>
-<p>Spring默认认为Controller的方法返回的就是一个页面</p>
-<h4 id="响应文本数据-ResponseBody"><a href="#响应文本数据-ResponseBody" class="headerlink" title="响应文本数据@ResponseBody"></a>响应文本数据@ResponseBody</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021225227708.png" alt="image-20241021225227708"></p>
+<p>直接在方法里 return “page.jsp” ，<u>Spring默认认为Controller的方法返回的就是一个页面</u>，也就是说会经过渲染步骤。</p>
+<h4 id="返回值就是响应体：-ResponseBody"><a href="#返回值就是响应体：-ResponseBody" class="headerlink" title="返回值就是响应体：@ResponseBody"></a>返回值就是响应体：@ResponseBody</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021225227708.png" alt="image-20241021225227708"></p>
 <p>如果直接return一个字符串Spring会认为这个字符串是一个网页，响应分为响应行响应头和响应体，响应头里是放状态码之类的，只能在响应体里返回数据，加@ResponseBody注解表示返回值就是响应体。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/toText&quot;)</span></span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">toText</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;page.jsp&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//表示返回 page.jsp 这个字符串</span></span><br></pre></td></tr></table></figure>
 
@@ -2737,7 +2840,7 @@
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021231846312.png" alt="image-20241021231846312"></p>
 <h5 id="RequestBody-RequestParam-PathVariable"><a href="#RequestBody-RequestParam-PathVariable" class="headerlink" title="@RequestBody@RequestParam@PathVariable"></a>@RequestBody@RequestParam@PathVariable</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021232010983.png" alt="image-20241021232010983"></p>
 <h4 id="RESTful-快速开发"><a href="#RESTful-快速开发" class="headerlink" title="RESTful 快速开发"></a><mark>RESTful 快速开发</mark></h4><h5 id="类级别注解-RequestMapping"><a href="#类级别注解-RequestMapping" class="headerlink" title="类级别注解 @RequestMapping"></a>类级别注解 @RequestMapping</h5><p>省去所有user前缀，写一次就好。</p>
-<h5 id="类级别注解-RestController"><a href="#类级别注解-RestController" class="headerlink" title="类级别注解 @RestController"></a>类级别注解 @RestController</h5><p>类级别的@RequestBody，表示所有类的返回值都是请求体的数据，既然@Controller和RequestBody都要写，合而为一即可</p>
+<h5 id="类级别注解-RestController"><a href="#类级别注解-RestController" class="headerlink" title="类级别注解 @RestController"></a>类级别注解 @RestController</h5><p>类级别的@RequestBody，表示所有类的返回值都是请求体的数据，既然@Controller和RequestBody都要写，合而为一即可。</p>
 <h5 id="方法级别注解-PostMapping"><a href="#方法级别注解-PostMapping" class="headerlink" title="方法级别注解 @PostMapping"></a>方法级别注解 @PostMapping</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(value = &quot;/&#123;id&#125;&quot; ,method = RequestMethod.DELETE)</span></span><br><span class="line"><span class="meta">@GetMapping</span></span><br><span class="line"><span class="meta">@PostMapping(&quot;/&#123;id&#125;&quot;)</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241021232955549.png" alt="image-20241021232955549"></p>
@@ -2792,7 +2895,7 @@
 </blockquote>
 <p><code>JdbcConfig</code> 里 加PlatformTransactionManager Bean, 接dataSource参数</p>
 <p><code>Service</code>接口添加@Transactional</p>
-<h3 id="前后端联调"><a href="#前后端联调" class="headerlink" title="前后端联调"></a>前后端联调</h3><h4 id="表现层数据封装模型-设置统一的返回结果集Result"><a href="#表现层数据封装模型-设置统一的返回结果集Result" class="headerlink" title="表现层数据封装模型 - 设置统一的返回结果集Result"></a>表现层数据封装模型 - 设置统一的返回结果集Result</h4><p>实际开发过程中前后端<mark>约定<mark></p>
+<h3 id="前后端联调"><a href="#前后端联调" class="headerlink" title="前后端联调"></a><strong>前后端联调</strong></h3><h4 id="表现层数据封装模型-设置统一的返回结果集Result"><a href="#表现层数据封装模型-设置统一的返回结果集Result" class="headerlink" title="表现层数据封装模型 - 设置统一的返回结果集Result"></a>表现层数据封装模型 - 设置统一的返回结果集Result</h4><p>实际开发过程中前后端<mark>约定<mark></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Result</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Object data;</span><br><span class="line">    <span class="keyword">private</span> Integer code;</span><br><span class="line">    <span class="keyword">private</span> String message;</span><br><span class="line">    <span class="comment">//下方提供若干构造方法,有参无参</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Result</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Result</span><span class="params">(Integer code,Object data)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.data = data;</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Result</span><span class="params">(Integer code, Object data, String msg)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.data = data;</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">        <span class="built_in">this</span>.msg = msg;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//.....getter setter</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022152253512-1729581786093-1.png" alt="image-20241022152253512"></p>
@@ -2865,7 +2968,7 @@
 <h5 id="拦截并处理异常-返回Result"><a href="#拦截并处理异常-返回Result" class="headerlink" title="拦截并处理异常 返回Result"></a>拦截并处理异常 返回Result</h5><p>在RestControllerAdvice下方的类中处理对应类型的异常，将异常继续封装成Result返回</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022160546843.png" alt="image-20241022160546843"></p>
 <h3 id="放行静态资源配置"><a href="#放行静态资源配置" class="headerlink" title="放行静态资源配置"></a>放行静态资源配置</h3><h4 id="SpringMvcSupport（Config类）"><a href="#SpringMvcSupport（Config类）" class="headerlink" title="SpringMvcSupport（Config类）"></a>SpringMvcSupport（Config类）</h4><p>加Configuration注解，继承WebMvcConfigurationSupport类，重写resourceHandler方法</p>
-<h4 id="Config包详解"><a href="#Config包详解" class="headerlink" title="Config包详解"></a><mark>Config包详解</mark></h4><h5 id="ServletContainersInitializerConfig-Servlet容器配置类"><a href="#ServletContainersInitializerConfig-Servlet容器配置类" class="headerlink" title="ServletContainersInitializerConfig (Servlet容器配置类)"></a>ServletContainersInitializerConfig (Servlet容器配置类)</h5><p>用来构建ServletContext，继承自 AbstractDispatcherServletInitializer，Spring MVC是建立在 DispatcherServlet 基础之上的，每一个请求最先访问的都是它，负责转发每一个Request请求，所以是必不可少的。</p>
+<h4 id="配置类"><a href="#配置类" class="headerlink" title="配置类"></a>配置类</h4><h5 id="ServletContainersInitializerConfig-Servlet容器配置类"><a href="#ServletContainersInitializerConfig-Servlet容器配置类" class="headerlink" title="ServletContainersInitializerConfig (Servlet容器配置类)"></a>ServletContainersInitializerConfig (Servlet容器配置类)</h5><p>用来构建ServletContext，继承自 AbstractDispatcherServletInitializer，Spring MVC是建立在 DispatcherServlet 基础之上的，每一个请求最先访问的都是它，负责转发每一个Request请求，所以是必不可少的。</p>
 <p>先以 <mark>Abstract<u>DispatcherServlet</u>Initializer<mark> 为例介绍这个加载Config类的职责 具体介绍在<a href="#webappinit">下方</a></p>
 <h6 id="a-createRootApplicationContext"><a href="#a-createRootApplicationContext" class="headerlink" title="a. createRootApplicationContext"></a>a. createRootApplicationContext</h6><p>需要加载Spring IoC容器的配置类(SpringConfig)，返回配置好的 <a href="#wac">Root WAC</a> </p>
 <h6 id="b-createServletApplicationContext"><a href="#b-createServletApplicationContext" class="headerlink" title="b.createServletApplicationContext"></a>b.createServletApplicationContext</h6><p>需要加载WebMvc容器的配置类(SpringMvcConfig) 返回配置好的 <a href="#swac">Servlet WAC</a> </p>
@@ -2875,7 +2978,7 @@
 <p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zzjlxy-225223/p/12611093.html">applicationContext.xml及spring-servlet.xml详解 - 长木木弓 - 博客园 (cnblogs.com)</a>  </p>
 <p>注解开发用来替代传统的XML配置文件，因此可以透过xml与注解的映射关系来了解，<code>@Configuration</code>用来替代<code>&lt;beans&gt;</code> <code>&lt;/beans&gt;</code> 在应用启动时，Spring 会自动扫描并加载所有带有 <code>@Configuration</code> 注解的类，根据<code>@ComponentScan</code>扫描要加入的<code>@Component</code>(代替<code>&lt;bean&gt;</code> <code>&lt;/bean&gt;</code>)，最终创建出对应的容器(Context) </p>
 <h6 id="Import-MyBatisConfig-class-JdbcConfig-class"><a href="#Import-MyBatisConfig-class-JdbcConfig-class" class="headerlink" title="@Import({MyBatisConfig.class,JdbcConfig.class})"></a>@Import({MyBatisConfig.class,JdbcConfig.class})</h6><p><code>MyBatisConfig</code> 和 <code>JdbcConfig</code>中方法级别注解<code>@Bean</code>用来替代 <code>&lt;bean&gt;</code> <code>&lt;/bean&gt;</code> 标签（表示方法返回的对象当成Bean/Component交给Spring容器管理）虽然没有加<code>Configuration</code>注解，但是会由<code>SpringConfig</code> <code>@Import</code>，导入的还是SpringConfig配置的容器，属于 <a href="#wac">Root WAC</a> </p>
-<h5 id="SpringMvcConfig-Configuration-EnableWebMvc"><a href="#SpringMvcConfig-Configuration-EnableWebMvc" class="headerlink" title="SpringMvcConfig(@Configuration @EnableWebMvc)"></a>SpringMvcConfig(@Configuration @EnableWebMvc)</h5><p><u>对应spring-servlet.xml</u>，配置 <a href="#swac">Servlet WAC</a> </p>
+<h5 id="SpringMvcConfig-Configuration-EnableWebMvc"><a href="#SpringMvcConfig-Configuration-EnableWebMvc" class="headerlink" title="SpringMvcConfig(@Configuration @EnableWebMvc)"></a>SpringMvcConfig(@Configuration @EnableWebMvc)</h5><p><u>对应spring-webmvc.xml</u>，配置 <a href="#swac">Servlet WAC</a> </p>
 <p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/config/annotation/EnableWebMvc.html">@EnableWebMvc (Spring Framework 6.1.14 API)</a> </p>
 <p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/servlet/config/annotation/WebMvcConfigurationSupport.html">WebMvcConfigurationSupport (Spring Framework 6.1.14 API)</a>  (WMCS)</p>
 <ul>
@@ -2908,8 +3011,8 @@
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023191526268.png" alt="image-20241023191526268"></p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023191952545.png" alt="image-20241023191952545"></p>
 <h2 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h2><h3 id="Interceptor"><a href="#Interceptor" class="headerlink" title="Interceptor"></a>Interceptor</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023193138396.png" alt="image-20241023193138396"></p>
-<h4 id="In-Filter"><a href="#In-Filter" class="headerlink" title="In Filter"></a>In Filter</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023193414214.png" alt="image-20241023193414214"></p>
-<p>filter在一定是在访问servlet之前，interceptor只能在servlet中， <mark>before Controller<mark></p>
+<h4 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023193414214.png" alt="image-20241023193414214"></p>
+<p>filter在一定是在访问 servlet 之前，interceptor只能在servlet中， <mark>before Controller</mark></p>
 <h3 id="功能类"><a href="#功能类" class="headerlink" title="功能类"></a>功能类</h3><p>控制表现层：controller下新建interceptor包，新建一个Interceptor类 <strong>extends HandlerInterceptor</strong> </p>
 <p>注意preHandle返回值和@Component</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023210048371.png" alt="image-20241023210048371"></p>
@@ -2924,40 +3027,51 @@
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023210636045.png" alt="image-20241023210636045"></p>
 <h4 id="简化开发-WebMvcConfigurer"><a href="#简化开发-WebMvcConfigurer" class="headerlink" title="简化开发-WebMvcConfigurer"></a>简化开发-WebMvcConfigurer</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023210528299.png" alt="image-20241023210528299"></p>
 <p>已经和Spring接口绑定，侵入性强。</p>
-<h3 id="拦截方法"><a href="#拦截方法" class="headerlink" title="拦截方法"></a>拦截方法</h3><h4 id="preHandle"><a href="#preHandle" class="headerlink" title="preHandle"></a>preHandle</h4><p><code>boolean preHandle(req,resp,handler)</code></p>
-<p>req和resp是servlet的响应和请求，handler实际上是HandlerMethod，通过getMethod能拿到执行的业务方法的对象（反射）</p>
-<h4 id="postHandle"><a href="#postHandle" class="headerlink" title="postHandle"></a>postHandle</h4><p><code>void postHandle(req,resp,handler,modelAndView)</code></p>
-<p>页面跳转相关。</p>
-<h4 id="afterCompletion"><a href="#afterCompletion" class="headerlink" title="afterCompletion"></a>afterCompletion</h4><p><code>void afterCompletion(req,resp,handler,exception)</code></p>
-<p>能拿到原始业务方法执行过程中的异常</p>
+<h3 id="拦截方法"><a href="#拦截方法" class="headerlink" title="拦截方法"></a>拦截方法</h3><p><code>boolean preHandle(req,resp,handler)</code> req和resp是servlet的响应和请求，handler实际上是 HandlerMethod，通过 getMethod 能拿到执行的业务方法的对象（反射）</p>
+<p><code>void postHandle(req,resp,handler,modelAndView)</code> 渲染页面之前调用</p>
+<p><code>void afterCompletion(req,resp,handler,exception)</code> 能拿到原始业务方法执行过程中的异常</p>
 <h3 id="拦截链顺序"><a href="#拦截链顺序" class="headerlink" title="拦截链顺序"></a>拦截链顺序</h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023211911820.png" alt="image-20241023211911820"></p>
 <p>拦截顺序，和注册顺序有关系</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023212439810.png" alt="image-20241023212439810"></p>
 <p>如果某个pre返回false，post全部跳过，倒序执行，从最近一个pre返回true的拦截器开始执行afterCompletion</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023212527269.png" alt="image-20241023212527269"></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/penriver/article/details/118571991">万字详解 GoF 23 种设计模式（多图、思维导图、模式对比），让你一文全面理解-CSDN博客</a></p>
-<h2 id="Spring-MVC-源码分析"><a href="#Spring-MVC-源码分析" class="headerlink" title="Spring MVC 源码分析"></a>Spring MVC 源码分析</h2><h3 id="WebApplicationContext"><a href="#WebApplicationContext" class="headerlink" title="WebApplicationContext"></a><code>WebApplicationContext</code></h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022175254007-1729595662475-3.png" alt="image-20241022175254007"></p>
-<h4 id="WebApplicationContext-WAC"><a href="#WebApplicationContext-WAC" class="headerlink" title="WebApplicationContext(WAC)"></a><span id="wac">WebApplicationContext(WAC)</span></h4><ul>
-<li>ApplicationContext(AC) 表示 ioc 容器。WAC是普通AC的扩展，它具有Web应用程序所需的一些额外功能，比如可以<u>get</u>ServletContext或者<u>set</u>ServletContext</li>
-<li><code>Root WAC</code>在应用启动时首先被加载，并且作为父上下文，供表示层使用，主要负责管理服务层（Service）、数据访问层（DAO）、中间件配置等非 Web 层（表示层）的 Bean</li>
-</ul>
-<h4 id="Servlet-WebApplicationContext-Servlet-WAC"><a href="#Servlet-WebApplicationContext-Servlet-WAC" class="headerlink" title="Servlet WebApplicationContext(Servlet WAC)"></a><span id="swac">Servlet WebApplicationContext(Servlet WAC)</span></h4><ul>
+<h2 id="Spring-MVC-启动流程"><a href="#Spring-MVC-启动流程" class="headerlink" title="Spring MVC 启动流程"></a>Spring MVC 启动流程</h2><h3 id="WebApplicationContext"><a href="#WebApplicationContext" class="headerlink" title="WebApplicationContext"></a><code>WebApplicationContext</code></h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022175254007-1729595662475-3.png" alt="image-20241022175254007"></p>
+<h4 id="WebApplicationContext-WAC"><a href="#WebApplicationContext-WAC" class="headerlink" title="WebApplicationContext(WAC)"></a><span id="wac">WebApplicationContext(WAC)</span></h4><p>ApplicationContext(AC) 表示 ioc 容器。WAC是普通AC的扩展，它具有Web应用程序所需的一些额外功能，比如可以获取 ServletContext并修改</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">WebApplicationContext</span> <span class="keyword">extends</span> <span class="title class_">ApplicationContext</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE</span> <span class="operator">=</span> WebApplicationContext.class.getName() + <span class="string">&quot;.ROOT&quot;</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">SCOPE_REQUEST</span> <span class="operator">=</span> <span class="string">&quot;request&quot;</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">SCOPE_SESSION</span> <span class="operator">=</span> <span class="string">&quot;session&quot;</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">SCOPE_APPLICATION</span> <span class="operator">=</span> <span class="string">&quot;application&quot;</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">SERVLET_CONTEXT_BEAN_NAME</span> <span class="operator">=</span> <span class="string">&quot;servletContext&quot;</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">CONTEXT_PARAMETERS_BEAN_NAME</span> <span class="operator">=</span> <span class="string">&quot;contextParameters&quot;</span>;</span><br><span class="line">    <span class="type">String</span> <span class="variable">CONTEXT_ATTRIBUTES_BEAN_NAME</span> <span class="operator">=</span> <span class="string">&quot;contextAttributes&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Nullable</span></span><br><span class="line">    ServletContext <span class="title function_">getServletContext</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Root-WebApplicationContext-applicationContext-xml"><a href="#Root-WebApplicationContext-applicationContext-xml" class="headerlink" title="Root WebApplicationContext(applicationContext.xml)"></a>Root WebApplicationContext(applicationContext.xml)</h4><p><code>Root WAC</code>在应用启动时首先被加载，并且作为父上下文，供表示层使用，主要负责管理服务层（Service）、数据访问层（DAO）、中间件配置等非 Web 层（表示层）的 Bean</p>
+<h4 id="Servlet-WebApplicationContext-spring-mvc-xml"><a href="#Servlet-WebApplicationContext-spring-mvc-xml" class="headerlink" title="Servlet WebApplicationContext(spring-mvc.xml)"></a><span id="swac">Servlet WebApplicationContext(spring-mvc.xml)</span></h4><ul>
 <li><code>Servlet WAC</code> 是 <code>Root WAC</code> 的<strong>子上下文</strong>，专门用于处理表示层的 Bean 和配置。比如控制器（<code>Controller</code>）、视图解析器、拦截器(<code>Interceptor</code>)等</li>
-<li>每个 <code>DispatcherServlet</code> 实例会有一个独立的 <code>Servlet WAC</code> </li>
+<li>每个 <code>DispatcherServlet</code> 实例会有一个独立的 <code>Servlet WAC</code></li>
 </ul>
 <h4 id="Parent-amp-Child-ApplicatitonContext"><a href="#Parent-amp-Child-ApplicatitonContext" class="headerlink" title="Parent &amp; Child ApplicatitonContext"></a>Parent &amp; Child ApplicatitonContext</h4><p>Root WAC 作为 所有 Servlet WAC 的 Parent，DispatherServlet在创建属于自己的ServletContext的getAttribute方法来判断是否存在Root WebApplicationContext。如果存在，则将其设置为自己的parent。这就是父子上下文(父子容器)的概念，getParentBeanFactory。</p>
 <p>对于作用范围而言，在DispatcherServlet中可以引用由ContextLoaderListener所创建的RootWAC中的内容，而反过来不行。当Spring在执行ApplicationContext的getBean时，如果在自己context中找不到对应的bean，则会在父ApplicationContext中去找。这也解释了为什么我们可以在DispatcherServlet中获取到RootWAC中的bean。</p>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023154504980.png" alt="image-20241023154504980"></p>
-<h4 id="ServletContext"><a href="#ServletContext" class="headerlink" title="ServletContext"></a>ServletContext</h4><ul>
-<li>Servlet容器（Tomcat）在启动一个web应用时，根据web.xml 会为整个应用创建一个<mark>唯一<mark>的ServletContext(SC)对象，应用内部所有的Servlet共享同一个SC。</li>
-<li>ServletContext是Servlet与Servlet容器（Tomcat）之间直接通信的接口。</li>
-<li>容器中的Servlet可以通过它来访问容器中的各种资源</li>
-<li>ServletContext跟XML一样，由Attributes组成，要访问资源就要通过字符串name访问，可以通过<code>void setAttribute(name, object) </code>来将ServletContext与你的object绑定，<code>Object getAttribute(name)</code>可以得到object</li>
-<li><code>Enumeration&lt;String&gt; getInitParameterNames()</code> 获取所有 <code>&lt;context-param/&gt;</code> 参数的名称 字符串枚举</li>
-<li><code> String getInitParameter(name)</code> 根据name获取指定的 <code>&lt;context-param/&gt;</code> 参数值</li>
+<h3 id="ServletContext-web-xml"><a href="#ServletContext-web-xml" class="headerlink" title="ServletContext(web.xml)"></a>ServletContext(web.xml)</h3><p>作用</p>
+<ul>
+<li>存储 Web 应用的全局参数（如 web.xml 中的<code>&lt;context-param&gt;</code>）</li>
+<li>提供对 Web 应用资源（如文件、配置）的访问</li>
+<li>作为应用范围内的共享数据存储（通过<code>setAttribute()</code>和<code>getAttribute()</code>）</li>
+<li>生命周期与 Web 应用一致，从服务器启动到停止</li>
+</ul>
+<p>注意事项</p>
+<ul>
+<li><p>Servlet容器（Tomcat）在启动一个web应用时，根据web.xml 会为整个应用创建一个<mark>唯一</mark>的ServletContext(SC)对象，应用内部所有的Servlet共享同一个SC。</p>
+</li>
+<li><p>ServletContext是Servlet与Servlet容器（Tomcat）之间直接通信的接口。</p>
+</li>
+<li><p>容器中的Servlet可以通过它来访问容器中的各种资源</p>
+</li>
+<li><p>ServletContext跟XML一样，由Attributes组成，要访问资源就要通过字符串name访问，可以通过<code>void setAttribute(name, object) </code>来将ServletContext与你的object绑定，<code>Object getAttribute(name)</code>可以得到object</p>
+</li>
+<li><p><code>Enumeration&lt;String&gt; getInitParameterNames()</code> 获取所有 <code>&lt;context-param/&gt;</code> 参数的名称 字符串枚举</p>
+</li>
+<li><p><code> String getInitParameter(name)</code> 根据name获取指定的 <code>&lt;context-param/&gt;</code> 参数值</p>
+</li>
 </ul>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023013135254.png" alt="image-20241023013135254"></p>
-<h5 id="Root-WAC-Servlet-WAC-ServletContext之间的关系"><a href="#Root-WAC-Servlet-WAC-ServletContext之间的关系" class="headerlink" title="Root WAC, Servlet WAC, ServletContext之间的关系"></a>Root WAC, Servlet WAC, ServletContext之间的关系</h5><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022230909096.png" alt="image-20241022230909096"></p>
+<h4 id="Root-WAC-Servlet-WAC-ServletContext之间的关系"><a href="#Root-WAC-Servlet-WAC-ServletContext之间的关系" class="headerlink" title="Root WAC, Servlet WAC, ServletContext之间的关系"></a>Root WAC, Servlet WAC, ServletContext之间的关系</h4><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241022230909096.png" alt="image-20241022230909096"></p>
 <ul>
 <li><p>Root WebApplicationContext存储key为<code>WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE</code>，可以通过此Key访问Root WAC。</p>
 </li>
@@ -2969,8 +3083,8 @@
 <li><p>WAC提供了获取ServletContext的抽象方法 <code>getServletContext()</code> </p>
 </li>
 </ul>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/%E6%97%A0%E6%A0%87%E9%A2%98-1729654361571-5.png" alt="context"></p>
-<h5 id="web-xml-配置-ServletContext"><a href="#web-xml-配置-ServletContext" class="headerlink" title="web.xml 配置 ServletContext"></a>web.xml 配置 ServletContext</h5><p>Tomcat创建web应用时，会构建ServletContext对象，根据web.xml中的配置把如下参数都存到ServletContext对象中，注册Listener，Servlet等</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20250613113913619.png" alt="image-20250613113913619"></p>
+<h4 id="web-xml-配置-ServletContext"><a href="#web-xml-配置-ServletContext" class="headerlink" title="web.xml 配置 ServletContext"></a>web.xml 配置 ServletContext</h4><p>Tomcat创建web应用时，会构建ServletContext对象，根据web.xml中的配置把如下参数都存到ServletContext对象中，注册Listener，Servlet等</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span>  </span><br><span class="line">  </span><br><span class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">version</span>=<span class="string">&quot;3.0&quot;</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    </span><br><span class="line">    &lt;!—ServletContext自有的init 参数--&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">context-param</span>&gt;</span>  </span><br><span class="line">        &lt;!—创建Root WAC所需要的配置文件路径--&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>/WEB-INF/spring/applicationContext.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">context-param</span>&gt;</span>  </span><br><span class="line">  	</span><br><span class="line">    &lt;!—注册ContextLoaderListener--&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">listener</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">listener</span>&gt;</span>  </span><br><span class="line">    </span><br><span class="line">    &lt;!—注册DispatcherServlet ServletConfig--&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>dispatcher<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>org.springframework.web.servlet.DispatcherServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span> </span><br><span class="line">        &lt;!—init Servlet所需参数--&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">init-param</span>&gt;</span>  </span><br><span class="line">            &lt;!—创建Servlet WAC所需参数--&gt;</span><br><span class="line">            <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span>  </span><br><span class="line">            <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>/WEB-INF/spring/spring-servlet.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">load-on-startup</span>&gt;</span>1<span class="tag">&lt;/<span class="name">load-on-startup</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">servlet</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span>  </span><br><span class="line">        &lt;!—指定某个servlet的URL映射路径--&gt;</span><br><span class="line">        <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>dispatcher<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span>  </span><br><span class="line">        <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/*<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span>  </span><br><span class="line">  </span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <h3 id="ContextLoaderListener-创建-Root-WAC"><a href="#ContextLoaderListener-创建-Root-WAC" class="headerlink" title="ContextLoaderListener - 创建 Root WAC"></a>ContextLoaderListener - 创建 Root WAC</h3><ul>
@@ -2989,60 +3103,194 @@
 <p><code>setAttribute(</code> <code>WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE</code>, <code>this.context)</code></p>
 <p>最终返回 <code>this.context</code> 作为 Root WAC</p>
 <h4 id="WebApplicationContext-contextInitialized-ServletContextEvent-sce"><a href="#WebApplicationContext-contextInitialized-ServletContextEvent-sce" class="headerlink" title="WebApplicationContext contextInitialized(ServletContextEvent sce)"></a><code>WebApplicationContext contextInitialized(ServletContextEvent sce)</code></h4><p>ContextLoaderListener 能监听Web应用启动或关闭的事件（会修改ServletContext中的参数），触发contextInitializaed/contextDestroyed，创建或销毁Root WAC。</p>
-<h3 id="DispatcherServlet-创建-Servlet-WAC"><a href="#DispatcherServlet-创建-Servlet-WAC" class="headerlink" title="DispatcherServlet - 创建 Servlet WAC"></a>DispatcherServlet - 创建 Servlet WAC</h3><ul>
-<li><p>本质就是一个Servlet，所以需要在web.xml中注册，继承自HttpServlet-&gt;HttpServletBean-&gt;FrameworkServlet</p>
+<h3 id="DispatcherServlet-创建-Servlet-WAC"><a href="#DispatcherServlet-创建-Servlet-WAC" class="headerlink" title="DispatcherServlet - 创建 Servlet WAC"></a>DispatcherServlet - 创建 Servlet WAC</h3><h4 id="本质——Servlet"><a href="#本质——Servlet" class="headerlink" title="本质——Servlet"></a>本质——Servlet</h4><ul>
+<li><p>Spring MVC 的核心<strong>前端控制器</strong>，用于处理所有进入的 HTTP 请求。将请求分发给适当的处理器（控制器 Controller），并在处理后将响应返回给客户端。</p>
 </li>
-<li><p>Spring MVC 的核心前端控制器，用于处理所有进入的 HTTP 请求。将请求分发给适当的处理器（控制器 Controller），并在处理后将响应返回给客户端。</p>
+<li><p>每一个 <code>DispatcherServlet</code> 都拥有自己的 <a href="#swac">Servlet WebApplicationContext</a>，管理与 Web 层(表现层)相关的 Bean，如控制器Controller、视图解析器ViewResolver、拦截器Interceptor等。</p>
 </li>
-<li><p>每一个 <code>DispatcherServlet</code> 都拥有自己的 <a href="#swac">Servlet WebApplicationContext</a>，管理与 Web 层(表现层)相关的 Bean，如控制器、视图解析器、拦截器等。</p>
+<li><p>本质就是一个Servlet，在web.xml中注册，继承链 <code>HttpServlet-&gt;HttpServletBean-&gt;FrameworkServlet</code></p>
 </li>
-<li><p>HttpServletBean有一个final的init()<strong>[Servlet的入口方法]</strong>  其中会调用抽象方法initServletBean()</p>
+<li><p>HttpServletBean有一个final <code>init()</code><strong>[Servlet的入口方法]</strong>  其中会调用抽象方法<code>initServletBean()</code></p>
 </li>
 <li><p>FrameServlet实现了initServletBean(): <strong>[生成Servlet WAC，设置parent和ServletContext]</strong> 最后会调用initStrategies</p>
+</li>
+</ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">ServletContext</span> <span class="variable">var10000</span> <span class="operator">=</span> <span class="built_in">this</span>.getServletContext();</span><br><span class="line"><span class="type">String</span> <span class="variable">var10001</span> <span class="operator">=</span> <span class="built_in">this</span>.getClass().getSimpleName();</span><br><span class="line">var10000.log(<span class="string">&quot;Initializing Spring &quot;</span> + var10001 + <span class="string">&quot; &#x27;&quot;</span> + <span class="built_in">this</span>.getServletName() + <span class="string">&quot;&#x27;&quot;</span>);</span><br><span class="line"><span class="comment">//记录日志</span></span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>同样的，途中也会调用自己的initWAC方法：<ul>
-<li>调用WACUtils工具类，获得自己所在的ServletContext的<strong>Root WAC</strong> </li>
-<li>将自己的WAC转换成CWAC，如果存在RootWAC，则将其设置为自己的parent</li>
+<li>调用WACUtils工具类，获得自己所在的ServletContext的 <strong>Root WAC</strong> </li>
+<li>将自己的WAC转换成ConfigurableWAC，如果存在 RootWAC，则将其设置为自己的parent</li>
 <li>然后configureAndRefreshWAC(cwac)：设置ServletContext为sc，从其中ServletConfig中获取 <code>&lt;init-param&gt;</code> 参数的值</li>
 </ul>
 </li>
 </ul>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image-20241023013013442.png" alt="image-20241023013013442"></p>
 <ul>
-<li>最后根据自己的ServletConfig获取到ServletContext，根据自己的名称设置自己的Servlet WAC在ServletContext中的Key</li>
-</ul>
+<li><p>最后根据自己的ServletConfig获取到ServletContext，根据自己的名称设置自己的Servlet WAC在ServletContext中的Key</p>
 </li>
 <li><p>DispatcherServlet实现了initStrategies [生成各个功能组件，异常处理器，视图处理，请求映射]</p>
 </li>
 </ul>
 <p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/mvc-context-hierarchy.png" alt="mvc-context-hierarchy"></p>
 <p>这两个context都是在ServletContext中，属于dispatcherServlet的上下文是servletWAC，找不到的话就去rootWAC中找</p>
-<h3 id="Java形式配置ServletContext——WebApplicationInitializer"><a href="#Java形式配置ServletContext——WebApplicationInitializer" class="headerlink" title="Java形式配置ServletContext——WebApplicationInitializer"></a><span id="webappinit">Java形式配置ServletContext——WebApplicationInitializer</span></h3><p>![屏幕截图 2024-10-23 133904](<a target="_blank" rel="noopener" href="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE">https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/屏幕截图</a> 2024-10-23 133904.png)</p>
+<h3 id="Java配置ServletContext——WebApplicationInitializer"><a href="#Java配置ServletContext——WebApplicationInitializer" class="headerlink" title="Java配置ServletContext——WebApplicationInitializer"></a><span id="webappinit">Java配置ServletContext——WebApplicationInitializer</span></h3><p>![屏幕截图 2024-10-23 133904](<a target="_blank" rel="noopener" href="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE">https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/屏幕截图</a> 2024-10-23 133904.png)</p>
 <blockquote>
 <p>替代web.xml</p>
 </blockquote>
 <h4 id="ServletContainerInitializer"><a href="#ServletContainerInitializer" class="headerlink" title="ServletContainerInitializer"></a>ServletContainerInitializer</h4><p>之前，web容器（Tomcat）会根据WEB-INF下的web.xml初始化ServletContext</p>
 <p>Java EE Servlet 规范定义了这个接口，web容器（Tomcat）启动时根据这个初始化器做一些组件内的初始化工作。 </p>
 <p><strong>SpringServletContainerInitializer</strong> 是Spring 对其的实现，其onStartup方法会调用 <strong><a href="#webappinit">WebApplicationInitializer</a></strong> 的onStartup(<strong>ServletContext sc</strong>)初始化Web应用</p>
-<h3 id="SpringMVC-Web应用启动流程"><a href="#SpringMVC-Web应用启动流程" class="headerlink" title="SpringMVC Web应用启动流程"></a>SpringMVC Web应用启动流程</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/54chensongxia/p/12522804.html">Spring MVC启动流程</a> </p>
+<h3 id="典型-SpringMVC-应用启动流程"><a href="#典型-SpringMVC-应用启动流程" class="headerlink" title="典型 SpringMVC 应用启动流程"></a>典型 SpringMVC 应用启动流程</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/54chensongxia/p/12522804.html">Spring MVC启动流程</a> </p>
 <ul>
-<li>Tomcat 读取web.xml中 <code>&lt;context-param&gt;</code> <code>&lt;listener&gt;</code>  然后创建一个全局共享的ServletContext</li>
+<li><p>Tomcat 读取web.xml中 <code>&lt;context-param&gt;</code> <code>&lt;listener&gt;</code>  然后创建一个全局共享的ServletContext</p>
+<ul>
 <li>Tomcat 将<code>&lt;context-param&gt;</code> <code>&lt;listener&gt;</code>转化为键值对，存到ServletContext </li>
-<li>Tomcat 加载Listener实例，实施监听，Listener必须实现<u>ServletContext</u>Listener接口（比如ContextLoaderListener）</li>
-<li><strong>Web项目继续启动中</strong>，触发Listener中的contextInitialized(ServletContexEvent event)，根据ServletContext中 <code>&lt;context-param&gt;</code> 部分创建父容器，configClass是类的形式，configLocation是xml配置文件的形式</li>
-<li>创建完父容器，如果有<code>&lt;filter&gt;</code>会创建filter，然后读取 <code>&lt;servlet&gt;</code> 用于注册DispatcherServlet（这块流程建议从init方法一步步往下看，流程还是很清晰的），因为DispatcherServlet实质是一个Servlet，所以会先执行它的init方法。这个init()方法在<strong>HttpServletBean</strong>这个类中实现，其主要工作是做一些初始化工作，将我们在web.xml中配置的参数设置到ServletContext的ServletConfig中，然后再触发<strong>FrameworkServlet</strong>的initServletBean()方法；<ul>
+</ul>
+</li>
+<li><p>Tomcat 加载Listener实例，实施监听，Listener必须实现<u>ServletContext</u>Listener接口（比如ContextLoaderListener）</p>
+</li>
+<li><p><strong>Web项目继续启动</strong>，触发Listener中的contextInitialized(ServletContexEvent event)，根据ServletContext中 <code>&lt;context-param&gt;</code> 部分创建根容器，configClass是类的形式，configLocation是xml配置文件（如<code>applicationContext.xml</code>）。将根上下文绑定到 ServletContext（键为<code>ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE</code>）</p>
+</li>
+<li><p>创建完父容器，如果有<code>&lt;filter&gt;</code>会创建filter，然后读取 <code>&lt;servlet&gt;</code> 用于注册DispatcherServlet（这块流程建议从init方法一步步往下看，流程还是很清晰的），因为DispatcherServlet实质是一个Servlet，所以会先执行它的init方法。这个init()方法在<strong>HttpServletBean</strong>这个类中实现，其主要工作是做一些初始化工作，将我们在web.xml中配置的参数设置到ServletContext的ServletConfig中，然后再触发<strong>FrameworkServlet</strong>的initServletBean()方法；</p>
+<ul>
 <li><strong>FrameworkServlet</strong>主要作用是初始化Spring子容器，设置其父容器，并将其放入ServletContext中；</li>
-<li><strong>FrameworkServlet</strong>在调用initServletBean()的过程中同时会触发<strong>DispatcherServlet</strong>的onRefresh()方法，这个方法会初始化Spring MVC的各个功能组件。比如异常处理器、视图处理器、请求映射处理等</li>
+<li><strong>FrameworkServlet</strong>在调用initServletBean()的过程中同时会触发<strong>DispatcherServlet</strong>的<code>onRefresh()</code>方法，这个方法会初始化Spring MVC的各个功能组件。比如异常处理器、视图处理器、拦截器、请求映射处理<strong>HandlerMapping</strong>等</li>
 </ul>
 </li>
 </ul>
 <blockquote>
-<p>100% code-based </p>
+<p>XML-free startup</p>
 </blockquote>
 <p>用Java类的形式配置ServletContext，有一些细微差异，Spring这边实现了ServletContainerInitializer接口，注册组件的工作就交给了WebApplicationInitializer：</p>
-<p>先根据指定的rootWacConfig配置类（SpringConfig）创建出父容器，父容器作为参数进行Listener的有参构造，最后以<mark>add<mark>Listener的方式注册到ServletContext中。</p>
+<p>先根据指定的rootWacConfig配置类（SpringConfig）创建出父容器，父容器作为参数进行Listener的有参构造，最后以<mark>add</mark>Listener的方式注册到ServletContext中。</p>
+<h2 id="Spring-MVC-执行流程"><a href="#Spring-MVC-执行流程" class="headerlink" title="Spring MVC 执行流程"></a><span id="spring-mvc-exec">Spring MVC 执行流程</span></h2><h3 id="核心组件"><a href="#核心组件" class="headerlink" title="核心组件"></a>核心组件</h3><table>
+<thead>
+<tr>
+<th>组件名称</th>
+<th>核心职责</th>
+<th>常见实现类</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DispatcherServlet</td>
+<td>前端控制器，协调所有组件处理请求</td>
+<td><code>org.springframework.web.servlet.DispatcherServlet</code></td>
+</tr>
+<tr>
+<td>HandlerMapping</td>
+<td>映射 URL 到处理器</td>
+<td>RequestMappingHandlerMapping、SimpleUrlHandlerMapping</td>
+</tr>
+<tr>
+<td>HandlerAdapter</td>
+<td>适配处理器并执行</td>
+<td>RequestMappingHandlerAdapter、SimpleControllerHandlerAdapter</td>
+</tr>
+<tr>
+<td>ViewResolver</td>
+<td>解析逻辑视图名到物理视图</td>
+<td>InternalResourceViewResolver、ThymeleafViewResolver</td>
+</tr>
+<tr>
+<td>Interceptor</td>
+<td>拦截请求并在不同阶段处理（预处理、后处理、完成处理）</td>
+<td>HandlerInterceptor 接口实现类</td>
+</tr>
+<tr>
+<td>View</td>
+<td>渲染模型数据为响应内容</td>
+<td>JSPView、ThymeleafView、JSONView</td>
+</tr>
+</tbody></table>
+<h3 id="doDispatch"><a href="#doDispatch" class="headerlink" title="doDispatch()"></a>doDispatch()</h3><p>SpringMVC 的执行流程本质是 **“组件协作式” 的请求处理模式 **，通过 DispatcherServlet 作为中枢，核心方法是<code>DispatcherServlet#doDispatch</code>方法，串联 HandlerMapping、HandlerAdapter、ViewResolver 等组件，实现从请求接收到响应的自动化处理。理解此流程的核心在于掌握各组件的职责及数据流转路径，这也是排查 MVC 相关问题（如请求 404、参数绑定失败）的关键思路。</p>
+<p><strong>步骤 1：DispatcherServlet 接收请求</strong></p>
+<ul>
+<li>所有请求通过 URL 映射到 DispatcherServlet（如<code>/api/*</code>），由其统一调度。</li>
+</ul>
+<p>**步骤 2：HandlerMapping 获取 HandlerExecutionChain 和相应的 HandlerAdaptor **</p>
+<ul>
+<li>常见实现类：<code>RequestMappingHandlerMapping</code>（基于注解映射）、<code>SimpleUrlHandlerMapping</code>（基于 URL 路径映射）。请求<code>/api/user/list</code>会匹配到<code>@RequestMapping(&quot;/user/list&quot;)</code>标注的 Controller 方法。</li>
+</ul>
+<blockquote>
+<p><code>DispatcherServlet#doDispatch(HttpServletRequest request, HttpServletResponse response)</code></p>
+</blockquote>
+<p><code>DispatcherServlet</code>接收请求后，调用<code>HandlerMapping</code>，将 Controller(handler) 和拦截器包装到<code>HandlerExecutionChain</code>。</p>
+<blockquote>
+<p><code>DispatcherServlet#getHandlerAdapter(Object handler)</code></p>
+</blockquote>
+<p>获取真正的业务handler，可能是注解形式的Controller方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyController</span> &#123;</span><br><span class="line">    <span class="meta">@GetMapping(&quot;/hello&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">hello</span><span class="params">()</span> &#123; <span class="keyword">return</span> <span class="string">&quot;hi&quot;</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Spring 在运行时会把这个方法封装为 <code>HandlerMethod</code> 对象，这个对象包含控制器实例（即 <code>MyController</code>）、方法对象（即 <code>hello()</code>）、方法参数等元信息。<code>handler instanceof HandlerMethod == true</code> </p>
+<p>除此之外可能会实现旧版的 Controller 接口，返回的是 ModelAndView。不知道是哪种，所以就会从 HandlerAdaptors 中找到一个支持 HandlerMethod 的 Adaptor。</p>
+<p><strong>步骤 3：拦截器预处理器</strong> </p>
+<blockquote>
+<p><code>HandlerExecutionChain#applyPreHandle(req,resp)</code></p>
+</blockquote>
+<ul>
+<li><strong>预处理（preHandle）</strong>：按注册顺序依次调用拦截器的<code>preHandle()</code>方法。在处理器执行前拦截请求，可用于权限校验、日志记录。可以实现 WebMvcConfigurer 的 <code>addInterceptors(InterceptorRegistry registry)</code> 注册拦截器并设定拦截路径。</li>
+</ul>
+<p><strong>步骤 4：HandlerAdapter 执行处理器</strong></p>
+<blockquote>
+<p><code>HandlerAdaptor#handle(req,resp,handler)</code> 返回值 modelandview</p>
+</blockquote>
+<ul>
+<li>常见实现类：<code>RequestMappingHandlerAdapter</code>（处理注解控制器）、<code>SimpleControllerHandlerAdapter</code>（处理传统控制器）。</li>
+<li>职责：所有拦截器的<code>preHandle()</code>都返回<code>true</code>时，通过<code>HandlerAdapter</code>的<code>handle()</code>方法执行 Handler。</li>
+<li>实现类有参数解析器和和结果处理器。</li>
+<li>REST 风格的调用栈，从外到内：<ol>
+<li><code>AbstractHandlerMethodAdapter#handle()</code></li>
+<li><code>RequestMappingHandlerAdapter#handleInternal()</code></li>
+<li><code>RequestMappingHandlerAdapter#invokeHandlerMethod()</code> 将 handlerMethod 包装成 invocable</li>
+<li><code>ServletInvocableHandlerMethod#invokeAndHandle()</code>通过反射调用原始方法。</li>
+<li><code>HandlerMethodReturnValueHandler#handleReturnValue()</code> 结果处理器。</li>
+<li>REST：通过<code>mavContainer</code>告诉框架已经写完 response，不需要渲染。比如<code>RequestResponseBodyMethodProcessor</code>这样的实现类，里面的<code>writeWithMessageConverters()</code>把返回值通过 <code>xxxxMessageConverter</code>转化成 JSON/XML，将 JSON 直接写入 <code>HttpServletResponse</code> 输出流。之后会返回 mv 为 null。</li>
+</ol>
+</li>
+</ul>
+<p><strong>步骤 5：拦截器后处理器</strong></p>
+<blockquote>
+<p><code>HandlerExecutionChain#applyPostHandle(req,resp,mv)</code></p>
+</blockquote>
+<ul>
+<li><strong>后处理（postHandle）</strong>：在处理器执行之后，<strong>逆序</strong>调用拦截器的<code>postHandle()</code>方法，可用于在渲染之前修改模型数据，或者可以添加响应头（CORS、token…）。</li>
+</ul>
+<p><strong>步骤 6：结果响应与异常处理</strong>（可能有渲染）</p>
+<blockquote>
+<p><code>DispatcherServlet#processDispatchResult(req, resp, chain, mv, dispatchException)</code></p>
+</blockquote>
+<p><strong>步骤 6.1：异常处理，processHandlerException</strong></p>
+<p>DispatcherServlet 执行 handler（即 controller）期间抛出异常时，会尝试通过一组 <code>HandlerExceptionResolver</code> 进行异常处理，如下为REST处理异常的一个示例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@RestControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebExceptionAdvice</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ExceptionHandler(RuntimeException.class)</span></span><br><span class="line">    <span class="keyword">public</span> Result <span class="title function_">handleRuntimeException</span><span class="params">(RuntimeException e)</span> &#123;</span><br><span class="line">        log.error(e.toString(), e);</span><br><span class="line">        <span class="keyword">return</span> Result.fail(<span class="string">&quot;服务器内部异常&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<blockquote>
+<p>如果是 <code>@ResponseBody</code> 或 <code>@RestController</code>，<code>ModelAndView</code> 为 null，不会走渲染逻辑。</p>
+</blockquote>
+<p>（步骤 6.2：处理器返回的 ModelAndView）</p>
+<ul>
+<li>处理器方法返回值会被封装为 ModelAndView：<ul>
+<li>模型（Model）：存储数据（如<code>model.addAttribute(&quot;users&quot;, userList)</code>）。</li>
+<li>视图（View）：逻辑名称（如<code>&quot;user/list&quot;</code>，由视图解析器转换为物理视图）。</li>
+</ul>
+</li>
+</ul>
+<p>（步骤 6.3：ViewResolver 解析视图）</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;prefix&quot;</span> <span class="attr">value</span>=<span class="string">&quot;/WEB-INF/views/&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;suffix&quot;</span> <span class="attr">value</span>=<span class="string">&quot;.jsp&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>逻辑视图<code>&quot;user/list&quot;</code>会被解析为<code>/WEB-INF/views/user/list.jsp</code>。</li>
+</ul>
+<p>（步骤 6.4：视图渲染与响应生成）</p>
+<ul>
+<li>视图对象（如 JSP）将模型数据渲染为 HTML 内容，写入 HttpServletResponse 的输出流。</li>
+</ul>
+</blockquote>
+<p><strong>步骤 7：拦截器完成处理器</strong></p>
+<ul>
+<li>所有拦截器的<code>afterCompletion</code>方法按照注册的顺序逆序执行，用于渲染后处理。</li>
+</ul>
 <h1 id="Spring-Boot"><a href="#Spring-Boot" class="headerlink" title="Spring Boot"></a>Spring Boot</h1><h2 id="入门案例-1"><a href="#入门案例-1" class="headerlink" title="入门案例"></a>入门案例</h2><h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><blockquote>
 <p>创建boot模块</p>
 </blockquote>
@@ -3247,7 +3495,7 @@
 <li><strong>Q：为什么我的 <code>@Component</code> 组件没被扫描到？</strong>  A：确保组件位于主类的<strong>同级或子包</strong>下，或通过 <code>scanBasePackages</code> 显式指定路径。</li>
 <li><strong>Q：如何查看生效的自动配置？</strong>  A：启动时添加 <code>--debug</code> 参数，日志会输出所有自动配置的评估结果。</li>
 </ul>
-<h2 id="SpringBoot-启动流程"><a href="#SpringBoot-启动流程" class="headerlink" title="SpringBoot 启动流程"></a>SpringBoot 启动流程</h2><h3 id="app-run"><a href="#app-run" class="headerlink" title="app.run()"></a><code>app.run()</code></h3><ol>
+<h2 id="SpringBoot-启动流程"><a href="#SpringBoot-启动流程" class="headerlink" title="SpringBoot 启动流程"></a><span id="spring-boot-init">SpringBoot 启动流程</span></h2><h3 id="app-run"><a href="#app-run" class="headerlink" title="app.run()"></a><code>app.run()</code></h3><ol>
 <li><code>new SpringApplication()</code><ul>
 <li>确认应用类型（SERVLET、NON、响应式）</li>
 <li>加载 <code>ApplicationContextInitializer</code>（包括在 spring.factories 自定义的）</li>
