@@ -166,18 +166,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">96</span>
+          <span class="site-state-item-count">99</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">20</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">131</span>
+        <span class="site-state-item-count">134</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -194,6 +194,688 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/07/27/iot-thing-model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/07/27/iot-thing-model/" class="post-title-link" itemprop="url">物模型</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-07-27 00:00:00" itemprop="dateCreated datePublished" datetime="2025-07-27T00:00:00+08:00">2025-07-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-29 00:58:19" itemprop="dateModified" datetime="2025-07-29T00:58:19+08:00">2025-07-29</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="大模型控制智能家居"><a href="#大模型控制智能家居" class="headerlink" title="大模型控制智能家居"></a>大模型控制智能家居</h1><h2 id="Capability"><a href="#Capability" class="headerlink" title="Capability"></a>Capability</h2><p><strong>BaseCapability（基础能力）</strong><br> 定义所有设备都具备的通用能力，比如开关（Power）</p>
+<p><strong>CategoryCapability（品类能力）</strong><br> 针对设备大类（如灯、空调、窗帘）定义的能力，比如灯具的亮度调节（Brightness）</p>
+<p><strong>ProductCapability（产品特有能力）</strong><br> 针对具体型号或功能更丰富的产品，添加额外能力，如色温调节（ColorTemperature）、色彩模式（ColorMode）</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;deviceType&quot;</span><span class="punctuation">:</span> <span class="string">&quot;colorLight&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;capabilities&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;power&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;boolean&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;brightness&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;integer&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;min&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;max&quot;</span><span class="punctuation">:</span> <span class="number">100</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;unit&quot;</span><span class="punctuation">:</span> <span class="string">&quot;%&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;colorTemperature&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;integer&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;min&quot;</span><span class="punctuation">:</span> <span class="number">2000</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;max&quot;</span><span class="punctuation">:</span> <span class="number">6500</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;unit&quot;</span><span class="punctuation">:</span> <span class="string">&quot;K&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="系统架构总览"><a href="#系统架构总览" class="headerlink" title="系统架构总览"></a>系统架构总览</h2><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">┌────────────────────────────────────────────────┐</span><br><span class="line">│                    客户端                      │  （App/Web/小程序/语音设备）</span><br><span class="line">│  ┌─────────┐   ┌──────────┐   ┌────────────┐  │</span><br><span class="line">│  │ 语音/   │──▶│ ASR/STT  │──▶│  NLU      │  │</span><br><span class="line">│  │ 文本输入│   └──────────┘   └────────────┘  │</span><br><span class="line">│  └─────────┘                             │   │</span><br><span class="line">└─────────────────────────────────────────▼────┘</span><br><span class="line"><span class="code">              ▲                             │</span></span><br><span class="line"><span class="code">              │     ┌───────────────┐       │</span></span><br><span class="line"><span class="code">              └────▶│对话管理层（DM）│◀──────┘</span></span><br><span class="line"><span class="code">                    └───────────────┘</span></span><br><span class="line"><span class="code">                             │</span></span><br><span class="line"><span class="code">       ┌─────────────────────┼─────────────────────┐</span></span><br><span class="line"><span class="code">       │                     │                     │</span></span><br><span class="line"><span class="code">┌────────────┐       ┌──────────────┐       ┌───────────┐</span></span><br><span class="line"><span class="code">│ 意图/槽位  │       │ 对话状态 &amp;  │       │ 设备控制  │</span></span><br><span class="line"><span class="code">│ 管理 (NLU) │──────▶│ 会话存储    │──────▶│  API 层  │</span></span><br><span class="line"><span class="code">└────────────┘       └──────────────┘       └───────────┘</span></span><br><span class="line"><span class="code">                             │</span></span><br><span class="line"><span class="code">                           日志／审计／监控</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="核心模块"><a href="#核心模块" class="headerlink" title="核心模块"></a>核心模块</h3><ol>
+<li><strong>ASR/STT</strong>（可选语音）。</li>
+<li><strong>NLU</strong>：意图识别 + 槽位抽取。</li>
+<li><strong>DM（对话管理）</strong>：根据当前意图与上下文状态，决定下一步动作／回复。</li>
+<li><strong>SessionStorage</strong>：存储会话上下文、用户状态、历史操作。</li>
+<li><strong>Function Calling / Device API</strong>：将意图映射到具体设备控制接口（MQTT/CoAP/REST/WebSocket）。</li>
+<li><strong>安全与鉴权</strong>：OAuth2.0/JWT/设备访问令牌。</li>
+<li><strong>日志与监控</strong>：所有指令及回复入库、监控平台报警。</li>
+</ol>
+<h2 id="关键技术细节"><a href="#关键技术细节" class="headerlink" title="关键技术细节"></a>关键技术细节</h2><h3 id="意图识别-amp-槽位抽取（NLU）"><a href="#意图识别-amp-槽位抽取（NLU）" class="headerlink" title="意图识别 &amp; 槽位抽取（NLU）"></a>意图识别 &amp; 槽位抽取（NLU）</h3><ul>
+<li><strong>模型</strong>：可用开源框架（Rasa、Snips）或自研轻量级分类+CRF/Seq2Seq。</li>
+<li><strong>核心意图</strong>：开关设备（开灯/关灯）、调节参数（调高温度）、查询状态（室温多少）、情景模式（回家模式）。</li>
+<li><strong>槽位</strong>：<code>device</code>（灯、空调）、<code>location</code>（客厅、卧室）、<code>value</code>（25℃、50%）。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">IntentResult</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String intent;</span><br><span class="line">    <span class="keyword">private</span> Map&lt;String, String&gt; slots;</span><br><span class="line">    <span class="comment">// getters/setters</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="对话管理（DM）"><a href="#对话管理（DM）" class="headerlink" title="对话管理（DM）"></a>对话管理（DM）</h3><ul>
+<li><strong>状态机</strong>：定义对话流转逻辑，例如：<ul>
+<li>如果缺少槽位，DM 发起补全询问；</li>
+<li>如果意图确认，直接触发 Function Calling；</li>
+<li>多轮确认、歧义消解等。</li>
+</ul>
+</li>
+<li><strong>策略</strong>：基于规则的 FSM + 简单策略；亦可结合强化学习/蒙特卡洛树搜索进行优化。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DialogManager</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> DialogueAct <span class="title function_">handle</span><span class="params">(IntentResult nlu, Session session)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!session.hasSlot(<span class="string">&quot;device&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> ask(<span class="string">&quot;请问您想控制哪个设备？&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (!session.hasSlot(<span class="string">&quot;location&quot;</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> ask(<span class="string">&quot;哪一个房间的&quot;</span> + session.getSlot(<span class="string">&quot;device&quot;</span>) + <span class="string">&quot;？&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 槽位齐全，执行控制</span></span><br><span class="line">        <span class="keyword">return</span> executeControl(session);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="会话存储（SessionStorage）"><a href="#会话存储（SessionStorage）" class="headerlink" title="会话存储（SessionStorage）"></a>会话存储（SessionStorage）</h3><table>
+<thead>
+<tr>
+<th>方案</th>
+<th>适用场景</th>
+<th>优势</th>
+<th>劣势</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>In‑Memory</td>
+<td>单机、调试、POC</td>
+<td>极低延迟、无外部依赖</td>
+<td>不持久，无法分布式</td>
+</tr>
+<tr>
+<td>Redis</td>
+<td>分布式、高并发、需要 TTL 管理</td>
+<td>水平扩展、持久化配置、TTL</td>
+<td>网络延迟、运维成本</td>
+</tr>
+<tr>
+<td>RDBMS</td>
+<td>事务要求、历史数据分析</td>
+<td>结构化查询、事务、成熟生态</td>
+<td>性能瓶颈、扩展性较弱</td>
+</tr>
+<tr>
+<td>VectorDB</td>
+<td>语义检索、海量历史对话</td>
+<td>基于相似度召回，检索相关性高</td>
+<td>架构复杂、向量化开销</td>
+</tr>
+</tbody></table>
+<ul>
+<li>存储：index:userId 用于按照创建时间戳去</li>
+<li><strong>接口同前面设计</strong>：支持多用户、多会话、持久化与过期策略。</li>
+<li>sessionId: userID_timestamp_randomBits</li>
+</ul>
+<p><strong>短时语音交互场景（5–15秒）</strong></p>
+<ul>
+<li>如果你的系统主要是语音唤醒＋单轮指令（如“小爱同学，开灯”），那么用户发完一条指令后、返回结果之前就可认为一次会话结束。</li>
+<li>建议：在 <strong>5–10秒</strong> 内无新语音输入，即认为本次交互结束，清理短期会话上下文。</li>
+</ul>
+<p><strong>短对话补充场景（1–2分钟）</strong></p>
+<ul>
+<li>当用户需要多轮补全槽位（例如“把灯调到多少亮度？”→“80”），通常流程不会超过 1 分钟。</li>
+<li>建议：若 <strong>1–2 分钟</strong> 内仍无用户回复，就主动结束当前会话，下次发起新请求时开启新的 session。</li>
+</ul>
+<p><strong>长会话场景（10–30分钟）</strong></p>
+<ul>
+<li>在 App 或 Web 上，用户可能边看界面边对话，甚至切到后台再回来；此时希望保持会话连续。</li>
+<li>建议：在 <strong>20–30 分钟</strong> 无任何交互，就自动关闭，会话存储 TTL 设置为 30 分钟；超过则重新生成新的 sessionId。</li>
+</ul>
+<p><strong>可配置的分层过期</strong></p>
+<ul>
+<li><strong>短期上下文</strong>（slot filling、多轮确认）使用较短的过期（如 2 分钟），过期后清空当前多轮状态但保留历史记录。</li>
+<li><strong>长期历史</strong>（行为日志、偏好设置、场景记忆）使用更长的 TTL（如数小时到数天），用于个性化推荐或日志审计。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SessionExpiryPolicy</span> &#123;</span><br><span class="line">    <span class="comment">// 语音单轮指令</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Duration</span> <span class="variable">SHORT_TURN_TIMEOUT</span> <span class="operator">=</span> Duration.ofSeconds(<span class="number">10</span>);</span><br><span class="line">    <span class="comment">// 多轮补充</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Duration</span> <span class="variable">MULTI_TURN_TIMEOUT</span> <span class="operator">=</span> Duration.ofMinutes(<span class="number">2</span>);</span><br><span class="line">    <span class="comment">// 长会话保留</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Duration</span> <span class="variable">LONG_SESSION_TTL</span>    <span class="operator">=</span> Duration.ofMinutes(<span class="number">30</span>);</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 根据最后一次活动时间判断是否需要开启新会话</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isExpired</span><span class="params">(Session session)</span> &#123;</span><br><span class="line">    	<span class="type">Duration</span> <span class="variable">idle</span> <span class="operator">=</span> Duration.between(session.getLastAccess(), Instant.now());</span><br><span class="line">        <span class="keyword">if</span> (session.isInSlotFilling()) &#123;</span><br><span class="line">            <span class="keyword">return</span> idle.compareTo(MULTI_TURN_TIMEOUT) &gt; <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (session.isVoiceSingleTurn()) &#123;</span><br><span class="line">            <span class="keyword">return</span> idle.compareTo(SHORT_TURN_TIMEOUT) &gt; <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> idle.compareTo(LONG_SESSION_TTL) &gt; <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>slotFilling 标志：在对话管理中，若当前 Session 处于“等待槽位补全”状态，就用多轮补充超时；否则按单轮或长会话处理。</li>
+<li>最后访问时间：每次用户输入或系统输出都要更新 session.lastAccess。</li>
+<li>过期处理：一旦判定过期，可删除或标记 closed，下次请求自动新建 sessionId 并关联新上下文。</li>
+</ul>
+<p><strong>扩展</strong>：为每个对话保存上下文对象 <code>Session &#123; userId, sessionId, slots, lastAccess, history &#125;</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Session</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> String userId;</span><br><span class="line">    <span class="keyword">private</span> String sessionId;</span><br><span class="line">    <span class="keyword">private</span> Map&lt;String,String&gt; slots = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> List&lt;String&gt; history = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-Function-Calling-与设备控制"><a href="#4-Function-Calling-与设备控制" class="headerlink" title="4. Function Calling 与设备控制"></a>4. Function Calling 与设备控制</h3><ul>
+<li><strong>适配层</strong>：将意图和槽位映射到具体 API 调用。</li>
+<li><strong>通信协议</strong>：MQTT（轻量、实时）、CoAP、或 HTTP RESTful。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DeviceController</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> MqttClient mqttClient;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">turnOn</span><span class="params">(String device, String location)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">topic</span> <span class="operator">=</span> String.format(<span class="string">&quot;home/%s/%s/command&quot;</span>, userId, location);</span><br><span class="line">        <span class="type">String</span> <span class="variable">payload</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JSONObject</span>()</span><br><span class="line">            .put(<span class="string">&quot;device&quot;</span>, device)</span><br><span class="line">            .put(<span class="string">&quot;action&quot;</span>, <span class="string">&quot;on&quot;</span>).toString();</span><br><span class="line">        mqttClient.publish(topic, payload.getBytes(), <span class="number">1</span>, <span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="安全与鉴权"><a href="#安全与鉴权" class="headerlink" title="安全与鉴权"></a>安全与鉴权</h3><ul>
+<li><strong>用户认证</strong>：前端登录获取 JWT；</li>
+<li><strong>设备授权</strong>：对每条控制指令附带 Token；</li>
+<li><strong>校验</strong>：网关层或消息中间件拦截，防止非法调用。</li>
+</ul>
+<h3 id="日志、审计与监控"><a href="#日志、审计与监控" class="headerlink" title="日志、审计与监控"></a>日志、审计与监控</h3><ul>
+<li>保存所有对话流水、设备反馈、异常日志。</li>
+<li>结合 ELK / Prometheus / Grafana 实时监控设备连通性、对话成功率、延迟。</li>
+</ul>
+<h2 id="示例流程"><a href="#示例流程" class="headerlink" title="示例流程"></a>示例流程</h2><ol>
+<li><strong>用户</strong>：“帮我把客厅的灯打开。”</li>
+<li><strong>ASR</strong> → 文本</li>
+<li><strong>NLU</strong>：<code>intent=TurnOn</code>, <code>slots=&#123;device:灯, location:客厅&#125;</code></li>
+<li><strong>DM</strong>：槽位齐全 → 调用 <code>DeviceController.turnOn(&quot;灯&quot;,&quot;客厅&quot;)</code></li>
+<li><strong>DeviceController</strong> 发布 MQTT 消息</li>
+<li><strong>设备</strong> 执行后上报状态</li>
+<li><strong>DM</strong> 收到反馈，回复 “客厅的灯已打开”。</li>
+</ol>
+<h2 id="可扩展方向"><a href="#可扩展方向" class="headerlink" title="可扩展方向"></a>可扩展方向</h2><ol>
+<li><strong>多模态交互</strong>：结合摄像头、手势、遥控器等。</li>
+<li><strong>场景编排</strong>：支持用户自定义 “回家模式” 一键执行多条指令。</li>
+<li><strong>语义记忆</strong>：引入向量检索，自动推荐常用指令或习惯场景。</li>
+<li><strong>离线容错</strong>：网络不通时缓存指令，恢复网络后再下发。</li>
+<li><strong>多设备协同</strong>：跨品牌协议适配（Zigbee、Z-Wave、Matter）。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/07/12/llm-agent/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/07/12/llm-agent/" class="post-title-link" itemprop="url">llm-agent</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-07-12 00:00:00" itemprop="dateCreated datePublished" datetime="2025-07-12T00:00:00+08:00">2025-07-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-16 00:20:27" itemprop="dateModified" datetime="2025-07-16T00:20:27+08:00">2025-07-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ai/" itemprop="url" rel="index"><span itemprop="name">ai</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="agent-iot"><a href="#agent-iot" class="headerlink" title="agent-iot"></a>agent-iot</h1><h2 id="输入构成"><a href="#输入构成" class="headerlink" title="输入构成"></a>输入构成</h2><p>获取设备的属性快照信息和控制信息（设备说明书、API文档），作为 system prompt。</p>
+<p>可使用function calling让输出更加规范，调用具体的函数。</p>
+<p>用户的输入作为userPrompt，<strong>意图</strong>。</p>
+<h2 id="Scene场景"><a href="#Scene场景" class="headerlink" title="Scene场景"></a>Scene场景</h2><ul>
+<li>用户情景、场景设置：经典场景 ifttt 规则引擎</li>
+<li>主动智能：（JMQ事件感知 DUCC配置规则）</li>
+<li>按照用户的使用习惯，自动生成场景（需要开放给用户）</li>
+</ul>
+<h2 id="语义层标准化"><a href="#语义层标准化" class="headerlink" title="语义层标准化"></a><strong>语义层标准化</strong></h2><p>定义与底层协议无关的通用指令模型，包括：</p>
+<ul>
+<li><strong>操作类型</strong>：<code>GET</code>（查询）、<code>SET</code>（设置）、<code>EXECUTE</code>（执行服务）</li>
+<li><strong>目标标识</strong>：设备ID + 属性/服务ID（如<code>AC-001/targetTemp</code>）</li>
+<li><strong>参数格式</strong>：JSON/二进制编码的统一数据表达（如<code>&#123;&quot;value&quot;:25&#125;</code>）</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;op&quot;:&quot;SET&quot;,&quot;path&quot;:&quot;AC-001/targetTemp&quot;,&quot;params&quot;:&#123;&quot;value&quot;:25&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了加快响应，应当进一步简化。。。？</p>
+<p>开灯：</p>
+<ol>
+<li>很多盏灯，要开哪一盏？<strong>如果<strong><strong>查询到用户操作的品类</strong></strong>对应有多台设备，应当询问用户对哪一台进行操作，然后从用户的补充说明中提取deviceName或者roomName这样的字段，然后<strong><strong>匹配到具体的设备</strong></strong>id，就能返回对应的控制指令。然后<strong><strong>调用小家平台控制API</strong></strong>进行控制。</strong></li>
+<li>没有灯。如果用户操作的品类没有对应的设备，应当以友好语气回复用户，并给出一定的建议（是否需要跳转购买）。</li>
+</ol>
+<h1 id="Function-Calling"><a href="#Function-Calling" class="headerlink" title="Function Calling"></a>Function Calling</h1><p>source：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1aeLqzUE6L">10分钟讲清楚 Prompt, Agent, MCP 是什么</a></p>
+<p><strong>System Prompt</strong>: 模型扮演的角色，使用什么方式回复，用户只需要关注真正需要说的话（User Prompt）。</p>
+<p><strong>AI Agent</strong>: AutoGPT 会把函数用法和功能描述、AI的回复格式转化为SystemPrompt，把SystemPrompt连同用户请求UserPrompt发送给模型。模型生成函数的调用信息，AutoGPT随后去调用函数并返回结果。这样在模型、工具、用户之间传话的程序叫做 Agent。这些提供调用的函数或者服务叫做 Agent <strong>Tools</strong>。AI总归是概率模型，发现返回格式不对会进行重试，典型例子Cline。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image.png" alt="image"></p>
+<p><strong>Function Calling</strong>: 统一格式，规范描述。将函数用法和功能描述转化成类似如下的固定JSON格式，因此 System Prompt中的这一部分可以删去。AI 使用工具时的回复也都依照相同的格式，因此可以实现有针对性训练，并且AI服务器端自己就能检测到格式错误，实现用户无感的服务端重试，节省 prompt。缺点是各家模型api格式不统一，因此跨模型能力一般。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">// 调用信息</span><br><span class="line">&#123;</span><br><span class="line">    &quot;name&quot;: &quot;list_files&quot;,</span><br><span class="line">    &quot;desc&quot;: &quot;列目录&quot;,</span><br><span class="line">    &quot;params&quot;: &#123;</span><br><span class="line">        &quot;path&quot;: &quot;str&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">// 回复格式</span><br><span class="line">&#123;</span><br><span class="line">    &quot;type&quot;: &quot;call&quot;,</span><br><span class="line">    &quot;name&quot;: &quot;list_files&quot;</span><br><span class="line">    &quot;args&quot;: &#123;</span><br><span class="line">        &quot;path&quot;: &quot;/&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>![image (1)](<a target="_blank" rel="noopener" href="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image">https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image</a> (1).png)</p>
+<ul>
+<li><strong>核心思想：</strong>允许 LLM 在推理过程中，识别用户请求中需要调用外部工具或 API 来完成特定任务的意图，然后以结构化格式（通常是 JSON）输出一个包含所需调用函数名称和参数的请求。<strong>LLM 本身并不执行函数</strong>，而是由应用程序接收这个请求，调用对应的外部函数/API，并将执行结果返回给 LLM（通常作为后续对话的上下文），最终由 LLM 整合结果并生成面向用户的自然语言回复，或者LLM继续生成结构化调用信息，Agent继续调用API重复上述步骤。</li>
+<li><strong>解决的问题：</strong><ul>
+<li><strong>功能局限性：</strong>LLM 本质是文本生成器，无法直接执行现实世界的操作（如查数据库、发邮件、查天气、运行代码、数学计算）。</li>
+<li><strong>动态信息获取：</strong>获取需要实时计算或查询外部系统才能得到的信息（如当前股价、天气、账户余额）。</li>
+<li><strong>状态改变：</strong>执行需要改变外部系统状态的操作（如创建日历事件、发送邮件、下订单）。</li>
+<li><strong>精确性要求高的操作：</strong>对于需要精确执行、不能依赖 LLM 自由发挥的任务（如数据库查询）。</li>
+</ul>
+</li>
+<li><strong>工作流程：</strong><ol>
+<li><strong>用户请求：</strong>用户提出一个可能需要调用外部功能的请求（如 “预订下周一上午10点的会议室” 或 “旧金山现在的天气怎么样？”）。</li>
+<li><strong>模型推理与函数调用检测：</strong>LLM 分析请求，判断是否需要调用函数以及调用哪个函数。如果需要，它生成一个结构化的函数调用请求（函数名 + 参数）。</li>
+<li><strong>应用程序执行函数：</strong>应用程序（或代理框架）接收到 LLM 输出的函数调用请求，解析它，并调用相应的后端函数或 API，传入参数。</li>
+<li><strong>获取函数结果：</strong>后端函数/API 执行，返回结果（可能是数据、状态码、错误信息等）。</li>
+<li><strong>结果整合与生成回复：</strong>应用程序将函数执行结果作为上下文信息，连同原始的对话历史（或新的用户消息）一起再次发送给 LLM。</li>
+<li><strong>最终回复：</strong>LLM 理解函数执行结果，生成自然语言回复给用户（如 “已为您预订了X会议室” 或 “旧金山现在是晴天，22摄氏度”）。</li>
+</ol>
+</li>
+<li><strong>关键组件：</strong><ul>
+<li>支持 Function Calling 能力的 LLM（如 GPT-3.5-turbo, GPT-4, Claude, 部分开源模型）。</li>
+<li>应用程序逻辑（解析 LLM 的函数调用请求，执行函数/API，管理上下文）。</li>
+<li>预定义的可调用函数/API 列表及其描述（名称、功能描述、参数及其类型、是否必需）。</li>
+</ul>
+</li>
+<li><strong>典型应用场景：</strong><ul>
+<li>智能助理执行操作：发邮件、订日历、查待办事项、控制智能家居。</li>
+<li>数据查询助手：根据自然语言查询数据库或 API（如 “上季度华东区的销售总额是多少？”）。</li>
+<li>代码解释器/工具使用：执行数学计算、绘图、运行 Python 代码片段。</li>
+<li>旅行规划：搜索航班、酒店、景点信息。</li>
+<li>实时信息查询：股票、天气、新闻、汇率。</li>
+</ul>
+</li>
+</ul>
+<p><strong>以上是Agent和LLM之间的交互。下面介绍 API Agent之间的交互。</strong></p>
+<h1 id="MCP：Agent与Tools交互"><a href="#MCP：Agent与Tools交互" class="headerlink" title="MCP：Agent与Tools交互"></a>MCP：Agent与Tools交互</h1><p><strong>MCP</strong>: 模型上下文协议。解决的是 Agent Tools 和 AI Agent 交互的问题。本地可以直接在同一个进程里调用，但是随着时间的推移，发现有些tool功能是通用的，为了复用代码，就可以让多个Agent调用同一个tool服务。</p>
+<p>MCP Server——运行Tool的服务，MCP Client——Agent。</p>
+<p>MCP用来规定他俩之间的通信格式，以及MCP Server需要提供的接口（list tools，tool desc，etc.）</p>
+<p>MCP Server可以直接提供数据，提供类似文件读写的服务：Resources，可以提供提示词模板：Prompts</p>
+<p>Server和Client可以通过标准输出stdio、http等方式通信</p>
+<p>![image (2)](<a target="_blank" rel="noopener" href="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image">https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image</a> (2).png)</p>
+<p>标准流程：</p>
+<ol>
+<li>发送 User Prompt，“女朋友肚子疼怎么办”</li>
+<li>MCP Client 从 Server 获取tool的基本信息，转化成 Function Calling 或者 System Prompt 格式，附带 User Prompt 一并发送给模型，模型返回调用信息。这里最核心的就是把函数的API和API文档。</li>
+<li>MCP Client 通过模型返回的调用信息，请求 MCP Server，随后将 HTTP页面转发给 AI 模型，AI模型据此回复</li>
+</ol>
+<p>![image (3)](<a target="_blank" rel="noopener" href="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image">https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/image</a> (3).png)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">curl https://api.deepseek.com/chat/completions \</span><br><span class="line">  -H &quot;Content-Type: application/json&quot; \</span><br><span class="line">  -H &quot;Authorization: Bearer sk-fc290454309d4e008675ec939c4df8c5&quot; \</span><br><span class="line">  -d &#x27;&#123;</span><br><span class="line">        &quot;model&quot;: &quot;deepseek-chat&quot;,</span><br><span class="line">        &quot;messages&quot;: [</span><br><span class="line">          &#123;&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;你是一个猫娘&quot;&#125;,</span><br><span class="line">          &#123;&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;你好&quot;&#125;</span><br><span class="line">        ],</span><br><span class="line">        &quot;stream&quot;: true</span><br><span class="line">      &#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<h1 id="RAG-检索增强生成"><a href="#RAG-检索增强生成" class="headerlink" title="RAG (检索增强生成)"></a>RAG (检索增强生成)</h1><ul>
+<li><strong>核心思想：</strong>将大型语言模型（LLM）的生成能力与外部知识源（通常是向量数据库）的检索能力结合起来。在生成答案之前，先从外部知识库中检索与用户查询最相关的信息片段（chunks），然后将这些信息片段和原始查询一起提供给 LLM，让 LLM 基于这些<strong>最新、特定、可信</strong>的上下文信息生成回答。</li>
+<li><strong>解决的问题：</strong><ul>
+<li><strong>知识局限性/陈旧性：</strong>LLM 的知识截止于其训练数据。RAG 允许模型访问并利用训练后产生的最新信息或模型训练数据中未包含的专有/特定领域信息。</li>
+<li><strong>事实准确性/幻觉：</strong>通过提供可靠的上下文来源，引导 LLM 基于事实而非凭空想象（幻觉）生成答案。</li>
+<li><strong>溯源：</strong>可以追踪生成答案的依据（来自哪个检索到的文档片段）。</li>
+</ul>
+</li>
+<li><strong>工作流程：</strong><ol>
+<li><strong>用户查询：</strong>接收用户输入的问题。</li>
+<li><strong>检索：</strong>将用户查询嵌入（embed）成向量，在预先构建好的向量数据库中进行相似性搜索，找出最相关的文档片段（通常是 Top-K）。</li>
+<li><strong>增强提示：</strong>将检索到的相关片段（上下文）与用户的原始查询组合成一个新的、信息更丰富的提示（Prompt）。</li>
+<li><strong>生成：</strong>将这个增强后的提示输入给 LLM。</li>
+<li><strong>响应：</strong>LLM 基于提供的上下文生成最终的答案。</li>
+</ol>
+</li>
+<li><strong>关键组件：</strong><ul>
+<li>文本嵌入模型（Embedding Model）</li>
+<li>向量数据库（Vector Database）</li>
+<li>大型语言模型（LLM）</li>
+<li>检索策略（如 Top-K, MMR）</li>
+</ul>
+</li>
+<li><strong>典型应用场景：</strong><ul>
+<li>基于公司内部文档（手册、产品文档、会议记录）的智能问答系统。</li>
+<li>需要最新信息的问答（如新闻摘要、市场报告）。</li>
+<li>需要引用特定来源的客服聊天机器人。</li>
+<li>学术研究助手（搜索论文库回答问题）。</li>
+<li></li>
+</ul>
+</li>
+</ul>
+<h1 id="RAG-vs-Function-Calling-核心对比"><a href="#RAG-vs-Function-Calling-核心对比" class="headerlink" title="RAG vs Function Calling: 核心对比"></a>RAG vs Function Calling: 核心对比</h1><ul>
+<li><strong>RAG 是给 LLM “喂知识”：</strong>解决 “<strong>LLM 不知道什么</strong>” 的问题。通过检索外部信息源提供相关上下文，让生成更准确、更新、更相关。</li>
+<li><strong>Function Calling 是让 LLM “用工具”：</strong>解决 “<strong>LLM 不能做什么</strong>” 的问题。通过检测意图并输出结构化请求，让 LLM 能够触发外部工具执行操作或获取 LLM 自身无法计算/访问的动态信息。强调动作</li>
+<li><strong>强大的AI应用 = RAG + Function Calling + LLM：</strong>最先进的 LLM 应用架构通常会将两者结合，甚至与 Agent（能自主规划、调用工具、迭代的 LLM 驱动模块）的概念融合，打造出真正强大、知识丰富且能执行实际任务的 AI 系统。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>RAG (检索增强生成)</th>
+<th>Function Calling (函数调用)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>主要目的</strong></td>
+<td><strong>增强知识</strong>- 提供最新、特定领域的上下文信息给 LLM 用于生成。</td>
+<td><strong>增强功能</strong>- 让 LLM 能够触发外部工具/API 执行操作或获取动态数据。</td>
+</tr>
+<tr>
+<td><strong>核心操作</strong></td>
+<td><strong>检索</strong>信息片段 -&gt;<strong>注入上下文</strong>-&gt; LLM 生成答案。</td>
+<td>LLM<strong>检测意图</strong>-&gt;<strong>输出结构化调用请求</strong>-&gt;<strong>外部执行</strong>-&gt; LLM<strong>整合结果</strong>生成回复。</td>
+</tr>
+<tr>
+<td><strong>LLM 角色</strong></td>
+<td><strong>知识消费者</strong>(利用提供的上下文生成答案)。</td>
+<td><strong>意图检测器 &amp; 结果解释器</strong>(不直接执行功能)。</td>
+</tr>
+<tr>
+<td><strong>输入增强</strong></td>
+<td><strong>是</strong>。将检索到的文本作为额外上下文输入给 LLM。</td>
+<td><strong>间接是</strong>。函数执行的结果可作为后续 LLM 调用的上下文输入。</td>
+</tr>
+<tr>
+<td><strong>输出形式</strong></td>
+<td><strong>自然语言文本</strong>(最终答案)。</td>
+<td><strong>结构化数据</strong>(函数调用请求 JSON)<strong>或自然语言文本</strong>(最终整合后的答案)。</td>
+</tr>
+<tr>
+<td><strong>依赖外部</strong></td>
+<td><strong>向量数据库/文档存储</strong>(存储和检索知识)。</td>
+<td><strong>后端函数/API/服务</strong>(执行具体操作或提供动态数据)。</td>
+</tr>
+<tr>
+<td><strong>解决痛点</strong></td>
+<td>知识过时、领域知识缺失、幻觉、需要溯源。</td>
+<td>无法执行操作、无法获取实时数据、无法精确操作外部系统。</td>
+</tr>
+<tr>
+<td><strong>典型输出</strong></td>
+<td>“根据[文档Y]第X节，… 的答案是…”</td>
+<td><code>&#123;&quot;name&quot;: &quot;get_weather&quot;, &quot;arguments&quot;: &#123;&quot;location&quot;: &quot;San Francisco&quot;&#125;&#125;</code>(或整合后的 “旧金山天气晴，22°C”)</td>
+</tr>
+</tbody></table>
+<h1 id="协同使用"><a href="#协同使用" class="headerlink" title="协同使用"></a>协同使用</h1><p>RAG 和 Function Calling<strong>不是互斥的，而是互补的</strong>，经常在同一个复杂的 LLM 应用中结合使用：</p>
+<ol>
+<li><strong>使用 Function Calling 执行检索：</strong>你可以定义一个<code>search_knowledge_base(query: string)</code>的函数。当用户提问时，LLM 可以决定调用这个函数。应用程序执行该函数（本质上就是进行一次 RAG 的检索步骤），将检索到的文档片段作为结果返回给 LLM。LLM 再基于这些片段生成最终回答。这相当于<strong>用 Function Calling 的机制来实现 RAG 流程</strong>。</li>
+<li><strong>在 RAG 流程中使用 Function Calling 获取必要信息：</strong>假设你的 RAG 系统需要回答一个需要实时数据的复杂问题（如 “基于我们最新的产品手册和当前的库存情况，我能在北京最快什么时候收到 Model X？”）。LLM 在分析增强后的提示（包含手册片段）时，可能发现需要当前库存和物流信息，于是输出一个调用<code>check_inventory(product_id)</code>和<code>get_shipping_estimate(location)</code>的请求。应用程序执行这些函数，将结果再次提供给 LLM。LLM 结合<em>手册片段</em>、<em>库存数据</em>和<em>物流信息</em>生成最终答案。</li>
+<li><strong>Function Calling 执行操作，RAG 提供操作依据：</strong>用户说 “请把这份报告的主要发现摘要邮件发给项目组”。LLM 可能先调用 RAG 函数<code>summarize_document(document_id)</code>获取摘要（RAG 部分），然后调用<code>send_email(recipients, subject, body)</code>函数，并将摘要作为邮件正文内容（Function Calling 部分）。</li>
+</ol>
+<h1 id="现有框架"><a href="#现有框架" class="headerlink" title="现有框架"></a>现有框架</h1><p>langchain4j 支持function calling，<code>@Tool</code>注解标记Tools方法，可以在注解值里标注此函数的用途。@P注解方法的参数，</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/06/18/zhihu-online-issue-solution/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/06/18/zhihu-online-issue-solution/" class="post-title-link" itemprop="url">JAVA线上故障排查全套路</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-06-18 00:00:00 / 修改时间：13:19:00" itemprop="dateCreated datePublished" datetime="2025-06-18T00:00:00+08:00">2025-06-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/zhihu/" itemprop="url" rel="index"><span itemprop="name">zhihu</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="JAVA线上故障排查全套路"><a href="#JAVA线上故障排查全套路" class="headerlink" title="JAVA线上故障排查全套路"></a>JAVA线上故障排查全套路</h1><p>线上故障主要会包括 cpu、磁盘、内存以及网络问题，而大多数故障可能会包含不止一个层面的问题，所以进行排查时候尽量四个方面依次排查一遍。同时例如 jstack、jmap 等工具也是不囿于一个方面的问题的，基本上出问题就是 df、free、top 三连，然后依次 jstack、jmap 伺候，具体问题具体分析即可。</p>
+<h2 id="CPU"><a href="#CPU" class="headerlink" title="CPU"></a>CPU</h2><p>一般来讲我们首先会排查 cpu 方面的问题。cpu 异常往往还是比较好定位的。原因包括业务逻辑问题(死循环)、频繁 gc 以及上下文切换过多。而最常见的往往是业务逻辑(或者框架逻辑)导致的，可以使用 jstack 来分析对应的堆栈情况。</p>
+<h3 id="使用-jstack-分析-cpu-问题"><a href="#使用-jstack-分析-cpu-问题" class="headerlink" title="使用 jstack 分析 cpu 问题"></a>使用 jstack 分析 cpu 问题</h3><p>我们先用ps命令找到对应进程的pid(如果你有好几个目标进程，可以先用top看一下哪个占用比较高)。 接着用<code>top -H -p pid</code>来找到cpu使用率比较高的一些线程</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-373ed9d9b598ef08cb1409b2008a658c_1440w.jpg" alt="img"></p>
+<p>然后将占用最高的pid转换为16进制<code>printf &#39;%x\n&#39; pid</code>得到nid</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-b571a2b7c9a68e37eb5872a784542f10_1440w.jpg" alt="img"></p>
+<p>img</p>
+<p>接着直接在 jstack 中找到相应的堆栈信息<code>jstack pid |grep &#39;nid&#39; -C5 –color</code></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-4b37b60d1bf1f7879c8bb0f624869ea5_1440w.jpg" alt="img"></p>
+<p>img</p>
+<p>可以看到我们已经找到了nid为0x42的堆栈信息，接着只要仔细分析一番即可。</p>
+<p>当然更常见的是我们对整个 jstack 文件进行分析，通常我们会比较关注 <strong>WAITING</strong> 和 <strong>TIMED_WAITING</strong> 的部分，BLOCKED 就不用说了。我们可以使用命令 <code>cat jstack.log | grep &quot;java.lang.Thread.State&quot; | sort -nr | uniq -c</code>来对 jstack 的状态有一个整体的把握，如果 WAITING 之类的特别多，那么多半是有问题啦。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-ffa1f2abe34c73b388cc40f3f96d9fde_1440w.jpg" alt="img"></p>
+<p>img</p>
+<h3 id="频繁-gc"><a href="#频繁-gc" class="headerlink" title="频繁 gc"></a>频繁 gc</h3><p>当然我们还是会使用 jstack 来分析问题，但有时候我们可以先确定下 gc 是不是太频繁，使用 <code>jstat -gc pid 1000</code> 命令来对 gc 分代变化情况进行观察，1000 表示采样间隔(ms)，S0C/S1C、S0U/S1U、EC/EU、OC/OU、MC/MU 分别代表两个 Survivor 区、Eden 区、老年代、元数据区的容量和使用量。YGC/YGT、FGC/FGCT、GCT则代表 YoungGc、FullGc 的耗时和次数以及总耗时。如果看到 gc 比较频繁，再针对 gc 方面做进一步分析。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-4e98d8de93de39dc06f9ffb0eb31ca90_1440w.jpg" alt="img"></p>
+<h3 id="上下文切换"><a href="#上下文切换" class="headerlink" title="上下文切换"></a>上下文切换</h3><p>针对频繁上下文问题，我们可以使用 <code>vmstat</code> 命令来进行查看</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-32b92418a9e9e83dff9eef723706fb15_1440w.jpg" alt="img"></p>
+<p>cs(context switch)一列则代表了上下文切换的次数。 如果我们希望对特定的pid进行监控那么可以使用 <code>pidstat -w pid</code>命令，cswch和nvcswch表示自愿及非自愿切换。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-76dbd738bab29801484c968cea305f0a_1440w.jpg" alt="img"></p>
+<h2 id="磁盘"><a href="#磁盘" class="headerlink" title="磁盘"></a>磁盘</h2><p>磁盘问题和 cpu 一样是属于比较基础的。首先是磁盘空间方面，我们直接使用 <code>df -hl</code> 来查看文件系统状态</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-0aa4c0d725afb4afe6193b693db075f0_1440w.jpg" alt="img"></p>
+<p>更多时候，磁盘问题还是性能上的问题。我们可以通过 iostat： <code>iostat -d -k -x</code> 来进行分析</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-58ff9b2f82607ca4f0c499ad8d976f31_1440w.jpg" alt="img"></p>
+<p>最后一列<code>%util</code>可以看到每块磁盘写入的程度，而<code>rrqpm/s</code>以及<code>wrqm/s</code>分别表示读写速度，一般就能帮助定位到具体哪块磁盘出现问题了。</p>
+<p>另外我们还需要知道是哪个进程在进行读写，一般来说开发自己心里有数，或者用iotop命令来进行定位文件读写的来源。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-0837c11a25cb8c4557f389ea231d4d7c_1440w.jpg" alt="img"></p>
+<p>不过这边拿到的是tid，我们要转换成pid，可以通过readlink来找到pid<code>readlink -f /proc/*/task/tid/../..</code>。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-379b5bc32975d90980e638f38b65d0ef_1440w.jpg" alt="img"></p>
+<p>找到pid之后就可以看这个进程具体的读写情况<code>cat /proc/pid/io</code></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-4670e1487ab85034df0166fb619747bd_1440w.jpg" alt="img"></p>
+<p>我们还可以通过lsof命令来确定具体的文件读写情况<code>lsof -p pid</code></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-1024a0f1f183e6a1268a8688de6a2769_1440w.jpg" alt="img"></p>
+<h2 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h2><p>内存问题排查起来相对比 CPU 麻烦一些，场景也比较多。主要包括 OOM、GC 问题和堆外内存。一般来讲，我们会先用<code>free</code>命令先来检查一发内存的各种情况。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-d42f87a16e07115b5df10ed7428b6948_1440w.jpg" alt="img"></p>
+<h3 id="堆内内存"><a href="#堆内内存" class="headerlink" title="堆内内存"></a>堆内内存</h3><p>内存问题大多还都是堆内内存问题。表象上主要分为 OOM 和 StackOverflow。</p>
+<h3 id="OOM"><a href="#OOM" class="headerlink" title="OOM"></a>OOM</h3><p>JMV 中的内存不足，OOM 大致可以分为以下几种：</p>
+<p><strong>Exception in thread “main” java.lang.OutOfMemoryError: unable to create new native thread</strong> 这个意思是没有足够的内存空间给线程分配java栈，基本上还是线程池代码写的有问题，比如说忘记shutdown，所以说应该首先从代码层面来寻找问题，使用jstack或者jmap。如果一切都正常，JVM方面可以通过指定<code>Xss</code>来减少单个 thread stack 的大小。另外也可以在系统层面，可以通过修改<code>/etc/security/limits.conf</code>nofile和nproc来增大os对线程的限制</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-d3e9f583034b7783d2c99964365fb18d_1440w.jpg" alt="img"></p>
+<p><strong>Exception in thread “main” java.lang.OutOfMemoryError: Java heap space</strong> 这个意思是堆的内存占用已经达到-Xmx设置的最大值，应该是最常见的OOM错误了。解决思路仍然是先应该在代码中找，怀疑存在内存泄漏，通过jstack和jmap去定位问题。如果说一切都正常，才需要通过调整<code>Xmx</code>的值来扩大内存。</p>
+<p><strong>Caused by: java.lang.OutOfMemoryError: Meta space</strong> 这个意思是元数据区的内存占用已经达到<code>XX:MaxMetaspaceSize</code>设置的最大值，排查思路和上面的一致，参数方面可以通过<code>XX:MaxPermSize</code>来进行调整(这里就不说1.8以前的永久代了)。</p>
+<h3 id="Stack-Overflow"><a href="#Stack-Overflow" class="headerlink" title="Stack Overflow"></a>Stack Overflow</h3><p>栈内存溢出，这个大家见到也比较多。 <strong>Exception in thread “main” java.lang.StackOverflowError</strong> 表示线程栈需要的内存大于Xss值，同样也是先进行排查，参数方面通过<code>Xss</code>来调整，但调整的太大可能又会引起OOM。</p>
+<h3 id="使用JMAP定位代码内存泄漏"><a href="#使用JMAP定位代码内存泄漏" class="headerlink" title="使用JMAP定位代码内存泄漏"></a>使用JMAP定位代码内存泄漏</h3><p>上述关于OOM和StackOverflow的代码排查方面，我们一般使用JMAP<code>jmap -dump:format=b,file=filename pid</code>来导出dump文件</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-3e6731c3e8501ad6b23a7edd900c805e_1440w.jpg" alt="img"></p>
+<p>通过mat(Eclipse Memory Analysis Tools)导入dump文件进行分析，内存泄漏问题一般我们直接选Leak Suspects即可，mat给出了内存泄漏的建议。另外也可以选择Top Consumers来查看最大对象报告。和线程相关的问题可以选择thread overview进行分析。除此之外就是选择Histogram类概览来自己慢慢分析，大家可以搜搜mat的相关教程。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-e9f6e70c3264d4ec9bd69a8d6d5c99e5_1440w.jpg" alt="img"></p>
+<p>日常开发中，代码产生内存泄漏是比较常见的事，并且比较隐蔽，需要开发者更加关注细节。比如说每次请求都new对象，导致大量重复创建对象；进行文件流操作但未正确关闭；手动不当触发gc；ByteBuffer缓存分配不合理等都会造成代码OOM。</p>
+<p>另一方面，我们可以在启动参数中指定<code>-XX:+HeapDumpOnOutOfMemoryError</code>来保存OOM时的dump文件。</p>
+<h3 id="gc问题和线程"><a href="#gc问题和线程" class="headerlink" title="gc问题和线程"></a>gc问题和线程</h3><p>gc问题除了影响cpu也会影响内存，排查思路也是一致的。一般先使用jstat来查看分代变化情况，比如youngGC或者fullGC次数是不是太多呀；EU、OU等指标增长是不是异常呀等。 线程的话太多而且不被及时gc也会引发oom，大部分就是之前说的<code>unable to create new native thread</code>。除了jstack细细分析dump文件外，我们一般先会看下总体线程，通过<code>pstreee -p pid |wc -l</code>。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-7aeda19334d1de41a203d69ce29cf944_1440w.jpg" alt="img"></p>
+<p>或者直接通过查看<code>/proc/pid/task</code>的数量即为线程数量。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-13e8f8517780a9ba86179e9602409cb8_1440w.jpg" alt="img"></p>
+<h3 id="堆外内存"><a href="#堆外内存" class="headerlink" title="堆外内存"></a>堆外内存</h3><p>如果碰到堆外内存溢出，那可真是太不幸了。首先堆外内存溢出表现就是物理常驻内存增长快，报错的话视使用方式都不确定，如果由于使用Netty导致的，那错误日志里可能会出现<code>OutOfDirectMemoryError</code>错误，如果直接是DirectByteBuffer，那会报<code>OutOfMemoryError: Direct buffer memory</code>。</p>
+<p>堆外内存溢出往往是和NIO的使用相关，一般我们先通过pmap来查看下进程占用的内存情况<code>pmap -x pid | sort -rn -k3 | head -30</code>，这段意思是查看对应pid倒序前30大的内存段。这边可以再一段时间后再跑一次命令看看内存增长情况，或者和正常机器比较可疑的内存段在哪里。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-dc39fc53b5c0136ed0eefb043a392513_1440w.jpg" alt="img"></p>
+<p>我们如果确定有可疑的内存端，需要通过gdb来分析<code>gdb --batch --pid &#123;pid&#125; -ex &quot;dump memory filename.dump &#123;内存起始地址&#125; &#123;内存起始地址+内存块大小&#125;&quot;</code></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-cc7cced3d6fd53db0dafd197ec7332e3_1440w.jpg" alt="img"></p>
+<p>获取dump文件后可用heaxdump进行查看<code>hexdump -C filename | less</code>，不过大多数看到的都是二进制乱码。</p>
+<p>NMT是Java7U40引入的HotSpot新特性，配合jcmd命令我们就可以看到具体内存组成了。需要在启动参数中加入 <code>-XX:NativeMemoryTracking=summary</code> 或者 <code>-XX:NativeMemoryTracking=detail</code>，会有略微性能损耗。</p>
+<p>一般对于堆外内存缓慢增长直到爆炸的情况来说，可以先设一个基线<code>jcmd pid VM.native_memory baseline</code>。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-e1a085000e224b1d11a83e5c73d14798_1440w.jpg" alt="img"></p>
+<p>然后等放一段时间后再去看看内存增长的情况，通过<code>jcmd pid VM.native_memory detail.diff(summary.diff)</code>做一下summary或者detail级别的diff。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-5baf0c7cd5a60c1458ebfb38746c3509_1440w.jpg" alt="img"></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-f73b2a6e9e1fbe45cc19f1c10706cd52_1440w.jpg" alt="img"></p>
+<p>可以看到jcmd分析出来的内存十分详细，包括堆内、线程以及gc(所以上述其他内存异常其实都可以用nmt来分析)，这边堆外内存我们重点关注Internal的内存增长，如果增长十分明显的话那就是有问题了。 detail级别的话还会有具体内存段的增长情况，如下图。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-32f9bac8d651186f6564815965eb953f_1440w.jpg" alt="img"></p>
+<p>此外在系统层面，我们还可以使用strace命令来监控内存分配 <code>strace -f -e &quot;brk,mmap,munmap&quot; -p pid</code> 这边内存分配信息主要包括了pid和内存地址。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-6b150dab7ebbc5ba2fd87432d32145a4_1440w.jpg" alt="img"></p>
+<p>不过其实上面那些操作也很难定位到具体的问题点，关键还是要看错误日志栈，找到可疑的对象，搞清楚它的回收机制，然后去分析对应的对象。比如DirectByteBuffer分配内存的话，是需要full GC或者手动system.gc来进行回收的(所以最好不要使用<code>-XX:+DisableExplicitGC</code>)。那么其实我们可以跟踪一下DirectByteBuffer对象的内存情况，通过<code>jmap -histo:live pid</code>手动触发fullGC来看看堆外内存有没有被回收。如果被回收了，那么大概率是堆外内存本身分配的太小了，通过<code>-XX:MaxDirectMemorySize</code>进行调整。如果没有什么变化，那就要使用jmap去分析那些不能被gc的对象，以及和DirectByteBuffer之间的引用关系了。</p>
+<h2 id="GC"><a href="#GC" class="headerlink" title="GC"></a>GC</h2><p>堆内内存泄漏总是和GC异常相伴。不过GC问题不只是和内存问题相关，还有可能引起CPU负载、网络问题等系列并发症，只是相对来说和内存联系紧密些，所以我们在此单独总结一下GC相关问题。</p>
+<p>我们在cpu章介绍了使用jstat来获取当前GC分代变化信息。而更多时候，我们是通过GC日志来排查问题的，在启动参数中加上<code>-verbose:gc -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps</code>来开启GC日志。 常见的Young GC、Full GC日志含义在此就不做赘述了。</p>
+<p>针对gc日志，我们就能大致推断出youngGC与fullGC是否过于频繁或者耗时过长，从而对症下药。我们下面将对G1垃圾收集器来做分析，这边也建议大家使用G1<code>-XX:+UseG1GC</code>。</p>
+<p><strong>youngGC过频繁</strong> youngGC频繁一般是短周期小对象较多，先考虑是不是Eden区/新生代设置的太小了，看能否通过调整-Xmn、-XX:SurvivorRatio等参数设置来解决问题。如果参数正常，但是young gc频率还是太高，就需要使用Jmap和MAT对dump文件进行进一步排查了。</p>
+<p><strong>youngGC耗时过长</strong> 耗时过长问题就要看GC日志里耗时耗在哪一块了。以G1日志为例，可以关注Root Scanning、Object Copy、Ref Proc等阶段。Ref Proc耗时长，就要注意引用相关的对象。Root Scanning耗时长，就要注意线程数、跨代引用。Object Copy则需要关注对象生存周期。而且耗时分析它需要横向比较，就是和其他项目或者正常时间段的耗时比较。比如说图中的Root Scanning和正常时间段比增长较多，那就是起的线程太多了。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-b7a13c185873ecc4f890e4f55fda6378_1440w.jpg" alt="img"></p>
+<p><strong>触发fullGC</strong> G1中更多的还是mixedGC，但mixedGC可以和youngGC思路一样去排查。触发fullGC了一般都会有问题，G1会退化使用Serial收集器来完成垃圾的清理工作，暂停时长达到秒级别，可以说是半跪了。 fullGC的原因可能包括以下这些，以及参数调整方面的一些思路：</p>
+<ul>
+<li>并发阶段失败：在并发标记阶段，MixGC之前老年代就被填满了，那么这时候G1就会放弃标记周期。这种情况，可能就需要增加堆大小，或者调整并发标记线程数<code>-XX:ConcGCThreads</code>。</li>
+<li>晋升失败：在GC的时候没有足够的内存供存活/晋升对象使用，所以触发了Full GC。这时候可以通过<code>-XX:G1ReservePercent</code>来增加预留内存百分比，减少<code>-XX:InitiatingHeapOccupancyPercent</code>来提前启动标记，<code>-XX:ConcGCThreads</code>来增加标记线程数也是可以的。</li>
+<li>大对象分配失败：大对象找不到合适的region空间进行分配，就会进行fullGC，这种情况下可以增大内存或者增大<code>-XX:G1HeapRegionSize</code>。</li>
+<li>程序主动执行System.gc()：不要随便写就对了。</li>
+</ul>
+<p>另外，我们可以在启动参数中配置<code>-XX:HeapDumpPath=/xxx/dump.hprof</code>来dump fullGC相关的文件，并通过jinfo来进行gc前后的dump</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jinfo -flag +HeapDumpBeforeFullGC pid </span><br><span class="line">jinfo -flag +HeapDumpAfterFullGC pid</span><br></pre></td></tr></table></figure>
+
+<p>这样得到2份dump文件，对比后主要关注被gc掉的问题对象来定位问题。</p>
+<h2 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h2><p>涉及到网络层面的问题一般都比较复杂，场景多，定位难，成为了大多数开发的噩梦，应该是最复杂的了。这里会举一些例子，并从tcp层、应用层以及工具的使用等方面进行阐述。</p>
+<h3 id="超时"><a href="#超时" class="headerlink" title="超时"></a>超时</h3><p>超时错误大部分处在应用层面，所以这块着重理解概念。超时大体可以分为连接超时和读写超时，某些使用连接池的客户端框架还会存在获取连接超时和空闲连接清理超时。</p>
+<ul>
+<li>读写超时。readTimeout/writeTimeout，有些框架叫做so_timeout或者socketTimeout，均指的是数据读写超时。注意这边的超时大部分是指逻辑上的超时。soa的超时指的也是读超时。读写超时一般都只针对客户端设置。</li>
+<li>连接超时。connectionTimeout，客户端通常指与服务端建立连接的最大时间。服务端这边connectionTimeout就有些五花八门了，jetty中表示空闲连接清理时间，tomcat则表示连接维持的最大时间。</li>
+<li>其他。包括连接获取超时connectionAcquireTimeout和空闲连接清理超时idleConnectionTimeout。多用于使用连接池或队列的客户端或服务端框架。</li>
+</ul>
+<p>我们在设置各种超时时间中，需要确认的是尽量保持客户端的超时小于服务端的超时，以保证连接正常结束。</p>
+<p>在实际开发中，我们关心最多的应该是接口的读写超时了。</p>
+<p>如何设置合理的接口超时是一个问题。如果接口超时设置的过长，那么有可能会过多地占用服务端的tcp连接。而如果接口设置的过短，那么接口超时就会非常频繁。</p>
+<p>服务端接口明明rt降低，但客户端仍然一直超时又是另一个问题。这个问题其实很简单，客户端到服务端的链路包括网络传输、排队以及服务处理等，每一个环节都可能是耗时的原因。</p>
+<h3 id="TCP队列溢出"><a href="#TCP队列溢出" class="headerlink" title="TCP队列溢出"></a>TCP队列溢出</h3><p>tcp队列溢出是个相对底层的错误，它可能会造成超时、rst等更表层的错误。因此错误也更隐蔽，所以我们单独说一说。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-289c20c451ddf84900d1f4a6cf7309fc_1440w.jpg" alt="img"></p>
+<p>如上图所示，这里有两个队列：syns queue(半连接队列）、accept queue（全连接队列）。三次握手，在server收到client的syn后，把消息放到syns queue，回复syn+ack给client，server收到client的ack，如果这时accept queue没满，那就从syns queue拿出暂存的信息放入accept queue中，否则按tcp_abort_on_overflow指示的执行。</p>
+<p>tcp_abort_on_overflow 0表示如果三次握手第三步的时候accept queue满了那么server扔掉client发过来的ack。tcp_abort_on_overflow 1则表示第三步的时候如果全连接队列满了，server发送一个rst包给client，表示废掉这个握手过程和这个连接，意味着日志里可能会有很多<code>connection reset / connection reset by peer</code>。</p>
+<p>那么在实际开发中，我们怎么能快速定位到tcp队列溢出呢？</p>
+<p><strong>netstat命令，执行netstat -s | egrep “listen|LISTEN”</strong></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-83733a82b2961b9578aaea08f6073424_1440w.jpg" alt="img"></p>
+<p>如上图所示，overflowed表示全连接队列溢出的次数，sockets dropped表示半连接队列溢出的次数。</p>
+<p><strong>ss命令，执行ss -lnt</strong></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-1d54ee672b91f702cc2c94bc08bb111a_1440w.jpg" alt="img"></p>
+<p>上面看到Send-Q 表示第三列的listen端口上的全连接队列最大为5，第一列Recv-Q为全连接队列当前使用了多少。</p>
+<p>接着我们看看怎么设置全连接、半连接队列大小吧：</p>
+<p>全连接队列的大小取决于min(backlog, somaxconn)。backlog是在socket创建的时候传入的，somaxconn是一个os级别的系统参数。而半连接队列的大小取决于max(64, /proc/sys/net/ipv4/tcp_max_syn_backlog)。</p>
+<p>在日常开发中，我们往往使用servlet容器作为服务端，所以我们有时候也需要关注容器的连接队列大小。在tomcat中backlog叫做<code>acceptCount</code>，在jetty里面则是<code>acceptQueueSize</code>。</p>
+<h3 id="RST异常"><a href="#RST异常" class="headerlink" title="RST异常"></a>RST异常</h3><p>RST包表示连接重置，用于关闭一些无用的连接，通常表示异常关闭，区别于四次挥手。</p>
+<p>在实际开发中，我们往往会看到<code>connection reset / connection reset by peer</code>错误，这种情况就是RST包导致的。</p>
+<p><strong>端口不存在</strong></p>
+<p>如果像不存在的端口发出建立连接SYN请求，那么服务端发现自己并没有这个端口则会直接返回一个RST报文，用于中断连接。</p>
+<p><strong>主动代替FIN终止连接</strong></p>
+<p>一般来说，正常的连接关闭都是需要通过FIN报文实现，然而我们也可以用RST报文来代替FIN，表示直接终止连接。实际开发中，可设置SO_LINGER数值来控制，这种往往是故意的，来跳过TIMED_WAIT，提供交互效率，不闲就慎用。</p>
+<p><strong>客户端或服务端有一边发生了异常，该方向对端发送RST以告知关闭连接</strong></p>
+<p>我们上面讲的tcp队列溢出发送RST包其实也是属于这一种。这种往往是由于某些原因，一方无法再能正常处理请求连接了(比如程序崩了，队列满了)，从而告知另一方关闭连接。</p>
+<p><strong>接收到的TCP报文不在已知的TCP连接内</strong></p>
+<p>比如，一方机器由于网络实在太差TCP报文失踪了，另一方关闭了该连接，然后过了许久收到了之前失踪的TCP报文，但由于对应的TCP连接已不存在，那么会直接发一个RST包以便开启新的连接。</p>
+<p><strong>一方长期未收到另一方的确认报文，在一定时间或重传次数后发出RST报文</strong></p>
+<p>这种大多也和网络环境相关了，网络环境差可能会导致更多的RST报文。</p>
+<p>之前说过RST报文多会导致程序报错，在一个已关闭的连接上读操作会报<code>connection reset</code>，而在一个已关闭的连接上写操作则会报<code>connection reset by peer</code>。通常我们可能还会看到<code>broken pipe</code>错误，这是管道层面的错误，表示对已关闭的管道进行读写，往往是在收到RST，报出<code>connection reset</code>错后继续读写数据报的错，这个在glibc源码注释中也有介绍。</p>
+<p>我们在排查故障时候怎么确定有RST包的存在呢？当然是使用tcpdump命令进行抓包，并使用wireshark进行简单分析了。<code>tcpdump -i en0 tcp -w xxx.cap</code>，en0表示监听的网卡。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-1bee5c73806eff9c4ab3865e0ccafe35_1440w.jpg" alt="img"></p>
+<p>接下来我们通过wireshark打开抓到的包，可能就能看到如下图所示，红色的就表示RST包了。</p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-c66a1a6f0980872955154f5b56115aad_1440w.jpg" alt="img"></p>
+<h3 id="TIME-WAIT和CLOSE-WAIT"><a href="#TIME-WAIT和CLOSE-WAIT" class="headerlink" title="TIME_WAIT和CLOSE_WAIT"></a>TIME_WAIT和CLOSE_WAIT</h3><p>TIME_WAIT和CLOSE_WAIT是啥意思相信大家都知道。 在线上时，我们可以直接用命令<code>netstat -n | awk &#39;/^tcp/ &#123;++S[$NF]&#125; END &#123;for(a in S) print a, S[a]&#125;&#39;</code>来查看time-wait和close_wait的数量</p>
+<p>用ss命令会更快<code>ss -ant | awk &#39;&#123;++S[$1]&#125; END &#123;for(a in S) print a, S[a]&#125;&#39;</code></p>
+<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-5dcc6f7924aaca763ebc8058397611d1_1440w.jpg" alt="img"></p>
+<p>img</p>
+<h3 id="TIME-WAIT"><a href="#TIME-WAIT" class="headerlink" title="TIME_WAIT"></a>TIME_WAIT</h3><p>time_wait的存在一是为了丢失的数据包被后面连接复用，二是为了在2MSL的时间范围内正常关闭连接。它的存在其实会大大减少RST包的出现。</p>
+<p>过多的time_wait在短连接频繁的场景比较容易出现。这种情况可以在服务端做一些内核参数调优:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#表示开启重用。允许将TIME-WAIT sockets重新用于新的TCP连接，默认为0，表示关闭</span><br><span class="line">net.ipv4.tcp_tw_reuse = 1</span><br><span class="line">#表示开启TCP连接中TIME-WAIT sockets的快速回收，默认为0，表示关闭</span><br><span class="line">net.ipv4.tcp_tw_recycle = 1</span><br></pre></td></tr></table></figure>
+
+<p>当然我们不要忘记在NAT环境下因为时间戳错乱导致数据包被拒绝的坑了，另外的办法就是改小<code>tcp_max_tw_buckets</code>，超过这个数的time_wait都会被干掉，不过这也会导致报<code>time wait bucket table overflow</code>的错。</p>
+<h3 id="CLOSE-WAIT"><a href="#CLOSE-WAIT" class="headerlink" title="CLOSE_WAIT"></a>CLOSE_WAIT</h3><p>close_wait 往往都是因为应用程序写的有问题，没有在 ACK 后再次发起 FIN 报文。close_wait 出现的概率甚至比time_wait要更高，后果也更严重。往往是由于某个地方阻塞住了，没有正常关闭连接，从而渐渐地消耗完所有的线程。</p>
+<p>想要定位这类问题，最好是通过jstack来分析线程堆栈来排查问题，具体可参考上述章节。这里仅举一个例子。</p>
+<p>开发同学说应用上线后CLOSE_WAIT就一直增多，直到挂掉为止，jstack后找到比较可疑的堆栈是大部分线程都卡在了<code>countdownlatch.await</code>方法，找开发同学了解后得知使用了多线程但是确没有catch异常，修改后发现异常仅仅是最简单的升级sdk后常出现的<code>class not found</code>。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2853,533 +3535,6 @@ $$
 <li>Reactor only handle the IO read/write reactively, it will notify user when there is anything that is ready for read/write, so user could read/write the data, and handle business logic</li>
 </ul>
 <p>Proactor和Reactor都是并发编程中的设计模式。在我看来，他们都是用于派发/分离IO操作事件的。这里所谓的IO事件也就是诸如read/write的IO操作。”派发/分离”就是将单独的IO事件通知到上层模块。两个模式不同的地方在于，Proactor用于异步IO，而Reactor用于同步IO。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/29/algorithm-top100freq-files/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/29/algorithm-top100freq-files/" class="post-title-link" itemprop="url">超大文件中在有限的内存里找到单词频率 top 100</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-29 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-29T00:00:00+08:00">2025-05-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-06-13 15:22:38" itemprop="dateModified" datetime="2025-06-13T15:22:38+08:00">2025-06-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="TOP-100-freq-words"><a href="#TOP-100-freq-words" class="headerlink" title="TOP 100 freq words"></a>TOP 100 freq words</h1><h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>问题：有一个 1G 大小的文件，里面每一行是一个词，每个词的大小不超过 16 字节，内存限制大小是 1M。返回出现频率最高的 100 个单词</p>
-<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><ul>
-<li>有一个 1GB 的文件，每行是一个词，每个词不超过 16 字节。</li>
-<li>内存限制为 1MB，因此无法一次性加载整个文件到内存中处理。</li>
-<li>需要返回出现频率最高的 100 个词，要求精确结果（非近似）。</li>
-<li>核心挑战：内存小，文件大，需高效处理大数据，避免内存溢出。</li>
-</ul>
-<h3 id="解决思路：分治法-外部排序-堆维护-Top-100"><a href="#解决思路：分治法-外部排序-堆维护-Top-100" class="headerlink" title="解决思路：分治法 + 外部排序 + 堆维护 Top 100"></a>解决思路：分治法 + 外部排序 + 堆维护 Top 100</h3><p>使用分治法将大文件分解为小文件块，每个块在内存中处理，然后多级合并部分结果。在合并过程中，维护一个最小堆来跟踪全局频率最高的 100 个词。思路简单直接，步骤如下：</p>
-<ol>
-<li><strong>分块（Divide）</strong>：<ul>
-<li>将大文件分割成多个小文件块，每个块大小约 500KB（约 32,000 行），确保块内不同词的数量不超过内存限制（1MB）。<ul>
-<li>为什么 500KB？内存 1MB，每个词最大 16 字节，哈希表条目（词 + 频率）约 20-32 字节（包括开销），32,000 个不同词需约 640KB，小于 1MB。</li>
-</ul>
-</li>
-<li>分割方法：顺序读取大文件，逐行写入块文件，直到块大小达到约 500KB。重复直到处理完整个文件。</li>
-<li>块数量：文件 1GB ≈ 1,000,000,000 字节，每行平均约 10 字节（词 + 换行符），总行数约 100,000,000 行。每个块 32,000 行，块数约 3,125（100,000,000 / 32,000 ≈ 3,125）。</li>
-</ul>
-</li>
-<li><strong>块内处理（Process Chunks）</strong>：<ul>
-<li>对每个块文件：<ul>
-<li>读入内存（约 500KB）。</li>
-<li>使用哈希表统计词频：逐行读取，以词为键，累加频率。</li>
-<li>块处理完后，对哈希表中的词按键（词）排序。</li>
-<li>输出到临时文件：每行格式为 “词 频率”，并按词排序（便于后续合并）。</li>
-</ul>
-</li>
-<li>内存使用：哈希表存储词（最大 16 字节）和频率（4 字节整数），条目上限 32,000，总内存约 640KB，满足 1MB 限制。</li>
-<li>输出：每个块生成一个排序后的部分频率文件。</li>
-</ul>
-</li>
-<li><strong>第一级合并（Merge Partially）</strong>：<ul>
-<li>部分文件数量多（约 3,125 个），需分组合并，避免同时打开太多文件（文件描述符限制，假设一次最多打开 256 个文件）。</li>
-<li>分组：将约 3,125 个部分文件分成 13 组（每组 240 文件）和 1 组（剩余文件），确保每组文件数 ≤ 256。</li>
-<li>对每组执行多路合并：<ul>
-<li>使用优先队列（最小堆）按键（词）合并：堆中每个条目存储（词、频率、文件索引），大小约 30 字节。</li>
-<li>合并逻辑：弹出最小词，检查所有输入文件是否有相同词，累加频率，输出全局（词，聚合频率）到新临时文件（按词排序）。</li>
-<li>内存使用：优先队列（256 条目 × 30 字节 ≈ 7.7KB），输入缓冲区（每个文件 512 字节缓冲区 × 256 文件 ≈ 128KB），输出缓冲区（4KB），总内存约 140KB &lt; 1MB。</li>
-</ul>
-</li>
-<li>输出：每组生成一个更大的排序频率文件（约 13 个文件）。</li>
-</ul>
-</li>
-<li><strong>第二级合并与 Top 100 提取（Final Merge and Heap Update）</strong>：<ul>
-<li>第一级合并后，文件数少（约 13 个），可一次性合并。</li>
-<li>执行多路合并（13 路）：<ul>
-<li>使用优先队列按键（词）合并：堆中每个条目约 30 字节。</li>
-<li>合并逻辑：弹出最小词，累加所有输入文件中的频率，得到全局（词，全局频率）。</li>
-<li>同时维护一个最小堆（大小 100）用于 Top 100：以频率为键，存储（词，频率）。<ul>
-<li>对于每个全局（词，频率），插入堆中。</li>
-<li>如果堆大小 &gt; 100，弹出最小频率条目，确保堆始终保留最大频率的 100 个词。</li>
-</ul>
-</li>
-<li>内存使用：优先队列（13 条目 × 30 字节 ≈ 0.4KB），输入缓冲区（13 文件 × 4KB = 52KB），堆（100 条目 × 30 字节 ≈ 3KB），总内存约 55KB &lt; 1MB。</li>
-<li>注意：无需输出完整全局文件，只更新堆，节省内存和磁盘。</li>
-</ul>
-</li>
-<li>处理完所有词后，堆中即为频率最高的 100 个词。</li>
-</ul>
-</li>
-<li><strong>输出结果</strong>：<ul>
-<li>堆中元素按频率最小堆组织，但 Top 100 已确定。</li>
-<li>将堆中元素按频率降序排序（例如，通过逐个弹出并反转），返回结果。</li>
-</ul>
-</li>
-</ol>
-<h3 id="为什么满足内存限制？"><a href="#为什么满足内存限制？" class="headerlink" title="为什么满足内存限制？"></a>为什么满足内存限制？</h3><ul>
-<li>分块大小（500KB）确保块内处理在 1MB 内。</li>
-<li>合并阶段使用小缓冲区（每个文件 512 字节-4KB）和紧凑数据结构（优先队列条目 30 字节），总内存始终 &lt; 1MB。</li>
-<li>堆维护 Top 100 仅需约 3KB，不影响内存。</li>
-</ul>
-<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ul>
-<li>简单直接：分治减少内存压力，外部排序处理大数据，堆高效维护 Top K。</li>
-<li>精确结果：通过全局频率累加，确保正确性。</li>
-<li>可扩展：适用于更大文件或更小内存。</li>
-</ul>
-<p>此思路可在标准编程语言（如 Python、Java）中实现，注意文件 I/O 和缓冲区管理以优化性能。</p>
-<h2 id="解法一"><a href="#解法一" class="headerlink" title="解法一"></a>解法一</h2><p>第一步：将 1 G 拆分成小文件，每个小文件的大小不超过 1 MB ，其实应该留空间用于统计一个小文件中单词出现的频率，所以为了保险起见，每个文件的大小不超过 512 kb，那么得到 1 GB / 512 KB = 2048 个小文件</p>
-<p>这里不用 hash 的方法来切分小文件，直接顺序读取然后写到小文件，小文件大小多到了 512kb 就关闭，写下一个小文件</p>
-<p>第二步：分别对每个文件做下面的事情：<br>① 将小文件中的单词加载进内存<br>② 使用 HashMap 进行单词统计<br>③ 将 HashMap 中词频数据写到另一个新的小文件中，我们称为词频小文件<br>这里再写的时候，对单词进行 hash (word) % 2048 写到对应的文件中<br>这样做的目的是为了相同的单词放到同一个文件中。</p>
-<p>第三步：初始化一个 100 个节点的小顶堆，用于保存 100 个出现频率最多的单词<br>分别对每个词频小文件做下面的事情：<br>① 将小文件中的单词及其频率加载进内存<br>② 使用 HashMap 进行单词统计<br>③ 遍历 HashMap 中单词词频，如果词频大于小顶堆中堆顶词频的话，则放入小顶堆，否则不放</p>
-<p>最终，小顶堆中的 100 个单词就是出现频率最多的单词了</p>
-<p>该方案在第二步的第 ③ 点的时候有点问题：就是当词频小文件大于 1 M 了，该怎么处理呢？<br>或者说极端情况下，每个单词都只出现一次，并且每个单词的 hash (word) % 2048 值都是相同的话，那词频小文件的大小都会超过 1 G 了</p>
-<h2 id="解法二"><a href="#解法二" class="headerlink" title="解法二"></a>解法二</h2><p>第一步：使用多路归并排序对大文件进行排序，这样相同的单词肯定是挨着的</p>
-<p>第二步：<br>① 初始化一个 100 个节点的小顶堆，用于保存 100 个出现频率最多的单词<br>② 遍历整个文件，一个单词一个单词的从文件中取出来，并计数<br>③ 等到遍历的单词和上一个单词不同的话，那么上一个单词及其频率如果大于堆顶的词的频率，那么放在堆中，否则不放</p>
-<p>最终，小顶堆中就是出现频率前 100 的单词了</p>
-<p>多路归并排序对大文件进行排序的步骤如下：<br>① 将文件按照顺序切分成大小不超过 512KB 的小文件，总共 2048 个小文件<br>② 使用 1MB 内存分别对 2048 个小文件中的单词进行排序<br>③ 使用一个大小为 2048 大小的堆，对 2048 个小文件进行多路排序，结果写到一个大文件中</p>
-<h2 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h2><h3 id="数据准备和工具类"><a href="#数据准备和工具类" class="headerlink" title="数据准备和工具类"></a>数据准备和工具类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">FileIOUtils</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 拿到指定文件的输入流，并包装成文件 BufferedReader</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> BufferedReader <span class="title function_">getReader</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">FileInputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(name);</span><br><span class="line">            <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedReader</span>(<span class="keyword">new</span> <span class="title class_">InputStreamReader</span>(inputStream));</span><br><span class="line">            <span class="keyword">return</span> br;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;IOException&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 拿到指定文件的输出流，并包装成文件 BufferedWriter</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> BufferedWriter <span class="title function_">getWriter</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">FileOutputStream</span> <span class="variable">outputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(name);</span><br><span class="line">            <span class="type">BufferedWriter</span> <span class="variable">bw</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedWriter</span>(<span class="keyword">new</span> <span class="title class_">OutputStreamWriter</span>(outputStream));</span><br><span class="line">            <span class="keyword">return</span> bw;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;IOException&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">closeReader</span><span class="params">(Reader reader)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (reader != <span class="literal">null</span>) &#123;</span><br><span class="line">                reader.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;IOException&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">closeWriter</span><span class="params">(Writer writer)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (writer != <span class="literal">null</span>) &#123;</span><br><span class="line">                writer.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;IOException&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 准备阶段：准备 1G 的文件，文件中每一行一个单词，每个单词的大小小于等于 16 字节</span></span><br><span class="line"><span class="comment"> * 数据写道当前工程目录下的文件：data\top100\words.txt</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_0_WordsGenerator</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Random</span> <span class="variable">r</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedWriter</span> <span class="variable">writer</span> <span class="operator">=</span> FileIOUtils.getWriter(<span class="string">&quot;data\\top100\\words.txt&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">char</span>[] chars = &#123;<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;d&#x27;</span>, <span class="string">&#x27;e&#x27;</span>, <span class="string">&#x27;f&#x27;</span>, <span class="string">&#x27;g&#x27;</span>&#125;;</span><br><span class="line">        <span class="type">int</span> <span class="variable">m</span> <span class="operator">=</span> chars.length;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">10000</span>; i++) &#123;</span><br><span class="line">            <span class="type">StringBuilder</span> <span class="variable">line</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringBuilder</span>();</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">j</span> <span class="operator">=</span> <span class="number">0</span>; j &lt; r.nextInt(<span class="number">16</span>); j++) &#123;</span><br><span class="line">                line.append(chars[r.nextInt(m)]);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (line.length() == <span class="number">0</span>) <span class="keyword">continue</span>;</span><br><span class="line">            writer.write(line.toString());</span><br><span class="line">            writer.newLine();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        FileIOUtils.closeWriter(writer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="将一个大文件切割成多个小文件"><a href="#将一个大文件切割成多个小文件" class="headerlink" title="将一个大文件切割成多个小文件"></a>将一个大文件切割成多个小文件</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 第一步：将一个大文件切割成多个小文件</span></span><br><span class="line"><span class="comment"> * 小文件的大小为 512kb 左右</span></span><br><span class="line"><span class="comment"> * 小文件都写到这个目录下：data\top100\raw_data\</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_1_FileSplit</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">splitFile</span><span class="params">(String fileName)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">fileNum</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileSuffix</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\raw_data\\&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">littleFileName</span> <span class="operator">=</span> fileSuffix + fileNum;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 记录每个小文件的大小</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">totalSize</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedWriter</span> <span class="variable">bw</span> <span class="operator">=</span> FileIOUtils.getWriter(littleFileName);</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> FileIOUtils.getReader(fileName);</span><br><span class="line">        <span class="type">String</span> <span class="variable">line</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">while</span> ((line = br.readLine()) != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 如果当前小文件大小大于 512KB ，那么关闭当前小文件，写下一个小文件</span></span><br><span class="line">            <span class="keyword">if</span> (totalSize &gt;= <span class="number">512</span> * <span class="number">1024</span>) &#123;</span><br><span class="line">                <span class="comment">// 关闭当前小文件的输出流</span></span><br><span class="line">                FileIOUtils.closeWriter(bw);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 拿到下一个小文件的输出流，开始写下一个小文件</span></span><br><span class="line">                fileNum++;</span><br><span class="line">                littleFileName = fileSuffix + fileNum;</span><br><span class="line">                bw = FileIOUtils.getWriter(littleFileName);</span><br><span class="line">                totalSize = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            totalSize += line.length();</span><br><span class="line"></span><br><span class="line">            bw.write(line);</span><br><span class="line">            bw.newLine();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        FileIOUtils.closeReader(br);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\words.txt&quot;</span>;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">_1_FileSplit</span>().splitFile(fileName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="每个小文件中的单词进行排序"><a href="#每个小文件中的单词进行排序" class="headerlink" title="每个小文件中的单词进行排序"></a>每个小文件中的单词进行排序</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 第二步：将每个小文件中的单词进行排序</span></span><br><span class="line"><span class="comment"> *  排序后的数据写到另一个目录：data\top100\sorted_data\</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_2_LittleFileSorter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sortEachFile</span><span class="params">(String dirName)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">File</span> <span class="variable">dir</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(dirName);</span><br><span class="line">        File[] littleFiles = dir.listFiles();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 排序每一个小文件中的单词</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; littleFiles.length; i++) &#123;</span><br><span class="line">            <span class="comment">// 1. 将当前小文件中单词读取到内存中</span></span><br><span class="line">            <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> FileIOUtils.getReader(littleFiles[i].getName());</span><br><span class="line">            List&lt;String&gt; words = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">            <span class="type">String</span> <span class="variable">line</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">            <span class="keyword">while</span> ((line = br.readLine()) != <span class="literal">null</span>) &#123;</span><br><span class="line">                words.add(line);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            FileIOUtils.closeReader(br);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 2. 对当前文件中的所有单词进行排序</span></span><br><span class="line">            Collections.sort(words);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 3. 将排完序的单词写道目标文件中</span></span><br><span class="line">            <span class="type">BufferedWriter</span> <span class="variable">bw</span> <span class="operator">=</span> FileIOUtils.getWriter(<span class="string">&quot;data\\top100\\sorted_data\\&quot;</span> + i);</span><br><span class="line">            <span class="keyword">for</span> (String word : words) &#123;</span><br><span class="line">                bw.write(word);</span><br><span class="line">                bw.newLine();</span><br><span class="line">            &#125;</span><br><span class="line">            FileIOUtils.closeWriter(bw);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">dir</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\raw_data&quot;</span>;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">_2_LittleFileSorter</span>().sortEachFile(dir);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="对有序的小文件进行外部排序"><a href="#对有序的小文件进行外部排序" class="headerlink" title="对有序的小文件进行外部排序"></a>对有序的小文件进行外部排序</h3><p>我们先写一个 BufferedIterator 类，如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// BufferedIterator 是对文件输入流 BufferedReader 的包装，用于：</span></span><br><span class="line"><span class="comment">//  ① 判断输入流中是否还有数据，有过有的话，则先缓存下一行数据</span></span><br><span class="line"><span class="comment">//  ② 得到文件输入流中的下一行数据</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BufferedIterator</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> BufferedReader reader;</span><br><span class="line">    <span class="keyword">private</span> String head;</span><br><span class="line"></span><br><span class="line">    BufferedIterator(BufferedReader reader) &#123;</span><br><span class="line">        <span class="built_in">this</span>.reader = reader;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">hasNext</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            head = <span class="built_in">this</span>.reader.readLine();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            head = <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> head != <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">next</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">close</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="built_in">this</span>.reader.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>然后使用多路归并排序来实现文件的外部排序，如下代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 第三步： 对有序的小文件进行外部排序</span></span><br><span class="line"><span class="comment"> * 使用多路归并排序实现</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_3_ExternalSorter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">mergeSort</span><span class="params">(String dirName)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="type">File</span> <span class="variable">dir</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">File</span>(dirName);</span><br><span class="line">        File[] children = dir.listFiles();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 初始化一个最小堆，大小就是有序小文件的个数</span></span><br><span class="line">        <span class="comment">// 堆中的每个节点存放每个有序小文件对应的输入流</span></span><br><span class="line">        <span class="comment">// BufferedIterator 是对文件输入流 BufferedReader 的包装，用于：</span></span><br><span class="line">        <span class="comment">//  ① 判断输入流中是否还有数据</span></span><br><span class="line">        <span class="comment">//  ② 得到文件输入流中的下一行数据</span></span><br><span class="line">        PriorityQueue&lt;BufferedIterator&gt; minHeap = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;(children.length, <span class="keyword">new</span> <span class="title class_">Comparator</span>&lt;BufferedIterator&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compare</span><span class="params">(BufferedIterator o1, BufferedIterator o2)</span> &#123;</span><br><span class="line">                <span class="comment">// 按照每个有序文件中的下一行数据对所有文件输入流进行排序</span></span><br><span class="line">                <span class="comment">// 单词小的输入文件流放在堆顶</span></span><br><span class="line">                <span class="keyword">return</span> o1.next().compareTo(o2.next());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 将所有有序文件的输入流包装成 BufferedIterator 放入到堆中</span></span><br><span class="line">        <span class="keyword">for</span> (File file : children) &#123;</span><br><span class="line">            <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> FileIOUtils.getReader(file.getName());</span><br><span class="line">            <span class="type">BufferedIterator</span> <span class="variable">buf</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BufferedIterator</span>(br);</span><br><span class="line">            <span class="comment">// 要有数据才放入到堆中，否则关闭流</span></span><br><span class="line">            <span class="keyword">if</span> (buf.hasNext()) &#123;</span><br><span class="line">                minHeap.add(buf);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                buf.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedWriter</span> <span class="variable">bw</span> <span class="operator">=</span> FileIOUtils.getWriter(<span class="string">&quot;data\\top100\\sorted_words.txt&quot;</span>);</span><br><span class="line">        <span class="comment">// 3. 拿出堆顶的数据，并写入到最终排序的文件中</span></span><br><span class="line">        <span class="keyword">while</span> (!minHeap.isEmpty()) &#123;</span><br><span class="line">            <span class="type">BufferedIterator</span> <span class="variable">firstBuf</span> <span class="operator">=</span> minHeap.poll();</span><br><span class="line">            bw.write(firstBuf.next());</span><br><span class="line">            bw.newLine();</span><br><span class="line">            <span class="comment">// 如果拿出来的输入流中还有数据的话，那么将这个输入流再一次添加到栈中，</span></span><br><span class="line">            <span class="keyword">if</span> (firstBuf.hasNext()) &#123;</span><br><span class="line">                minHeap.add(firstBuf);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123; <span class="comment">// 否则说明该文件输入流中没有数据了，那么可以关闭这个流</span></span><br><span class="line">                firstBuf.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">       FileIOUtils.closeWriter(bw);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">dirName</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\sorted_data\\&quot;</span>;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">_3_ExternalSorter</span>().mergeSort(dirName);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="利用-100-大小的小顶堆得到出现频率-top-100-的单词"><a href="#利用-100-大小的小顶堆得到出现频率-top-100-的单词" class="headerlink" title="利用 100 大小的小顶堆得到出现频率 top 100 的单词"></a>利用 100 大小的小顶堆得到出现频率 top 100 的单词</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 第四步：利用 100 大小的小顶堆得到出现频率 top 100 的单词</span></span><br><span class="line"><span class="comment"> * 到这里，经过外部排序后，文件中所有的单词都是有序的，相同的单词都是挨着的</span></span><br><span class="line"><span class="comment"> * 所以，可以顺序遍历有序的文件，得到出现频率 top 100 的单词</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">_4_Top_100_Words</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">Pair</span> &#123;</span><br><span class="line">        String word;</span><br><span class="line">        <span class="type">int</span> cnt;</span><br><span class="line"></span><br><span class="line">        Pair(String word, <span class="type">int</span> cnt) &#123;</span><br><span class="line">            <span class="built_in">this</span>.word = word;</span><br><span class="line">            <span class="built_in">this</span>.cnt = cnt;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String[] top_100 (String fileName) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 初始化一个 100 大小的小顶堆</span></span><br><span class="line">        <span class="comment">// 堆中每个节点存放的是单词及其出现的次数</span></span><br><span class="line">        PriorityQueue&lt;Pair&gt; minHeap = <span class="keyword">new</span> <span class="title class_">PriorityQueue</span>&lt;&gt;(<span class="number">100</span>, <span class="keyword">new</span> <span class="title class_">Comparator</span>&lt;Pair&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compare</span><span class="params">(Pair o1, Pair o2)</span> &#123;</span><br><span class="line">                <span class="comment">// 按照单词出现的次数排序</span></span><br><span class="line">                <span class="comment">// 出现次数多的，放在堆顶</span></span><br><span class="line">                <span class="keyword">return</span> o1.cnt - o2.cnt;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 前一个单词</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">prevWord</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="comment">// 前一个单词出现的次数</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">prevCnt</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="type">BufferedReader</span> <span class="variable">br</span> <span class="operator">=</span> FileIOUtils.getReader(fileName);</span><br><span class="line">        <span class="comment">// 当前的单词</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">currWord</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="comment">// 2. 读取有序文件中每一行的单词，然后统计其出现的次数，并保留出现次数 top 100 的单词</span></span><br><span class="line">        <span class="keyword">while</span> ((currWord = br.readLine()) != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// 如果当前的单词和前一个单词不是同一个单词</span></span><br><span class="line">            <span class="comment">// 那么需要处理前一个单词</span></span><br><span class="line">            <span class="keyword">if</span> (!currWord.equals(prevWord)) &#123;</span><br><span class="line">                <span class="comment">// 如果堆的大小小于 100，那么直接将前一个单词及其出现的次数放入堆中</span></span><br><span class="line">                <span class="keyword">if</span> (minHeap.size() &lt; <span class="number">100</span>) &#123;</span><br><span class="line">                    minHeap.add(<span class="keyword">new</span> <span class="title class_">Pair</span>(prevWord, prevCnt));</span><br><span class="line">                &#125; <span class="keyword">else</span> <span class="keyword">if</span> (prevCnt &gt; minHeap.peek().cnt) &#123; <span class="comment">// 否则，如果前一个单词出现的次数大于堆顶单词出现的次数</span></span><br><span class="line">                    <span class="comment">// 先删除堆顶单词</span></span><br><span class="line">                    minHeap.remove();</span><br><span class="line">                    <span class="comment">//将前一个单词及其出现的次数放入堆中</span></span><br><span class="line">                    minHeap.add(<span class="keyword">new</span> <span class="title class_">Pair</span>(prevWord, prevCnt));</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 将当前单词设置为前一个单词</span></span><br><span class="line">                prevWord = currWord;</span><br><span class="line">                <span class="comment">// 前一个单词出现的次数清零</span></span><br><span class="line">                prevCnt = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 统计前一个单词出现的次数</span></span><br><span class="line">            prevCnt++;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//3. 最终堆中的 100 个单词就是出现频率最高的单词了，输出即可</span></span><br><span class="line">        String[] res = <span class="keyword">new</span> <span class="title class_">String</span>[<span class="number">100</span>];</span><br><span class="line">        <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (!minHeap.isEmpty()) &#123;</span><br><span class="line">            res[index++] = minHeap.poll().word;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> <span class="string">&quot;data\\top100\\sorted_words.txt&quot;</span>;</span><br><span class="line">        String[] res = <span class="keyword">new</span> <span class="title class_">_4_Top_100_Words</span>().top_100(fileName);</span><br><span class="line">        System.out.println(Arrays.toString(res));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="MapReduce-框架-Hadoop-Spark"><a href="#MapReduce-框架-Hadoop-Spark" class="headerlink" title="MapReduce 框架 Hadoop Spark"></a>MapReduce 框架 Hadoop Spark</h2><h3 id="MapReduce-思路解决大文件词频统计与-Top-100-问题"><a href="#MapReduce-思路解决大文件词频统计与-Top-100-问题" class="headerlink" title="MapReduce 思路解决大文件词频统计与 Top 100 问题"></a>MapReduce 思路解决大文件词频统计与 Top 100 问题</h3><h4 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h4><p>MapReduce 是分布式计算模型，天然适合处理海量数据。我们将问题分解为两个 MapReduce 作业：</p>
-<ol>
-<li><strong>词频统计作业</strong>：精确计算每个词的全局频率</li>
-<li><strong>Top 100 提取作业</strong>：从全局词频中筛选最高频词</li>
-</ol>
-<h4 id="系统架构"><a href="#系统架构" class="headerlink" title="系统架构"></a>系统架构</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">输入文件 (1GB)</span><br><span class="line">     │</span><br><span class="line">     ├─ MapReduce Job 1 (词频统计)</span><br><span class="line">     │    ├─ Mapper 局部词频统计</span><br><span class="line">     │    └─ Reducer 全局词频合并</span><br><span class="line">     │</span><br><span class="line">     └─ MapReduce Job 2 (Top 100 提取)</span><br><span class="line">          ├─ Mapper 局部 Top 100 筛选</span><br><span class="line">          └─ Reducer 全局 Top 100 合并</span><br></pre></td></tr></table></figure>
-
-<h3 id="Job-1-全局词频统计"><a href="#Job-1-全局词频统计" class="headerlink" title="Job 1: 全局词频统计"></a><strong>Job 1: 全局词频统计</strong></h3><p><strong>目标</strong>：精确计算每个词的出现频率</p>
-<h4 id="Map-阶段"><a href="#Map-阶段" class="headerlink" title="Map 阶段"></a>Map 阶段</h4><ul>
-<li><strong>输入</strong>：文件分块（每块 ≈500KB）</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mapper</span>(<span class="params">block</span>):</span><br><span class="line">    word_count = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> word <span class="keyword">in</span> block:</span><br><span class="line">        word_count[word] = word_count.get(word, <span class="number">0</span>) + <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出当前块的词频统计</span></span><br><span class="line">    <span class="keyword">for</span> word, count <span class="keyword">in</span> word_count.items():</span><br><span class="line">        <span class="keyword">yield</span> (word, count)</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><strong>内存控制</strong>：每个 Mapper 处理单块（500KB），哈希表内存 ≈700KB &lt; 1MB</li>
-<li><strong>输出示例</strong>：<code>(apple, 15)</code>, <code>(banana, 23)</code>, …</li>
-</ul>
-<h4 id="Shuffle-阶段"><a href="#Shuffle-阶段" class="headerlink" title="Shuffle 阶段"></a>Shuffle 阶段</h4><ul>
-<li>按单词哈希分区（如 <code>hash(word) % R</code>）</li>
-<li>相同单词的计数发送到同一 Reducer</li>
-</ul>
-<h4 id="Reduce-阶段"><a href="#Reduce-阶段" class="headerlink" title="Reduce 阶段"></a>Reduce 阶段</h4><ul>
-<li><strong>输入</strong>：相同单词的所有局部计数 <code>[ (word, [count1, count2,...]) ]</code></li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">reducer</span>(<span class="params">word, counts</span>):</span><br><span class="line">    total = <span class="built_in">sum</span>(counts)</span><br><span class="line">    <span class="keyword">yield</span> (word, total)  <span class="comment"># 输出全局词频</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>内存控制：<ul>
-<li>设置 Reducer 数量 <code>R = 4000</code></li>
-<li>每个 Reducer 处理约 <code>1亿/R ≈ 25,000</code> 个单词</li>
-<li>内存占用：25,000 词 × 30 字节 ≈ 750KB &lt; 1MB</li>
-</ul>
-</li>
-<li><strong>输出</strong>：全局词频文件（<code>R</code> 个分区文件）</li>
-</ul>
-<h3 id="Job-2-Top-100-提取"><a href="#Job-2-Top-100-提取" class="headerlink" title="Job 2: Top 100 提取"></a><strong>Job 2: Top 100 提取</strong></h3><p><strong>目标</strong>：从全局词频中筛选频率最高的 100 个词</p>
-<h4 id="Map-阶段-1"><a href="#Map-阶段-1" class="headerlink" title="Map 阶段"></a>Map 阶段</h4><ul>
-<li><strong>输入</strong>：Job 1 的输出文件（每个文件 ≈250KB）</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mapper</span>(<span class="params">file</span>):</span><br><span class="line">    heap = MinHeap(<span class="number">100</span>)  <span class="comment"># 最小堆维护局部 Top 100</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (word, count) <span class="keyword">in</span> file:</span><br><span class="line">        <span class="keyword">if</span> heap.size &lt; <span class="number">100</span> <span class="keyword">or</span> count &gt; heap.<span class="built_in">min</span>():</span><br><span class="line">            heap.push((count, word))</span><br><span class="line">        <span class="keyword">if</span> heap.size &gt; <span class="number">100</span>:</span><br><span class="line">            heap.pop()  <span class="comment"># 移除最小值</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出当前文件的 Top 100</span></span><br><span class="line">    <span class="keyword">for</span> count, word <span class="keyword">in</span> heap.items:</span><br><span class="line">        <span class="keyword">yield</span> (<span class="literal">None</span>, (word, count))  <span class="comment"># Key 统一为 None</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><strong>内存控制</strong>：100 个词 × 30 字节 ≈ 3KB，远低于 1MB</li>
-<li><strong>输出示例</strong>：<code>(None, (&quot;apple&quot;, 1580))</code>, <code>(None, (&quot;banana&quot;, 1423))</code>…</li>
-</ul>
-<h4 id="Reduce-阶段（单-Reducer）"><a href="#Reduce-阶段（单-Reducer）" class="headerlink" title="Reduce 阶段（单 Reducer）"></a>Reduce 阶段（单 Reducer）</h4><ul>
-<li><strong>输入</strong>：所有 Mapper 的 Top 100 结果（共 <code>4000 × 100 = 400,000</code> 条）</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">reducer</span>(<span class="params">_, values</span>):</span><br><span class="line">    heap = MinHeap(<span class="number">100</span>)  <span class="comment"># 最小堆维护全局 Top 100</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (word, count) <span class="keyword">in</span> values:</span><br><span class="line">        <span class="keyword">if</span> heap.size &lt; <span class="number">100</span> <span class="keyword">or</span> count &gt; heap.<span class="built_in">min</span>():</span><br><span class="line">            heap.push((count, word))</span><br><span class="line">        <span class="keyword">if</span> heap.size &gt; <span class="number">100</span>:</span><br><span class="line">            heap.pop()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出最终 Top 100（按频率降序）</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sorted</span>(heap.items, reverse=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>内存控制：<ul>
-<li>流式处理：逐条读取记录，不一次性加载</li>
-<li>堆大小固定 100，内存 ≈3KB</li>
-<li>文件缓冲区：4KB</li>
-<li>总计 &lt; 10KB &lt;&lt; 1MB</li>
-</ul>
-</li>
-</ul>
-<h3 id="关键优化与内存保障"><a href="#关键优化与内存保障" class="headerlink" title="关键优化与内存保障"></a>关键优化与内存保障</h3><ol>
-<li><strong>动态 Reducer 数量</strong>：<ul>
-<li>Job 1 中 <code>R = 4000</code> 确保每个 Reducer 处理 ≤25,000 词</li>
-<li>公式：<code>R &gt; (总词数 × 30 字节) / 1MB</code></li>
-</ul>
-</li>
-<li><strong>流式处理</strong>：<ul>
-<li>Job 2 的 Reducer 逐条处理记录，避免加载全部 400,000 条数据</li>
-</ul>
-</li>
-<li><strong>堆排序优势</strong>：<ul>
-<li>时间复杂度 <code>O(n log k)</code>（<code>k=100</code> 为常数级）</li>
-<li>空间复杂度 <code>O(k)</code> 严格受限</li>
-</ul>
-</li>
-<li><strong>分布式扩展性</strong>：<ul>
-<li>文件更大时：增加 Mapper 数量</li>
-<li>词量激增时：线性增加 Job 1 的 Reducer 数量</li>
-</ul>
-</li>
-</ol>
-<hr>
-<h3 id="执行示例"><a href="#执行示例" class="headerlink" title="执行示例"></a>执行示例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">flowchart TB</span><br><span class="line">    A[1GB 输入文件] --&gt; B&#123;Job1 Mappers&#125;</span><br><span class="line">    B --&gt;|局部词频| C[Shuffle]</span><br><span class="line">    C --&gt; D&#123;Job1 Reducers&#125;</span><br><span class="line">    D --&gt;|全局词频| E[4000 个分区文件]</span><br><span class="line">    E --&gt; F&#123;Job2 Mappers&#125;</span><br><span class="line">    F --&gt;|局部 Top100| G[Shuffle]</span><br><span class="line">    G --&gt; H&#123;Job2 Reducer&#125;</span><br><span class="line">    H --&gt; I[全局 Top100]</span><br></pre></td></tr></table></figure>
-
-<p><svg aria-roledescription="flowchart-v2" role="graphics-document document" style="overflow: hidden; max-width: 100%;" class="flowchart" xmlns="http://www.w3.org/2000/svg" width="100%" id="svgGraph54700541592936" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"><g id="viewport-20250529151628010" class="svg-pan-zoom_viewport" transform="matrix(0.6705729999713365,0,0,0.6705729999713365,334.8240352952333,-299.0624837462725)" style="transform: matrix(0.670573, 0, 0, 0.670573, 334.824, -299.062);"><g><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="5" viewBox="0 0 10 10" class="marker flowchart-v2" id="svgGraph54700541592936_flowchart-v2-pointEnd"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 0 L 10 5 L 0 10 z"></path></marker><marker orient="auto" markerHeight="8" markerWidth="8" markerUnits="userSpaceOnUse" refY="5" refX="4.5" viewBox="0 0 10 10" class="marker flowchart-v2" id="svgGraph54700541592936_flowchart-v2-pointStart"><path style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 0 5 L 10 10 L 10 0 z"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="11" viewBox="0 0 10 10" class="marker flowchart-v2" id="svgGraph54700541592936_flowchart-v2-circleEnd"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5" refX="-1" viewBox="0 0 10 10" class="marker flowchart-v2" id="svgGraph54700541592936_flowchart-v2-circleStart"><circle style="stroke-width: 1; stroke-dasharray: 1, 0;" class="arrowMarkerPath" r="5" cy="5" cx="5"></circle></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="12" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="svgGraph54700541592936_flowchart-v2-crossEnd"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><marker orient="auto" markerHeight="11" markerWidth="11" markerUnits="userSpaceOnUse" refY="5.2" refX="-1" viewBox="0 0 11 11" class="marker cross flowchart-v2" id="svgGraph54700541592936_flowchart-v2-crossStart"><path style="stroke-width: 2; stroke-dasharray: 1, 0;" class="arrowMarkerPath" d="M 1,1 l 9,9 M 10,1 l -9,9"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_A_B_0" d="M97.194,62L97.194,66.167C97.194,70.333,97.194,78.667,97.265,86.417C97.335,94.167,97.475,101.334,97.546,104.917L97.616,108.501"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_B_C_0" d="M97.694,263.847L97.611,269.931C97.528,276.014,97.361,288.181,97.278,299.764C97.194,311.347,97.194,322.347,97.194,327.847L97.194,333.347"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_C_D_0" d="M97.194,391.347L97.194,395.514C97.194,399.681,97.194,408.014,97.265,415.764C97.335,423.514,97.475,430.681,97.546,434.265L97.616,437.848"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_D_E_0" d="M97.694,598.576L97.611,604.66C97.528,610.743,97.361,622.91,97.278,634.493C97.194,646.076,97.194,657.076,97.194,662.576L97.194,668.076"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_E_F_0" d="M97.194,726.076L97.194,730.243C97.194,734.41,97.194,742.743,97.265,750.493C97.335,758.243,97.475,765.41,97.546,768.994L97.616,772.577"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_F_G_0" d="M97.694,927.924L97.611,934.007C97.528,940.09,97.361,952.257,97.278,963.84C97.194,975.424,97.194,986.424,97.194,991.924L97.194,997.424"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_G_H_0" d="M97.194,1055.424L97.194,1059.59C97.194,1063.757,97.194,1072.09,97.265,1079.84C97.335,1087.591,97.475,1094.757,97.546,1098.341L97.616,1101.924"></path><path marker-end="url(#svgGraph54700541592936_flowchart-v2-pointEnd)" style="" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" id="L_H_I_0" d="M97.694,1256.174L97.611,1260.257C97.528,1264.34,97.361,1272.507,97.278,1280.09C97.194,1287.674,97.194,1294.674,97.194,1298.174L97.194,1301.674"></path></g><g class="edgeLabels"><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 300.34722900390625)" class="edgeLabel"><g transform="translate(-32, -12)" class="label"><foreignObject height="24" width="64"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word; background-color: rgb(88, 88, 88);">局部词频</p></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 635.0763854980469)" class="edgeLabel"><g transform="translate(-32, -12)" class="label"><foreignObject height="24" width="64"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word; background-color: rgb(88, 88, 88);">全局词频</p></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 964.4236145019531)" class="edgeLabel"><g transform="translate(-43.39583206176758, -12)" class="label"><foreignObject height="24" width="86.79166412353516"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word; background-color: rgb(88, 88, 88);">局部 Top100</p></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g><g class="edgeLabel"><g transform="translate(0, 0)" class="label"><foreignObject height="0" width="0"><div class="labelBkg" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; background-color: rgba(88, 88, 88, 0.5); display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="edgeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204); background-color: rgb(88, 88, 88); text-align: center;"></span></div></foreignObject></g></g></g><g class="nodes"><g transform="translate(97.19444274902344, 35)" id="flowchart-A-0" class="node default"><rect height="54" width="157.09027862548828" y="-27" x="-78.54513931274414" style="" class="basic label-container"></rect><g transform="translate(-48.54513931274414, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="97.09027862548828"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">1GB 输入文件</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 187.67361450195312)" id="flowchart-B-1" class="node default"><polygon transform="translate(-75.67361068725586,75.67361068725586)" class="label-container" points="75.67361068725586,0 151.34722137451172,-75.67361068725586 75.67361068725586,-151.34722137451172 0,-75.67361068725586"></polygon><g transform="translate(-48.67361068725586, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="97.34722137451172"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Job1 Mappers</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 364.34722900390625)" id="flowchart-C-3" class="node default"><rect height="54" width="110.45833206176758" y="-27" x="-55.22916603088379" style="" class="basic label-container"></rect><g transform="translate(-25.22916603088379, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="50.45833206176758"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Shuffle</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 519.7118072509766)" id="flowchart-D-5" class="node default"><polygon transform="translate(-78.36458206176758,78.36458206176758)" class="label-container" points="78.36458206176758,0 156.72916412353516,-78.36458206176758 78.36458206176758,-156.72916412353516 0,-78.36458206176758"></polygon><g transform="translate(-51.36458206176758, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="102.72916412353516"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Job1 Reducers</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 699.0763854980469)" id="flowchart-E-7" class="node default"><rect height="54" width="178.3888931274414" y="-27" x="-89.1944465637207" style="" class="basic label-container"></rect><g transform="translate(-59.1944465637207, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="118.3888931274414"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">4000 个分区文件</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 851.75)" id="flowchart-F-9" class="node default"><polygon transform="translate(-75.67361068725586,75.67361068725586)" class="label-container" points="75.67361068725586,0 151.34722137451172,-75.67361068725586 75.67361068725586,-151.34722137451172 0,-75.67361068725586"></polygon><g transform="translate(-48.67361068725586, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="97.34722137451172"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Job2 Mappers</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 1028.4236145019531)" id="flowchart-G-11" class="node default"><rect height="54" width="110.45833206176758" y="-27" x="-55.22916603088379" style="" class="basic label-container"></rect><g transform="translate(-25.22916603088379, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="50.45833206176758"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Shuffle</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 1180.5486145019531)" id="flowchart-H-13" class="node default"><polygon transform="translate(-75.125,75.125)" class="label-container" points="75.125,0 150.25,-75.125 75.125,-150.25 0,-75.125"></polygon><g transform="translate(-48.125, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="96.25"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">Job2 Reducer</p></span></div></foreignObject></g></g><g transform="translate(97.19444274902344, 1332.6736145019531)" id="flowchart-I-15" class="node default"><rect height="54" width="146.79166412353516" y="-27" x="-73.39583206176758" style="" class="basic label-container"></rect><g transform="translate(-43.39583206176758, -12)" style="" class="label"><rect></rect><foreignObject height="24" width="86.79166412353516"><div xmlns="http://www.w3.org/1999/xhtml" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: 1.5; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; display: table-cell; white-space: nowrap; max-width: 200px; text-align: center;"><span class="nodeLabel" style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit !important; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; fill: rgb(204, 204, 204); color: rgb(204, 204, 204);"><p style="margin: 0px; padding: 0px; border: 0px; font-style: inherit; font-variant: inherit; font-weight: 400; font-stretch: inherit; font-size: 16px; line-height: 1.75; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; vertical-align: baseline; word-break: break-word; overflow-wrap: break-word;">全局 Top100</p></span></div></foreignObject></g></g></g></g></g></g></svg></p>
-<p>此方案严格满足 1MB 内存限制，充分利用 MapReduce 的分布式能力，同时保证结果精确性。在 Hadoop/Spark 等框架可直接实现。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/26/review-5-26-27-%E8%85%BE%E8%AE%AFpcg/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/26/review-5-26-27-%E8%85%BE%E8%AE%AFpcg/" class="post-title-link" itemprop="url">5.26 pcg 暑期</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-26 19:19:53" itemprop="dateCreated datePublished" datetime="2025-05-26T19:19:53+08:00">2025-05-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-27 19:00:57" itemprop="dateModified" datetime="2025-05-27T19:00:57+08:00">2025-05-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/review/" itemprop="url" rel="index"><span itemprop="name">review</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>一面：35min</p>
-<p>内容平台，基础架构部门，一共半个多小时，问的比较简单：<br>项目问了一下缓存穿透和布隆过滤器，然后问了问事务，讲了十分钟左右吧</p>
-<p>剩下十五分钟手撕回文链表跟爬楼梯</p>
-<p>然后就是反问，一问是用的go，怪不得不问八股，面试官说整体还不错</p>
-<p>二面：50min</p>
-<p>介绍项目</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/25/spring-circle-ref/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/25/spring-circle-ref/" class="post-title-link" itemprop="url">spring 循环依赖</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2025-05-25 00:00:00 / 修改时间：07:06:13" itemprop="dateCreated datePublished" datetime="2025-05-25T00:00:00+08:00">2025-05-25</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">spring</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Spring-循环依赖"><a href="#Spring-循环依赖" class="headerlink" title="Spring 循环依赖"></a>Spring 循环依赖</h1><h2 id="获取单例对象"><a href="#获取单例对象" class="headerlink" title="获取单例对象"></a>获取单例对象</h2><ol>
-<li><strong>优先查询一级缓存（<code>singletonObjects</code>）</strong><ul>
-<li>一级缓存也叫单例池，存储的是<strong>完全初始化</strong>的单例 Bean（例如已注入所有依赖且完成代理增强的对象）。</li>
-<li><strong>作用</strong>：直接获取可用 Bean，避免重复创建。</li>
-<li>优先级最高：如果找到直接返回，不触发后续缓存查询。</li>
-</ul>
-</li>
-<li><strong>未找到则查询二级缓存（<code>earlySingletonObjects</code>）</strong><ul>
-<li>二级缓存存储的是<strong>已实例化但未完成初始化</strong>的 Bean（半成品）。</li>
-<li><strong>作用</strong>：在循环依赖中临时暴露早期引用（例如 A 依赖 B 时，B 可能正在创建中，需引用 A 的半成品）。</li>
-<li>注意：若二级缓存中存在目标 Bean，则直接返回，但此时 Bean 可能尚未完成属性注入或代理。</li>
-</ul>
-</li>
-<li><strong>最后查询三级缓存（<code>singletonFactories</code>）</strong><ul>
-<li>三级缓存是 beanName 到 对象工厂（<code>ObjectFactory</code>）的映射，对象工厂是个函数式接口，这个接口用于动态生成 Bean 的早期引用或代理对象。</li>
-<li>触发条件：仅当一、二级缓存均未找到时，调用工厂生成 Bean 实例，之后将其提升至二级缓存。</li>
-<li><strong>关键作用</strong>：支持 AOP 代理的延迟生成（例如解决代理对象的循环依赖）。</li>
-</ul>
-</li>
-</ol>
-<h2 id="如果只有二级缓存，就可以解决问题"><a href="#如果只有二级缓存，就可以解决问题" class="headerlink" title="如果只有二级缓存，就可以解决问题"></a>如果只有二级缓存，就可以解决问题</h2><ul>
-<li><code>getBean(a)</code>，实例化对象 A 以后放入二级缓存（裸对象），然后 A 开始属性注入</li>
-<li>遇到一个属性 B，先从一级缓存里面拿发现没有，瞄一眼二级缓存里面也没有，于是开始 <code>getBean(b)</code>：</li>
-<li>实例化对象B以后将其放入二级缓存（裸对象），B 开始属性注入，发现 A 不在一级缓存，但是从二级缓存里面拿到了 A 的裸对象注入 B，此时 B 算初始化完成，把 B 从二级缓存里面删掉，放到一级缓存里面，至此 B 创建完成。</li>
-<li>最后 A 用于注入的方法就能返回一个从缓存里面拿到的 B 对象，A 的注入也就完成了。</li>
-</ul>
-<h3 id="二级缓存的不足"><a href="#二级缓存的不足" class="headerlink" title="二级缓存的不足"></a>二级缓存的不足</h3><p>但是二级缓存的问题是，A是代理，有B，B有需要注入A，首先A创建出实例，随后A就走到了populateBean这一步</p>
-<p>然后去拿B，B创建，又想来获取A了，此时A那边属于是一个刚创建实例的状态，并未走到生成代理对象那一步，因此直接注入就会出问题，所以应该注册一个回调函数，把A的实例注册进去，函数的返回值是A的对象（实例/代理实例），所以就产生了三级缓存。三级缓存的 <code>ObjectFactory</code> 主要是用于提供一个钩子，这个接口的方法返回的就是bean对象，不同之处在于可以在返回裸对象前，给其套上一层代理再返回。如果只有二级缓存，就没有机会返回代理对象。</p>
-<h2 id="源码流程"><a href="#源码流程" class="headerlink" title="源码流程"></a>源码流程</h2><blockquote>
-<p><code>DefaultSingletonBeanRegistry#getSingleton(name,true)</code> DCL双重校验锁。</p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="keyword">protected</span> Object <span class="title function_">getSingleton</span><span class="params">(String beanName, <span class="type">boolean</span> allowEarlyReference)</span> &#123;</span><br><span class="line">    <span class="comment">// 快速从一二级缓存检查已有的单例</span></span><br><span class="line">    <span class="type">Object</span> <span class="variable">singletonObject</span> <span class="operator">=</span> <span class="built_in">this</span>.singletonObjects.get(beanName);</span><br><span class="line">    <span class="keyword">if</span> (singletonObject == <span class="literal">null</span> &amp;&amp; isSingletonCurrentlyInCreation(beanName)) &#123;</span><br><span class="line">        singletonObject = <span class="built_in">this</span>.earlySingletonObjects.get(beanName);</span><br><span class="line">        <span class="keyword">if</span> (singletonObject == <span class="literal">null</span> &amp;&amp; allowEarlyReference) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (<span class="built_in">this</span>.singletonObjects) &#123;</span><br><span class="line">                <span class="comment">// 加锁，从三级缓存创建单例对象</span></span><br><span class="line">                singletonObject = <span class="built_in">this</span>.singletonObjects.get(beanName);</span><br><span class="line">                <span class="keyword">if</span> (singletonObject == <span class="literal">null</span>) &#123;</span><br><span class="line">                    singletonObject = <span class="built_in">this</span>.earlySingletonObjects.get(beanName);</span><br><span class="line">                    <span class="keyword">if</span> (singletonObject == <span class="literal">null</span>) &#123;</span><br><span class="line">                        ObjectFactory&lt;?&gt; singletonFactory = <span class="built_in">this</span>.singletonFactories.get(beanName);</span><br><span class="line">                        <span class="keyword">if</span> (singletonFactory != <span class="literal">null</span>) &#123;</span><br><span class="line">                            singletonObject = singletonFactory.getObject();</span><br><span class="line">                            <span class="built_in">this</span>.earlySingletonObjects.put(beanName, singletonObject);</span><br><span class="line">                            <span class="built_in">this</span>.singletonFactories.remove(beanName);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> singletonObject;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<hr>
-<blockquote>
-<p>流程正式开始</p>
-<p><code>DefaultListableBeanFactory#preInstantiateSingletons()</code> 用于对解析到的<code> beanNames</code> 一一进行 <code>getBean(beanName)</code></p>
-<p><code>AbstractBeanFactory#doGetBean(name···)</code> </p>
-</blockquote>
-<ol>
-<li><code>getSingleton(name,true)</code> 获取不到再往下走</li>
-<li>类似双亲委派，找 parent，parent 找不到再自行寻找</li>
-<li>自行寻找：(dependsOn) 然后 <code>getSingleton(name, singletonFactory)</code></li>
-<li><code>getSingleton(name, singletonFactory)</code>: 先一级缓存找，找不到就真正开始<mark>创建工作</mark>：<ul>
-<li>首先将其加到 CreationSet 表明其正在创建。</li>
-<li><code>singletonFactory</code>实际上就是一个<code>ObjectFactory</code>，这个函数式接口实现方法通过<code>createBean(name···)</code>获取对象。</li>
-<li>创建完成将其从 CreationSet 中移除，保证其只存在于一级缓存单例池中。最后返回创建好的 bean</li>
-</ul>
-</li>
-</ol>
-<blockquote>
-<p><code>AbstractAutowireCapableBeanFactory#doCreateBean(name,mbd,args)</code> </p>
-</blockquote>
-<ol>
-<li><p><code>createBeanInstance()</code>：创建出裸对象，此时未注入依赖。（实际上返回的是 BeanWrapper，有更完善的功能，本质还是对象实例）</p>
-<ul>
-<li>当且仅当<u>单例+允许循环依赖+这个bean在 CreationSet 中</u>，才加三级缓存<code>addSingletonFactory</code>，一定要保证一级和二级缓存里面没有，然后把ObjectFactory加到三级缓存里面。所以单例 bean 加入了三级缓存：lambda：<code>getEarlyBeanReference()</code>返回创建的裸/代理对象 <code>singletonObject</code></li>
-</ul>
-</li>
-<li><p><code>populateBean()</code>：进行字段、方法注入。做一些<code> postProcessAfterInstantiation</code> 实例化之后初始化之前的工作。然后就是 <code>autowireByName/Name</code>，本质上就是通过 <code>getBean(name···)</code>获取实例。</p>
-<ul>
-<li>依赖注入就是这里遇到的问题，如果代理对象出现循环依赖，那么其生成应该是初始化之后，所以此阶段断然不能提供出代理对象，因此加入三级缓存提前暴露出一个引用，。</li>
-</ul>
-</li>
-<li><p><code>initializeBean()</code>：</p>
-<ul>
-<li><p>调用 <code>BeanPostProcessor#postProcessBeforeInitialization</code>。</p>
-</li>
-<li><p>调用初始化方法。(PostConstruct-initMethod-afterPropertiesSet)</p>
-</li>
-<li><p>调用 <code>BeanPostProcessor#postProcessAfterInitialization</code>（<strong>一般到这里才生成代理对象</strong>）。</p>
-</li>
-</ul>
-</li>
-<li><p>完成上述工作之后，如果当前是存在于三级缓存，则调用下方的 <code>getSingleton(name,true)</code> ： true 代表允许早期引用（主要解决循环依赖）</p>
-</li>
-</ol>
-<blockquote>
-<p>代理：<code>AbstractAutoProxyCreator</code></p>
-</blockquote>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这个方法是用于三级缓存生成对象的时候将bean放到earlyBeanReferences里面，</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">getEarlyBeanReference</span><span class="params">(Object bean, String beanName)</span> &#123;</span><br><span class="line">    <span class="type">Object</span> <span class="variable">cacheKey</span> <span class="operator">=</span> <span class="built_in">this</span>.getCacheKey(bean.getClass(), beanName);</span><br><span class="line">    <span class="built_in">this</span>.earlyBeanReferences.put(cacheKey, bean);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">this</span>.wrapIfNecessary(bean, beanName, cacheKey);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">postProcessAfterInitialization</span><span class="params">(<span class="meta">@Nullable</span> Object bean, String beanName)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (bean != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="type">Object</span> <span class="variable">cacheKey</span> <span class="operator">=</span> <span class="built_in">this</span>.getCacheKey(bean.getClass(), beanName);</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span>.earlyBeanReferences.remove(cacheKey) != bean) &#123;</span><br><span class="line">            <span class="comment">// wrap 包装成代理的核心方法</span></span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">this</span>.wrapIfNecessary(bean, beanName, cacheKey);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> bean;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="无法解决的循环引用"><a href="#无法解决的循环引用" class="headerlink" title="无法解决的循环引用"></a>无法解决的循环引用</h2><p>如果是 AB互相依赖，A只有含参构造，那么注入B完成之前就无法创建一个A实例出来，自然也没法加到缓存里面，A尝试注入B，B那边尝试注入A彻底卡死。</p>
-<p>但是 从B开始又可以了，然而对于普通的bean来说，注册顺序并不是一个可控的状态，所以尽量避免含参构造的bean之间互相依赖</p>
 
       
     </div>
