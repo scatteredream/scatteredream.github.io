@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">99</span>
+          <span class="site-state-item-count">100</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -194,6 +194,86 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/16/example-consumer-producer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/05/16/example-consumer-producer/" class="post-title-link" itemprop="url">生产者-消费者(有界缓冲区)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-05-16 00:00:00 / 修改时间：22:53:32" itemprop="dateCreated datePublished" datetime="2025-05-16T00:00:00+08:00">2025-05-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">BoundedBuffer</span>&lt;E&gt; &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="type">ReentrantLock</span> <span class="variable">lock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line">    <span class="keyword">final</span> <span class="type">Condition</span> <span class="variable">notFull</span>  <span class="operator">=</span> lock.newCondition(); </span><br><span class="line">    <span class="keyword">final</span> <span class="type">Condition</span> <span class="variable">notEmpty</span> <span class="operator">=</span> lock.newCondition(); </span><br><span class="line"> </span><br><span class="line">    <span class="keyword">final</span> Object[] items = <span class="keyword">new</span> <span class="title class_">Object</span>[<span class="number">100</span>];</span><br><span class="line">    <span class="type">int</span> putptr, takeptr, count;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">put</span><span class="params">(E x)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">      lock.lock();</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (count == items.length)</span><br><span class="line">          notFull.await();</span><br><span class="line">        items[putptr] = x;</span><br><span class="line">        <span class="keyword">if</span> (++putptr == items.length) putptr = <span class="number">0</span>;</span><br><span class="line">        ++count;</span><br><span class="line">        notEmpty.signal();</span><br><span class="line">      &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> E <span class="title function_">take</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">      lock.lock();</span><br><span class="line">      <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">while</span> (count == <span class="number">0</span>)</span><br><span class="line">          notEmpty.await();</span><br><span class="line">        <span class="type">E</span> <span class="variable">x</span> <span class="operator">=</span> (E) items[takeptr];</span><br><span class="line">        <span class="keyword">if</span> (++takeptr == items.length) takeptr = <span class="number">0</span>;</span><br><span class="line">        --count;</span><br><span class="line">        notFull.signal();</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">      &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -3018,451 +3098,6 @@
 </li>
 <li>f(xy)=f(x)f(y)</li>
 </ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/03/408-in-one/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/03/408-in-one/" class="post-title-link" itemprop="url">22408 分值</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-03 22:25:09" itemprop="dateCreated datePublished" datetime="2025-05-03T22:25:09+08:00">2025-05-03</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-05 12:50:11" itemprop="dateModified" datetime="2025-05-05T12:50:11+08:00">2025-05-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%80%83%E7%A0%94/" itemprop="url" rel="index"><span itemprop="name">考研</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="22408"><a href="#22408" class="headerlink" title="22408"></a>22408</h1><p>转自：<a target="_blank" rel="noopener" href="https://blog.csdn.net/smilehappiness/article/details/109964058">考研公共部分科目分支分布以及计算机408分值分布-CSDN博客</a> </p>
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>现在考研的竞争压力越来越大，这里，笔者也把考研中计算机的，408试卷分值分布做一个总结，方便以后考研的时候使用。</p>
-<h2 id="计算机4科分值分配比"><a href="#计算机4科分值分配比" class="headerlink" title="计算机4科分值分配比"></a>计算机4科分值分配比</h2><table>
-<thead>
-<tr>
-<th><strong>科目</strong></th>
-<th><strong>大概分值</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据结构</td>
-<td>45分</td>
-</tr>
-<tr>
-<td>计算机组成原理</td>
-<td>45分</td>
-</tr>
-<tr>
-<td>操作系统</td>
-<td>35分</td>
-</tr>
-<tr>
-<td>计算机网络</td>
-<td>25分</td>
-</tr>
-</tbody></table>
-<h2 id="408"><a href="#408" class="headerlink" title="408"></a>408</h2><p><strong>408考试中，分值总分150分，大致题型以及分值如下（仅供参考）：</strong></p>
-<h3 id="选择题-共80分"><a href="#选择题-共80分" class="headerlink" title="选择题 (共80分)"></a>选择题 (共80分)</h3><table>
-<thead>
-<tr>
-<th>选择题</th>
-<th>题目序号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据结构</td>
-<td>1~11</td>
-<td>11X2=22分</td>
-</tr>
-<tr>
-<td>计算机组成原理</td>
-<td>12~22</td>
-<td>11X2=22分</td>
-</tr>
-<tr>
-<td>操作系统</td>
-<td>23~32</td>
-<td>10X2=20分</td>
-</tr>
-<tr>
-<td>计算机网络</td>
-<td>33~40</td>
-<td>8X2=16分</td>
-</tr>
-</tbody></table>
-<h3 id="综合应用题-共70分"><a href="#综合应用题-共70分" class="headerlink" title="综合应用题 (共70分)"></a>综合应用题 (共70分)</h3><p>一共有41、42、43、44 、45、46 、47，共七个大题，<code>总分值70分</code><br><strong>21年考研大题41~47分值分布依次为：</strong>15、8、15、8、7、8、9</p>
-<p>正在备考的童鞋们，根据以上的分支分布，可以做一下复习侧重点呦</p>
-<h2 id="其他公共科目"><a href="#其他公共科目" class="headerlink" title="其他公共科目"></a>其他公共科目</h2><h3 id="英二"><a href="#英二" class="headerlink" title="英二"></a>英二</h3><p>英语二试题分四部分，共48题，总计<code>100分</code>，包括<code>英语知识运用</code>、<code>阅读理解</code>、<code>英译汉</code>和<code>写作</code>。</p>
-<p><strong>表格速览：</strong></p>
-<table>
-<thead>
-<tr>
-<th>题目类型</th>
-<th>题目序号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>英语知识运用</td>
-<td>1~20</td>
-<td>20X0.5=<code>10分</code></td>
-</tr>
-<tr>
-<td>阅读理解</td>
-<td>21~45</td>
-<td>25X2=<code>50分</code></td>
-</tr>
-<tr>
-<td>英译汉</td>
-<td>第三部分</td>
-<td><code>15分</code></td>
-</tr>
-<tr>
-<td>作文</td>
-<td>第四部分</td>
-<td><code>25分</code></td>
-</tr>
-</tbody></table>
-<h4 id="第一部分（英语知识运用）"><a href="#第一部分（英语知识运用）" class="headerlink" title="第一部分（英语知识运用）"></a>第一部分（英语知识运用）</h4><p>主要考查考生对英语知识的综合运用能力。共<code>20</code>小题，每小题<code>0.5</code>分，<code>共10分</code>。</p>
-<p>在一篇约350词的文章中留出20个空白，要求考生从每题给出的4个选项中选出最佳答案，使补全后的文章意思通顺、前后连贯、结构完整。</p>
-<h4 id="第二部分（阅读理解）"><a href="#第二部分（阅读理解）" class="headerlink" title="第二部分（阅读理解）"></a>第二部分（阅读理解）</h4><p>主要考查考生获取信息、理解文章、猜测重要生词词义并进行推断等方面的能力。该部分<code>由A、B两节组成</code>，共<code>25</code>小题，每小题<code>2</code>分，共<code>50</code>分。</p>
-<ul>
-<li><p><strong>A节(20小题)</strong><br>本部分为多项选择题。<code>共四篇文章</code>，总长度为1500词左右。<code>每篇文章设5题，共20题</code>。每小题2分，共40分。</p>
-</li>
-<li><p><strong>B节(5小题)</strong><br>本部分有两种备选题型。每次考试从这两种题型中选择其中的一种形式，或者两种形式的组合进行考查。本节文章设<code>5小题</code>，每小题2分，<code>共10分</code>。</p>
-<p>备选题型包括：<br><strong>1)多项对应</strong><br>本部分为一篇长度为450~550词的文章，试题内容分为左右两栏，左侧一栏为5道题目，右侧一栏为7个选项。要求考生在阅读后根据文章内容和左侧一栏中提供的信息从右侧一栏中的7个选项中选出对应的5项相关信息。</p>
-<p><strong>2)小标题对应</strong><br>在一篇长度为450~550词的文章前有7个概括句或小标题。这些文字或标题分别是对文章中某一部分的概括或阐述。要求考生根据文章内容和篇章结构从这7个选项中选出最恰当的5个概括句或小标题填入文章空白处。</p>
-</li>
-</ul>
-<h4 id="第三部分（英译汉）"><a href="#第三部分（英译汉）" class="headerlink" title="第三部分（英译汉）"></a>第三部分（英译汉）</h4><p>要求考生阅读、理解长度为150词左右的一个或几个英语段落，并将其全部译成汉语，<code>共15分</code>。</p>
-<h4 id="第四部分（写作）"><a href="#第四部分（写作）" class="headerlink" title="第四部分（写作）"></a>第四部分（写作）</h4><p>该部分由<code>A、B</code>两节组成，主要考查考生的书面表达能力。<code>共2题</code>，<code>25分</code>。</p>
-<ul>
-<li><strong>A节</strong><br>考生根据所给情景写出约100词(标点符号不计算在内)的应用性短文，包括私人和公务信函（常见的有：）、备忘录、报告等。共10分。</li>
-</ul>
-<p><strong>大致分类如下：</strong><br><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/8c5d133eb5d9b1deaa794f4441f60b77.png" alt="在这里插入图片描述"></p>
-<ul>
-<li><strong>B节</strong><br>要求考生根据所规定的情景或给出的提纲，写出一篇150词左右的英语说明文或议论文。提供情景的形式为图画、图表或文字。共15分。</li>
-</ul>
-<h3 id="政治分值分布"><a href="#政治分值分布" class="headerlink" title="政治分值分布"></a>政治分值分布</h3><p>政治部分分值，总共<code>100</code>分。</p>
-<table>
-<thead>
-<tr>
-<th>题目类型</th>
-<th>题目序号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>单项选择题</td>
-<td>1~16</td>
-<td>16X1=<code>16分</code></td>
-</tr>
-<tr>
-<td>多项选择题</td>
-<td>17~33</td>
-<td>17X2=<code>34分</code></td>
-</tr>
-<tr>
-<td>材料分析题</td>
-<td>共5个大题</td>
-<td>10X5=<code>50分</code></td>
-</tr>
-</tbody></table>
-<h3 id="数二"><a href="#数二" class="headerlink" title="数二"></a>数二</h3><p>数学部分分值，总共<code>150</code>分。</p>
-<table>
-<thead>
-<tr>
-<th>题目类型</th>
-<th>题目序号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>单项选择题</td>
-<td>1~10</td>
-<td>10X5=<code>50分</code></td>
-</tr>
-<tr>
-<td>填空题</td>
-<td>11~16</td>
-<td>16X5=<code>30分</code></td>
-</tr>
-<tr>
-<td>大题</td>
-<td>共6个大题</td>
-<td>1X10 + 5X12=<code>70分</code></td>
-</tr>
-</tbody></table>
-<p><strong>参考资料</strong>：<a target="_blank" rel="noopener" href="https://zhidao.baidu.com/question/12821750.html">https://zhidao.baidu.com/question/12821750.html</a></p>
-<p><code>注意：</code> <strong>以上总结仅供参考，实际还是以实际的考卷分值分布为准</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">希望笔者总结的分值分布，对小伙伴有所帮助~</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>写博客是为了记住自己容易忘记的东西，另外也是对自己工作的总结，希望尽自己的努力，做到更好，大家一起努力进步！</p>
-<p>如果有什么问题，欢迎大家评论，一起探讨</p>
-<p>给自己的梦想添加一双翅膀，让它可以在天空中自由自在的飞翔！</p>
-</blockquote>
-<h1 id="11408"><a href="#11408" class="headerlink" title="11408"></a>11408</h1><h2 id="408-1"><a href="#408-1" class="headerlink" title="408"></a>408</h2><table>
-<thead>
-<tr>
-<th>科目</th>
-<th>大致分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据结构</td>
-<td>45</td>
-</tr>
-<tr>
-<td>计算机组成原理</td>
-<td>45</td>
-</tr>
-<tr>
-<td>操作系统</td>
-<td>35</td>
-</tr>
-<tr>
-<td>计算机网络</td>
-<td>25</td>
-</tr>
-</tbody></table>
-<p>其中包括</p>
-<table>
-<thead>
-<tr>
-<th>科目</th>
-<th>题号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据结构</td>
-<td>1~11</td>
-<td>22</td>
-</tr>
-<tr>
-<td>计算机组成原理</td>
-<td>12~22</td>
-<td>22</td>
-</tr>
-<tr>
-<td>操作系统</td>
-<td>23~32</td>
-<td>20</td>
-</tr>
-<tr>
-<td>计算机网络</td>
-<td>33~40</td>
-<td>16</td>
-</tr>
-</tbody></table>
-<p>以及七3道综合应用题共70分</p>
-<h2 id="数一"><a href="#数一" class="headerlink" title="数一"></a>数一</h2><table>
-<thead>
-<tr>
-<th>科目</th>
-<th>大致分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>高等数学</td>
-<td>84</td>
-</tr>
-<tr>
-<td>线性代数</td>
-<td>33</td>
-</tr>
-<tr>
-<td>概率论与数理统计</td>
-<td>33</td>
-</tr>
-</tbody></table>
-<p>其中</p>
-<table>
-<thead>
-<tr>
-<th>题型</th>
-<th>高数</th>
-<th>线代</th>
-<th>概率</th>
-<th>题号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>选择题</td>
-<td>6</td>
-<td>2</td>
-<td>2</td>
-<td>1~10</td>
-<td>50</td>
-</tr>
-<tr>
-<td>填空题</td>
-<td>4</td>
-<td>1</td>
-<td>1</td>
-<td>11~16</td>
-<td>30</td>
-</tr>
-<tr>
-<td>计算题</td>
-<td>4</td>
-<td>1</td>
-<td>1</td>
-<td>17~22</td>
-<td>70</td>
-</tr>
-</tbody></table>
-<h2 id="英一"><a href="#英一" class="headerlink" title="英一"></a>英一</h2><table>
-<thead>
-<tr>
-<th>题型</th>
-<th>题号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>英语知识运用</td>
-<td>1~20</td>
-<td>10</td>
-</tr>
-<tr>
-<td>阅读理解</td>
-<td>21~50</td>
-<td>60</td>
-</tr>
-<tr>
-<td>写作</td>
-<td>51~52</td>
-<td>30</td>
-</tr>
-</tbody></table>
-<p>其中</p>
-<p>阅读理解<br>A、B、C三节组成，考查考生理解书面英语的能力。共30小题，每小题2分，共60分。</p>
-<p>A节(20小题)：主要考查考生理解主旨要义、具体信息、概念性含义，进行有关的判断、推理和引申，根据上下文推测生词的词义等能力。要求考生根据所提供的4篇(总长度约为1 600词)文章的内容，从每题所给出的4个选项中选出最佳答案。考生在答题卡1上作答。</p>
-<p>B节(5小题)：主要考查考生对诸如连贯性、一致性等语段特征以及文章结构的理解。本部分有3种备选题型。每次考试从这3种备选题型中选择一种进行考查。考生在答题卡1上作答。</p>
-<p>C节(5小题)：主要考查考生准确理解概念或结构较复杂的英语文字材料的能力。要求考生阅读一篇约400词的文章，并将其中5个画线部分(约150词)译成汉语，要求译文准确、完整、通顺。考生在答题卡2上作答。</p>
-<p>写作<br>该部分由A、B两节组成，主要考查考生的书面表达能力。共30分。</p>
-<p>A节：考生根据所给情景写出约100词(标点符号不计算在内)的应用性短文，包括私人和公务信函、备忘录、报告等。</p>
-<p>B节：考生根据提示信息写出一篇160~200词的短文(标点符号不计算在内)。提示信息的形式有主题句、写作提纲、规定情景、图、表等。考生在答题卡2上作答。共20分。 *硕士研究生入学考试将英译汉试题作为阅读理解的一部分，其目的是测试考生根据上下文准确理解概念或复杂结构并用汉语正确予以表达的能力。</p>
-<h2 id="政治"><a href="#政治" class="headerlink" title="政治"></a>政治</h2><table>
-<thead>
-<tr>
-<th>科目</th>
-<th>大致分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>马原</td>
-<td>24</td>
-</tr>
-<tr>
-<td>毛中特</td>
-<td>30</td>
-</tr>
-<tr>
-<td>近代史</td>
-<td>14</td>
-</tr>
-<tr>
-<td>思修</td>
-<td>16</td>
-</tr>
-</tbody></table>
-<p>其中</p>
-<table>
-<thead>
-<tr>
-<th>题型</th>
-<th>题号</th>
-<th>分值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>单选</td>
-<td>1~16</td>
-<td>16</td>
-</tr>
-<tr>
-<td>多选</td>
-<td>17~33</td>
-<td>34</td>
-</tr>
-<tr>
-<td>材料分析</td>
-<td>34~38</td>
-<td>50</td>
-</tr>
-</tbody></table>
 
       
     </div>

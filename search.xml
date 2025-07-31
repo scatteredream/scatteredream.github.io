@@ -38037,4 +38037,20 @@ $$
         <category>zhihu</category>
       </categories>
   </entry>
+  <entry>
+    <title>SSH代理配置</title>
+    <url>/2025/07/31/ssh-keygen/</url>
+    <content><![CDATA[<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -b 4096 -C <span class="string">&quot;fengyujie.jayden@jd.com&quot;</span></span><br><span class="line">ssh-keygen -t ed25519 -C <span class="string">&quot;fengyujie.jayden@jd.com&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">eval</span> <span class="string">&quot;<span class="subst">$(ssh-agent -s)</span>&quot;</span></span><br><span class="line">ssh-add ~/.ssh/id_ed25519</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>~/.ssh/config</code> 文件中添加配置（没有就新建一个）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Host *</span><br><span class="line">  AddKeysToAgent yes</span><br><span class="line">  UseKeychain yes</span><br><span class="line">  IdentityFile ~/.ssh/id_ed25519</span><br><span class="line"></span><br><span class="line">Host github.com</span><br><span class="line">  User git</span><br><span class="line">  Hostname ssh.github.com</span><br><span class="line">  PreferredAuthentications publickey</span><br><span class="line">  IdentityFile ~/.ssh/id_rsa</span><br><span class="line">  Port 443</span><br></pre></td></tr></table></figure>
+
+<p><code>pbcopy &lt; ~/.ssh/id_ed25519.pub</code><br>然后去 GitHub / GitLab / Gitee 等账号的 SSH Keys 设置中粘贴。</p>
+<p><code>ssh -T git@github.com</code> </p>
+]]></content>
+  </entry>
 </search>
