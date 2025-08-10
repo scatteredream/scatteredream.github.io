@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-count">102</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -177,7 +177,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">134</span>
+        <span class="site-state-item-count">135</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -194,6 +194,499 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/08/10/gRPC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/08/10/gRPC/" class="post-title-link" itemprop="url">grpc</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-08-10 00:00:00 / 修改时间：22:50:04" itemprop="dateCreated datePublished" datetime="2025-08-10T00:00:00+08:00">2025-08-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="gRPC"><a href="#gRPC" class="headerlink" title="gRPC"></a>gRPC</h1><h2 id="一次完整的调用流程概览"><a href="#一次完整的调用流程概览" class="headerlink" title="一次完整的调用流程概览"></a>一次完整的调用流程概览</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant ClientApp as 客户端应用</span><br><span class="line">    participant Stub as Stub(客户端代理)</span><br><span class="line">    participant Net as 网络传输(HTTP/2)</span><br><span class="line">    participant Skeleton as Skeleton(服务端桩)</span><br><span class="line">    participant ServiceImpl as 服务端实现类</span><br><span class="line"></span><br><span class="line">    ClientApp-&gt;&gt;Stub: 调用方法(请求参数)</span><br><span class="line">    Stub-&gt;&gt;Stub: 序列化为Protobuf</span><br><span class="line">    Stub-&gt;&gt;Net: 发送请求数据</span><br><span class="line">    Net-&gt;&gt;Skeleton: 传输请求</span><br><span class="line">    Skeleton-&gt;&gt;Skeleton: 反序列化Protobuf为对象</span><br><span class="line">    Skeleton-&gt;&gt;ServiceImpl: 调用业务方法</span><br><span class="line">    ServiceImpl--&gt;&gt;Skeleton: 返回结果</span><br><span class="line">    Skeleton-&gt;&gt;Skeleton: 序列化结果为Protobuf</span><br><span class="line">    Skeleton-&gt;&gt;Net: 返回响应数据</span><br><span class="line">    Net-&gt;&gt;Stub: 传输响应</span><br><span class="line">    Stub-&gt;&gt;Stub: 反序列化Protobuf为响应对象</span><br><span class="line">    Stub-&gt;&gt;ClientApp: 返回响应</span><br></pre></td></tr></table></figure>
+
+<p>一次调用流程：</p>
+<ul>
+<li>Client Stub：客户端的Proxy代理对象，把方法调用信息序列化（Protobuf）成二进制形式通过HTTP/2发送到服务器</li>
+<li>Server Skeleton：负责将网络请求反序列化为真正的请求然后传给服务实现类，处理逻辑完成之后将返回的结果再次序列化为二进制形式，返回给客户端。</li>
+<li>Client Stub：收到返回结果将其反序列化后形成真正的调用结果。</li>
+</ul>
+<h2 id="proto-文件"><a href="#proto-文件" class="headerlink" title="proto 文件"></a>proto 文件</h2><p><strong>定义了请求和响应消息的内容以及分别请求的方法</strong></p>
+<ul>
+<li><p>定义消息结构（<code>message</code>）</p>
+</li>
+<li><p>定义服务接口（<code>service</code> + <code>rpc</code> 方法）</p>
+</li>
+</ul>
+<ul>
+<li>必须使用 <strong>Protocol Buffers（Protobuf）</strong> 作为 IDL，通过 <code>.proto</code> 文件定义服务接口、数据结构（消息类型）和方法参数 / 返回值。这是客户端与服务端一致的 “契约”，确保双方对通信格式的理解一致。</li>
+<li>在 <code>.proto</code> 文件中通过 <code>service</code> 关键字定义服务，明确包含的 RPC 方法（如简单 RPC、流式 RPC 等），以及每个方法的输入（<code>request</code>）和输出（<code>response</code>）类型。</li>
+<li>基于 <code>.proto</code> 文件，通过 gRPC 提供的代码生成工具（如 <code>protoc</code> 配合对应语言的插件）生成客户端 “存根（Stub）” 和服务器 “骨架（Skeleton）” 代码，简化跨语言调用的实现。</li>
+</ul>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">syntax = <span class="string">&quot;proto3&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> example;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 请求参数</span></span><br><span class="line"><span class="keyword">message </span><span class="title class_">HelloRequest</span> &#123;</span><br><span class="line">  <span class="type">string</span> name = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 响应结果</span></span><br><span class="line"><span class="keyword">message </span><span class="title class_">HelloResponse</span> &#123;</span><br><span class="line">  <span class="type">string</span> message = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 服务接口</span></span><br><span class="line"><span class="keyword">service </span><span class="title class_">Greeter</span> &#123;</span><br><span class="line">  <span class="function"><span class="keyword">rpc</span> SayHello(HelloRequest) <span class="keyword">returns</span> (HelloResponse)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>使用Protoc和语言插件自动生成客户端Stub和服务端Skeleton代码，然后服务端继承生成的抽象类，实现服务方法，填充业务逻辑</p>
+<h2 id="生成代码"><a href="#生成代码" class="headerlink" title="生成代码"></a>生成代码</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.xolstice.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>protobuf-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.6.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">protocArtifact</span>&gt;</span>com.google.protobuf:protoc:3.21.12:exe:$&#123;os.detected.classifier&#125;<span class="tag">&lt;/<span class="name">protocArtifact</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">pluginId</span>&gt;</span>grpc-java<span class="tag">&lt;/<span class="name">pluginId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">pluginArtifact</span>&gt;</span>io.grpc:protoc-gen-grpc-java:1.57.2:exe:$&#123;os.detected.classifier&#125;<span class="tag">&lt;/<span class="name">pluginArtifact</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>执行 <code>mvn compile</code> 会生成：</p>
+<ul>
+<li><code>GreeterGrpc.GreeterImplBase</code>（服务端基类）</li>
+<li><code>GreeterGrpc.GreeterBlockingStub</code> / <code>GreeterFutureStub</code> / <code>GreeterStub</code>（客户端）</li>
+</ul>
+<h3 id="其他依赖"><a href="#其他依赖" class="headerlink" title="其他依赖"></a>其他依赖</h3><p>在 Java 工程里使用 gRPC，一般要引入 3 类依赖：</p>
+<ol>
+<li><strong>gRPC 核心库（运行时）</strong></li>
+<li><strong>代码生成插件（protoc + gRPC Java 插件）</strong></li>
+<li><strong>Protobuf 运行时</strong></li>
+</ol>
+<ul>
+<li>必需：<code>grpc-netty-shaded</code> + <code>grpc-stub</code> + <code>grpc-protobuf</code> + <code>protobuf-java</code></li>
+<li>生成代码要有：<code>protobuf-maven-plugin</code> + <code>protoc-gen-grpc-java</code></li>
+<li>生产环境通常还会加 <code>grpc-services</code> 做健康检查</li>
+</ul>
+<h4 id="核心依赖（运行时）"><a href="#核心依赖（运行时）" class="headerlink" title="核心依赖（运行时）"></a>核心依赖（运行时）</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">maven.compiler.source</span>&gt;</span>17<span class="tag">&lt;/<span class="name">maven.compiler.source</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">maven.compiler.target</span>&gt;</span>17<span class="tag">&lt;/<span class="name">maven.compiler.target</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">project.build.sourceEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.build.sourceEncoding</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">grpc.version</span>&gt;</span>1.74.0<span class="tag">&lt;/<span class="name">grpc.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">protobuf.version</span>&gt;</span>3.25.5<span class="tag">&lt;/<span class="name">protobuf.version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.grpc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>grpc-netty-shaded<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;grpc.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>runtime<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.grpc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>grpc-protobuf<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;grpc.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.grpc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>grpc-stub<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;grpc.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.tomcat<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>annotations-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>6.0.53<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="代码生成插件（Maven）"><a href="#代码生成插件（Maven）" class="headerlink" title="代码生成插件（Maven）"></a>代码生成插件（Maven）</h4><p>注意protoSourceRoot，proto文件一定要放在指定的位置，不然插件找不到位置。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">extensions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">extension</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>kr.motd.maven<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>os-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.7.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">extension</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">extensions</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.xolstice.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>protobuf-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.6.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">protoSourceRoot</span>&gt;</span>$&#123;project.basedir&#125;/src/main/resources<span class="tag">&lt;/<span class="name">protoSourceRoot</span>&gt;</span> <span class="comment">&lt;!-- proto文件目录 --&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">protocArtifact</span>&gt;</span>com.google.protobuf:protoc:$&#123;protobuf.version&#125;:exe:$&#123;os.detected.classifier&#125;<span class="tag">&lt;/<span class="name">protocArtifact</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">pluginId</span>&gt;</span>grpc-java<span class="tag">&lt;/<span class="name">pluginId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">pluginArtifact</span>&gt;</span>io.grpc:protoc-gen-grpc-java:$&#123;grpc.version&#125;:exe:$&#123;os.detected.classifier&#125;<span class="tag">&lt;/<span class="name">pluginArtifact</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">goal</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">goal</span>&gt;</span>compile-custom<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>⚠️ <code>os.detected.classifier</code> 依赖 <code>os-maven-plugin</code> 自动检测操作系统，否则你需要手动填 <code>windows-x86_64</code> / <code>linux-x86_64</code> 等。</p>
+</blockquote>
+<h4 id="可选依赖（按需添加）"><a href="#可选依赖（按需添加）" class="headerlink" title="可选依赖（按需添加）"></a>可选依赖（按需添加）</h4><ul>
+<li><strong>gRPC 服务健康检查</strong>（K8s / 监控需要）</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.grpc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>grpc-services<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;grpc.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>安全（TLS/SSL）</strong></li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.grpc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>grpc-netty<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;grpc.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>（和 <code>grpc-netty-shaded</code> 只能二选一）</p>
+<h2 id="gRPC-Server"><a href="#gRPC-Server" class="headerlink" title="gRPC Server"></a>gRPC Server</h2><h3 id="填充业务逻辑"><a href="#填充业务逻辑" class="headerlink" title="填充业务逻辑"></a>填充业务逻辑</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public <span class="keyword">class</span> <span class="title class_">GreeterServiceImpl</span> extends GreeterGrpc.GreeterImplBase &#123;</span><br><span class="line"><span class="meta">    @Override</span></span><br><span class="line">    public void sayHello(HelloRequest req, StreamObserver&lt;HelloResponse&gt; responseObserver) &#123;</span><br><span class="line">        String result = <span class="string">&quot;Hello, &quot;</span> + req.getName();</span><br><span class="line">        HelloResponse reply = HelloResponse.newBuilder().setMessage(result).build();</span><br><span class="line">        responseObserver.onNext(reply);</span><br><span class="line">        responseObserver.onCompleted();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="启动gRPC服务"><a href="#启动gRPC服务" class="headerlink" title="启动gRPC服务"></a>启动gRPC服务</h3><ul>
+<li>绑定服务实现类，监听端口</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GrpcServer</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">Server</span> <span class="variable">server</span> <span class="operator">=</span> ServerBuilder.forPort(<span class="number">50051</span>)</span><br><span class="line">            .addService(<span class="keyword">new</span> <span class="title class_">GreeterServiceImpl</span>())</span><br><span class="line">            .build()</span><br><span class="line">            .start();</span><br><span class="line">        System.out.println(<span class="string">&quot;Server started on port 50051&quot;</span>);</span><br><span class="line">        server.awaitTermination();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>实践建议</strong>：</p>
+<ul>
+<li>放在 Spring Boot 中启动（通过 <code>@PostConstruct</code>）</li>
+<li>配合 <code>health check</code>（比如 <code>grpc-health-probe</code>）用于 K8s 探针</li>
+</ul>
+<h2 id="gRPC-Client"><a href="#gRPC-Client" class="headerlink" title="gRPC Client"></a>gRPC Client</h2><p>创建 <code>Channel</code> → 创建 <code>Stub</code> → 调用 RPC</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GrpcClient</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">ManagedChannel</span> <span class="variable">channel</span> <span class="operator">=</span> ManagedChannelBuilder.forAddress(<span class="string">&quot;localhost&quot;</span>, <span class="number">50051</span>)</span><br><span class="line">            .usePlaintext()</span><br><span class="line">            .build();</span><br><span class="line"></span><br><span class="line">        GreeterGrpc.<span class="type">GreeterBlockingStub</span> <span class="variable">stub</span> <span class="operator">=</span> GreeterGrpc.newBlockingStub(channel);</span><br><span class="line"></span><br><span class="line">        <span class="type">HelloResponse</span> <span class="variable">response</span> <span class="operator">=</span> stub.sayHello(</span><br><span class="line">            HelloRequest.newBuilder().setName(<span class="string">&quot;Alice&quot;</span>).build()</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        System.out.println(response.getMessage());</span><br><span class="line">        channel.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><ul>
+<li><strong>连接管理</strong><ul>
+<li>高并发建议使用<strong>连接池</strong>（例如 Netty ChannelPool）</li>
+<li>长连接重用，避免每次调用都 <code>new ManagedChannel</code></li>
+</ul>
+</li>
+<li><strong>错误重试</strong><ul>
+<li>gRPC 自带重试机制（需在客户端 <code>ServiceConfig</code> 配置）</li>
+<li>结合业务异常判断（不要无脑重试）</li>
+</ul>
+</li>
+<li><strong>安全加密</strong><ul>
+<li>内网可 <code>usePlaintext()</code></li>
+<li>公网必须 TLS（<code>useTransportSecurity()</code>）</li>
+</ul>
+</li>
+<li><strong>拦截器（Interceptor）</strong><ul>
+<li>实现统一日志、鉴权、Tracing（OpenTelemetry）</li>
+<li>分客户端和服务端两种</li>
+</ul>
+</li>
+<li><strong>流式通信</strong><ul>
+<li>一元 RPC（Unary）</li>
+<li>服务端流（Server Streaming）</li>
+<li>客户端流（Client Streaming）</li>
+<li>双向流（Bidirectional Streaming）</li>
+<li>常用于<strong>实时数据推送</strong>或<strong>长连接交互</strong></li>
+</ul>
+</li>
+<li><strong>部署与可观测性</strong><ul>
+<li>K8s 部署时，用 readiness/liveness probe</li>
+<li>Prometheus + gRPC Metrics 收集延迟、QPS</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/08/09/image-caption/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
+      <meta itemprop="name" content="碎梦">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | scatteredream's blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/08/09/image-caption/" class="post-title-link" itemprop="url">image captioning</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-08-09 00:00:00" itemprop="dateCreated datePublished" datetime="2025-08-09T00:00:00+08:00">2025-08-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-10 23:13:21" itemprop="dateModified" datetime="2025-08-10T23:13:21+08:00">2025-08-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Image-Captioning"><a href="#Image-Captioning" class="headerlink" title="Image Captioning"></a>Image Captioning</h1><p>“图像描述”（Image Captioning）方案指的是自动为图像生成自然语言描述的技术实现方法。这是一个结合了计算机视觉（CV）和自然语言处理（NLP）的多模态任务。</p>
+<p>以下是一个全面的图像描述方案设计和实现路径，涵盖不同复杂度和应用场景：</p>
+<p><strong>核心目标：</strong> 输入一张图像，输出一句（或多句）准确、流畅、信息丰富的自然语言描述。</p>
+<h2 id="基础方案（简单但效果有限）"><a href="#基础方案（简单但效果有限）" class="headerlink" title="基础方案（简单但效果有限）"></a>基础方案（简单但效果有限）</h2><ol>
+<li><p><strong>基于模板的方案：</strong></p>
+<ul>
+<li>  <strong>原理：</strong> 预先定义好描述句子的模板（例如：<code>&quot;这是一张包含 [对象] 在 [场景] 中的图片。&quot;</code>）。使用目标检测或图像分类模型识别图像中的主要对象和场景类别，然后将结果填入模板。</li>
+<li>  <strong>优点：</strong> 实现简单、快速、可控性强。</li>
+<li>  <strong>缺点：</strong> 描述生硬、不自然、缺乏细节（如属性、关系、动作）、灵活性差、无法生成复杂句子。</li>
+<li>  <strong>适用场景：</strong> 对描述质量要求不高、需要快速部署、资源受限的场景（如简单的图片管理）。</li>
+</ul>
+</li>
+<li><p><strong>基于检索的方案：</strong></p>
+<ul>
+<li>  <strong>原理：</strong> 构建一个大型的 <code>(图像, 描述)</code> 对数据库。对于新输入图像，计算其视觉特征（如 CNN 特征向量），在数据库中检索最相似的图像，然后返回该相似图像的描述或进行微调。</li>
+<li>  <strong>优点：</strong> 可以利用已有的高质量人工描述，描述相对自然。</li>
+<li>  <strong>缺点：</strong> 严重依赖数据库的覆盖度，无法生成不在数据库中的新描述，缺乏创造性，描述可能与图像细节不完全匹配。</li>
+<li>  <strong>适用场景：</strong> 图像库相对固定且已标注好的场景（如特定领域的产品图库）。</li>
+</ul>
+</li>
+</ol>
+<h2 id="主流与进阶方案（基于深度学习）"><a href="#主流与进阶方案（基于深度学习）" class="headerlink" title="主流与进阶方案（基于深度学习）"></a>主流与进阶方案（基于深度学习）</h2><h3 id="CNN-RNN"><a href="#CNN-RNN" class="headerlink" title="CNN-RNN"></a>CNN-RNN</h3><ul>
+<li>  <strong>代表模型</strong>: Google的 “Show and Tell” (Vinyals et al., 2015)。”Bottom-Up and Top-Down Attention” (简称 “Up-Down” 模型, Anderson et al., 2018)</li>
+<li><strong>原理：</strong> 这是早期最成功的深度学习方案。<ul>
+<li>  <strong>Encoder (视觉编码器)：</strong> 使用 CNN (如 VGG, ResNet) <strong>提取图像的深度视觉特征</strong>。通常取 CNN 最后一个卷积层的特征图或全局池化后的固定长度特征向量。</li>
+<li>  <strong>Decoder (语言解码器)：</strong> 使用 RNN (如 LSTM, GRU) 。以 Encoder 输出的视觉特征作为初始状态或上下文输入，逐词生成描述句子。在生成每个词时，会结合当前的视觉上下文和已生成的部分句子。</li>
+</ul>
+</li>
+<li><strong>关键机制：</strong><ul>
+<li>  <strong>注意力机制：</strong> 极大提升了效果。允许 Decoder 在生成每个词时，动态地关注图像的不同区域（特征图上的不同位置）。这使得描述能与图像的具体细节相关联（如“一只<strong>黑色</strong>的<strong>猫</strong>坐在<strong>红色</strong>的<strong>沙发</strong>上”）。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong> <ul>
+<li>  RNN 存在长序列依赖问题；特征表示能力受限于预训练的 CNN；模型相对复杂。</li>
+<li>  特征表达相对单一，无法充分捕捉图像中的细节和上下文，目标就是生成与标注尽可能一致的描述，泛化能力受限于标注数据的范围和多样性。</li>
+<li>  生成的描述较为模板化，缺乏多样性和泛化能力。主要在高质量、人工精细标注的数据集（如COCO，几十万张图）上进行有监督学习。模型被训练去“复述”人类给出的标准答案。</li>
+<li>  对语义理解和复杂场景的适应能力有限。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Transformer-Based-架构"><a href="#Transformer-Based-架构" class="headerlink" title="Transformer-Based 架构"></a>Transformer-Based 架构</h3><ul>
+<li><strong>原理：</strong> 完全摒弃 RNN，使用 Transformer 架构作为 Encoder 和 Decoder。<ul>
+<li>  <strong>Encoder (视觉编码器)：</strong> 通常仍使用 CNN (如 ResNet) 或 ViT 提取视觉特征。ViT 本身是 Transformer Encoder，能更好地捕捉全局信息。</li>
+<li>  <strong>Decoder (语言解码器)：</strong> 使用 Transformer Decoder。Transformer 的自注意力机制能更好地捕捉词与词之间的长距离依赖关系，以及词与图像区域之间的关系（通过 Cross-Attention）。</li>
+</ul>
+</li>
+<li>  <strong>优点：</strong> 训练速度通常更快（易于并行化），处理长序列能力更强，效果通常优于或持平 CNN-RNN+Attention 方案。ViT 作为 Encoder 潜力巨大。</li>
+<li>  <strong>缺点：</strong> 模型参数量可能更大，需要更多数据。</li>
+</ul>
+<h3 id="VLMs"><a href="#VLMs" class="headerlink" title="VLMs"></a>VLMs</h3><p><mark>大规模视觉语言预训练模型</mark></p>
+<ul>
+<li><strong>原理：</strong> 这是当前最前沿且效果最好的方案。在大规模图像-文本对数据集上预训练<strong>一个统一的模型</strong>，学习图像和文本的联合表示及它们之间的对齐关系。预训练任务通常包括：<ul>
+<li>  <mark>图像-文本匹配： 判断图像和文本是否匹配。</mark></li>
+<li>  <strong>掩码语言建模：</strong> 预测文本中被遮盖的词。</li>
+<li>  <strong>掩码区域建模/图像文本对比学习：</strong> 学习图像区域特征与文本词特征的对应关系。</li>
+</ul>
+</li>
+<li><strong>代表性模型：</strong><ul>
+<li>  <strong>CLIP (Contrastive Language-Image Pretraining):</strong> 学习图像和文本在共享嵌入空间的对齐。虽然本身不是生成模型，但其强大的图文匹配能力可用来初始化或辅助生成模型。</li>
+<li>  <strong>BLIP / BLIP-2:</strong> 专为多模态理解和生成任务设计。BLIP-2 创新地使用冻结的图像编码器（如 ViT）和冻结的大语言模型，通过轻量级的 Querying Transformer 来弥合视觉和语言模态之间的差距，实现高效且强大的图像描述生成（零样本或微调）。</li>
+<li>  <strong>GIT (GenerativeImage2Text):</strong> 大规模训练单一Transformer模型，统一处理图像和文本生成。</li>
+<li>  <strong>Flamingo:</strong> 专注于少样本学习，能将视觉信息整合到强大的语言模型中。</li>
+<li>  <strong>其他：</strong> OFA, SimVLM, CoCa 等。</li>
+</ul>
+</li>
+<li><strong>优点：</strong><ul>
+<li>  <strong>效果最佳：</strong> 生成的描述通常最准确、流畅、丰富、符合人类习惯。</li>
+<li>  <strong>泛化能力强：</strong> 对未见过的图像和概念有较好的理解能力。</li>
+<li>  <strong>支持零样本/少样本学习：</strong> 部分模型无需在特定下游任务上微调即可生成不错的描述（如 BLIP-2）。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong><ul>
+<li>  <strong>计算资源要求高：</strong> 预训练需要海量数据和强大的算力（GPU/TPU集群）。</li>
+<li>  <strong>模型庞大：</strong> 参数量巨大（数亿到数百亿），推理可能较慢。</li>
+<li>  <strong>依赖预训练数据：</strong> 模型能力受限于预训练数据的质量和覆盖范围，可能存在偏见。</li>
+</ul>
+</li>
+</ul>
+<p>传统的图像描述方法与现代VLM最核心的区别在于它们处理和整合视觉与语言信息的方式。</p>
+<h2 id="VLMs-为什么是-Image-Caption-领域的-SOTA"><a href="#VLMs-为什么是-Image-Caption-领域的-SOTA" class="headerlink" title="VLMs 为什么是 Image Caption 领域的 SOTA"></a>VLMs 为什么是 Image Caption 领域的 SOTA</h2><p>现代 VLM（比如 <strong>InternVL、Qwen-VL、GPT-4V、LLaVA</strong> 等）做 VQA 不是专门设计一个 VQA 网络，而是：</p>
+<ul>
+<li>用一个 <strong>统一的多模态编码器 + 大语言模型解码器</strong>，把 VQA 当成一种“多模态指令跟随”任务来做。</li>
+<li>输入端可以是「图像 + 问题」，直接拼到一个上下文里。</li>
+<li>模型通过大规模跨模态预训练和指令微调，学会了<strong>对齐视觉信息和语言理解</strong>，从而能自然生成答案</li>
+</ul>
+<h3 id="架构演进"><a href="#架构演进" class="headerlink" title="架构演进"></a>架构演进</h3><p><strong>传统模型 (CNN + RNN/Attention)</strong>:</p>
+<ul>
+<li><strong>信息流是单向且割裂的</strong>：一个CNN模块负责“看”，将整张图压缩成一个或一组特征向量；然后，一个RNN/LSTM模块接手这个“报告”，开始“写作”。视觉和语言的处理是<strong>分阶段的</strong>，两者之间的交互很浅。</li>
+<li><strong>理解是局部的</strong>：即便引入注意力机制，模型也只是在生成某个词时多“看”一眼图片的相关部分，但它缺乏对整个场景的全局、深层语义关联的理解。</li>
+</ul>
+<p><strong>现代VLM (基于Transformer)</strong>:</p>
+<ul>
+<li><strong>统一的表示空间 (Unified Embedding Space)</strong>: VLM的核心突破是将图像块（Patches）和文本（Tokens）投射到一个统一的、高维的语义空间中。在这个空间里，“苹果”这个词的向量和一张苹果图片的向量在数学上是“相近”的。这使得模型能在一个共同的层面上<strong>同时处理和融合</strong>视觉与语言信息。</li>
+<li><strong>强大的Transformer架构</strong>: VLM几乎都采用Transformer作为骨架。其自注意力机制（Self-Attention）不仅能捕捉句子中词与词的关系，也能捕捉图像中不同区域之间的关系，更重要的是，还能捕捉<strong>图像区域和文字之间的跨模态关系</strong>。这构建了一个极其强大的、端到端的融合网络，信息可以在视觉和语言模态之间自由流动和深度交互。</li>
+</ul>
+<h3 id="涌现能力（AGI）"><a href="#涌现能力（AGI）" class="headerlink" title="涌现能力（AGI）"></a>涌现能力（AGI）</h3><p><strong>传统模型</strong>:</p>
+<ul>
+<li><strong>任务特定</strong>: 为图像描述训练的模型，就只会做图像描述。它无法回答关于图片的问题，也无法遵循新的指令。生成的句子风格和内容较为固定，容易出现模式化和缺乏细节的问题。</li>
+</ul>
+<p><strong>现代VLM</strong>:</p>
+<ul>
+<li><strong>零样本（Zero-Shot）能力</strong>: 这是最关键的区别。一个强大的VLM，即便没有在“识别椅子”这个任务上训练过，你给它一张图，问“图里有什么可以坐的东西？”，它也能回答“一把椅子”。因为它在预训练中已经将“椅子”的视觉概念和“可以坐的家具”的文本语义关联了起来。</li>
+<li><strong>指令遵循（Instruction Following）</strong>: VLM能够理解并执行复杂的、在训练中从未见过的自然语言指令。你可以让它“描述一下这张图中看起来最危险的部分”，或者“用诗歌的形式描述这张日落”，甚至“找出图中所有红色的圆形物体并计数”。这是因为它继承了其背后大型语言模型（LLM）强大的语言理解和推理能力。</li>
+<li><strong>多任务通用性</strong>: VLM是天生的“多面手”。同一个模型，无需重新训练，就可以同时用于图像描述、视觉问答(VQA)、目标检测、图像生成、多模态对话等多种任务。</li>
+</ul>
+<h3 id="训练范式"><a href="#训练范式" class="headerlink" title="训练范式"></a>训练范式</h3><p><strong>传统模型</strong>:</p>
+<ul>
+<li><strong>数据有限且昂贵</strong>: 它们主要在高质量、人工精细标注的数据集（如COCO，几十万张图）上进行<strong>有监督学习</strong>。模型被训练去“复述”人类给出的标准答案。</li>
+<li><strong>学习目标单一</strong>: 目标就是生成与标注尽可能一致的描述，泛化能力受限于标注数据的范围和多样性。</li>
+</ul>
+<p><strong>现代VLM</strong>:</p>
+<ul>
+<li><strong>海量、廉价的互联网数据</strong>: VLM的大规模预训练利用了互联网上数以<strong>十亿计</strong>的图文对（如LAION-5B数据集）。这些数据虽然“嘈杂”（质量参差不齐），但其规模和多样性是前所未有的。</li>
+<li><strong>自监督学习 (Self-supervised Learning)</strong>: VLM通过巧妙的自监督任务（如CLIP的对比学习）进行预训练。模型的目标不再是模仿标准答案，而是自己去发现规律，例如，判断给定的文本描述是否与给定的图片匹配。通过在海量数据上完成这个看似简单的任务，VLM被迫学习到了<strong>关于世界的基础常识和高层概念</strong>——什么是狗，什么是天空，跑和跳有什么区别等等。</li>
+</ul>
+<h2 id="方案选择"><a href="#方案选择" class="headerlink" title="方案选择"></a>方案选择</h2><ol>
+<li><p><strong>明确需求与场景：</strong></p>
+<ul>
+<li>  对描述质量的要求（准确性、流畅度、丰富度）？</li>
+<li>  对生成速度/延迟的要求？</li>
+<li>  可用的计算资源（训练/推理）？</li>
+<li>  是否有特定领域（如医疗影像、艺术作品）？</li>
+<li>  是否需要多语言支持？</li>
+</ul>
+</li>
+<li><p><strong>数据：</strong></p>
+<ul>
+<li><strong>训练数据：</strong> 核心是高质量的 <code>(图像, 描述)</code> 对数据集。常用公开数据集：<ul>
+<li>  COCO Captions： 最常用基准数据集，约 33 万张图像，每张图 5 个描述。</li>
+<li>  Flickr30k： 3.1 万张图像，每张图 5 个描述。</li>
+<li>  Conceptual Captions： 规模巨大（数百万到数十亿对），但描述来自网页 Alt-text，质量相对参差不齐。</li>
+<li>  <strong>领域特定数据：</strong> 对于专业领域（如卫星图、病理切片），需要收集或标注相应数据。</li>
+</ul>
+</li>
+<li>  <strong>数据预处理：</strong> 图像缩放、归一化；文本分词、建立词表、处理 OOV 词。</li>
+</ul>
+</li>
+<li><p><strong>模型选择与训练：</strong></p>
+<ul>
+<li><strong>选择：</strong><ul>
+<li>  <strong>资源有限/快速验证：</strong> CNN-RNN+Attention 或小型 Transformer。</li>
+<li>  <strong>追求最佳效果：</strong> BLIP-2, GIT 等大规模预训练模型（优先考虑开源且可微调的）。BLIP-2 在效果、效率和灵活性上目前是很好的平衡点。</li>
+<li>  <strong>零样本/少样本需求：</strong> BLIP-2, Flamingo, CLIP引导的生成。</li>
+</ul>
+</li>
+<li><strong>训练：</strong><ul>
+<li>  <strong>预训练模型微调：</strong> 这是主流做法。下载开源预训练模型，在自己的数据集（即使较小）上进行微调，能快速获得好效果。</li>
+<li>  <strong>从头训练：</strong> 仅在资源极其丰富且有海量自有数据时考虑。</li>
+<li>  <strong>损失函数：</strong> 通常使用交叉熵损失（Cross-Entropy Loss）。更高级的可以使用强化学习策略（如 Self-Critical Sequence Training）直接优化评测指标（如 CIDEr），但实现更复杂。</li>
+<li>  <strong>训练技巧：</strong> 学习率调度、梯度裁剪、早停等。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>评估：</strong></p>
+<ul>
+<li><strong>自动化指标 (需谨慎解读)：</strong><ul>
+<li>  <strong>BLEU：</strong> 衡量生成描述与参考描述在 n-gram 上的精确度匹配。侧重表面形式。</li>
+<li>  <strong>METEOR：</strong> 考虑同义词、词干、对齐，比 BLEU 更贴近人类判断。</li>
+<li>  <strong>ROUGE-L：</strong> 基于最长公共子序列，衡量召回率。</li>
+<li>  <strong>CIDEr：</strong> <strong>最常用且与人工评价相关性较高</strong>。专门为图像描述设计，通过计算 TF-IDF 加权的 n-gram 相似度，衡量生成描述与多个参考描述的共识程度。</li>
+<li>  <strong>SPICE：</strong> 将描述解析为场景图（对象、属性、关系），然后与参考描述的解析结果进行语义匹配。更能衡量语义准确性。</li>
+</ul>
+</li>
+<li>  <strong>人工评估：</strong> <strong>最可靠！</strong> 请人评价描述的准确性、流畅度、信息量、相关性等。常用方法如 Likert 量表评分或成对比较。</li>
+</ul>
+</li>
+<li><p><strong>部署与优化：</strong></p>
+<ul>
+<li>  <strong>模型优化：</strong> 量化、剪枝、知识蒸馏等技术减小模型体积、提升推理速度。</li>
+<li>  <strong>推理加速：</strong> 使用 ONNX Runtime, TensorRT 等推理引擎；利用 GPU/专用硬件加速。</li>
+<li>  <strong>API 服务：</strong> 将模型封装成 RESTful API 或 gRPC 服务供应用调用。</li>
+<li>  <strong>集成：</strong> 集成到内容管理系统、辅助工具、聊天机器人等应用中。</li>
+<li>  <strong>监控与迭代：</strong> 监控线上效果，收集用户反馈，持续改进模型和数据。</li>
+</ul>
+</li>
+</ol>
+<h2 id="提升方向与挑战"><a href="#提升方向与挑战" class="headerlink" title="提升方向与挑战"></a>提升方向与挑战</h2><ul>
+<li>  <strong>细节与关系：</strong> 更精确地描述物体属性（颜色、材质、状态）、空间关系、复杂动作和交互。</li>
+<li>  <strong>常识推理：</strong> 理解图像中隐含的常识（如“人坐在椅子上”通常意味着“椅子在支撑人”）。</li>
+<li>  <strong>主观性与风格：</strong> 生成不同风格（幽默、诗意、简洁、详细）或带有主观情感色彩的描述。</li>
+<li>  <strong>长文本与故事性：</strong> 为图像序列（视频）生成连贯的故事性描述。</li>
+<li>  <strong>可控生成：</strong> 根据用户指令生成特定侧重点的描述（如“只描述动物”，“详细描述背景”）。</li>
+<li>  <strong>偏见与安全性：</strong> 减少模型从数据中学习到的社会偏见，过滤不当或有害内容。</li>
+<li>  <strong>低资源/少样本：</strong> 在标注数据稀缺的领域或语言中取得好效果。</li>
+<li>  <strong>解释性与可信度：</strong> 让模型解释其生成的依据，提高可信度。</li>
+</ul>
+<h2 id="总结表格"><a href="#总结表格" class="headerlink" title="总结表格"></a>总结表格</h2><table>
+<thead>
+<tr>
+<th>类别</th>
+<th>代表方法</th>
+<th>VQAv2 (overall 准确率，%）</th>
+<th>TextVQA (accuracy / ANLS，%）</th>
+<th>DocVQA (EM/accuracy，% 大致)</th>
+<th>要点 / 备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>经典 CNN+RNN / Attention-era</td>
+<td>Bottom-Up &amp; Top-Down (2017) / Pythia 等</td>
+<td>**~70%**（Top-Down 报 70.3% test-standard） 。(<a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content_cvpr_2018/CameraReady/1163.pdf?utm_source=chatgpt.com">CVF开放获取</a>)</td>
+<td>TextVQA 初期方法（LoRRA）**<del>26.6%**（val）；后续 M4C 提升到 **</del>40%** 区间。(<a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content_CVPR_2019/papers/Singh_Towards_VQA_Models_That_Can_Read_CVPR_2019_paper.pdf?utm_source=chatgpt.com">CVF开放获取</a>, <a target="_blank" rel="noopener" href="https://github.com/xinke-wang/Awesome-Text-VQA?utm_source=chatgpt.com">GitHub</a>)</td>
+<td>早期 DocVQA 指标明显低于现代方法（多数 &lt;50%），依赖专门 OCR +结构化推理流程。(<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.08920?utm_source=chatgpt.com">arXiv</a>)</td>
+<td>优点：轻量、推理快；缺点：难以处理含大量文字/表格/图表的场景，泛化差。</td>
+</tr>
+<tr>
+<td>Transformer era / 任务专用优化</td>
+<td>MCAN / Transformer-based VQA(近年)</td>
+<td>逐步上升，很多 transformer-based 报 **&gt;75%**（取决leaderboard）。(<a target="_blank" rel="noopener" href="https://proceedings.neurips.cc/paper/2021/file/aa97d584861474f4097cf13ccb5325da-Paper.pdf?utm_source=chatgpt.com">NeurIPS 会议论文集</a>)</td>
+<td>专用 TextVQA 方法（TAP / TAG 等）在预训练+外部大规模数据下能把 ANLS/acc 推高到 <strong>~50% 以上</strong>（取决方法和额外数据）。(<a target="_blank" rel="noopener" href="https://users.umiacs.umd.edu/~josephj/Text-VQA.pdf?utm_source=chatgpt.com">UMIACS</a>)</td>
+<td>专用 DocVQA 模型（结合 OCR/布局理解）在文档问答上明显好于老方法，部分方法能达到较高 EM。(<a target="_blank" rel="noopener" href="https://arxiv.org/html/2405.18433v1?utm_source=chatgpt.com">arXiv</a>)</td>
+<td>优点：针对性强；缺点：每类任务需要不同模块 / 数据。</td>
+</tr>
+<tr>
+<td>现代 VLM（InternVL 系列）</td>
+<td>InternVL (InternVL-G / 2.5 系列)</td>
+<td>在 VQAv2 / 多模态 benchmark 上表现优异（论文/补充表格给出跨任务领先或接近 SOTA），InternVL2 在多个 benchmark 大幅提升。InternVL 的综合评测显示在多项视觉-语言任务中领先。(<a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/CVPR2024/papers/Chen_InternVL_Scaling_up_Vision_Foundation_Models_and_Aligning_for_Generic_CVPR_2024_paper.pdf?utm_source=chatgpt.com">CVF开放获取</a>, <a target="_blank" rel="noopener" href="https://arxiv.org/html/2412.05271v1?utm_source=chatgpt.com">arXiv</a>)</td>
+<td>在 TextVQA/含文本理解任务上有显著进步（InternVL 在若干读图文本任务上优于旧方法）。(<a target="_blank" rel="noopener" href="https://arxiv.org/html/2412.05271v1?utm_source=chatgpt.com">arXiv</a>)</td>
+<td>InternVL 系列在 DocVQA/多模态文档任务有竞争力，InternVL2-Pro 在 MMMU/混合基准上达到接近闭源模型的水平。(<a target="_blank" rel="noopener" href="https://github.com/OpenGVLab/InternVL?utm_source=chatgpt.com">GitHub</a>, <a target="_blank" rel="noopener" href="https://arxiv.org/html/2412.05271v1?utm_source=chatgpt.com">arXiv</a>)</td>
+<td>优点：统一架构、多任务迁移好；缺点：部署成本高、极细粒度 OCR 可能仍靠专用模块强化。</td>
+</tr>
+<tr>
+<td>现代 VLM（Qwen2.5-VL 系列）</td>
+<td>Qwen2.5-VL (Alibaba)</td>
+<td>Qwen 系列在 VQA / 多模态 benchmark 上宣称 SoTA/接近 SoTA，尤其在需要强文本感知（TextVQA / OCRBench / DocVQA / ChartQA）上表现突出。(<a target="_blank" rel="noopener" href="https://arxiv.org/html/2409.12191v1?utm_source=chatgpt.com">arXiv</a>, <a target="_blank" rel="noopener" href="https://github.com/QwenLM/Qwen-VL?utm_source=chatgpt.com">GitHub</a>)</td>
+<td>文本相关的 VQA（TextVQA / OCRBench）上，Qwen2.5-VL 报告显著领先（论文与 repo 给出对比表）。(<a target="_blank" rel="noopener" href="https://arxiv.org/html/2409.12191v1?utm_source=chatgpt.com">arXiv</a>)</td>
+<td>Qwen 在 DocVQA / InfoVQA / ChartQA 等特定任务上宣称 SOTA 级别表现（论文/官方评测）。(<a target="_blank" rel="noopener" href="https://arxiv.org/html/2409.12191v1?utm_source=chatgpt.com">arXiv</a>)</td>
+<td>优点：对文字（OCR）和表格/图表理解优化；缺点：训练依赖大规模有标签/弱标签数据。</td>
+</tr>
+<tr>
+<td>闭源强基线（GPT-4V / GPT-4o-vision）</td>
+<td>OpenAI GPT-4 Vision family</td>
+<td>多项公开/第三方评测表明在 VQAv2、DocVQA、ChartQA 等上取得顶级表现（闭源 leader）。例如 GPT-4 系列在若些任务上领先。(<a target="_blank" rel="noopener" href="https://openai.com/index/gpt-4-research/?utm_source=chatgpt.com">OpenAI</a>, <a target="_blank" rel="noopener" href="https://arxiv.org/html/2405.18433v1?utm_source=chatgpt.com">arXiv</a>)</td>
+<td>在 TextVQA/文档问答中表现非常强（结合 OCR 辅助输入可拿到高分）。(<a target="_blank" rel="noopener" href="https://arxiv.org/html/2405.18433v1?utm_source=chatgpt.com">arXiv</a>)</td>
+<td>在 DocVQA / 文档理解 benchmark 上闭源模型往往是最高分（但不可复现）。(<a target="_blank" rel="noopener" href="https://encord.com/blog/gpt-4o-vs-gemini-vs-claude-3-opus/?utm_source=chatgpt.com">Encord</a>)</td>
+<td>优点：强泛化、推理能力强；缺点：闭源、不可定制/复现成本。</td>
+</tr>
+</tbody></table>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2707,281 +3200,8 @@ $$
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/31/zhihu-springboot-test/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/31/zhihu-springboot-test/" class="post-title-link" itemprop="url">全链路压测优化GC参数</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-05-31 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-31T00:00:00+08:00">2025-05-31</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-06-06 22:20:29" itemprop="dateModified" datetime="2025-06-06T22:20:29+08:00">2025-06-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/zhihu/" itemprop="url" rel="index"><span itemprop="name">zhihu</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>在实际工作中，经常会需要进行在<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=%E5%85%A8%E9%93%BE%E8%B7%AF%E5%8E%8B%E6%B5%8B&zhida_source=entity">全链路压测</a>，优化 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=GC%E5%8F%82%E6%95%B0&zhida_source=entity">GC参数</a>，优化 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=JVM+%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D&zhida_source=entity">JVM 内存分配</a>。</p>
-<p>当知道 1 次 RPC 请求和 Http 请求需要的堆内存大小后，你可以精确地计算：指定的并发量之下，系统需申请多少堆内存。同时结合 JVM <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=%E6%96%B0%E7%94%9F%E4%BB%A3%E5%A0%86%E5%A4%A7%E5%B0%8F&zhida_source=entity">新生代堆大小</a>，就能推算出 1 分钟发生多少次 GC，这个 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=GC%E9%A2%91%E7%8E%87&zhida_source=entity">GC频率</a>是否过于频繁？从而针对性的优化。</p>
-<p>我们希望 1 次 Rpc、Http 请求申请堆内存足够少，这样可减少 GC 导致的系统停顿，提高系统性能，单机可以支撑更高的并发量。</p>
-<p>1次 Http 请求，申请多少堆内存？</p>
-<p>1 次 RPC 请求，申请多少堆内存？</p>
-<p>如果不亲自实验，无法得出结论。</p>
-<h2 id="1-实验思路"><a href="#1-实验思路" class="headerlink" title="1. 实验思路"></a><strong>1. 实验思路</strong></h2><h3 id="关键动作"><a href="#关键动作" class="headerlink" title="关键动作"></a><strong>关键动作</strong></h3><ol>
-<li>创建<a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=SpringBoot&zhida_source=entity">SpringBoot</a>新应用(版本<code>2.5.4</code>)。</li>
-<li>新增 Post 接口，供 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=JMeter&zhida_source=entity">JMeter</a> 调用。</li>
-<li>JMeter（开源压测工具）新建测试计划。每个线程执行2000 次Http接口调用，共10 个线程，总调用 20000 次。</li>
-<li>SpringBoot 打印 GC 详细日志，记录GC 前后，新生代申请了多少内存。</li>
-</ol>
-<p>Jmeter 调用 20000 次 Http 接口以后，通过手动 GC 的方式触发 GC，通过 GC 详细日志计算压测期间新生代堆内存增长量。（对象基本分配在新生代）</p>
-<h2 id="2-SpringBoot-声明-Http-接口"><a href="#2-SpringBoot-声明-Http-接口" class="headerlink" title="2. SpringBoot 声明 Http 接口"></a><strong>2. SpringBoot 声明 Http 接口</strong></h2><p>如下代码声明了一个 Post接口 create；创建了 Get 接口，用于触发GC。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestController</span> &#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">private</span> <span class="type">AtomicLong</span> <span class="variable">count</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AtomicLong</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">   <span class="meta">@ResponseBody</span></span><br><span class="line">   <span class="meta">@RequestMapping(value = &quot;create&quot;, method = RequestMethod.POST)</span></span><br><span class="line">   <span class="keyword">public</span> String <span class="title function_">create</span><span class="params">(<span class="meta">@RequestBody</span> Order order)</span> &#123;</span><br><span class="line">      <span class="comment">//log.warn(&quot;收到提单请求 cnt&#123;&#125;:&#123;&#125;&quot;, count.getAndIncrement(), order);</span></span><br><span class="line">      <span class="keyword">return</span> <span class="string">&quot;ok&quot;</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="meta">@ResponseBody</span></span><br><span class="line">   <span class="meta">@RequestMapping(value = &quot;gc&quot;, method = RequestMethod.GET)</span></span><br><span class="line">   <span class="keyword">public</span> String <span class="title function_">gc</span><span class="params">()</span> &#123;</span><br><span class="line">      System.gc();</span><br><span class="line">      <span class="keyword">return</span> <span class="string">&quot;ok&quot;</span>;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="3-JMeter-新建测试计划"><a href="#3-JMeter-新建测试计划" class="headerlink" title="3. JMeter 新建测试计划"></a><strong>3. JMeter 新建测试计划</strong></h2><h3 id="3-1-新增线程组"><a href="#3-1-新增线程组" class="headerlink" title="3.1 新增线程组"></a><strong>3.1 新增线程组</strong></h3><p>新建线程组，选择 10 个线程，每个线程循环 2000次。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-5d9d9fa448616508fa7a9c56f813e893_1440w.webp" alt="img"></p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-ae94445a6a75a61e820a52e65df1dc54_1440w.webp" alt="img"></p>
-<h3 id="3-2-新建-Http-默认值"><a href="#3-2-新建-Http-默认值" class="headerlink" title="3.2 新建 Http 默认值"></a><strong>3.2 新建 Http 默认值</strong></h3><p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-64ba1f2c3a1eca7d2fa8a8bc63f210ad_1440w.webp" alt="img"></p>
-<h3 id="3-3-新建请求头"><a href="#3-3-新建请求头" class="headerlink" title="3.3 新建请求头"></a><strong>3.3 新建请求头</strong></h3><p>由于请求体是 JSON，所以新增请求头 Content-Type</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-7510127e1f61c1f513e287c5907dec04_1440w.webp" alt="img"></p>
-<h3 id="3-4-新建-Http-请求"><a href="#3-4-新建-Http-请求" class="headerlink" title="3.4 新建 Http 请求"></a><strong>3.4 新建 Http 请求</strong></h3><p>请求中指定 Url 和 请求体</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-d6686ab8e643e3965a9090179e126511_1440w.webp" alt="img"></p>
-<h2 id="4-实验过程"><a href="#4-实验过程" class="headerlink" title="4. 实验过程"></a><strong>4. 实验过程</strong></h2><h3 id="4-1-启动-SpringBoot应用"><a href="#4-1-启动-SpringBoot应用" class="headerlink" title="4.1 启动 SpringBoot应用"></a><strong>4.1 启动 SpringBoot应用</strong></h3><p>堆内存大小 4G，其中新生代内存 2G。<code>SurivivorRadio=8</code>，即每个 Surivivor 占比新生代 1/10。</p>
-<p>指定GC日志位置：<code>-Xloggc:/Users/testUser/log/gc.log</code></p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">java -server </span><br><span class="line">-Xmx4g -Xms4g -XX:SurvivorRatio=8 -Xmn2g</span><br><span class="line">-XX:MetaspaceSize=512m -XX:MaxMetaspaceSize=1g -XX:MaxDirectMemorySize=1g </span><br><span class="line">-XX:+HeapDumpOnOutOfMemoryError -XX:+PrintGCCause -XX:+PrintGCDetails </span><br><span class="line">-XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintTenuringDistribution </span><br><span class="line">-XX:+UnlockDiagnosticVMOptions -XX:ParGCCardsPerStrideChunk=32768 </span><br><span class="line">-XX:+PrintCommandLineFlags -XX:+UseConcMarkSweepGC -XX:+UseParNewGC </span><br><span class="line">-XX:ParallelCMSThreads=6 -XX:+CMSClassUnloadingEnabled </span><br><span class="line">-XX:+UseCMSCompactAtFullCollection -XX:+CMSParallelInitialMarkEnabled </span><br><span class="line">-XX:+CMSParallelRemarkEnabled -XX:+CMSScavengeBeforeRemark -XX:+PrintHeapAtGC </span><br><span class="line">-XX:CMSFullGCsBeforeCompaction=1 -XX:CMSInitiatingOccupancyFraction=70 </span><br><span class="line">-XX:+UseCMSInitiatingOccupancyOnly -XX:+PrintReferenceGC  </span><br><span class="line">-XX:+ParallelRefProcEnabled -XX:ReservedCodeCacheSize=256M </span><br><span class="line">-Xloggc:/Users/testUser/log/gc.log</span><br><span class="line">-jar target/activiti-0.0.1-SNAPSHOT.jar</span><br></pre></td></tr></table></figure>
-
-<h3 id="4-2-多次手动-GC"><a href="#4-2-多次手动-GC" class="headerlink" title="4.2 多次手动 GC"></a><strong>4.2 多次手动 GC</strong></h3><p>由于JVM 启动过程中，需要加载大量对象，所以我们在压测之前先手动 GC，清理一下存量对象。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8080/gc</span><br></pre></td></tr></table></figure>
-
-<h3 id="4-3-Jmeter-启动压测"><a href="#4-3-Jmeter-启动压测" class="headerlink" title="4.3 Jmeter 启动压测"></a><strong>4.3 Jmeter 启动压测</strong></h3><p>执行 JMeter压测计划，每次执行会调用 20000 次，</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-01e19093ebe98a61a006882fd7ab05d2_1440w.webp" alt="img"></p>
-<h3 id="4-4-GC-日志解读"><a href="#4-4-GC-日志解读" class="headerlink" title="4.4 GC 日志解读"></a><strong>4.4 GC 日志解读</strong></h3><p>GC 以后，新生代 Eden 区已使用内存为 0。GC 前 Eden区大小就是 20000 次 Http 调用所申请的内存总和！</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-184e3d1df97081f9ae9b757c14d7b333_1440w.webp" alt="img"></p>
-<h2 id="5-实验结果"><a href="#5-实验结果" class="headerlink" title="5. 实验结果"></a><strong>5. 实验结果</strong></h2><p>SpringBoot 在处理 Http 请求时，即使请求体相对较小，<strong>平均每次 Http 调用仍会申请约 34 K 的堆内存</strong>。这一点显得尤为突出，因为请求体仅包含 50 个字符，远远未达到 1K 大小。</p>
-<p>然而，每次 Http 请求所消耗的内存却依然高达 34K。这可能是由于在 SpringBoot 的内部处理流程中需要创建多个对象，这些对象的总内存占用显著高于请求体本身。</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;userId&quot;: 32898493, &quot;productId&quot;:39043, &quot;detail&quot;: &quot;&quot;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在调整 Http 请求后，如将 detail 字段设置为 1200 个字符时，每次 Http 调用平均占用堆内存为 36K。两次实验结果间的差异为 2K，这与 1200 个字符占用的内存大小基本持平（需考虑一定的误差）。</p>
-<p><strong>这表明 SpringBoot 内部未进行多次请求体拷贝。</strong></p>
-<h3 id="5-1-添加日志打印"><a href="#5-1-添加日志打印" class="headerlink" title="5.1 添加日志打印"></a><strong>5.1 添加日志打印</strong></h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">log.warn(&quot;收到提单请求 cnt&#123;&#125;:&#123;&#125;&quot;, count.getAndIncrement(), order);</span><br></pre></td></tr></table></figure>
-
-<p>在打印请求日志后，单次 Http 请求的平均内存使用量达到了 56 KB，比之前增加了整整 20 KB。</p>
-<p>然而，当我移除 detail 字段后，单次请求的内存使用骤降至 35.7 KB。</p>
-<p>这表明，当日志量较小时，打印日志对内存占用的影响较小。但随着日志大小的增加，内存占用显著上升，这可能触发更频繁地GC，最终导致系统性能明显下降。</p>
-<p>因此，建议各位严格控制单条日志的大小，以优化内存使用和系统性能。</p>
-<p><img src="https://pub-9e727eae11e040a4aa2b1feedc2608d2.r2.dev/PicGo/v2-3602e22b4df0e789f597d9d5400defb9_1440w.webp" alt="img"></p>
-<p><strong>6. 真实的数据</strong></p>
-<p>根据以上实验结果可得出结论：单次 HTTP 请求消耗约34KB内存，这并不意味着所有SpringBoot应用的内存消耗都是如此。由于实验所用的代码相对简单，因此34KB可能是内存消耗的最小值。</p>
-<p>举例来说，在我司的线上环境中，<strong>单次RPC请求的内存消耗在 0.5MB 到 1MB 之间</strong>，内存占用量相对较大。</p>
-<p>这是因为复杂的基础架构、复杂的业务逻辑、复杂的流程、多次下游调用、多次SQL 调用、多次缓存调用、日志打印等等 均需要消耗大量的内存！</p>
-<p>在此之前，我一直对新生代 Eden 区高达 5G 的情况下，仍每分钟进行 1-2 次 <a target="_blank" rel="noopener" href="https://zhida.zhihu.com/search?content_id=693946600&content_type=Answer&match_order=1&q=young+GC&zhida_source=entity">young GC</a> 感到困惑。</p>
-<p>经过粗略计算后发现，如果每次请求消耗 0.5M 内存，当单台服务器每秒并发度达到 500 次时，每分钟需要分配的内存高达 15G。因此，至少需要进行3次 young GC 才能满足需求。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://scatteredream.github.io/2025/05/31/advertisement/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars.githubusercontent.com/u/62317679?s=400&v=4">
-      <meta itemprop="name" content="碎梦">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | scatteredream's blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/31/advertisement/" class="post-title-link" itemprop="url">广告概念</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2025-05-31 00:00:00 / 修改时间：20:26:25" itemprop="dateCreated datePublished" datetime="2025-05-31T00:00:00+08:00">2025-05-31</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="广告系统"><a href="#广告系统" class="headerlink" title="广告系统"></a>广告系统</h1><p>好的！我来从一个 <strong>Java 程序员</strong> 的角度，详细讲讲 <strong>DSP、SSP、Ad Exchange</strong> 这些广告行业的技术生态和背后的系统设计。</p>
-<p>我会分成以下部分来讲：<br> ✅ 广告技术生态整体结构<br> ✅ 每个环节的工作流程<br> ✅ Java 程序员需要掌握的关键点<br> ✅ 技术方案和落地要点</p>
-<hr>
-<h2 id="🌍-广告技术生态整体结构"><a href="#🌍-广告技术生态整体结构" class="headerlink" title="🌍 广告技术生态整体结构"></a>🌍 广告技术生态整体结构</h2><p>广告行业的核心目标：<br> <strong>让广告主的广告精准高效地展示给合适的用户，同时帮助媒体（如网站、App）最大化广告收益。</strong></p>
-<p>涉及的主要角色：</p>
-<ul>
-<li><strong>广告主（Advertiser）</strong> → 提供广告预算、创意内容</li>
-<li><strong>DSP（需求方平台）</strong> → 代表广告主参与竞价</li>
-<li><strong>Ad Exchange（广告交易平台）</strong> → 公平的竞价撮合场所</li>
-<li><strong>SSP（供应方平台）</strong> → 代表媒体方卖出广告位</li>
-<li><strong>用户（Audience）</strong> → 接收广告展示</li>
-</ul>
-<p>数据流大致是：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户访问页面 → SSP 发起广告请求 → Ad Exchange 广播请求 → DSP 返回竞价 → Ad Exchange 确定最高价 → SSP 返回广告素材 → 用户端展示广告</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="📈-DSP（Demand-Side-Platform）"><a href="#📈-DSP（Demand-Side-Platform）" class="headerlink" title="📈 DSP（Demand-Side Platform）"></a>📈 DSP（Demand-Side Platform）</h2><p><strong>作为广告需求方，DSP主要负责：</strong><br> 1️⃣ 接收 Ad Exchange 发来的广告请求（Bid Request）<br> 2️⃣ 根据广告主设定的策略和预算，进行竞价决策<br> 3️⃣ 返回竞价结果（Bid Response）<br> 4️⃣ 记录曝光（Impression）、点击（Click）、转化（Conversion）等效果数据</p>
-<p><strong>Java 程序员需要关注：</strong><br> ✅ 高并发请求处理：需要处理每秒成千上万次广告请求，可以使用 <strong>Netty、Vert.x、Spring WebFlux</strong> 构建高性能的异步服务<br> ✅ 竞价引擎：一般会有基于规则或机器学习的竞价逻辑，需要精心优化性能<br> ✅ 数据缓存：实时访问用户画像、广告主出价等信息，常用 <strong>Redis、Caffeine</strong><br> ✅ 日志与追踪：用 <strong>Kafka、Flume</strong> 采集曝光、点击、转化日志，供后续分析<br> ✅ 广告投放策略：可以涉及 <strong>预算分配、频次控制、目标受众匹配</strong></p>
-<hr>
-<h2 id="📦-SSP（Supply-Side-Platform）"><a href="#📦-SSP（Supply-Side-Platform）" class="headerlink" title="📦 SSP（Supply-Side Platform）"></a>📦 SSP（Supply-Side Platform）</h2><p><strong>作为广告供应方，SSP主要负责：</strong><br> 1️⃣ 管理媒体方的广告库存（广告位、展示机会）<br> 2️⃣ 将请求发送到 Ad Exchange<br> 3️⃣ 收集各 DSP 返回的竞价结果<br> 4️⃣ 选出最高价并返回广告素材</p>
-<p><strong>Java 程序员需要关注：</strong><br> ✅ 广告库存管理：广告位信息、展示频次、保底合同，需要设计灵活的库存管理系统<br> ✅ 请求调度：对接多个 Ad Exchange，处理并发和超时，需要优化网络调用和重试机制<br> ✅ 收益优化：用算法/策略决定什么时候走直销、什么时候走竞价，结合历史数据分析</p>
-<hr>
-<h2 id="🔗-Ad-Exchange（广告交易平台）"><a href="#🔗-Ad-Exchange（广告交易平台）" class="headerlink" title="🔗 Ad Exchange（广告交易平台）"></a>🔗 Ad Exchange（广告交易平台）</h2><p><strong>作为中立的交易所，Ad Exchange主要负责：</strong><br> 1️⃣ 接收 SSP 的广告请求<br> 2️⃣ 广播给多个 DSP 请求竞价<br> 3️⃣ 收集竞价响应，确定最终赢者<br> 4️⃣ 将素材和投放结果反馈给 SSP</p>
-<p><strong>Java 程序员需要关注：</strong><br> ✅ 高性能分发：毫秒级处理、低延迟广播请求，通常基于 <strong>高性能网络框架、异步非阻塞IO</strong><br> ✅ 实时竞价（RTB）算法：快速比价、过滤不合规的竞价<br> ✅ 日志和数据流：用 <strong>Kafka</strong> 等做实时流处理，为后续效果分析提供数据<br> ✅ 系统可用性：涉及资金和业务核心，必须有 <strong>高可用架构、容错机制</strong></p>
-<hr>
-<h2 id="💡-技术方案落地要点"><a href="#💡-技术方案落地要点" class="headerlink" title="💡 技术方案落地要点"></a>💡 技术方案落地要点</h2><p>对于 Java 程序员，实际参与广告技术项目时，可以从以下几个角度入手：<br> ✅ 熟悉 <strong>微服务架构</strong>，因为广告系统几乎都是分布式服务（投放、日志、竞价、监测、报表等模块分开）<br> ✅ 掌握 <strong>消息队列</strong>（Kafka、Pulsar），用于日志、监测、异步任务<br> ✅ 掌握 <strong>高性能开发</strong>（Netty、异步IO、并发优化、对象池等）<br> ✅ 了解 <strong>实时流处理</strong>（Flink、Spark Streaming），用来处理曝光、点击等数据<br> ✅ 掌握 <strong>缓存和分布式存储</strong>，广告请求中需要快速查用户画像、广告主信息，延迟必须低<br> ✅ 有一定 <strong>算法和策略设计能力</strong>，参与预算管理、竞价算法、频控、流量分配等模块</p>
-<hr>
-<h2 id="⚙-一个简单的-Java-技术栈示例"><a href="#⚙-一个简单的-Java-技术栈示例" class="headerlink" title="⚙ 一个简单的 Java 技术栈示例"></a>⚙ 一个简单的 Java 技术栈示例</h2><table>
-<thead>
-<tr>
-<th>模块</th>
-<th>技术选型</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>请求接收</td>
-<td>Netty / Spring WebFlux</td>
-</tr>
-<tr>
-<td>缓存</td>
-<td>Redis / Caffeine</td>
-</tr>
-<tr>
-<td>日志收集</td>
-<td>Kafka / Flume</td>
-</tr>
-<tr>
-<td>流处理</td>
-<td>Flink / Spark Streaming</td>
-</tr>
-<tr>
-<td>数据存储</td>
-<td>MySQL / ClickHouse / Elasticsearch</td>
-</tr>
-<tr>
-<td>配置管理</td>
-<td>Nacos / Apollo</td>
-</tr>
-<tr>
-<td>服务治理</td>
-<td>Spring Cloud / Dubbo</td>
-</tr>
-</tbody></table>
-<hr>
-<p>如果你感兴趣，我还能帮你写一套：<br> ✅ <strong>DSP高并发广告请求接收模块（Java代码示例）</strong><br> ✅ <strong>广告日志Kafka生产者的代码模板</strong><br> ✅ <strong>一个简单的预算管理类（包含线程安全和高性能考虑）</strong></p>
-<p>要哪个？或者你还有具体问题，直接跟我说！我可以帮你拆解具体的场景或代码实现。😄</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/default/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/default/page/10/">10</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/default/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/default/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/default/page/11/">11</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/default/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
