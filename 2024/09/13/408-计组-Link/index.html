@@ -19,15 +19,15 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"scatteredream.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":true,"version":"8.23.0","exturl":false,"sidebar":{"position":"right","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":"flat"},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="文本：源代码 hello.c 预处理：修改文本 hello.i file 编译器：assembly hello.s file 汇编器：binary code hello.o file 连接器：hello.o + printf.o -&gt; hello  线程级并行：指令执行基本单位  多核心：多个核共享L3缓存，一个核有一个统一的L2缓存，L1缓存分为数据缓存和指令缓存，数据缓存直连CPU寄存器">
+    <meta name="description" content="文本：源代码 hello.c  预处理：修改文本 hello.i file  编译器：assembly hello.s file   汇编器：binary code hello.o file 连接器：hello.o + printf.o -&gt; hello  线程级并行：指令执行基本单位  多核心：多个核共享L3缓存，一个核有一个统一的L2缓存，L1缓存分为数据缓存和指令缓存，数据缓存直连C">
 <meta property="og:type" content="article">
 <meta property="og:title" content="符号链接">
 <meta property="og:url" content="http://scatteredream.github.io/2024/09/13/408-%E8%AE%A1%E7%BB%84-Link/index.html">
 <meta property="og:site_name" content="scatteredream&#39;s blog">
-<meta property="og:description" content="文本：源代码 hello.c 预处理：修改文本 hello.i file 编译器：assembly hello.s file 汇编器：binary code hello.o file 连接器：hello.o + printf.o -&gt; hello  线程级并行：指令执行基本单位  多核心：多个核共享L3缓存，一个核有一个统一的L2缓存，L1缓存分为数据缓存和指令缓存，数据缓存直连CPU寄存器">
+<meta property="og:description" content="文本：源代码 hello.c  预处理：修改文本 hello.i file  编译器：assembly hello.s file   汇编器：binary code hello.o file 连接器：hello.o + printf.o -&gt; hello  线程级并行：指令执行基本单位  多核心：多个核共享L3缓存，一个核有一个统一的L2缓存，L1缓存分为数据缓存和指令缓存，数据缓存直连C">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-09-12T16:00:00.000Z">
-<meta property="article:modified_time" content="2025-05-05T04:43:29.289Z">
+<meta property="article:modified_time" content="2025-08-15T14:42:30.445Z">
 <meta property="article:author" content="碎梦">
 <meta property="article:tag" content="link">
 <meta name="twitter:card" content="summary">
@@ -172,7 +172,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">102</span>
+          <span class="site-state-item-count">105</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -246,7 +246,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-05-05 12:43:29" itemprop="dateModified" datetime="2025-05-05T12:43:29+08:00">2025-05-05</time>
+      <time title="修改时间：2025-08-15 22:42:30" itemprop="dateModified" datetime="2025-08-15T22:42:30+08:00">2025-08-15</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -267,9 +267,14 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>文本：源代码 <code>hello.c</code></p>
-<p>预处理：修改文本 <code>hello.i file</code></p>
-<p>编译器：assembly <code>hello.s file</code></p>
+    <div class="post-body" itemprop="articleBody"><ol>
+<li><p>文本：源代码 <code>hello.c</code></p>
+</li>
+<li><p>预处理：修改文本 <code>hello.i file</code></p>
+</li>
+<li><p>编译器：assembly <code>hello.s file</code></p>
+</li>
+</ol>
 <p>汇编器：binary code <code>hello.o file</code></p>
 <p>连接器：hello.o + printf.o -&gt; <code>hello</code> </p>
 <p><strong>线程级并行</strong>：指令执行基本单位</p>
@@ -458,13 +463,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2024/09/13/jvm-classfile/" rel="prev" title="ClassFile">
-                  <i class="fa fa-angle-left"></i> ClassFile
+                <a href="/2024/09/13/408-%E8%AE%A1%E7%BB%84-Cache%20%E5%85%88%E8%A1%8C%E8%BF%9B%E4%BD%8D%20HDD/" rel="prev" title="cache、先行进位、hdd">
+                  <i class="fa fa-angle-left"></i> cache、先行进位、hdd
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2024/09/13/408-%E8%AE%A1%E7%BB%84-Cache%20%E5%85%88%E8%A1%8C%E8%BF%9B%E4%BD%8D%20HDD/" rel="next" title="cache、先行进位、hdd">
-                  cache、先行进位、hdd <i class="fa fa-angle-right"></i>
+                <a href="/2024/09/17/408-%E8%AE%A1%E7%BB%84-ROM%20RAM%20Cache%20Bus%20IO/" rel="next" title="ROM RAM Cache IO">
+                  ROM RAM Cache IO <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
